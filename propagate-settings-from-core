@@ -1,0 +1,16 @@
+#! /bin/bash
+pushd "$(dirname "$0")" &>/dev/null
+BASE="$(pwd)"
+popd &>/dev/null
+SRC="$BASE/com.yoursway.sadr.core"
+F=.settings
+for i in com.yoursway.sadr.ruby.core; do
+	pushd "$BASE/$i" &>/dev/null
+	test -d $F || mkdir $F
+	cd $F
+	for f in $SRC/$F/*; do
+	  echo "$i/$F/$(basename "$f")"
+  	cp $f ./
+  done
+	popd &>/dev/null
+done
