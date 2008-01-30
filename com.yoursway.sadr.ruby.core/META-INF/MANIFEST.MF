@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core Plug-in
+Bundle-SymbolicName: com.yoursway.sadr.ruby.core
+Bundle-Version: 1.0.0
+Bundle-Activator: com.yoursway.sadr.ruby.core.internal.Activator
+Bundle-Vendor: YourSway
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.dltk.core,
+ org.eclipse.dltk.ruby.core,
+ com.yoursway.sadr.core
+Eclipse-LazyStart: true
+Export-Package: com.yoursway.sadr.ruby.constructs,
+ com.yoursway.sadr.ruby.goals,
+ com.yoursway.sadr.ruby.places,
+ com.yoursway.sadr.ruby.scopes,
+ com.yoursway.sadr.ruby.world
