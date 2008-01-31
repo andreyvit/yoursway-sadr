@@ -49,6 +49,7 @@ public abstract class AbstractConstruct extends AbstractSubject implements Const
     }
     
     protected void defineControlFlow(List<Construct> flow) {
+        flow.addAll(wrap(node().getChilds()));
     }
     
 }
