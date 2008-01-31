@@ -7,9 +7,10 @@ import com.yoursway.sadr.core.Scope;
 import com.yoursway.sadr.ruby.ConstructFactory;
 
 public abstract class AbstractRubyScope extends Scope {
-
+    
+    @Override
     public Construct wrap(ASTNode child) {
         return ConstructFactory.I.create(this, child);
     }
-
+    
 }

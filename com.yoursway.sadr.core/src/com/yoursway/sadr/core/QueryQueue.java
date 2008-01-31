@@ -6,7 +6,7 @@ import java.util.Queue;
 public class QueryQueue implements QueryEnqueuer {
     
     private static Queue<Query> queue = new LinkedList<Query>();
-
+    
     public void enqueue(Query query) {
         queue.add(query);
     }
@@ -14,5 +14,5 @@ public class QueryQueue implements QueryEnqueuer {
     public Query poll() {
         return queue.poll();
     }
-
+    
 }

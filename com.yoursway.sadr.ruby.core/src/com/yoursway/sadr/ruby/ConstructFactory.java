@@ -15,7 +15,7 @@ import com.yoursway.sadr.ruby.constructs.StatementListC;
 
 public class ConstructFactory {
     
-    public static final ConstructFactory I = new ConstructFactory(); 
+    public static final ConstructFactory I = new ConstructFactory();
     
     public Construct create(Scope scope, ASTNode node) {
         if (node instanceof ModuleDeclaration)

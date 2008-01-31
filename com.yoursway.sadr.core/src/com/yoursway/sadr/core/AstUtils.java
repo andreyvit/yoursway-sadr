@@ -7,7 +7,7 @@ import org.eclipse.dltk.ast.expressions.CallArgumentsList;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
 public class AstUtils {
-
+    
     @SuppressWarnings("unchecked")
     public static List<ASTNode> argumentsOf(CallExpression node) {
         CallArgumentsList args = node.getArgs();

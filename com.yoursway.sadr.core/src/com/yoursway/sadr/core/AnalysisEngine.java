@@ -1,6 +1,5 @@
 package com.yoursway.sadr.core;
 
-
 public class AnalysisEngine {
     
     static final class SubqueryCreator implements SubgoalRequestor {
@@ -28,13 +27,13 @@ public class AnalysisEngine {
     }
     
     static abstract class Q extends Query implements ContinuationRequestor {
-
+        
         protected final QueryEnqueuer enqueuer;
         
         protected final Goal goal;
         
         private Query whenDone;
-
+        
         public Q(QueryEnqueuer enqueuer, Goal goal) {
             this.enqueuer = enqueuer;
             this.goal = goal;
@@ -61,7 +60,7 @@ public class AnalysisEngine {
                     enqueuer.enqueue(whenDone);
             }
         }
-
+        
         public void subgoal(Continuation cont) {
             SubqueryCreator creator = new SubqueryCreator(enqueuer);
             cont.provideSubgoals(creator);
@@ -71,36 +70,36 @@ public class AnalysisEngine {
         public void propagate(Subject subject) {
             enqueuer.enqueue(new QQ(enqueuer, goal, subject));
         }
-
+        
         protected abstract void doEvaluate();
         
     }
     
-    static final class QQ extends Q  {
-
+    static final class QQ extends Q {
+        
         private final Subject subject;
-
+        
         public QQ(QueryEnqueuer enqueuer, Goal goal, Subject subject) {
             super(enqueuer, goal);
             this.subject = subject;
         }
-
+        
         @Override
         public void doEvaluate() {
             subject.process(goal, this);
         }
-
+        
     }
     
     static final class QQQ extends Q {
         
         private final Continuation continuation;
-
+        
         public QQQ(Q continuationOf, Continuation continuation) {
             super(continuationOf);
             this.continuation = continuation;
         }
-
+        
         @Override
         public void doEvaluate() {
             continuation.done(this);
@@ -108,14 +107,13 @@ public class AnalysisEngine {
         
     }
     
-    private QueryQueue queue = new QueryQueue();
+    private final QueryQueue queue = new QueryQueue();
     
     public void evaluate(Goal goal, Subject subject) {
         queue.enqueue(new QQ(queue, goal, subject));
         Query current;
-        while ((current = queue.poll()) != null) {
+        while ((current = queue.poll()) != null)
             current.evaluate();
-        }
     }
     
 }

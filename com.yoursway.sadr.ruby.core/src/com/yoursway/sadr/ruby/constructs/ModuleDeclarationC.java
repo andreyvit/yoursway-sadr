@@ -15,5 +15,5 @@ public class ModuleDeclarationC extends AbstractConstruct {
     public ModuleDeclaration node() {
         return (ModuleDeclaration) super.node();
     }
-
+    
 }

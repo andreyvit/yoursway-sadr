@@ -6,10 +6,10 @@ import com.yoursway.sadr.core.Contributor;
 import com.yoursway.sadr.core.PropagationStyle;
 
 public class WorldG extends AbstractGoal {
-
+    
     public WorldG() {
     }
-
+    
     @Override
     public PropagationStyle propagationStyle() {
         return PropagationStyle.FLOW;

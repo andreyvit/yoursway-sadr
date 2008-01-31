@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-
 public abstract class AbstractConstruct extends AbstractSubject implements Construct {
     
     private final Scope scope;
