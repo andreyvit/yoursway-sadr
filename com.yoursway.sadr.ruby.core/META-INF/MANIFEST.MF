@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Core Plug-in
-Bundle-SymbolicName: com.yoursway.sadr.ruby.core
+Bundle-SymbolicName: com.yoursway.sadr.ruby.core;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: com.yoursway.sadr.ruby.core.internal.Activator
 Bundle-Vendor: YourSway
