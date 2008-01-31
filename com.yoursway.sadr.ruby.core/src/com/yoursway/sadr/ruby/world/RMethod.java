@@ -1,7 +1,7 @@
 package com.yoursway.sadr.ruby.world;
 
-import com.yoursway.sadr.core.Subject;
+import com.yoursway.sadr.core.Callable;
 
-public abstract class RMethod implements Subject {
+public abstract class RMethod extends Callable {
     
 }
