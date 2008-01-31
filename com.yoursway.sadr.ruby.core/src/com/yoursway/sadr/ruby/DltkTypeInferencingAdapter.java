@@ -12,7 +12,9 @@ import org.eclipse.dltk.ti.types.IEvaluatedType;
 import com.yoursway.sadr.core.AnalysisEngine;
 import com.yoursway.sadr.ruby.constructs.ModuleDeclarationC;
 import com.yoursway.sadr.ruby.goals.TypeG;
+import com.yoursway.sadr.ruby.goals.WorldG;
 import com.yoursway.sadr.ruby.scopes.TopLevelS;
+import com.yoursway.sadr.ruby.world.World;
 
 public class DltkTypeInferencingAdapter implements ITypeInferencer {
     
@@ -26,11 +28,14 @@ public class DltkTypeInferencingAdapter implements ITypeInferencer {
         //        ASTNode node = goal.getExpression();
         ModuleDeclaration rootNode = getModuleDeclaration(goal.getContext());
         
-        //        World world = new World();
+        World world = new World();
         AnalysisEngine engine = new AnalysisEngine();
         TopLevelS topLevelS = new TopLevelS();
         ModuleDeclarationC rootC = new ModuleDeclarationC(topLevelS, rootNode);
+        engine.evaluate(new WorldG(world), rootC);
         engine.evaluate(new TypeG(), rootC);
+        
+        System.out.println(world);
         
         return null;
     }

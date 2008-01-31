@@ -4,10 +4,18 @@ import com.yoursway.sadr.core.AbstractGoal;
 import com.yoursway.sadr.core.ContinuationRequestor;
 import com.yoursway.sadr.core.Contributor;
 import com.yoursway.sadr.core.PropagationStyle;
+import com.yoursway.sadr.ruby.world.WorldContributor;
 
 public class WorldG extends AbstractGoal {
     
-    public WorldG() {
+    private final WorldContributor contributor;
+    
+    public WorldG(WorldContributor contributor) {
+        this.contributor = contributor;
+    }
+    
+    public WorldContributor contributor() {
+        return contributor;
     }
     
     @Override

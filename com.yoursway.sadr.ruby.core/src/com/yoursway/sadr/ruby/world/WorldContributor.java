@@ -1,5 +1,7 @@
 package com.yoursway.sadr.ruby.world;
 
-public class WorldContributor {
+public interface WorldContributor {
+    
+    void defineMethod(RMethod method);
     
 }
