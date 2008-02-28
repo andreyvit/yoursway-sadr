@@ -8,4 +8,3 @@ Bundle-Vendor: YOURSWAY
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dltk.core
 Eclipse-LazyStart: true
-Export-Package: com.yoursway.sadr.core

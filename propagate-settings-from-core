@@ -4,7 +4,7 @@ BASE="$(pwd)"
 popd &>/dev/null
 SRC="$BASE/com.yoursway.sadr.core"
 F=.settings
-for i in com.yoursway.sadr.ruby.core; do
+for i in com.yoursway.sadr.ruby.core com.yoursway.sadr.engine; do
 	pushd "$BASE/$i" &>/dev/null
 	test -d $F || mkdir $F
 	cd $F
