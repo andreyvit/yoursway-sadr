@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.ui,
  com.yoursway.sadr.core;bundle-version="1.0.0",
  com.yoursway.sadr.engine;bundle-version="1.0.0",
  com.yoursway.sadr.ruby.core;bundle-version="1.0.0",
- org.eclipse.core.resources;bundle-version="3.4.0",
+ org.eclipse.core.resources;bundle-version="3.3.0",
  org.eclipse.dltk.core;bundle-version="1.0.0",
  org.junit4;bundle-version="4.3.1",
  org.eclipse.dltk.ruby.core;bundle-version="1.0.0"

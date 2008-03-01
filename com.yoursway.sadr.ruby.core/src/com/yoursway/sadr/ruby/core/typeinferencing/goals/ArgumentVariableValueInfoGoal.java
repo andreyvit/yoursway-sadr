@@ -225,20 +225,20 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         evaluateWithoutFlow(callable, construct, requestor);
     }
     
-    private void evaluateWithFlow(final Callable callable, final Construct<Scope, ASTNode> construct,
-            ContinuationRequestor requestor) {
-        PropagationTracker tracker = construct.scope().propagationTracker();
-        tracker.initiateBackwardPropagation(this, requestor, new ValueInfoContinuation() {
-            
-            public void consume(ValueInfo result, ContinuationRequestor requestor) {
-                if (!result.isEmpty())
-                    setResult(result);
-                else
-                    evaluateWithoutFlow(callable, construct, requestor);
-            }
-            
-        });
-    }
+    //    private void evaluateWithFlow(final Callable callable, final Construct<Scope, ASTNode> construct,
+    //            ContinuationRequestor requestor) {
+    //        PropagationTracker tracker = construct.scope().propagationTracker();
+    //        tracker.initiateBackwardPropagation(this, requestor, new ValueInfoContinuation() {
+    //            
+    //            public void consume(ValueInfo result, ContinuationRequestor requestor) {
+    //                if (!result.isEmpty())
+    //                    setResult(result);
+    //                else
+    //                    evaluateWithoutFlow(callable, construct, requestor);
+    //            }
+    //            
+    //        });
+    //    }
     
     private void evaluateWithoutFlow(final Callable callable, Construct<Scope, ASTNode> construct,
             ContinuationRequestor requestor) {
