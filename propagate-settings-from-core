@@ -4,13 +4,15 @@ BASE="$(pwd)"
 popd &>/dev/null
 SRC="$BASE/com.yoursway.sadr.core"
 F=.settings
-for i in com.yoursway.sadr.ruby.core com.yoursway.sadr.engine; do
-	pushd "$BASE/$i" &>/dev/null
-	test -d $F || mkdir $F
-	cd $F
-	for f in $SRC/$F/*; do
-	  echo "$i/$F/$(basename "$f")"
-  	cp $f ./
-  done
-	popd &>/dev/null
+for i in com.yoursway.sadr.*; do
+  if ! test $i == com.yoursway.sadr.core; then
+  	pushd "$BASE/$i" &>/dev/null
+  	test -d $F || mkdir $F
+  	cd $F
+  	for f in $SRC/$F/*; do
+  	  echo "$i/$F/$(basename "$f")"
+    	cp $f ./
+    done
+  	popd &>/dev/null
+	fi
 done

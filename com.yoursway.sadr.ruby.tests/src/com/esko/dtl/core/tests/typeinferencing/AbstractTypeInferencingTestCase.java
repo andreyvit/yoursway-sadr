@@ -49,7 +49,6 @@ import com.esko.dtl.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
-import com.yoursway.sadr.ruby.core.runtime.RubyRuntimeModel;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
@@ -63,7 +62,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class AbstractTypeInferencingTestCase {
-
+    
     protected IProject testProject;
     private File tempDirectory;
     
@@ -73,17 +72,17 @@ public abstract class AbstractTypeInferencingTestCase {
         if (testProject.exists())
             testProject.delete(false, true, null);
         IProjectDescription description = workspace.newProjectDescription(testProject.getName());
-        description.setNatureIds(new String[] {RubyNature.NATURE_ID});
+        description.setNatureIds(new String[] { RubyNature.NATURE_ID });
         //        URL projectLocation = DtlTestsPlugin.getDefault().getBundle().getEntry("test_projects/" + projectName);
-//        if (projectLocation == null)
-//            throw new AssertionError("Test project not found.");
-//        URL resolvedProjectLocation = Platform.resolve(projectLocation);
-        IPath tempPath = DtlTestsPlugin.getDefault().getStateLocation().append("testprojects")
-                .append(projectName);
+        //        if (projectLocation == null)
+        //            throw new AssertionError("Test project not found.");
+        //        URL resolvedProjectLocation = Platform.resolve(projectLocation);
+        IPath tempPath = DtlTestsPlugin.getDefault().getStateLocation().append("testprojects").append(
+                projectName);
         tempDirectory = tempPath.toFile();
         FileUtil.recursiveDelete(tempDirectory);
         recursiveCopy(projectLocation, tempDirectory);
-//      recursiveCopy(new File(resolvedProjectLocation.getPath()), tempDirectory);
+        //      recursiveCopy(new File(resolvedProjectLocation.getPath()), tempDirectory);
         description.setLocation(tempPath);
         testProject.create(description, null);
         testProject.open(null);
@@ -98,23 +97,22 @@ public abstract class AbstractTypeInferencingTestCase {
         String methodName = callerOutside(AbstractTypeInferencingTestCase.class);
         String className = getClass().getSimpleName();
         String basePath = "/tests/" + className + "/" + methodName;
-
+        
         URL projectLocation = DtlTestsPlugin.getDefault().getBundle().getEntry(basePath);
         if (projectLocation == null)
             throw new AssertionError("Test project not found.");
         URL resolvedProjectLocation = FileLocator.resolve(projectLocation);
         File file = new File(resolvedProjectLocation.getPath());
         createProject("test", file);
-
+        
         IScriptProject scriptProject = DLTKCore.create(testProject);
         WholeProjectRuntime projectRuntime = new WholeProjectRuntime(scriptProject);
-        RubyRuntimeModel runtimeModel = projectRuntime.getModel();
         
         AnalysisEngine engine = projectRuntime.getEngine();
         
         StringBuilder expected = new StringBuilder();
         StringBuilder actual = new StringBuilder();
-
+        
         for (ISourceModule sourceModule : projectRuntime.getSourceModules()) {
             String headline = "==== " + sourceModule.getElementName() + " ====\n";
             expected.append(headline);
@@ -124,9 +122,10 @@ public abstract class AbstractTypeInferencingTestCase {
         
         Assert.assertEquals(expected.toString(), actual.toString());
     }
-
+    
     private void checkFile(ISourceModule sourceModule, WholeProjectRuntime projectRuntime,
-            AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws ModelException, Exception {
+            AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws ModelException,
+            Exception {
         Collection<IAssertion> assertions = new ArrayList<IAssertion>();
         
         String content = sourceModule.getSource();
@@ -152,18 +151,18 @@ public abstract class AbstractTypeInferencingTestCase {
             }
             lineOffset += originalLine.length() + 1;
         }
-
+        
         if (assertions.size() == 0)
             return;
-
+        
         ModuleDeclaration rootNode = projectRuntime.getASTFor(sourceModule);
         FileScope scope = projectRuntime.getScopeFor(sourceModule);
-        for(IAssertion assertion : assertions) 
+        for (IAssertion assertion : assertions)
             assertion.check(scope, rootNode, sourceModule, engine, expected, actual);
     }
-
-    private IAssertion parseAssertion(StringTokenizer tok, String test, String line, String originalLine, int lineOffset,
-            int delimiterPos) {
+    
+    private IAssertion parseAssertion(StringTokenizer tok, String test, String line, String originalLine,
+            int lineOffset, int delimiterPos) {
         IAssertion assertion;
         if ("expr".equals(test)) {
             String expr = tok.nextToken();
@@ -191,12 +190,12 @@ public abstract class AbstractTypeInferencingTestCase {
         }
         return assertion;
     }
-
+    
     private void needToken(StringTokenizer tok, String token) {
         String arrow = tok.nextToken();
         assertTrue(arrow.equals(token));
     }
-
+    
     private int locate(String expr, String line, String originalLine, int delimiterPos, int lineOffset) {
         Pattern pat = Pattern.compile("(?<!\\w)" + Pattern.quote(expr) + "(?!\\w)");
         Matcher matcher = pat.matcher(originalLine);
@@ -248,7 +247,6 @@ public abstract class AbstractTypeInferencingTestCase {
             in.close();
         }
     }
-  
     
     private static void recursiveCopy(File source, File destination) throws IOException {
         if (source.isDirectory()) {
@@ -298,33 +296,32 @@ public abstract class AbstractTypeInferencingTestCase {
         String fixed = original.replaceAll("class " + newName, "class " + oldName);
         oldFile.setContents(new StringInputStream(fixed), true, false, null);
     }
-
+    
     public interface IAssertion {
-
-        void check(FileScope scope, ModuleDeclaration rootNode, ISourceModule cu, AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception;
-
+        
+        void check(FileScope scope, ModuleDeclaration rootNode, ISourceModule cu, AnalysisEngine engine,
+                StringBuilder expected, StringBuilder actual) throws Exception;
+        
         ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode);
-
+        
     }
     
     class ExpressionTypeAssertion implements IAssertion {
-
+        
         private final String correctClassRef;
-
+        
         private final String expression;
-
+        
         private final int namePos;
-
-        public ExpressionTypeAssertion(String expression,
-                int namePos, String correctClassRef) {
+        
+        public ExpressionTypeAssertion(String expression, int namePos, String correctClassRef) {
             this.expression = expression;
             this.namePos = namePos;
             this.correctClassRef = correctClassRef;
         }
-
-        public void check(FileScope fileScope, ModuleDeclaration rootNode,
-                ISourceModule cu, AnalysisEngine engine, StringBuilder expected, StringBuilder actual)
-                throws Exception {
+        
+        public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
+                AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
             ValueInfo result = goal.resultWithoutKarma();
@@ -335,24 +332,21 @@ public abstract class AbstractTypeInferencingTestCase {
             expected.append(prefix).append(correctClassRef).append('\n');
             actual.append(prefix).append(types).append('\n');
         }
-
+        
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
             Scope scope = RubyUtils.restoreScope(fileScope, node);
             return new ExpressionValueInfoGoal(scope, node, InfoKind.TYPE);
         }
-
+        
     }
     
     class LocalVarTypeAssertion implements IAssertion {
         
-        private final String expression;
-        
         private final int namePos;
         
         public LocalVarTypeAssertion(String expression, int namePos) {
-            this.expression = expression;
             this.namePos = namePos;
         }
         
@@ -380,16 +374,14 @@ public abstract class AbstractTypeInferencingTestCase {
         
         private final int namePos;
         
-        public ExpressionValueAssertion(String expression,
-                int namePos, String ClassRecorrectClassReff) {
+        public ExpressionValueAssertion(String expression, int namePos, String ClassRecorrectClassReff) {
             this.expression = expression;
             this.namePos = namePos;
             this.correctClassRef = ClassRecorrectClassReff;
         }
         
-        public void check(FileScope fileScope, ModuleDeclaration rootNode,
-                ISourceModule cu, AnalysisEngine engine, StringBuilder expected, StringBuilder actual)
-        throws Exception {
+        public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
+                AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
             ValueInfo result = goal.resultWithoutKarma();
@@ -402,7 +394,7 @@ public abstract class AbstractTypeInferencingTestCase {
             expected.append(prefix).append(correctClassRef).append('\n');
             actual.append(prefix).append(values).append('\n');
         }
-
+        
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
@@ -437,12 +429,13 @@ public abstract class AbstractTypeInferencingTestCase {
             MethodNamesRequestor namesRequestor = new MethodNamesRequestor();
             result.findMethodsByPrefix("", namesRequestor);
             
-            String prefix = expression + "." + methodName +"() : ";
+            String prefix = expression + "." + methodName + "() : ";
             expected.append(prefix).append("yes").append('\n');
-            actual.append(prefix).append(requestor.anythingFound() ? "yes" : "no, has: " + 
-                    join(namesRequestor.asArray(), ", ")).append('\n');
+            actual.append(prefix).append(
+                    requestor.anythingFound() ? "yes" : "no, has: " + join(namesRequestor.asArray(), ", "))
+                    .append('\n');
         }
-
+        
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
@@ -451,32 +444,32 @@ public abstract class AbstractTypeInferencingTestCase {
         }
         
     }
-
+    
     class CachedAssertion implements IAssertion {
-
+        
         private final IAssertion assertion;
         private final boolean shouldBeCached;
-
+        
         public CachedAssertion(IAssertion assertion, boolean shouldBeCached) {
             this.assertion = assertion;
             this.shouldBeCached = shouldBeCached;
         }
-
+        
         public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
                 AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ValueInfoGoal goal = assertion.createGoal(fileScope, rootNode);
-            boolean isCached = engine.isCached(goal); 
+            boolean isCached = engine.isCached(goal);
             
             String prefix = goal.toString() + " : ";
             expected.append(prefix).append(cachedString(shouldBeCached)).append('\n');
             actual.append(prefix).append(cachedString(isCached)).append('\n');
-
+            
         }
-
+        
         private String cachedString(boolean cached) {
             return cached ? "CACHED" : "NOT CACHED";
         }
-
+        
         public ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             return null;
         }
