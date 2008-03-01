@@ -1,0 +1,3 @@
+if not isnil (file)
+    fputstr (file, "")
+fi
