@@ -32,7 +32,7 @@ public class RubyLocalVariable extends RubyVariable implements ContributableItem
         this.container = container;
         this.scope = scope;
         this.node = node;
-        this.name = ((SimpleReference) node.getTarget()).getName();
+        this.name = ((SimpleReference) ((RubyAssignment) node.getTarget()).getLeft()).getName();
         if (name == null)
             throw new NullPointerException("name == null");
         container.addLocalVariable(this);

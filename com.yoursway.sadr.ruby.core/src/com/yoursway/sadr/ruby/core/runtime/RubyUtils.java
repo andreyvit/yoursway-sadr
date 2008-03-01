@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.ast.expressions.Literal;
 import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IParent;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.ruby.ast.RubyArrayAccessExpression;
+import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 import org.eclipse.dltk.ruby.ast.RubyColonExpression;
 import org.eclipse.dltk.ruby.ast.RubyForStatement2;
+import org.eclipse.dltk.ruby.ast.RubySelfReference;
 
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstTraverser;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
@@ -40,7 +43,9 @@ import com.yoursway.sadr.ruby.core.typeinferencing.typesets.TypeSetBuilder;
 public class RubyUtils {
     
     public static Wildcard assignmentWildcardExpression(ASTNode node) {
-        if (node instanceof SimpleReference || node instanceof RubyColonExpression)
+        if (node instanceof SimpleReference || node instanceof RubyColonExpression
+                || node instanceof RubySelfReference || node instanceof CallExpression
+                || node instanceof Literal)
             return StarWildcard.INSTANCE;
         else if (node instanceof RubyArrayAccessExpression) {
             return new ArrayWildcard(assignmentWildcardExpression(((RubyArrayAccessExpression) node)
@@ -50,7 +55,9 @@ public class RubyUtils {
     }
     
     public static ASTNode assignmentTerminalNode(ASTNode node) {
-        if (node instanceof SimpleReference || node instanceof RubyColonExpression)
+        if (node instanceof SimpleReference || node instanceof RubyColonExpression
+                || node instanceof RubySelfReference || node instanceof CallExpression
+                || node instanceof Literal)
             return node;
         else if (node instanceof RubyArrayAccessExpression)
             return assignmentTerminalNode(((RubyArrayAccessExpression) node).getArray());
@@ -246,7 +253,12 @@ public class RubyUtils {
     
     @SuppressWarnings("unchecked")
     public static ASTNode[] argumentsOf(CallExpression n) {
-        List<ASTNode> children = n.getArgs().getChilds();
+        List<ASTNode> children0 = n.getArgs().getChilds();
+        List<ASTNode> children = new ArrayList<ASTNode>();
+        for (ASTNode nd : children0) {
+            if (nd instanceof RubyCallArgument)
+                children.add(((RubyCallArgument) nd).getValue());
+        }
         return children.toArray(new ASTNode[children.size()]);
     }
     

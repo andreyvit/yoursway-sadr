@@ -1,5 +1,7 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
+import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.ruby.ast.RubyDotExpression;
 import org.eclipse.dltk.ruby.ast.RubyForStatement2;
 
 import com.yoursway.sadr.engine.Continuation;
@@ -36,12 +38,21 @@ public class ForCounterVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void consume(final ValueInfo result, ContinuationRequestor requestor) {
             // TODO: here we've put hui over the effect assignments have
             // on the loop iterations
-            if (this == this)
+            ASTNode leftBound0 = null, rightBound0 = null;
+            RubyForStatement2 st = scope.node();
+            if (st.getList().getChilds().get(0) instanceof RubyDotExpression) {
+                RubyDotExpression expr = (RubyDotExpression) st.getList().getChilds().get(0);
+                leftBound0 = expr.getBegin();
+                rightBound0 = expr.getEnd();
+            }
+            if (leftBound0 == null)
                 return;
+            final ASTNode leftBound = leftBound0;
+            final ASTNode rightBound = rightBound0;
             requestor.subgoal(new Continuation() {
                 
-                ValueInfoGoal startGoal = new ExpressionValueInfoGoal(scope, null, InfoKind.VALUE);
-                ValueInfoGoal endGoal = new ExpressionValueInfoGoal(scope, null, InfoKind.VALUE);
+                ValueInfoGoal startGoal = new ExpressionValueInfoGoal(scope, leftBound, InfoKind.VALUE);
+                ValueInfoGoal endGoal = new ExpressionValueInfoGoal(scope, rightBound, InfoKind.VALUE);
                 
                 public void provideSubgoals(SubgoalRequestor requestor) {
                     requestor.subgoal(startGoal);

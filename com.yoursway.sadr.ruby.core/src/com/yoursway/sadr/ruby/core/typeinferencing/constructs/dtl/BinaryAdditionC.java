@@ -2,6 +2,7 @@ package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
@@ -31,7 +32,10 @@ public class BinaryAdditionC extends DtlConstruct<CallExpression> {
     public void evaluateValue(final DynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
         final ASTNode leftArg = node.getReceiver();
-        final ASTNode rightArg = (ASTNode) node.getArgs().getChilds().get(0);
+        ASTNode rightArg0 = (ASTNode) node.getArgs().getChilds().get(0);
+        if (rightArg0 instanceof RubyCallArgument)
+            rightArg0 = ((RubyCallArgument) rightArg0).getValue();
+        final ASTNode rightArg = rightArg0;
         requestor.subgoal(new Continuation() {
             
             private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal((Scope) dc, leftArg, infoKind);

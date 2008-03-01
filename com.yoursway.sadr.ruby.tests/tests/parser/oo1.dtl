@@ -1,0 +1,2 @@
+obj1 = circle:new( 20 )
+obj1 = rectangle:new( 10,15 )

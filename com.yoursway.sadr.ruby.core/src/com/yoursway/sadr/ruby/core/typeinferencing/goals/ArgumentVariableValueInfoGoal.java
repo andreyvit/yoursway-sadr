@@ -221,7 +221,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     public void evaluate(ContinuationRequestor requestor) {
         final Callable callable = variable.callable();
         final Construct<Scope, ASTNode> construct = callable.construct();
-        evaluateWithFlow(callable, construct, requestor);
+        //evaluateWithFlow(callable, construct, requestor);
+        evaluateWithoutFlow(callable, construct, requestor);
     }
     
     private void evaluateWithFlow(final Callable callable, final Construct<Scope, ASTNode> construct,

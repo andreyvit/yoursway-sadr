@@ -1,0 +1,5 @@
+if drink = 1
+	foo()
+else
+	doo()
+fi

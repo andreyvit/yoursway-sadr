@@ -11,6 +11,7 @@ import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.runtime.contributions.ContributableItem;
 import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ClassScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class RubySourceClassDefinition extends RubyClassDefinition implements ContributableItem,
@@ -30,7 +31,7 @@ public class RubySourceClassDefinition extends RubyClassDefinition implements Co
         this.node = construct.node();
         this.superclass = superclass;
         context.add(this);
-        scope = construct.scope();
+        this.scope = new ClassScope(construct.scope(), this, node);
     }
     
     @Override

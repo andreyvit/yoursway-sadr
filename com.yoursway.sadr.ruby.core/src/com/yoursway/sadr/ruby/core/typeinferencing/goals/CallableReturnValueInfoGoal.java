@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 import org.eclipse.dltk.ruby.ast.RubyReturnStatement;
 
 import com.yoursway.sadr.engine.ContinuationRequestor;
@@ -87,8 +88,11 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
         @Override
         protected RubyAstVisitor<?> enterReturnStatement(RubyReturnStatement node) {
             ASTNode expr = (ASTNode) node.getValue().getChilds().get(0);
-            if (expr != null)
-                returns.add(new Construct<Scope, ASTNode>(scope, expr));
+            if (expr instanceof RubyCallArgument) {
+                RubyCallArgument argument = (RubyCallArgument) expr;
+                returns.add(new Construct<Scope, ASTNode>(scope, argument.getValue()));
+                
+            }
             return null;
         }
         

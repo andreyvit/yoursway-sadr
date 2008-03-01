@@ -15,6 +15,8 @@ import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.ruby.ast.RubyAssignment;
 import org.eclipse.dltk.ruby.ast.RubyBinaryExpression;
+import org.eclipse.dltk.ruby.ast.RubyCallArgument;
+import org.eclipse.dltk.ruby.ast.RubyDotExpression;
 import org.eclipse.dltk.ruby.ast.RubyForStatement2;
 import org.eclipse.dltk.ruby.ast.RubyIfStatement;
 import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
@@ -76,8 +78,9 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
         //        if (node instanceof RubyArrayAccessExpression)
         //            return new ArrayAccessC(sc, (ArrayAccess) node);
         if (node instanceof ASTListNode || node instanceof RubyReturnStatement
-                || node instanceof RubyMethodArgument || node instanceof RubyForStatement2
-                || node instanceof Block)
+                || node instanceof RubyCallArgument || node instanceof RubyForStatement2
+                || node instanceof Block || node instanceof RubyMethodArgument
+                || node instanceof RubyDotExpression)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }

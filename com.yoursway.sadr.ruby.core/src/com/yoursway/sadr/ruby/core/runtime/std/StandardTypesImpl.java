@@ -32,12 +32,12 @@ public class StandardTypesImpl implements StandardTypes {
     private final RubySimpleType nilType;
     
     public StandardTypesImpl(RubyRuntimeModel model) {
-        objectClass = model.lookupClass("Ruby$object");
+        objectClass = model.lookupClass("Object");
         new RubyBuiltinClassDefinition(objectClass, null);
         
-        intType = new RubySimpleType(model, "int");
-        stringType = new RubySimpleType(model, "string");
-        nilType = new RubySimpleType(model, "nil");
+        intType = new RubySimpleType(model, "Fixnum");
+        stringType = new RubySimpleType(model, "String");
+        nilType = new RubySimpleType(model, "NilClass");
         
         new RubyBuiltinMethod(objectClass.metaClass(), "subclass", new RubyArgument("subclass_name",
                 RubyArgument.Usage.REQUIRED),

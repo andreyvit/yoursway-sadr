@@ -1,7 +1,9 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
@@ -15,6 +17,7 @@ import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallableReturnValueInfoGoal;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
@@ -28,7 +31,9 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
     protected static class CallablesReturnTypeCont implements Continuation {
         private final Callable[] callables;
         private final ValueInfo receiver;
-        final List<ValueInfoGoal> argGoals;
+        //        final List<ValueInfoGoal> argGoals;
+        final Map<Callable, List<ValueInfoGoal>> argGoals;
+        
         private final ValueInfoContinuation continuation;
         private final InfoKind infoKind;
         
@@ -38,28 +43,40 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
             this.callables = callables;
             this.receiver = receiver;
             this.continuation = continuation;
-            argGoals = new ArrayList<ValueInfoGoal>(arguments.length);
-            //            for (ASTNode arg : arguments)
-            //                argGoals.add(new ExpressionValueInfoGoal(scope, arg, kind));
+            argGoals = new HashMap<Callable, List<ValueInfoGoal>>(callables.length);
+            for (Callable c : callables) {
+                ArrayList<ValueInfoGoal> list = new ArrayList<ValueInfoGoal>(arguments.length);
+                for (ASTNode arg : arguments)
+                    list.add(new ExpressionValueInfoGoal(c.construct().scope(), arg, infoKind));
+                argGoals.put(c, list);
+            }
         }
         
         public void provideSubgoals(SubgoalRequestor requestor) {
-            for (Goal g : argGoals)
-                requestor.subgoal(g);
+            for (List<ValueInfoGoal> l : argGoals.values()) {
+                for (Goal g : l)
+                    requestor.subgoal(g);
+            }
         }
         
         public void done(ContinuationRequestor requestor) {
-            final ValueInfo[] args = new ValueInfo[argGoals.size()];
-            for (int i = 0; i < args.length; i++)
-                args[i] = argGoals.get(i).result(null);
+            //            final ValueInfo[] args = new ValueInfo[argGoals.size()];
+            //            for (int i = 0; i < args.length; i++)
+            //                args[i] = argGoals.get(i).result(null);
             
             requestor.subgoal(new Continuation() {
                 
                 final ValueInfoGoal[] retGoals = new ValueInfoGoal[callables.length];
                 
                 {
-                    for (int i = 0; i < callables.length; i++)
+                    for (int i = 0; i < callables.length; i++) {
+                        List<ValueInfoGoal> list = argGoals.get(callables[i]);
+                        ValueInfo[] args = new ValueInfo[list.size()];
+                        int pos = 0;
+                        for (ValueInfoGoal g : list)
+                            args[pos++] = g.result(null);
                         retGoals[i] = new CallableReturnValueInfoGoal(callables[i], infoKind, receiver, args);
+                    }
                 }
                 
                 public void provideSubgoals(SubgoalRequestor requestor) {

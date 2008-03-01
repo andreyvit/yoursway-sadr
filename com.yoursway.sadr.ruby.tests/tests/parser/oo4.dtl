@@ -1,0 +1,1 @@
+procedure point:init( x, y ); self:moveto( x,y ); end
