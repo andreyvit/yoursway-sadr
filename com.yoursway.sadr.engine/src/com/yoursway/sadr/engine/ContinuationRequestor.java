@@ -4,6 +4,8 @@ public interface ContinuationRequestor {
     
     void subgoal(Continuation cont);
     
+    void done();
+    
     Query currentQuery();
     
 }

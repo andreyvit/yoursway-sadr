@@ -68,6 +68,19 @@ public class AnalysisEngine {
     
     private static final int CONTINUATION_CREATED = -1;
     
+    private static final int DONE_CALLED = -2;
+    
+    static final class GoalContinuationContractViolation extends RuntimeException {
+        
+        private static final long serialVersionUID = 1L;
+        
+        public GoalContinuationContractViolation(String methodName, Goal goal) {
+            super(String.format("%s did not create a continuation or call done, goal %s", methodName, goal
+                    .toString()));
+        }
+        
+    }
+    
     final class SubqueryCreator implements SubgoalRequestor {
         
         private final Q parent;
@@ -106,7 +119,7 @@ public class AnalysisEngine {
         
         private Query parent = null;
         
-        private int childrenCount = 0;
+        private int childrenCountOrState = 0;
         
         public Q(Goal goal) {
             this.goal = goal;
@@ -119,13 +132,13 @@ public class AnalysisEngine {
         }
         
         private void continuationCreated() {
-            if (childrenCount > 0)
+            if (childrenCountOrState > 0)
                 throw new IllegalStateException("continuationCreated with childrenCount > 0");
-            childrenCount = CONTINUATION_CREATED;
+            childrenCountOrState = CONTINUATION_CREATED;
         }
         
         private boolean isContinuationCreated() {
-            return childrenCount < 0;
+            return childrenCountOrState == CONTINUATION_CREATED;
         }
         
         void setParent(Query parent) {
@@ -138,12 +151,14 @@ public class AnalysisEngine {
         public void evaluate() {
             stats.startingEvaluation(goal);
             pleaseEvaluate();
-            done(); // TODO wrap in finally
+            maybeDone(); // TODO wrap in finally
             stats.finishedEvaluation(goal);
         }
         
-        private void done() {
+        private void maybeDone() {
             if (!isContinuationCreated()) {
+                if (childrenCountOrState != DONE_CALLED)
+                    signalContinueOrDoneViolation();
                 handleFinished();
             }
         }
@@ -160,12 +175,14 @@ public class AnalysisEngine {
             }
         }
         
+        protected abstract void signalContinueOrDoneViolation();
+        
         protected abstract void storeIntoCache();
         
         private void decrementChildrenCount(Goal reason) {
-            if (childrenCount <= 0)
+            if (childrenCountOrState <= 0)
                 throw new IllegalStateException("childrenCount should be greater than zero");
-            if (--childrenCount == 0) {
+            if (--childrenCountOrState == 0) {
                 System.out.println("ENQUEUE of:         " + goal);
                 System.out.println("    ^-- because of: " + reason);
                 queue.enqueue(this);
@@ -179,9 +196,18 @@ public class AnalysisEngine {
             creator.done();
         }
         
+        public void done() {
+            if (isContinuationCreated())
+                throw new IllegalStateException(
+                        "ContinuationRequestor.done() called after creating a continuation");
+            if (childrenCountOrState != 0)
+                throw new AssertionError("ContinuationRequestor.done() called when childrenCount > 0");
+            childrenCountOrState = DONE_CALLED;
+        }
+        
         @Override
         public void recursive() {
-            done();
+            maybeDone();
         }
         
         @Override
@@ -201,7 +227,7 @@ public class AnalysisEngine {
         }
         
         public void incrementChildrenCount() {
-            ++childrenCount;
+            ++childrenCountOrState;
         }
         
     }
@@ -274,6 +300,10 @@ public class AnalysisEngine {
             goal.evaluate(rq);
         }
         
+        @Override
+        protected void signalContinueOrDoneViolation() {
+            throw new GoalContinuationContractViolation(goal.getClass().getName() + ".evaluate()", goal);
+        }
     }
     
     final class QQQ extends QWithKarma {
@@ -288,6 +318,11 @@ public class AnalysisEngine {
         @Override
         protected void pleaseEvaluate() {
             continuation.done(this);
+        }
+        
+        @Override
+        protected void signalContinueOrDoneViolation() {
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".done()", goal);
         }
         
     }
