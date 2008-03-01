@@ -15,14 +15,14 @@ public class Continuations {
             T value = iterator.next();
             SimpleContinuation cont = new SimpleContinuation() {
                 
-                public void evaluate(ContinuationRequestor requestor) {
+                public void run(ContinuationRequestor requestor) {
                     iterate(iterator, visitor, requestor, continuation);
                 }
                 
             };
             visitor.iteration(value, requestor, cont);
         } else {
-            continuation.evaluate(requestor);
+            continuation.run(requestor);
         }
         
     }

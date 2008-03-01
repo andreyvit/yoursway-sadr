@@ -1,7 +1,8 @@
 package com.yoursway.sadr.engine;
 
-
-public interface Goal extends SimpleContinuation, Sinner {
+public interface Goal extends Sinner {
+    
+    void evaluate(ContinuationRequestor requestor);
     
     void done();
     
