@@ -8,5 +8,30 @@ Bundle-Vendor: YourSway
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dltk.core,
  org.eclipse.dltk.ruby.core,
- com.yoursway.sadr.core
+ com.yoursway.sadr.core,
+ com.yoursway.sadr.engine;bundle-version="1.0.0",
+ org.eclipse.core.resources;bundle-version="3.4.0",
+ com.google.collections;bundle-version="1.0.0"
 Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Export-Package: com.yoursway.sadr.ruby,
+ com.yoursway.sadr.ruby.core.ast.visitor,
+ com.yoursway.sadr.ruby.core.internal,
+ com.yoursway.sadr.ruby.core.runtime,
+ com.yoursway.sadr.ruby.core.runtime.contributions,
+ com.yoursway.sadr.ruby.core.runtime.requestors.methods,
+ com.yoursway.sadr.ruby.core.runtime.std,
+ com.yoursway.sadr.ruby.core.typeinferencing.constructs,
+ com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl,
+ com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq,
+ com.yoursway.sadr.ruby.core.typeinferencing.engine,
+ com.yoursway.sadr.ruby.core.typeinferencing.goals,
+ com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards,
+ com.yoursway.sadr.ruby.core.typeinferencing.scopes,
+ com.yoursway.sadr.ruby.core.typeinferencing.services,
+ com.yoursway.sadr.ruby.core.typeinferencing.types,
+ com.yoursway.sadr.ruby.core.typeinferencing.typesets,
+ com.yoursway.sadr.ruby.core.typeinferencing.typesets.internal,
+ com.yoursway.sadr.ruby.core.typeinferencing.values,
+ com.yoursway.sadr.ruby.core.typeinferencing.valuesets,
+ com.yoursway.sadr.ruby.core.typeinferencing.valuesets.internal
