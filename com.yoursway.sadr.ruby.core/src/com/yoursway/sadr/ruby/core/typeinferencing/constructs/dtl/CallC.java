@@ -21,6 +21,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class CallC extends DtlConstruct<CallExpression> {
     
@@ -28,7 +29,7 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
         super(sc, node);
     }
     
-    protected static class CallablesReturnTypeCont implements Continuation {
+    protected class CallablesReturnTypeCont implements Continuation {
         private final Callable[] callables;
         private final ValueInfo receiver;
         //        final List<ValueInfoGoal> argGoals;
@@ -44,12 +45,12 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
             this.receiver = receiver;
             this.continuation = continuation;
             argGoals = new HashMap<Callable, List<ValueInfoGoal>>(callables.length);
-            for (Callable c : callables) {
-                ArrayList<ValueInfoGoal> list = new ArrayList<ValueInfoGoal>(arguments.length);
-                for (ASTNode arg : arguments)
-                    list.add(new ExpressionValueInfoGoal(c.construct().scope(), arg, infoKind));
-                argGoals.put(c, list);
-            }
+            //            for (Callable c : callables) {
+            ArrayList<ValueInfoGoal> list = new ArrayList<ValueInfoGoal>(arguments.length);
+            for (ASTNode arg : arguments)
+                list.add(new ExpressionValueInfoGoal((Scope) staticContext(), arg, infoKind));
+            argGoals.put(null, list);
+            //            }
         }
         
         public void provideSubgoals(SubgoalRequestor requestor) {
@@ -70,7 +71,7 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
                 
                 {
                     for (int i = 0; i < callables.length; i++) {
-                        List<ValueInfoGoal> list = argGoals.get(callables[i]);
+                        List<ValueInfoGoal> list = argGoals.get(null);
                         ValueInfo[] args = new ValueInfo[list.size()];
                         int pos = 0;
                         for (ValueInfoGoal g : list)
