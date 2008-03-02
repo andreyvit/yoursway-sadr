@@ -6,7 +6,7 @@ import static com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSetFa
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.yoursway.sadr.engine.Result;
+import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.python.core.runtime.RubyMethod;
 import com.yoursway.sadr.python.core.runtime.RubyUtils;
@@ -21,7 +21,7 @@ import com.yoursway.sadr.python.core.typeinferencing.values.ArrayValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.Value;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 
-public class ValueInfo implements Result {
+public class ValueInfo implements IValueInfo {
     
     @Override
     public int hashCode() {
@@ -151,6 +151,14 @@ public class ValueInfo implements Result {
     
     public Collection<Value> containedValues() {
         return valueSet.containedValues();
+    }
+    
+    public static ValueInfo from(IValueInfo result) {
+        if (result instanceof ValueInfo)
+            return (ValueInfo) result;
+        if (result.isEmpty())
+            return emptyValueInfo();
+        throw new IllegalArgumentException("Illegal input ValueInfo: " + result);
     }
     
 }

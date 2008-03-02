@@ -2,23 +2,21 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs.dtl;
 
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.RubySimpleType;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.python.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.values.IntegerValue;
 
-public class IntegerLiteralC extends PythonConstruct<NumericLiteral> {
+public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     
-    IntegerLiteralC(StaticContext sc, NumericLiteral node) {
+    IntegerLiteralC(PythonStaticContext sc, NumericLiteral node) {
         super(sc, node);
     }
     
-    public void evaluateValue(DynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
+    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         RubySimpleType t = staticContext().builtins().intType();

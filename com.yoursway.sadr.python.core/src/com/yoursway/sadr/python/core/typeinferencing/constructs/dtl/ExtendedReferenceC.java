@@ -1,20 +1,18 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs.dtl;
 
-import org.eclipse.dltk.ruby.ast.RubyArrayAccessExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.python.core.typeinferencing.engine.ValueInfoContinuation;
 
-public class ArrayAccessC extends PythonConstruct<RubyArrayAccessExpression> {
+public class ExtendedReferenceC extends PythonConstructImpl<ExtendedVariableReference> {
     
-    ArrayAccessC(StaticContext sc, RubyArrayAccessExpression node) {
+    ExtendedReferenceC(PythonStaticContext sc, ExtendedVariableReference node) {
         super(sc, node);
     }
     
-    public void evaluateValue(final DynamicContext dc, final InfoKind infoKind,
+    public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
         //        
         //        final Statement name = node.getName();

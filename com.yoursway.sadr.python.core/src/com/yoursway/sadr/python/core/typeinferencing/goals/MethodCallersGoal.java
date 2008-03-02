@@ -1,11 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.expressions.CallExpression;
 
 import com.yoursway.sadr.engine.AbstractGoal;
 import com.yoursway.sadr.engine.Continuation;
@@ -15,14 +11,11 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.engine.Sinner;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.python.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.runtime.RubyUtils;
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 
@@ -68,7 +61,6 @@ public class MethodCallersGoal extends AbstractGoal {
         return resultWithoutKarma();
     }
     
-    @SuppressWarnings("unchecked")
     public CallersInfo resultWithoutKarma() {
         if (callers == null)
             throw new IllegalStateException("MethodCallersGoal.result() before done()");
@@ -76,7 +68,7 @@ public class MethodCallersGoal extends AbstractGoal {
     }
     
     public void evaluate(ContinuationRequestor requestor) {
-        final List<Construct<Scope, CallExpression>> possibleCallers = new ArrayList<Construct<Scope, CallExpression>>();
+        final List<CallC> possibleCallers = new ArrayList<CallC>();
         boolean isMethod = (callable instanceof RubyMethod);
         //        for (FileScope fileScope : searchService.searchForEverything()) {
         //            PossibleCallsVisitor visitor = new PossibleCallsVisitor(callable.name(), isMethod);
@@ -89,9 +81,8 @@ public class MethodCallersGoal extends AbstractGoal {
         String name = callable.name();
         CallsRequestor cr = new CallsRequestor() {
             
-            public void call(CallExpression call, FileScope fileScope) {
-                Scope scope = RubyUtils.restoreScope(fileScope, call);
-                possibleCallers.add(new Construct<Scope, CallExpression>(scope, call));
+            public void call(CallC call) {
+                possibleCallers.add(call);
             }
             
         };
@@ -99,8 +90,7 @@ public class MethodCallersGoal extends AbstractGoal {
             searchService.findMethodCalls(name, cr);
         else
             searchService.findProcedureCalls(name, cr);
-        Construct<Scope, CallExpression>[] array = possibleCallers
-                .toArray(createArray(possibleCallers.size()));
+        CallC[] array = possibleCallers.toArray(createArray(possibleCallers.size()));
         if (!isMethod) {
             this.callers = new CallersInfo(array);
             requestor.done();
@@ -111,14 +101,14 @@ public class MethodCallersGoal extends AbstractGoal {
     class MethodCallersRefiner implements Continuation {
         
         private final ExpressionValueInfoGoal[] goals;
-        private final Construct<Scope, CallExpression>[] constructs;
+        private final CallC[] constructs;
         
-        public MethodCallersRefiner(Construct<Scope, CallExpression>[] constructs) {
+        public MethodCallersRefiner(CallC[] constructs) {
             this.constructs = constructs;
             goals = new ExpressionValueInfoGoal[constructs.length];
             for (int i = 0; i < constructs.length; i++)
-                goals[i] = new ExpressionValueInfoGoal(constructs[i].scope(), constructs[i].node()
-                        .getReceiver(), InfoKind.TYPE);
+                goals[i] = new ExpressionValueInfoGoal(constructs[i], new EmptyDynamicContext(),
+                        InfoKind.TYPE);
         }
         
         public void provideSubgoals(SubgoalRequestor requestor) {
@@ -131,40 +121,13 @@ public class MethodCallersGoal extends AbstractGoal {
             requestor.done();
         }
         
-        private Construct<Scope, CallExpression>[] collectSuitableCallers(RubyMethod method) {
-            List<Construct<Scope, CallExpression>> realCallers = new ArrayList<Construct<Scope, CallExpression>>();
+        private CallC[] collectSuitableCallers(RubyMethod method) {
+            List<CallC> realCallers = new ArrayList<CallC>();
             for (int i = 0; i < constructs.length; i++)
                 for (RubyBasicClass klass : goals[i].result(thou()).possibleClasses())
                     if (method.canBeCalledFrom(klass))
                         realCallers.add(constructs[i]);
             return realCallers.toArray(createArray(realCallers.size()));
-        }
-        
-    }
-    
-    class PossibleCallsVisitor extends RubyAstVisitor<ASTNode> {
-        
-        private final Collection<CallExpression> possibleCalls = new ArrayList<CallExpression>();
-        
-        private final String name;
-        
-        private final boolean needReceiver;
-        
-        public PossibleCallsVisitor(String name, boolean needReceiver) {
-            super(null);
-            this.name = name;
-            this.needReceiver = needReceiver;
-        }
-        
-        public CallExpression[] possibleCalls() {
-            return possibleCalls.toArray(new CallExpression[possibleCalls.size()]);
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterCallExpression(CallExpression node) {
-            if (name.equalsIgnoreCase(node.getName()) && (needReceiver == (node.getReceiver() != null)))
-                possibleCalls.add(node);
-            return this;
         }
         
     }
@@ -199,9 +162,8 @@ public class MethodCallersGoal extends AbstractGoal {
         return "MethodCallersGoal <" + callable + ">";
     }
     
-    @SuppressWarnings("unchecked")
-    private Construct<Scope, CallExpression>[] createArray(int size) {
-        return new Construct[size];
+    private CallC[] createArray(int size) {
+        return new CallC[size];
     }
     
     public int debugSlot() {

@@ -2,8 +2,7 @@ package com.yoursway.sadr.python.core.runtime;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.ruby.ast.RubyAssignment;
-import org.eclipse.dltk.ruby.ast.RubyForStatement2;
+import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.runtime.contributions.ContributableItem;
@@ -16,25 +15,12 @@ public class RubyLocalVariable extends RubyVariable implements ContributableItem
     private final Scope scope;
     private final String name;
     
-    public RubyLocalVariable(LocalVariableContainer container, Context context, Scope scope,
-            RubyAssignment node1) {
+    public RubyLocalVariable(LocalVariableContainer container, Context context, Scope scope, Assignment node) {
         this.container = container;
         this.scope = scope;
-        SimpleReference left = (SimpleReference) node1.getLeft();
-        this.node = node1.getLeft();
+        SimpleReference left = (SimpleReference) node.getLeft();
+        this.node = node.getLeft();
         this.name = (left).getName();
-        container.addLocalVariable(this);
-        context.add(this);
-    }
-    
-    public RubyLocalVariable(LocalVariableContainer container, Context context, Scope scope,
-            RubyForStatement2 node) {
-        this.container = container;
-        this.scope = scope;
-        this.node = node;
-        this.name = ((SimpleReference) ((RubyAssignment) node.getTarget()).getLeft()).getName();
-        if (name == null)
-            throw new NullPointerException("name == null");
         container.addLocalVariable(this);
         context.add(this);
     }

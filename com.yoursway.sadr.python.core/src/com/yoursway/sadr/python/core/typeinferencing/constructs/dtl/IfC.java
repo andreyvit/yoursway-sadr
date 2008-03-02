@@ -6,43 +6,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ruby.ast.RubyIfStatement;
+import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.core.constructs.ControlFlowGraph;
+import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ControlFlowGraph;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.IConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.python.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.Value;
 import com.yoursway.sadr.python.core.typeinferencing.values.ValueTraits;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 
-public class IfC extends PythonConstruct<RubyIfStatement> {
+public class IfC extends PythonConstructImpl<IfStatement> {
     
-    IfC(StaticContext sc, RubyIfStatement node) {
+    IfC(PythonStaticContext sc, IfStatement node) {
         super(sc, node);
     }
     
-    public void evaluateValue(DynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
+    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         continuation.consume(emptyValueInfo(), requestor);
     }
     
     @Override
-    public void calculateEffectiveControlFlowGraph(ContinuationRequestor requestor,
-            final ControlFlowGraphRequestor continuation) {
-        final ASTNode condition = node.getCondition();
+    public void calculateEffectiveControlFlowGraph(
+            ContinuationRequestor requestor,
+            final ControlFlowGraphRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
+        final PythonConstruct condition = wrap(staticContext(), node.getCondition());
         requestor.subgoal(new Continuation() {
             
-            ValueInfoGoal conditionGoal = new ExpressionValueInfoGoal((Scope) staticContext(), condition,
+            ValueInfoGoal conditionGoal = new ExpressionValueInfoGoal(condition, new EmptyDynamicContext(),
                     InfoKind.VALUE);
             
             public void provideSubgoals(SubgoalRequestor requestor) {
@@ -62,13 +59,13 @@ public class IfC extends PythonConstruct<RubyIfStatement> {
                 }
                 if (!visitThen && !visitElse)
                     visitThen = visitElse = true;
-                List<IConstruct> staticNodes = new ArrayList<IConstruct>();
-                staticNodes.add(wrap(staticContext(), condition));
+                List<PythonConstruct> staticNodes = new ArrayList<PythonConstruct>();
+                staticNodes.add(condition);
                 if (visitThen)
                     staticNodes.add(wrap(staticContext(), node.getThen()));
                 if (visitElse)
                     staticNodes.add(wrap(staticContext(), node.getElse()));
-                continuation.process(new ControlFlowGraph(staticNodes), requestor);
+                continuation.process(ControlFlowGraph.create(staticNodes), requestor);
             }
             
         });

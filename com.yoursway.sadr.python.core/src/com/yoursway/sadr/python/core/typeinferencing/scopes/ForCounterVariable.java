@@ -1,8 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.ruby.ast.RubyAssignment;
 
 import com.yoursway.sadr.python.core.runtime.RubyVariable;
 
@@ -16,12 +14,7 @@ public class ForCounterVariable extends RubyVariable {
     
     @Override
     public String name() {
-        if (scope.node().getTarget() instanceof RubyAssignment) {
-            RubyAssignment ass = (RubyAssignment) scope.node().getTarget();
-            SimpleReference ref = (SimpleReference) ass.getLeft();
-            return ref.getName();
-        } else
-            return "<херня-какая-то>";
+        return "i"; // FIXME
     }
     
     public ForScope scope() {

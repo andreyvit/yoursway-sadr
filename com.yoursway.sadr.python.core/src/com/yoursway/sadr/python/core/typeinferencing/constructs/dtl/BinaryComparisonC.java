@@ -3,49 +3,40 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs.dtl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.ruby.ast.RubyCallArgument;
+import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.python.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercion;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercionRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.values.IntegerValue;
 
-public class BinaryComparisonC extends PythonConstruct<CallExpression> {
+public class BinaryComparisonC extends BinaryC {
     
     private final Comparison comparison;
     
-    BinaryComparisonC(StaticContext sc, CallExpression node, Comparison comparison) {
+    BinaryComparisonC(PythonStaticContext sc, BinaryExpression node, Comparison comparison) {
         super(sc, node);
         this.comparison = comparison;
     }
     
-    public void evaluateValue(final DynamicContext dc, final InfoKind infoKind,
+    public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
-        final ASTNode leftArg = node.getReceiver();
-        ASTNode rightArg0 = (ASTNode) node.getArgs().getChilds().get(0);
-        if (rightArg0 instanceof RubyCallArgument)
-            rightArg0 = ((RubyCallArgument) rightArg0).getValue();
-        final ASTNode rightArg = rightArg0;
+        final PythonConstruct leftArg = wrap(innerContext(), node.getLeft());
+        final PythonConstruct rightArg = wrap(innerContext(), node.getRight());
         requestor.subgoal(new Continuation() {
             
-            private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal((Scope) dc, leftArg, infoKind);
+            private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal(leftArg, dc, infoKind);
             
-            private final ValueInfoGoal rightGoal = new ExpressionValueInfoGoal((Scope) dc, rightArg,
-                    infoKind);
+            private final ValueInfoGoal rightGoal = new ExpressionValueInfoGoal(rightArg, dc, infoKind);
             
             public void provideSubgoals(SubgoalRequestor requestor) {
                 requestor.subgoal(leftGoal);
@@ -78,7 +69,6 @@ public class BinaryComparisonC extends PythonConstruct<CallExpression> {
                     public void unknowns() {
                     }
                     
-                    @SuppressWarnings("unchecked")
                     private <T> void compare(Comparable<T> a, T b) {
                         valueIs(comparison.matches(a.compareTo(b)));
                     }

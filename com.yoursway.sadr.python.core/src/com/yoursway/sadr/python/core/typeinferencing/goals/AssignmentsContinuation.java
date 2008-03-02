@@ -3,16 +3,14 @@
  */
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import org.eclipse.dltk.ast.ASTNode;
-
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Sinner;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.python.core.typeinferencing.engine.ValueInfoContinuation;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
 
 public final class AssignmentsContinuation extends AbstractContinuation {
     
@@ -24,15 +22,15 @@ public final class AssignmentsContinuation extends AbstractContinuation {
     
     private final ValueInfoContinuation continuation;
     
-    public AssignmentsContinuation(Sinner victim, AssignmentInfo[] ass, InfoKind kind,
-            ValueInfoContinuation continuation) {
+    public AssignmentsContinuation(Sinner victim, AssignmentInfo[] ass, PythonDynamicContext dc,
+            InfoKind kind, ValueInfoContinuation continuation) {
         this.victim = victim;
         assignments = ass;
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[assignments.length];
         for (int i = 0; i < assignments.length; i++) {
-            Construct<Scope, ASTNode> construct = assignments[i].construct();
-            goals[i] = new ExpressionValueInfoGoal(construct.scope(), construct.node(), kind);
+            PythonConstruct construct = assignments[i].construct();
+            goals[i] = new ExpressionValueInfoGoal(construct, dc, kind);
         }
     }
     

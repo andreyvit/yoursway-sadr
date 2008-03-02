@@ -8,36 +8,32 @@ import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
-import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.python.core.runtime.RubyArgument.Usage;
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.MethodDeclarationC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.LocalScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.ProcedureScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem, LocalVariableContainer {
-    
-    private final MethodDeclaration node;
     
     private final Collection<RubyLocalVariable> localVariables = new ArrayList<RubyLocalVariable>();
     
     private final Map<String, RubyLocalVariable> namesToLocalVariables = new HashMap<String, RubyLocalVariable>();
     
-    private final ProcedureScope scope;
+    private final MethodDeclarationC construct;
     
-    public RubySourceProcedure(Context context, Construct<Scope, MethodDeclaration> construct) {
+    public RubySourceProcedure(Context context, MethodDeclarationC construct) {
         super(context.model(), construct.node().getName(), createArguments(construct.node()));
-        this.node = construct.node();
-        this.scope = new ProcedureScope(construct.scope(), this, node);
+        this.construct = construct;
         context.add(this);
     }
     
     private static RubyArgument[] createArguments(MethodDeclaration node) {
         List<RubyArgument> args = new ArrayList<RubyArgument>();
-        for (RubyMethodArgument argument : (List<RubyMethodArgument>) node.getArguments()) {
+        for (PythonArgument argument : RubyUtils.argumentsOf(node)) {
             String name = argument.getName();
             Usage usage;
             //            if ("...".equals(name))
@@ -53,7 +49,7 @@ public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem,
     }
     
     public ASTNode node() {
-        return node;
+        return construct.node();
     }
     
     public void addLocalVariable(RubyLocalVariable localVariable) {
@@ -66,15 +62,15 @@ public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem,
     }
     
     public LocalScope scope() {
-        return scope;
-    }
-    
-    public Construct<Scope, ASTNode> construct() {
-        return new Construct<Scope, ASTNode>(scope, node);
+        return construct.methodScope();
     }
     
     public boolean isBuiltin() {
         return false;
+    }
+    
+    public PythonConstruct construct() {
+        return construct;
     }
     
 }

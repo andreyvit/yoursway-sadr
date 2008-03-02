@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.runtime.RubyVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
@@ -20,7 +20,7 @@ public abstract class LocalScope extends ChildScope implements VariableLookup {
         return node;
     }
     
-    public IConstruct createConstruct() {
+    public PythonConstruct createConstruct() {
         FileScope fileScope = fileScope();
         PythonFileC fileC = new PythonFileC(fileScope, fileScope.node());
         return fileC.subconstructFor(node);

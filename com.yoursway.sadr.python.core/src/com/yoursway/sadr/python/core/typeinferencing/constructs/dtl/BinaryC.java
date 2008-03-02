@@ -1,12 +1,11 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs.dtl;
 
-import org.eclipse.dltk.ruby.ast.RubyBinaryExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.StaticContext;
 
-public abstract class BinaryC extends PythonConstruct<RubyBinaryExpression> {
+public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     
-    BinaryC(StaticContext sc, RubyBinaryExpression node) {
+    BinaryC(PythonStaticContext sc, BinaryExpression node) {
         super(sc, node);
     }
     

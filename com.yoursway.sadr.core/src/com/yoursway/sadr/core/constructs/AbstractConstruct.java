@@ -3,7 +3,7 @@ package com.yoursway.sadr.core.constructs;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractConstruct<C extends IConstruct<?, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N>
+public abstract class AbstractConstruct<C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N>
         implements IConstruct<C, SC, DC, N> {
     
     private final SC dtlStaticContext;

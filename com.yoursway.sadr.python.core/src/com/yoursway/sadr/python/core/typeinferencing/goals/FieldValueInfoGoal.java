@@ -3,6 +3,8 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yoursway.sadr.core.constructs.IConstruct;
+import com.yoursway.sadr.core.propagation.PropagationTracker;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.Goal;
@@ -14,9 +16,8 @@ import com.yoursway.sadr.python.core.runtime.RubyField;
 import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.python.core.runtime.RubyMethod;
 import com.yoursway.sadr.python.core.runtime.RubySourceMethod;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.python.core.typeinferencing.services.PropagationTracker;
 
 public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     
@@ -44,7 +45,8 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
                 }
             }
             
-        }, requestor, new DelayedAssignmentsContinuation(request, kind, FieldValueInfoGoal.this));
+        }, requestor, new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
+                FieldValueInfoGoal.this));
     }
     
     private List<RubyMethod> findPossibleWriters() {

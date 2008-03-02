@@ -6,32 +6,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
+import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.runtime.contributions.ContributableItem;
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.ClassDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.ClassScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class RubySourceClassDefinition extends RubyClassDefinition implements ContributableItem,
         LocalVariableContainer {
     
     private final RubyClass superclass;
-    private final RubyClassDeclaration node;
-    private final Scope scope;
+    private final PythonClassDeclaration node;
     
     private final Collection<RubyLocalVariable> localVariables = new ArrayList<RubyLocalVariable>();
     
     private final Map<String, RubyLocalVariable> namesToLocalVariables = new HashMap<String, RubyLocalVariable>();
+    private final ClassScope scope;
     
-    public RubySourceClassDefinition(RubyClass klass, Context context,
-            Construct<Scope, RubyClassDeclaration> construct, RubyClass superclass) {
-        super(klass);
+    public RubySourceClassDefinition(ClassScope scope, Context context, ClassDeclarationC construct,
+            RubyClass superclass) {
+        super(scope.klass());
+        this.scope = scope;
         this.node = construct.node();
         this.superclass = superclass;
         context.add(this);
-        this.scope = new ClassScope(construct.scope(), this, node);
+    }
+    
+    public ClassScope scope() {
+        return scope;
     }
     
     @Override
@@ -39,13 +42,9 @@ public class RubySourceClassDefinition extends RubyClassDefinition implements Co
         return superclass;
     }
     
-    public Scope scope() {
-        return scope;
-    }
-    
     @Override
     public ASTNode nodeForSelection() {
-        return node.getClassName();
+        return node; // FIXME
     }
     
     public void addLocalVariable(RubyLocalVariable localVariable) {

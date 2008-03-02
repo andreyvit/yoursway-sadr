@@ -1,17 +1,14 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import org.eclipse.dltk.ast.ASTNode;
-
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class AssignmentInfo {
     
     private final Wildcard wildcard;
-    private final Construct<Scope, ASTNode> construct;
+    private final PythonConstruct construct;
     
-    public AssignmentInfo(Wildcard wildcard, Construct<Scope, ASTNode> construct) {
+    public AssignmentInfo(Wildcard wildcard, PythonConstruct construct) {
         this.wildcard = wildcard;
         this.construct = construct;
     }
@@ -20,7 +17,7 @@ public class AssignmentInfo {
         return wildcard;
     }
     
-    public Construct<Scope, ASTNode> construct() {
+    public PythonConstruct construct() {
         return construct;
     }
     

@@ -30,10 +30,6 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     
     private final Map<String, RubyProcedure> lowercaseNamesToProcedures = new HashMap<String, RubyProcedure>();
     
-    private final Collection<RubyGlobalVariable> globalVariables = new ArrayList<RubyGlobalVariable>();
-    
-    private final Map<String, RubyGlobalVariable> lowercaseNamesToGlobalVariables = new HashMap<String, RubyGlobalVariable>();
-    
     private final Collection<RubySimpleType> simpleTypes = new ArrayList<RubySimpleType>();
     
     private final Map<String, RubySimpleType> lowercaseNamesToSimpleTypes = new HashMap<String, RubySimpleType>();
@@ -59,19 +55,6 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
         return lowercaseNamesToClasses.get(name.toLowerCase());
     }
     
-    public RubyGlobalVariable lookupGlobalVariable(String name) {
-        RubyGlobalVariable globalVariable = findGlobalVariable(name);
-        if (globalVariable != null)
-            return globalVariable;
-        return new RubyGlobalVariable(this, name);
-    }
-    
-    private RubyGlobalVariable findGlobalVariable(String name) {
-        String lowerName = name.toLowerCase();
-        RubyGlobalVariable globalVariable = lowercaseNamesToGlobalVariables.get(lowerName);
-        return globalVariable;
-    }
-    
     public void addClass(RubyClass klass) {
         klasses.add(klass);
         lowercaseNamesToClasses.put(klass.name().toLowerCase(), klass);
@@ -80,11 +63,6 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     public void addProcedure(RubyProcedure procedure) {
         procedures.add(procedure);
         lowercaseNamesToProcedures.put(procedure.name().toLowerCase(), procedure);
-    }
-    
-    public void addGlobalVariable(RubyGlobalVariable globalVariable) {
-        globalVariables.add(globalVariable);
-        lowercaseNamesToGlobalVariables.put(globalVariable.name().toLowerCase(), globalVariable);
     }
     
     public RubyProcedure[] findProceduresMatching(String prefix) {
@@ -105,7 +83,7 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     }
     
     public RubyVariable findVariable(String name) {
-        return findGlobalVariable(name);
+        return null;
     }
     
     public RubyProcedure findProcedure(String name) {

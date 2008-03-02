@@ -4,10 +4,10 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.RubyLocalVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python.core.typeinferencing.services.PropagationTracker;
 
 public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     
@@ -21,13 +21,10 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     public void evaluate(ContinuationRequestor requestor) {
         Scope scope = variable.scope();
-        //        ASTNode node = variable.container().node();
-        PropagationTracker tracker = scope.propagationTracker();
-        
-        IConstruct construct = scope.createConstruct();
+        PythonConstruct construct = scope.createConstruct();
         final VariableRequest request = new VariableRequest(variable, kind);
-        tracker.traverseEntirely(construct, request, requestor, new DelayedAssignmentsContinuation(request,
-                kind, this));
+        scope.propagationTracker().traverseEntirely(construct, request, requestor,
+                new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind, this));
     }
     
     @Override

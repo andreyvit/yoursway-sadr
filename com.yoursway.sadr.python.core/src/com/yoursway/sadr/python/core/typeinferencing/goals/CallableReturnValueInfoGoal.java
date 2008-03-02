@@ -1,28 +1,22 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-
-import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ruby.ast.RubyCallArgument;
-import org.eclipse.dltk.ruby.ast.RubyReturnStatement;
 
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.python.core.ast.visitor.RubyAstVisitor;
-import com.yoursway.sadr.python.core.ast.visitor.RubyControlFlowTraverser;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.RubyBuiltinMethod;
 import com.yoursway.sadr.python.core.runtime.RubyBuiltinProcedure;
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.ReturnsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicMethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicProcedureScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.ProcedureScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
     
@@ -49,53 +43,26 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
             }
             return;
         }
-        Construct<Scope, ASTNode> construct = callable.construct();
+        PythonConstruct construct = callable.construct();
         if (construct != null) {
-            Scope staticScope = construct.scope();
-            Scope scope;
+            PythonStaticContext staticScope = construct.staticContext();
+            final PythonDynamicContext dc;
             if (staticScope instanceof MethodScope)
-                scope = new DynamicMethodScope((MethodScope) staticScope, receiver, arguments);
+                dc = new DynamicMethodScope((MethodScope) staticScope, receiver, arguments);
             else
-                scope = new DynamicProcedureScope((ProcedureScope) staticScope, arguments);
-            final ReturnsVisitor visitor = new ReturnsVisitor(scope);
-            new RubyControlFlowTraverser(this, construct.scope()).traverse(construct.node(), requestor,
-                    visitor, new SimpleContinuation() {
+                dc = new DynamicProcedureScope((ProcedureScope) staticScope, arguments);
+            
+            final ReturnsRequest request = new ReturnsRequest();
+            construct.staticContext().propagationTracker().traverseEntirely(construct, request, requestor,
+                    new SimpleContinuation() {
                         
                         public void run(ContinuationRequestor requestor) {
-                            requestor.subgoal(new MergeConstructsValueInfosContinuation(thou(), visitor
-                                    .returns(), kind, CallableReturnValueInfoGoal.this));
+                            requestor.subgoal(new MergeConstructsValueInfosContinuation(thou(), request
+                                    .returns(), dc, kind, CallableReturnValueInfoGoal.this));
                         }
                         
                     });
         }
-    }
-    
-    class ReturnsVisitor extends RubyAstVisitor<ASTNode> {
-        
-        private final Collection<Construct<?, ?>> returns = new ArrayList<Construct<?, ?>>();
-        
-        private final Scope scope;
-        
-        public ReturnsVisitor(Scope scope) {
-            super(null);
-            this.scope = scope;
-        }
-        
-        public Construct<?, ?>[] returns() {
-            return returns.toArray(new Construct<?, ?>[returns.size()]);
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterReturnStatement(RubyReturnStatement node) {
-            ASTNode expr = (ASTNode) node.getValue().getChilds().get(0);
-            if (expr instanceof RubyCallArgument) {
-                RubyCallArgument argument = (RubyCallArgument) expr;
-                returns.add(new Construct<Scope, ASTNode>(scope, argument.getValue()));
-                
-            }
-            return null;
-        }
-        
     }
     
     @Override

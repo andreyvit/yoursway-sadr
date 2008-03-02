@@ -9,8 +9,9 @@ import com.yoursway.sadr.core.BackwardPropagationEntryPoint;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.ValueInfos;
+import com.yoursway.sadr.core.constructs.AbstractConstructTraverser;
 import com.yoursway.sadr.core.constructs.ConstructControlFlowTraverser;
-import com.yoursway.sadr.core.constructs.ConstructVisitor;
+import com.yoursway.sadr.core.constructs.ConstructStaticStructureTraverser;
 import com.yoursway.sadr.core.constructs.DynamicContext;
 import com.yoursway.sadr.core.constructs.IConstruct;
 import com.yoursway.sadr.core.constructs.Request;
@@ -22,8 +23,12 @@ import com.yoursway.sadr.engine.Query;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 
-public class PropagationTrackerImpl<C extends IConstruct<?, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N>
+public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N>
         implements PropagationTracker<C, SC, DC, N> {
+    
+    public static <C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N> PropagationTracker<C, SC, DC, N> create() {
+        return new PropagationTrackerImpl<C, SC, DC, N>();
+    }
     
     private final Map<Goal, Query> entryPoints = new HashMap<Goal, Query>();
     
@@ -101,18 +106,14 @@ public class PropagationTrackerImpl<C extends IConstruct<?, SC, DC, N>, SC exten
     
     public void traverseEntirely(C construct, final Request<C, SC, DC, N> request,
             ContinuationRequestor requestor, SimpleContinuation continuation) {
-        ConstructControlFlowTraverser<C, SC, DC, N> traverser = new ConstructControlFlowTraverser<C, SC, DC, N>();
-        traverser.traverse(construct, requestor, new ConstructVisitor<C, SC, DC, N>() {
-            
-            public ConstructVisitor<C, SC, DC, N> enter(C construct) {
-                request.accept(construct);
-                return this;
-            }
-            
-            public void leave() {
-            }
-            
-        }, continuation);
+        AbstractConstructTraverser<C, SC, DC, N> traverser = new ConstructControlFlowTraverser<C, SC, DC, N>();
+        traverser.traverse(construct, requestor, request, continuation);
+    }
+    
+    public void traverseStatically(C construct, final Request<C, SC, DC, N> request,
+            ContinuationRequestor requestor, SimpleContinuation continuation) {
+        AbstractConstructTraverser<C, SC, DC, N> traverser = new ConstructStaticStructureTraverser<C, SC, DC, N>();
+        traverser.traverse(construct, requestor, request, continuation);
     }
     
 }

@@ -7,6 +7,8 @@ import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 
 public interface ClassLookup {
     
+    RubyClass lookupClass(String name);
+    
     RubyClass findClass(String name);
     
     StandardTypes standardTypes();

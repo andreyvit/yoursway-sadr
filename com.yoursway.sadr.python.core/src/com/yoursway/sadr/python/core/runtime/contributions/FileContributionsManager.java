@@ -7,23 +7,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.MethodDeclaration;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.core.ISourceModule;
 
+import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
-import com.yoursway.sadr.python.core.ast.visitor.RubyAstTraverser;
-import com.yoursway.sadr.python.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.python.core.runtime.RubyRuntimeModel;
-import com.yoursway.sadr.python.core.runtime.RubyUtils;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
-import com.yoursway.sadr.python.core.typeinferencing.goals.BasicAssignmentVisitor;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.ProcedureScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
@@ -61,8 +56,10 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
         return result;
     }
     
-    public void addToIndex(FileScope file, ModuleDeclaration node) {
-        lookup(file).addToIndex(node);
+    public void addToIndex(PythonConstruct root, ContinuationRequestor requestor,
+            SimpleContinuation continuation) {
+        FileScope file = ((Scope) root.staticContext()).fileScope();
+        lookup(file).addToIndex(root, requestor, continuation);
     }
     
     class ContextImpl implements Context {
@@ -109,8 +106,9 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
             index = new Index(scope);
         }
         
-        public void addToIndex(ModuleDeclaration node) {
-            index.add(node);
+        public void addToIndex(PythonConstruct root, ContinuationRequestor requestor,
+                SimpleContinuation continuation) {
+            index.add(root, requestor, continuation);
         }
         
         public Index index() {
@@ -143,9 +141,9 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
     
     static class Index {
         
-        private final AbstractMultiMap<String, CallExpression> procedureCalls = new ArrayListHashMultiMap<String, CallExpression>();
+        private final AbstractMultiMap<String, CallC> procedureCalls = new ArrayListHashMultiMap<String, CallC>();
         
-        private final AbstractMultiMap<String, CallExpression> methodsCalls = new ArrayListHashMultiMap<String, CallExpression>();
+        private final AbstractMultiMap<String, CallC> methodsCalls = new ArrayListHashMultiMap<String, CallC>();
         
         private final AbstractMultiMap<String, AssignmentInfo> assignments = new ArrayListHashMultiMap<String, AssignmentInfo>();
         
@@ -155,10 +153,10 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
             this.scope = scope;
         }
         
-        public void add(ModuleDeclaration module) {
-            RubyAstTraverser traverser = new RubyAstTraverser();
-            traverser.traverse(module, new CallsIndexer(procedureCalls, methodsCalls));
-            traverser.traverse(module, new AssignmentsIndexer(assignments, scope));
+        public void add(PythonConstruct root, ContinuationRequestor requestor, SimpleContinuation continuation) {
+            IndexRequest request = new IndexRequest(methodsCalls, procedureCalls, assignments);
+            root.staticContext().propagationTracker().traverseStatically(root, request, requestor,
+                    continuation);
         }
         
         public void findAssignments(String name, AssignmentsRequestor requestor) {
@@ -167,84 +165,17 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
         }
         
         public void findMethodCalls(String name, CallsRequestor requestor) {
-            for (CallExpression call : methodsCalls.get(name.toLowerCase()))
-                requestor.call(call, scope);
+            for (CallC call : methodsCalls.get(name.toLowerCase()))
+                requestor.call(call);
         }
         
         public void findProcedureCalls(String name, CallsRequestor requestor) {
-            for (CallExpression call : procedureCalls.get(name.toLowerCase()))
-                requestor.call(call, scope);
+            for (CallC call : procedureCalls.get(name.toLowerCase()))
+                requestor.call(call);
         }
     }
     
-    static class CallsIndexer extends RubyAstVisitor<ASTNode> {
-        
-        private final AbstractMultiMap<String, CallExpression> procedureCalls;
-        private final AbstractMultiMap<String, CallExpression> methodsCalls;
-        
-        public CallsIndexer(AbstractMultiMap<String, CallExpression> procedureCalls,
-                AbstractMultiMap<String, CallExpression> methodsCalls) {
-            super(null);
-            this.procedureCalls = procedureCalls;
-            this.methodsCalls = methodsCalls;
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterCallExpression(CallExpression node) {
-            String name = node.getName().toLowerCase();
-            if (node.getReceiver() == null)
-                procedureCalls.put(name, node);
-            else
-                methodsCalls.put(name, node);
-            return this;
-        }
-        
-    }
-    
-    static class AssignmentsIndexer extends BasicAssignmentVisitor {
-        
-        private final AbstractMultiMap<String, AssignmentInfo> assignments;
-        private final FileScope fileScope;
-        
-        public AssignmentsIndexer(AbstractMultiMap<String, AssignmentInfo> assignments, FileScope fileScope) {
-            super(null);
-            this.assignments = assignments;
-            this.fileScope = fileScope;
-            this.scope = fileScope;
-        }
-        
-        public AssignmentsIndexer(AssignmentsIndexer parentVisitor, Scope newScope) {
-            super(parentVisitor);
-            this.scope = newScope;
-            this.assignments = parentVisitor.assignments;
-            this.fileScope = parentVisitor.fileScope;
-        }
-        
-        @Override
-        protected void matched(ASTNode terminal, AssignmentInfo info) {
-            if (terminal instanceof SimpleReference) {
-                SimpleReference symbol = (SimpleReference) terminal;
-                String name = symbol.getName().toLowerCase();
-                assignments.put(name, info);
-            }
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterMethodDeclaration(MethodDeclaration node) {
-            // FIXME FOR scopes are not handled in the indexer
-            Scope newScope = RubyUtils.restoreScope(fileScope, node);
-            if (!(newScope instanceof MethodScope || newScope instanceof ProcedureScope))
-                throw new AssertionError("Incorrect scope restored in indexer's enterProcedureDecl");
-            return new AssignmentsIndexer(this, newScope);
-        }
-        
-        @Override
-        protected boolean matches(ASTNode terminal) {
-            return true;
-        }
-        
-    }
-    
+    // this method was left in memorial purposes
     public FileScope[] searchForEverything() {
         List<FileScope> result = new ArrayList<FileScope>();
         for (DtlFile file : files.values())

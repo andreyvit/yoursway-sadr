@@ -2,11 +2,8 @@ package com.yoursway.sadr.python.core.runtime;
 
 import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
-import org.eclipse.dltk.ast.ASTNode;
-
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class RubyBuiltinMethod extends RubyMethod {
     
@@ -22,7 +19,7 @@ public class RubyBuiltinMethod extends RubyMethod {
         return name;
     }
     
-    public Construct<Scope, ASTNode> construct() {
+    public PythonConstruct construct() {
         throw new UnsupportedOperationException();
     }
     

@@ -3,30 +3,27 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs.dtl;
 import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.ruby.ast.RubyAssignment;
-import org.eclipse.dltk.ruby.ast.RubyColonExpression;
+import org.eclipse.dltk.ast.references.VariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.RubyUtils;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.StaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.IndexAffector;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.python.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class AssignmentC extends PythonConstruct<RubyAssignment> implements VariableAffector {
+public class AssignmentC extends PythonConstructImpl<Assignment> implements VariableAffector, IndexAffector {
     
-    AssignmentC(StaticContext sc, RubyAssignment node) {
+    AssignmentC(PythonStaticContext sc, Assignment node) {
         super(sc, node);
     }
     
-    public void evaluateValue(DynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
+    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         continuation.consume(emptyValueInfo(), requestor);
     }
@@ -37,23 +34,33 @@ public class AssignmentC extends PythonConstruct<RubyAssignment> implements Vari
         if (rhs != null) {
             ASTNode terminal = RubyUtils.assignmentTerminalNode(lhs);
             Wildcard wildcard = RubyUtils.assignmentWildcardExpression(lhs);
-            if (matches(subject, terminal)) {
-                Scope subscope = RubyUtils.restoreSubscope((Scope) staticContext(), rhs);
-                Construct<Scope, ASTNode> construct = new Construct<Scope, ASTNode>(subscope, rhs);
-                AssignmentInfo info = new AssignmentInfo(wildcard, construct);
-                subject.add(info);
-            }
+            if (matches(subject, terminal))
+                subject.add(new AssignmentInfo(wildcard, subconstructFor(rhs)));
         }
         
     }
     
     protected boolean matches(VariableRequest request, ASTNode terminal) {
         boolean doit = false;
-        if (terminal instanceof SimpleReference) {
-            doit = (((SimpleReference) terminal).getName().equalsIgnoreCase(request.variable().name()));
-        } else if (terminal instanceof RubyColonExpression) {
+        if (terminal instanceof VariableReference) {
+            doit = (((VariableReference) terminal).getName().equalsIgnoreCase(request.variable().name()));
+        } else {
+            //if (terminal instanceof RubyColonExpression) {
             ; // TODO
         }
         return doit;
     }
+    
+    public void actOnIndex(IndexRequest request) {
+        ASTNode lhs = node.getLeft();
+        ASTNode rhs = node.getRight();
+        if (rhs != null) {
+            ASTNode terminal = RubyUtils.assignmentTerminalNode(lhs);
+            Wildcard wildcard = RubyUtils.assignmentWildcardExpression(lhs);
+            if (terminal instanceof VariableReference)
+                request.addAssignment(((VariableReference) terminal).getName(), new AssignmentInfo(wildcard,
+                        subconstructFor(rhs)));
+        }
+    }
+    
 }

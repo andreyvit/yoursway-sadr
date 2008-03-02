@@ -39,27 +39,29 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.ruby.core.RubyNature;
-import org.eclipse.dltk.ruby.internal.parsers.jruby.ASTUtils;
+import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
+import com.yoursway.sadr.python.ASTUtils;
+import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.WholeProjectRuntime;
+import com.yoursway.sadr.python.core.runtime.requestors.methods.AnyMethodRequestor;
+import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodNamesRequestor;
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
-import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
-import com.yoursway.sadr.ruby.core.runtime.requestors.methods.AnyMethodRequestor;
-import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodNamesRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonFileC;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
+import com.yoursway.sadr.python.core.typeinferencing.services.ServicesMegapack;
 
 public abstract class AbstractTypeInferencingTestCase {
     
@@ -72,7 +74,7 @@ public abstract class AbstractTypeInferencingTestCase {
         if (testProject.exists())
             testProject.delete(false, true, null);
         IProjectDescription description = workspace.newProjectDescription(testProject.getName());
-        description.setNatureIds(new String[] { RubyNature.NATURE_ID });
+        description.setNatureIds(new String[] { PythonNature.NATURE_ID });
         //        URL projectLocation = DtlTestsPlugin.getDefault().getBundle().getEntry("test_projects/" + projectName);
         //        if (projectLocation == null)
         //            throw new AssertionError("Test project not found.");
@@ -335,8 +337,8 @@ public abstract class AbstractTypeInferencingTestCase {
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
-            return new ExpressionValueInfoGoal(scope, node, InfoKind.TYPE);
+            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.TYPE);
         }
         
     }
@@ -356,11 +358,13 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
+            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
             if (!(node instanceof SimpleReference))
                 throw new IllegalArgumentException();
-            RubyVariable variable = scope.variableLookup().findVariable(((SimpleReference) node).getName());
-            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, scope);
+            RubyVariable variable = construct.staticContext().variableLookup().findVariable(
+                    ((SimpleReference) node).getName());
+            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, (ServicesMegapack) construct
+                    .staticContext());
         }
         
     }
@@ -397,8 +401,8 @@ public abstract class AbstractTypeInferencingTestCase {
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
-            return new ExpressionValueInfoGoal(scope, node, InfoKind.VALUE);
+            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
         }
         
     }
@@ -438,8 +442,8 @@ public abstract class AbstractTypeInferencingTestCase {
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
-            return new ExpressionValueInfoGoal(scope, node, InfoKind.VALUE);
+            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
         }
         
     }

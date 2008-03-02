@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
-import org.eclipse.dltk.ruby.ast.RubyForStatement2;
+import org.eclipse.dltk.python.parser.ast.statements.ForEachStatement;
 
 import com.yoursway.sadr.python.core.runtime.RubyVariable;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
@@ -9,14 +9,14 @@ public class ForScope extends LocalScope {
     
     private final ForCounterVariable counter;
     
-    public ForScope(Scope parent, RubyForStatement2 node) {
+    public ForScope(Scope parent, ForEachStatement node) {
         super(parent, node);
         counter = new ForCounterVariable(this);
     }
     
     @Override
-    public RubyForStatement2 node() {
-        return (RubyForStatement2) super.node();
+    public ForEachStatement node() {
+        return (ForEachStatement) super.node();
     }
     
     public ForCounterVariable counter() {

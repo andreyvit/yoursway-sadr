@@ -11,8 +11,6 @@ public interface NodeLookup {
     
     NodeBoundItem lookup(ASTNode node);
     
-    ASTNode parentOf(ASTNode node);
-    
     Collection<ModuleDeclaration> extentionsOf(ASTNode node);
     
 }

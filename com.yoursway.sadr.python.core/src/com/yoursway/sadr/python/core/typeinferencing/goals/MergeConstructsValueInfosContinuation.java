@@ -3,14 +3,15 @@
  */
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Sinner;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.python.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
 
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     
@@ -18,13 +19,13 @@ public final class MergeConstructsValueInfosContinuation implements Continuation
     private final Sinner victim;
     private final ValueInfoContinuation continuation;
     
-    public MergeConstructsValueInfosContinuation(Sinner victim, Construct<?, ?>[] constructs, InfoKind kind,
-            ValueInfoContinuation continuation) {
+    public MergeConstructsValueInfosContinuation(Sinner victim, PythonConstruct[] constructs,
+            PythonDynamicContext dc, InfoKind kind, ValueInfoContinuation continuation) {
         this.victim = victim;
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[constructs.length];
         for (int i = 0; i < constructs.length; i++)
-            goals[i] = new ExpressionValueInfoGoal(constructs[i].scope(), constructs[i].node(), kind);
+            goals[i] = new ExpressionValueInfoGoal(constructs[i], dc, kind);
     }
     
     public void provideSubgoals(SubgoalRequestor requestor) {

@@ -150,10 +150,6 @@ public class StandardTypesImpl implements StandardTypes {
                 "FontDB_GetFontInfo", "FontDB_GetGUIInfo" }) {
             new RubyBuiltinProcedure(model, name, new RubyArgument("args...", RubyArgument.Usage.OPTIONAL));
         }
-        
-        model.lookupGlobalVariable("Ruby$debug");
-        model.lookupGlobalVariable("Ruby$globl");
-        model.lookupGlobalVariable("Ruby$exception");
     }
     
     public RubyClass objectClass() {

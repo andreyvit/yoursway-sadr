@@ -1,12 +1,17 @@
 package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.core.propagation.PropagationTracker;
+import com.yoursway.sadr.python.core.runtime.RubyClass;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
-import com.yoursway.sadr.python.core.typeinferencing.services.PropagationTracker;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 
 public abstract class ChildScope extends AbstractScope {
@@ -38,7 +43,7 @@ public abstract class ChildScope extends AbstractScope {
         return parent.instanceRegistrar();
     }
     
-    public PropagationTracker propagationTracker() {
+    public PropagationTracker<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> propagationTracker() {
         return parent.propagationTracker();
     }
     
@@ -69,6 +74,10 @@ public abstract class ChildScope extends AbstractScope {
     
     public FileScope fileScope() {
         return parent.fileScope();
+    }
+    
+    public RubyClass currentClass() {
+        return parent.currentClass();
     }
     
 }

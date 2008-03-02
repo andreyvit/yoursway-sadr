@@ -1,12 +1,11 @@
 package com.yoursway.sadr.python.core.runtime;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 
 public interface CodeGatherer {
     
-    void add(FileScope fileScope, ModuleDeclaration rootNode, ASTNode fakeParent);
+    void add(PythonConstruct root, ASTNode fakeParent);
     
 }

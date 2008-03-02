@@ -3,34 +3,23 @@ package com.yoursway.sadr.python.core.runtime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.ast.expressions.Literal;
 import org.eclipse.dltk.ast.references.SimpleReference;
+import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IParent;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.ruby.ast.RubyArrayAccessExpression;
-import org.eclipse.dltk.ruby.ast.RubyCallArgument;
-import org.eclipse.dltk.ruby.ast.RubyColonExpression;
-import org.eclipse.dltk.ruby.ast.RubyForStatement2;
-import org.eclipse.dltk.ruby.ast.RubySelfReference;
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
+import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
-import com.yoursway.sadr.python.core.ast.visitor.RubyAstTraverser;
-import com.yoursway.sadr.python.core.ast.visitor.RubyAstVisitor;
-import com.yoursway.sadr.python.core.ast.visitor.RubyExtendedAstTraverser;
-import com.yoursway.sadr.python.core.ast.visitor.TargetedAstVisitor;
-import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.ArrayWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.ForScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.LocalScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.AbstractType;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
 import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
@@ -42,25 +31,37 @@ import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetBuilder;
 
 public class RubyUtils {
     
+    public static String superclassName(PythonClassDeclaration decl) {
+        ASTListNode superClasses = decl.getSuperClasses();
+        if (superClasses == null)
+            return null;
+        List<ASTNode> children = childrenOf(decl);
+        if (children.isEmpty())
+            return null;
+        ASTNode child = children.get(0);
+        return ((SimpleReference) child).getName();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static List<ASTNode> childrenOf(ASTNode node) {
+        return node.getChilds();
+    }
+    
     public static Wildcard assignmentWildcardExpression(ASTNode node) {
-        if (node instanceof SimpleReference || node instanceof RubyColonExpression
-                || node instanceof RubySelfReference || node instanceof CallExpression
-                || node instanceof Literal)
+        if (node instanceof VariableReference)
             return StarWildcard.INSTANCE;
-        else if (node instanceof RubyArrayAccessExpression) {
-            return new ArrayWildcard(assignmentWildcardExpression(((RubyArrayAccessExpression) node)
-                    .getArray()));
-        } else
+        //        else if (node instanceof RubyArrayAccessExpression) {
+        //            return new ArrayWildcard(assignmentWildcardExpression(((RubyArrayAccessExpression) node)
+        //                    .getArray()));
+        else
             throw new AssertionError("assignmentWildcardExpression: not symbol, dot or array");
     }
     
     public static ASTNode assignmentTerminalNode(ASTNode node) {
-        if (node instanceof SimpleReference || node instanceof RubyColonExpression
-                || node instanceof RubySelfReference || node instanceof CallExpression
-                || node instanceof Literal)
+        if (node instanceof VariableReference)
             return node;
-        else if (node instanceof RubyArrayAccessExpression)
-            return assignmentTerminalNode(((RubyArrayAccessExpression) node).getArray());
+        //        else if (node instanceof RubyArrayAccessExpression)
+        //            return assignmentTerminalNode(((RubyArrayAccessExpression) node).getArray());
         else
             throw new AssertionError("assignmentTerminalNode: not symbol, dot or array");
     }
@@ -143,31 +144,6 @@ public class RubyUtils {
         return klass == null ? null : klass.metaClass();
     }
     
-    public static Scope restoreScope(FileScope fileScope, ASTNode node) {
-        System.out.println();
-        LocalScope parentScope = findParentScope(fileScope, node);
-        ScopeRequestor requestor = new ScopeRequestor(parentScope);
-        RubyAstTraverser traverser = new RubyExtendedAstTraverser(fileScope.nodeLookup());
-        traverser.traverse(parentScope.node(), new RootScoper(node, parentScope, requestor));
-        return requestor.getInnerScope();
-    }
-    
-    public static Scope restoreSubscope(Scope scope, ASTNode node) {
-        return restoreScope(scope.fileScope(), node);
-    }
-    
-    private static LocalScope findParentScope(FileScope fileScope, ASTNode node) {
-        NodeLookup nodeLookup = fileScope.nodeLookup();
-        for (ASTNode current = node; current != null; current = fileScope.parentOf(current)) {
-            NodeBoundItem item = nodeLookup.lookup(current);
-            if (item instanceof RubySourceMethod)
-                return ((RubySourceMethod) item).scope();
-            if (item instanceof RubySourceProcedure)
-                return ((RubySourceProcedure) item).scope();
-        }
-        return fileScope;
-    }
-    
     static class ScopeRequestor {
         
         private final List<Scope> scopes = new ArrayList<Scope>();
@@ -196,70 +172,18 @@ public class RubyUtils {
         
     }
     
-    abstract static class AbstractScoper<T extends ASTNode> extends TargetedAstVisitor<T> {
-        
-        protected final Scope scope;
-        protected final ScopeRequestor requestor;
-        
-        public AbstractScoper(ASTNode target, Scope scope, ScopeRequestor requestor) {
-            super(target);
-            this.scope = scope;
-            this.requestor = requestor;
-            requestor.innerScope(scope);
+    public static ASTNode[] argumentsOf(CallExpression n) {
+        List<ASTNode> children0 = childrenOf(n.getArgs());
+        List<ASTNode> children = new ArrayList<ASTNode>();
+        for (ASTNode nd : children0) {
+            children.add(nd);
         }
-        
-        public AbstractScoper(TargetedAstVisitor<?> parentVisitor, Scope scope, ScopeRequestor requestor) {
-            super(parentVisitor);
-            this.scope = scope;
-            this.requestor = requestor;
-            requestor.innerScope(scope);
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterNode(ASTNode node) {
-            checkAnswer(node);
-            return this;
-        }
-        
-        protected void checkAnswer(ASTNode node) {
-            if (node == target())
-                requestor.found();
-        }
-        
-        @Override
-        protected void leave() {
-            requestor.leave();
-        }
-        
-    }
-    
-    static class RootScoper extends AbstractScoper<ASTNode> {
-        
-        public RootScoper(ASTNode target, Scope scope, ScopeRequestor requestor) {
-            super(target, scope, requestor);
-        }
-        
-        public RootScoper(TargetedAstVisitor<?> parentVisitor, Scope scope, ScopeRequestor requestor) {
-            super(parentVisitor, scope, requestor);
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterForStatement(RubyForStatement2 node) {
-            ForScope forScope = new ForScope(scope, node);
-            return new RootScoper(this, forScope, requestor);
-        }
-        
+        return children.toArray(new ASTNode[children.size()]);
     }
     
     @SuppressWarnings("unchecked")
-    public static ASTNode[] argumentsOf(CallExpression n) {
-        List<ASTNode> children0 = n.getArgs().getChilds();
-        List<ASTNode> children = new ArrayList<ASTNode>();
-        for (ASTNode nd : children0) {
-            if (nd instanceof RubyCallArgument)
-                children.add(((RubyCallArgument) nd).getValue());
-        }
-        return children.toArray(new ASTNode[children.size()]);
+    public static List<PythonArgument> argumentsOf(MethodDeclaration node) {
+        return node.getArguments();
     }
     
     //    public static StringLiteral trackField(ASTNode node, String fieldName) {

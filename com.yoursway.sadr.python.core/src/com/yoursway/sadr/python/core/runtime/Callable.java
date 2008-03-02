@@ -1,9 +1,6 @@
 package com.yoursway.sadr.python.core.runtime;
 
-import org.eclipse.dltk.ast.ASTNode;
-
-import com.yoursway.sadr.python.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 
 public interface Callable {
     
@@ -13,7 +10,7 @@ public interface Callable {
     
     RubyArgument[] arguments();
     
-    Construct<Scope, ASTNode> construct();
+    PythonConstruct construct();
     
     String[] parameterNames();
     
