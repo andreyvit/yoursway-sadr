@@ -19,14 +19,4 @@ public class VariablesTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
     
-    @Test
-    public void globalVariableType() throws Exception {
-        runTest();
-    }
-    
-    @Test
-    public void funcAssignedToGlobal() throws Exception {
-        runTest();
-    }
- 
 }
