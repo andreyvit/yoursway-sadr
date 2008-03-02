@@ -81,4 +81,8 @@ public class DynamicMethodScope extends ChildScope implements VariableLookup {
         return parent.createConstruct();
     }
     
+    public RubyVariable lookupVariable(String name) {
+        return findVariable(name);
+    }
+    
 }

@@ -37,6 +37,10 @@ public abstract class LocalScope extends ChildScope implements VariableLookup {
         return parent.variableLookup().findVariable(name);
     }
     
+    public RubyVariable lookupVariable(String name) {
+        return findVariable(name);
+    }
+    
     public abstract RubyVariable findOwnVariable(String name);
     
 }

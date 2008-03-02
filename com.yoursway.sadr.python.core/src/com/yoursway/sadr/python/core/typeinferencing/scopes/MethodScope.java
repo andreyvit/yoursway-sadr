@@ -8,6 +8,7 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import com.yoursway.sadr.python.core.runtime.RubyArgument;
 import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.python.core.runtime.RubyClass;
+import com.yoursway.sadr.python.core.runtime.RubyLocalVariable;
 import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.python.core.runtime.RubyMethod;
 import com.yoursway.sadr.python.core.runtime.RubySourceMethod;
@@ -74,6 +75,14 @@ public class MethodScope extends LocalScope {
         if (klass instanceof RubyClass)
             return ((RubyClass) klass).metaClass().findField(name);
         return null;
+    }
+    
+    @Override
+    public RubyVariable lookupVariable(String name) {
+        RubyVariable variable = findVariable(name);
+        if (variable == null)
+            variable = new RubyLocalVariable(method, null, method.scope(), null);
+        return variable;
     }
     
     public ValueInfo selfType() {

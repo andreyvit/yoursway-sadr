@@ -8,15 +8,21 @@ import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
+import org.eclipse.dltk.ast.expressions.CallArgumentsList;
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Block;
+import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonForStatement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.CallHolder;
+import org.eclipse.dltk.python.parser.ast.expressions.EmptyExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.PrintExpression;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
@@ -56,9 +62,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         if (node instanceof VariableReference)
             return wrapVariableReference(sc, (VariableReference) node);
         if (node instanceof ExtendedVariableReference)
-            return new ExtendedReferenceC(sc, (ExtendedVariableReference) node);
-        if (node instanceof CallExpression)
-            return wrapCall(sc, (CallExpression) node);
+            return wrapExtendedReference(sc, (ExtendedVariableReference) node);
         if (node instanceof ReturnStatement)
             return new ReturnC(sc, (ReturnStatement) node);
         if (node instanceof Assignment)
@@ -67,11 +71,34 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
             return new IfC(sc, (IfStatement) node);
         if (node instanceof MethodDeclaration)
             return new MethodDeclarationC(sc, (MethodDeclaration) node);
+        if (node instanceof PythonClassDeclaration)
+            return new ClassDeclarationC(sc, (PythonClassDeclaration) node);
         if (node instanceof BinaryExpression)
             return wrapBinaryExpression(sc, (BinaryExpression) node);
-        if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block)
+        if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
+                || node instanceof PrintExpression)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
+    }
+    
+    @SuppressWarnings("unchecked")
+    private PythonConstruct wrapExtendedReference(PythonStaticContext sc, ExtendedVariableReference node) {
+        List<ASTNode> expressions = node.getExpressions();
+        if (expressions.size() == 3 && expressions.get(0) instanceof VariableReference
+                && expressions.get(1) instanceof VariableReference
+                && expressions.get(2) instanceof CallHolder) {
+            VariableReference receiver = (VariableReference) expressions.get(0);
+            VariableReference funcName = (VariableReference) expressions.get(1);
+            CallHolder call = (CallHolder) expressions.get(2);
+            Expression arguments = call.getArguments();
+            CallArgumentsList list;
+            if (arguments instanceof EmptyExpression)
+                list = new CallArgumentsList(0, 0);
+            else
+                list = new CallArgumentsList(0, 0);
+            return new MethodCallC(sc, new CallExpression(receiver, funcName.getName(), list), node);
+        }
+        return new ExtendedReferenceC(sc, node);
     }
     
     private PythonConstruct wrapVariableReference(PythonStaticContext sc, VariableReference node) {
@@ -81,14 +108,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         if (name.equals("super"))
             return new SuperC(sc, node);
         return new VariableReferenceC(sc, node);
-    }
-    
-    private PythonConstruct wrapCall(PythonStaticContext sc, CallExpression node) {
-        if (node.getReceiver() == null)
-            return new ProcedureCallC(sc, node);
-        else {
-            return new MethodCallC(sc, node);
-        }
     }
     
     private PythonConstruct wrapBinaryExpression(PythonStaticContext sc, BinaryExpression node) {
@@ -109,17 +128,21 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         return result;
     }
     
-    private PythonConstruct innerSubsonstructFor(ASTNode node) {
-        if (node == this.node)
+    PythonConstruct innerSubsonstructFor(ASTNode node) {
+        if (isNode(node))
             return this;
         // TODO check offset here
         List<PythonConstruct> enclosedConstructs = enclosedConstructs();
         for (PythonConstruct c : enclosedConstructs) {
-            PythonConstruct sc = c.subconstructFor(node);
+            PythonConstruct sc = ((PythonConstructImpl<?>) c).innerSubsonstructFor(node);
             if (sc != null)
                 return sc;
         }
         return null;
+    }
+    
+    protected boolean isNode(ASTNode node) {
+        return node == this.node;
     }
     
     public void calculateEffectiveControlFlowGraph(

@@ -8,6 +8,7 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
@@ -19,8 +20,8 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.IndexRequ
 
 public class ProcedureCallC extends CallC {
     
-    ProcedureCallC(PythonStaticContext sc, CallExpression node) {
-        super(sc, node);
+    ProcedureCallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
+        super(sc, node, originalNode);
     }
     
     public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,

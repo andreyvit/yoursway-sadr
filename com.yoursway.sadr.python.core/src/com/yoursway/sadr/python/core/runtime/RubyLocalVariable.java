@@ -22,7 +22,8 @@ public class RubyLocalVariable extends RubyVariable implements ContributableItem
         this.node = node.getLeft();
         this.name = (left).getName();
         container.addLocalVariable(this);
-        context.add(this);
+        if (context != null)
+            context.add(this);
     }
     
     public LocalVariableContainer container() {

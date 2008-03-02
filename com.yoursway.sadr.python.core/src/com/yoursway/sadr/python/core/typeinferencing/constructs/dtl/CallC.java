@@ -10,6 +10,7 @@ import java.util.Map;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.ast.references.VariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -33,8 +34,11 @@ import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 
 public abstract class CallC extends PythonConstructImpl<CallExpression> implements CallsAffector {
     
-    CallC(PythonStaticContext sc, CallExpression node) {
+    private final ExtendedVariableReference originalNode;
+    
+    CallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
         super(sc, node);
+        this.originalNode = originalNode;
     }
     
     public List<PythonConstruct> arguments() {
@@ -136,6 +140,11 @@ public abstract class CallC extends PythonConstructImpl<CallExpression> implemen
             ; // TODO
         }
         return doit;
+    }
+    
+    @Override
+    protected boolean isNode(ASTNode node) {
+        return originalNode == node || this.node == node;
     }
     
 }

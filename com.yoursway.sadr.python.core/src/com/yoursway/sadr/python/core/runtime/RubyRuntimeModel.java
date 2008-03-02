@@ -147,4 +147,8 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
         return instanceRegistrar;
     }
     
+    public RubyVariable lookupVariable(String name) {
+        return null;
+    }
+    
 }

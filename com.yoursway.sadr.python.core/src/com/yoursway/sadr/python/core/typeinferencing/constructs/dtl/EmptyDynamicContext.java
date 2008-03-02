@@ -17,6 +17,10 @@ public class EmptyDynamicContext implements PythonDynamicContext {
                 return null;
             }
             
+            public RubyVariable lookupVariable(String name) {
+                return null;
+            }
+            
         };
     }
     

@@ -3,6 +3,7 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs.dtl;
 import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
@@ -17,8 +18,8 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 
 public class MethodCallC extends CallC implements IndexAffector {
     
-    MethodCallC(PythonStaticContext sc, CallExpression node) {
-        super(sc, node);
+    MethodCallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
+        super(sc, node, originalNode);
     }
     
     public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
