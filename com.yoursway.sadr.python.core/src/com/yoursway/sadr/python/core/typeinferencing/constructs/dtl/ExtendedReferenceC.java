@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs.dtl;
 
+import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
+
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
@@ -14,6 +16,8 @@ public class ExtendedReferenceC extends PythonConstructImpl<ExtendedVariableRefe
     
     public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
+        continuation.consume(emptyValueInfo(), requestor);
+        
         //        
         //        final Statement name = node.getName();
         //        requestor.subgoal(new Continuation() {

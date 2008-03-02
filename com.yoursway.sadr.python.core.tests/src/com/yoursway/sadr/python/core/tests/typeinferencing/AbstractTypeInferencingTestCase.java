@@ -335,7 +335,7 @@ public abstract class AbstractTypeInferencingTestCase {
         }
         
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
-            ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
+            ASTNode node = ASTUtils.findNodeAt(rootNode, namePos);
             assertNotNull(node);
             PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
             return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.TYPE);

@@ -198,6 +198,35 @@ public class ASTUtils {
         
     }
     
+    public static ASTNode findNodeAt(ModuleDeclaration unit, final int pos) {
+        class Visitor extends ASTVisitor {
+            ASTNode result = null;
+            
+            public ASTNode getResult() {
+                return result;
+            }
+            
+            @Override
+            public boolean visitGeneral(ASTNode s) throws Exception {
+                int realStart = s.sourceStart();
+                int realEnd = s.sourceEnd();
+                
+                if (realStart >= 0 && realEnd >= 0 && pos >= realStart && pos < realEnd)
+                    result = s;
+                return true;
+            }
+            
+        }
+        
+        Visitor visitor = new Visitor();
+        try {
+            unit.traverse(visitor);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return visitor.getResult();
+    }
+    
     /**
      * 
      * Finds minimal ast node, that covers given position

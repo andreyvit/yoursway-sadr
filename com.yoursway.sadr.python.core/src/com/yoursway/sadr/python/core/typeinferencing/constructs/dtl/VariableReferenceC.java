@@ -37,12 +37,12 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
         } else {
             RubyVariable variable = dc.variableLookup().findVariable(name);
             if (variable == null)
-                variable = staticContext().variableLookup().findVariable(name);
+                variable = staticContext().variableLookup().lookupVariable(name);
             if (variable == null) {
                 continuation.consume(emptyValueInfo(), requestor);
             } else {
                 final ValueInfoGoal varGoal = Goals.createVariableTypeGoal(variable, infoKind,
-                        (ServicesMegapack) dc);
+                        (ServicesMegapack) staticContext());
                 requestor.subgoal(new Continuation() {
                     
                     public void provideSubgoals(SubgoalRequestor requestor) {

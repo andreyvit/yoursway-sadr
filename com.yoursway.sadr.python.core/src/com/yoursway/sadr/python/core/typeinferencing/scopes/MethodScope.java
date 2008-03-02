@@ -81,7 +81,7 @@ public class MethodScope extends LocalScope {
     public RubyVariable lookupVariable(String name) {
         RubyVariable variable = findVariable(name);
         if (variable == null)
-            variable = new RubyLocalVariable(method, null, method.scope(), null);
+            variable = new RubyLocalVariable(method, null, method.scope(), name);
         return variable;
     }
     

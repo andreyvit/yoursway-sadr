@@ -15,6 +15,7 @@ import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Block;
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonForStatement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
@@ -23,6 +24,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.CallHolder;
 import org.eclipse.dltk.python.parser.ast.expressions.EmptyExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 import org.eclipse.dltk.python.parser.ast.expressions.PrintExpression;
+import org.eclipse.dltk.python.parser.ast.statements.EmptyStatement;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
@@ -31,6 +33,7 @@ import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.python.core.runtime.RubyUtils;
 
 public abstract class PythonConstructImpl<N extends ASTNode> extends
         AbstractConstruct<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> implements
@@ -76,7 +79,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         if (node instanceof BinaryExpression)
             return wrapBinaryExpression(sc, (BinaryExpression) node);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
-                || node instanceof PrintExpression)
+                || node instanceof PrintExpression || node instanceof EmptyStatement
+                || node instanceof PythonArgument)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }
@@ -94,8 +98,11 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
             CallArgumentsList list;
             if (arguments instanceof EmptyExpression)
                 list = new CallArgumentsList(0, 0);
-            else
+            else {
                 list = new CallArgumentsList(0, 0);
+                for (ASTNode a : RubyUtils.childrenOf(arguments))
+                    list.addNode(a);
+            }
             return new MethodCallC(sc, new CallExpression(receiver, funcName.getName(), list), node);
         }
         return new ExtendedReferenceC(sc, node);

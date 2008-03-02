@@ -107,7 +107,7 @@ public class MethodCallersGoal extends AbstractGoal {
             this.constructs = constructs;
             goals = new ExpressionValueInfoGoal[constructs.length];
             for (int i = 0; i < constructs.length; i++)
-                goals[i] = new ExpressionValueInfoGoal(constructs[i], new EmptyDynamicContext(),
+                goals[i] = new ExpressionValueInfoGoal(constructs[i].receiver(), new EmptyDynamicContext(),
                         InfoKind.TYPE);
         }
         

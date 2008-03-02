@@ -9,6 +9,7 @@ import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.RubyBuiltinMethod;
 import com.yoursway.sadr.python.core.runtime.RubyBuiltinProcedure;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonStaticContext;
@@ -45,7 +46,7 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
         }
         PythonConstruct construct = callable.construct();
         if (construct != null) {
-            PythonStaticContext staticScope = construct.staticContext();
+            PythonStaticContext staticScope = ((MethodDeclarationC) construct).methodScope();
             final PythonDynamicContext dc;
             if (staticScope instanceof MethodScope)
                 dc = new DynamicMethodScope((MethodScope) staticScope, receiver, arguments);

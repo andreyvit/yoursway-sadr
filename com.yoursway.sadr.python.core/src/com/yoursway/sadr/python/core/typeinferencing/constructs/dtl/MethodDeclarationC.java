@@ -47,7 +47,7 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
     protected PythonStaticContext innerContext() {
         if (innerScope == null)
             throw new IllegalStateException("innerContext called before the model has been built");
-        return super.innerContext();
+        return innerScope;
     }
     
     public void actOnModel(ModelRequest request) {

@@ -36,7 +36,7 @@ public class IfC extends PythonConstructImpl<IfStatement> {
     public void calculateEffectiveControlFlowGraph(
             ContinuationRequestor requestor,
             final ControlFlowGraphRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
-        final PythonConstruct condition = wrap(staticContext(), node.getCondition());
+        final PythonConstruct condition = wrap(innerContext(), node.getCondition());
         requestor.subgoal(new Continuation() {
             
             ValueInfoGoal conditionGoal = new ExpressionValueInfoGoal(condition, new EmptyDynamicContext(),
@@ -62,9 +62,9 @@ public class IfC extends PythonConstructImpl<IfStatement> {
                 List<PythonConstruct> staticNodes = new ArrayList<PythonConstruct>();
                 staticNodes.add(condition);
                 if (visitThen)
-                    staticNodes.add(wrap(staticContext(), node.getThen()));
+                    staticNodes.add(wrap(innerContext(), node.getThen()));
                 if (visitElse)
-                    staticNodes.add(wrap(staticContext(), node.getElse()));
+                    staticNodes.add(wrap(innerContext(), node.getElse()));
                 continuation.process(ControlFlowGraph.create(staticNodes), requestor);
             }
             

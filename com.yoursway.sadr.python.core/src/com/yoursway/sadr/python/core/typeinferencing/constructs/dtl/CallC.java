@@ -147,4 +147,11 @@ public abstract class CallC extends PythonConstructImpl<CallExpression> implemen
         return originalNode == node || this.node == node;
     }
     
+    public PythonConstruct receiver() {
+        ASTNode receiver = node.getReceiver();
+        if (receiver == null)
+            return null;
+        return wrap(innerContext(), receiver);
+    }
+    
 }
