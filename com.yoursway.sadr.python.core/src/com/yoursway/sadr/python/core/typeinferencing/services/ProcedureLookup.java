@@ -1,9 +1,9 @@
 package com.yoursway.sadr.python.core.typeinferencing.services;
 
-import com.yoursway.sadr.python.core.runtime.RubyProcedure;
+import com.yoursway.sadr.python.core.runtime.PythonProcedure;
 
 public interface ProcedureLookup {
     
-    RubyProcedure findProcedure(String name);
+    PythonProcedure findProcedure(String name);
     
 }

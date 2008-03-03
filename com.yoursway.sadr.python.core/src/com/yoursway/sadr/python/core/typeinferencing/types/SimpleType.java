@@ -2,15 +2,15 @@ package com.yoursway.sadr.python.core.typeinferencing.types;
 
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.runtime.RubySimpleType;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
 public class SimpleType extends AbstractType {
     
-    private final RubySimpleType simpleType;
+    private final PythonSimpleType simpleType;
     
-    public SimpleType(RubySimpleType simpleType) {
+    public SimpleType(PythonSimpleType simpleType) {
         this.simpleType = simpleType;
     }
     
@@ -19,10 +19,10 @@ public class SimpleType extends AbstractType {
         return simpleType.name();
     }
     
-    public void findMethodsByPrefix(String prefix, Collection<RubyMethod> methods) {
+    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
     }
     
-    public RubySimpleType dtlSimpleType() {
+    public PythonSimpleType dtlSimpleType() {
         return simpleType;
     }
     

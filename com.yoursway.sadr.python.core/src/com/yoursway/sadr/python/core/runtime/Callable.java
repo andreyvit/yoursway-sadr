@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.runtime;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
 public interface Callable {
     
@@ -8,7 +8,7 @@ public interface Callable {
     
     String name();
     
-    RubyArgument[] arguments();
+    PythonCallableArgument[] arguments();
     
     PythonConstruct construct();
     

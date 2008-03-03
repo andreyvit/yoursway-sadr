@@ -9,8 +9,8 @@ import org.eclipse.dltk.core.ISourceModule;
 
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
@@ -50,7 +50,7 @@ public class FileScope extends LocalScope implements NodeLookup {
     }
     
     @Override
-    public RubyVariable findOwnVariable(String name) {
+    public PythonVariable findOwnVariable(String name) {
         return null; // none for now
     }
     
@@ -73,7 +73,7 @@ public class FileScope extends LocalScope implements NodeLookup {
     }
     
     @Override
-    public RubyClass currentClass() {
+    public PythonClass currentClass() {
         return null;
     }
     

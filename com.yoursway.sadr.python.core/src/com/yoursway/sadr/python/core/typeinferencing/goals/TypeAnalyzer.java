@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import com.yoursway.sadr.python.core.runtime.RubySimpleType;
+import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
@@ -17,7 +17,7 @@ public class TypeAnalyzer {
         StandardTypes standard = lookup.standardTypes();
         for (Type type : typeSet.containedTypes())
             if (type instanceof SimpleType) {
-                RubySimpleType simpleType = ((SimpleType) type).dtlSimpleType();
+                PythonSimpleType simpleType = ((SimpleType) type).dtlSimpleType();
                 if (simpleType == standard.intType())
                     isInt = true;
                 else if (simpleType == standard.stringType())

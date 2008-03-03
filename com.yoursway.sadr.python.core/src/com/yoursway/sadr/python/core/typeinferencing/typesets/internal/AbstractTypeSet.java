@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.types.Type;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSet;
@@ -15,11 +15,11 @@ public abstract class AbstractTypeSet implements TypeSet {
     @Override
     public abstract String toString();
     
-    public RubyMethod[] findMethodsByPrefix(String prefix) {
-        Collection<RubyMethod> methods = new ArrayList<RubyMethod>();
+    public PythonMethod[] findMethodsByPrefix(String prefix) {
+        Collection<PythonMethod> methods = new ArrayList<PythonMethod>();
         for (Type type : containedTypes())
             type.findMethodsByPrefix(prefix, methods);
-        return methods.toArray(new RubyMethod[methods.size()]);
+        return methods.toArray(new PythonMethod[methods.size()]);
     }
     
     public void findMethod(String name, MethodRequestor requestor) {

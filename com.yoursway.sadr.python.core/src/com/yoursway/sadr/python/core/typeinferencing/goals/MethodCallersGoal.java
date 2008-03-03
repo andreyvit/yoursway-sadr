@@ -12,10 +12,10 @@ import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.Callable;
-import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 
@@ -29,8 +29,8 @@ public class MethodCallersGoal extends AbstractGoal {
     
     public MethodCallersGoal(Callable callable, SearchService searchService) {
         this.searchService = searchService;
-        if (callable instanceof RubyMethod) {
-            RubyMethod method = (RubyMethod) callable;
+        if (callable instanceof PythonMethod) {
+            PythonMethod method = (PythonMethod) callable;
             if (method.name().equals("init"))
                 callable = method.runtimeClass().metaClass().findMethod("new");
         }
@@ -69,7 +69,7 @@ public class MethodCallersGoal extends AbstractGoal {
     
     public void evaluate(ContinuationRequestor requestor) {
         final List<CallC> possibleCallers = new ArrayList<CallC>();
-        boolean isMethod = (callable instanceof RubyMethod);
+        boolean isMethod = (callable instanceof PythonMethod);
         //        for (FileScope fileScope : searchService.searchForEverything()) {
         //            PossibleCallsVisitor visitor = new PossibleCallsVisitor(callable.name(), isMethod);
         //            new RubyAstTraverser().traverse(fileScope.node(), visitor);
@@ -86,7 +86,7 @@ public class MethodCallersGoal extends AbstractGoal {
             }
             
         };
-        if (callable instanceof RubyMethod)
+        if (callable instanceof PythonMethod)
             searchService.findMethodCalls(name, cr);
         else
             searchService.findProcedureCalls(name, cr);
@@ -117,14 +117,14 @@ public class MethodCallersGoal extends AbstractGoal {
         }
         
         public void done(ContinuationRequestor requestor) {
-            callers = new CallersInfo(collectSuitableCallers((RubyMethod) callable));
+            callers = new CallersInfo(collectSuitableCallers((PythonMethod) callable));
             requestor.done();
         }
         
-        private CallC[] collectSuitableCallers(RubyMethod method) {
+        private CallC[] collectSuitableCallers(PythonMethod method) {
             List<CallC> realCallers = new ArrayList<CallC>();
             for (int i = 0; i < constructs.length; i++)
-                for (RubyBasicClass klass : goals[i].result(thou()).possibleClasses())
+                for (PythonBasicClass klass : goals[i].result(thou()).possibleClasses())
                     if (method.canBeCalledFrom(klass))
                         realCallers.add(constructs[i]);
             return realCallers.toArray(createArray(realCallers.size()));

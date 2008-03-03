@@ -5,15 +5,15 @@ import static com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFact
 
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
-import com.yoursway.sadr.python.core.runtime.RubyArgument;
-import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.runtime.RubyLocalVariable;
-import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.runtime.RubySourceMethod;
-import com.yoursway.sadr.python.core.runtime.RubyUtils;
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
+import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.PythonSourceMethod;
+import com.yoursway.sadr.python.core.runtime.PythonUtils;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.MetaClassValue;
@@ -22,10 +22,10 @@ import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSetFactory;
 
 public class MethodScope extends LocalScope {
     
-    private final RubySourceMethod method;
+    private final PythonSourceMethod method;
     private final DtlArgumentVariable[] argumentVariables;
     
-    public MethodScope(Scope parent, RubySourceMethod method, MethodDeclaration node) {
+    public MethodScope(Scope parent, PythonSourceMethod method, MethodDeclaration node) {
         super(parent, node);
         if (method == null)
             throw new NullPointerException();
@@ -35,8 +35,8 @@ public class MethodScope extends LocalScope {
         argumentVariables = createArguments(method);
     }
     
-    private DtlArgumentVariable[] createArguments(RubyMethod method) {
-        RubyArgument[] args = method.arguments();
+    private DtlArgumentVariable[] createArguments(PythonMethod method) {
+        PythonCallableArgument[] args = method.arguments();
         DtlArgumentVariable[] argVars = new DtlArgumentVariable[args.length];
         for (int i = 0; i < args.length; i++)
             argVars[i] = new DtlArgumentVariable(method, args[i], (null));
@@ -48,7 +48,7 @@ public class MethodScope extends LocalScope {
         return (MethodDeclaration) super.node();
     }
     
-    public RubyMethod getMethod() {
+    public PythonMethod getMethod() {
         return method;
     }
     
@@ -61,38 +61,38 @@ public class MethodScope extends LocalScope {
     }
     
     @Override
-    public RubyVariable findOwnVariable(String name) {
+    public PythonVariable findOwnVariable(String name) {
         for (DtlArgumentVariable var : argumentVariables)
             if (var.name().equalsIgnoreCase(name))
                 return var;
-        RubyVariable var = method.findLocalVariable(name);
+        PythonVariable var = method.findLocalVariable(name);
         if (var != null)
             return var;
-        RubyBasicClass klass = method.klass();
+        PythonBasicClass klass = method.klass();
         var = klass.findField(name);
         if (var != null)
             return var;
-        if (klass instanceof RubyClass)
-            return ((RubyClass) klass).metaClass().findField(name);
+        if (klass instanceof PythonClass)
+            return ((PythonClass) klass).metaClass().findField(name);
         return null;
     }
     
     @Override
-    public RubyVariable lookupVariable(String name) {
-        RubyVariable variable = findVariable(name);
+    public PythonVariable lookupVariable(String name) {
+        PythonVariable variable = findVariable(name);
         if (variable == null)
-            variable = new RubyLocalVariable(method, null, method.scope(), name);
+            variable = new PythonLocalVariable(method, null, method.scope(), name);
         return variable;
     }
     
     public ValueInfo selfType() {
-        RubyBasicClass klass = method.klass();
+        PythonBasicClass klass = method.klass();
         Value value;
-        if (klass instanceof RubyMetaClass)
-            value = new MetaClassValue((RubyMetaClass) klass);
+        if (klass instanceof PythonMetaClass)
+            value = new MetaClassValue((PythonMetaClass) klass);
         else
-            value = new InstanceValue((RubyClass) klass, instanceRegistrar());
-        return createResult(typeSetWith(RubyUtils.createType(klass)), ValueSetFactory.valueSetWith(value));
+            value = new InstanceValue((PythonClass) klass, instanceRegistrar());
+        return createResult(typeSetWith(PythonUtils.createType(klass)), ValueSetFactory.valueSetWith(value));
     }
     
 }

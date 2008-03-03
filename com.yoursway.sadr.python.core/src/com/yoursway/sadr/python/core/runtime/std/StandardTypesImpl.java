@@ -3,14 +3,14 @@ package com.yoursway.sadr.python.core.runtime.std;
 import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 import static com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSetFactory.valueSetWith;
 
-import com.yoursway.sadr.python.core.runtime.RubyArgument;
-import com.yoursway.sadr.python.core.runtime.RubyBuiltinClassDefinition;
-import com.yoursway.sadr.python.core.runtime.RubyBuiltinMethod;
-import com.yoursway.sadr.python.core.runtime.RubyBuiltinProcedure;
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.runtime.RubyRuntimeModel;
-import com.yoursway.sadr.python.core.runtime.RubySimpleType;
-import com.yoursway.sadr.python.core.runtime.RubyUtils;
+import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
+import com.yoursway.sadr.python.core.runtime.PythonBuiltinClassDefinition;
+import com.yoursway.sadr.python.core.runtime.PythonBuiltinMethod;
+import com.yoursway.sadr.python.core.runtime.PythonBuiltinProcedure;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
+import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
+import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
 import com.yoursway.sadr.python.core.typeinferencing.types.StubType;
@@ -25,48 +25,48 @@ public class StandardTypesImpl implements StandardTypes {
     
     // ELLIPSIS -> OPTIONAL
     
-    private final RubyClass objectClass;
-    private final RubySimpleType intType;
-    private final RubySimpleType stringType;
-    private final RubySimpleType nilType;
+    private final PythonClass objectClass;
+    private final PythonSimpleType intType;
+    private final PythonSimpleType stringType;
+    private final PythonSimpleType nilType;
     
-    public StandardTypesImpl(RubyRuntimeModel model) {
+    public StandardTypesImpl(PythonRuntimeModel model) {
         objectClass = model.lookupClass("Object");
-        new RubyBuiltinClassDefinition(objectClass, null);
+        new PythonBuiltinClassDefinition(objectClass, null);
         
-        intType = new RubySimpleType(model, "Fixnum");
-        stringType = new RubySimpleType(model, "String");
-        nilType = new RubySimpleType(model, "NilClass");
+        intType = new PythonSimpleType(model, "Fixnum");
+        stringType = new PythonSimpleType(model, "String");
+        nilType = new PythonSimpleType(model, "NilClass");
         
-        new RubyBuiltinMethod(objectClass.metaClass(), "subclass", new RubyArgument("subclass_name",
-                RubyArgument.Usage.REQUIRED),
-                new RubyArgument("instance_fields", RubyArgument.Usage.OPTIONAL), new RubyArgument(
-                        "class_fields", RubyArgument.Usage.OPTIONAL));
-        new RubyBuiltinMethod(objectClass, "has_superclass", new RubyArgument("name",
-                RubyArgument.Usage.REQUIRED));
-        new RubyBuiltinMethod(objectClass.metaClass(), "has_superclass", new RubyArgument("name",
-                RubyArgument.Usage.REQUIRED));
-        new RubyBuiltinMethod(objectClass, "has_method",
-                new RubyArgument("name", RubyArgument.Usage.REQUIRED));
-        new RubyBuiltinMethod(objectClass, "classname");
-        new RubyBuiltinMethod(objectClass, "error", new RubyArgument("message", RubyArgument.Usage.REQUIRED));
-        new RubyBuiltinMethod(objectClass.metaClass(), "export", new RubyArgument("attr...",
-                RubyArgument.Usage.OPTIONAL));
-        new RubyBuiltinMethod(objectClass, "submustprovide", new RubyArgument("message",
-                RubyArgument.Usage.OPTIONAL));
-        new RubyBuiltinMethod(objectClass.metaClass(), "submustprovide", new RubyArgument("message",
-                RubyArgument.Usage.OPTIONAL));
-        new RubyBuiltinMethod(objectClass, "mesg", new RubyArgument("method", RubyArgument.Usage.REQUIRED),
-                new RubyArgument("expr...", RubyArgument.Usage.OPTIONAL));
-        new RubyBuiltinMethod(objectClass.metaClass(), "mesg", new RubyArgument("method",
-                RubyArgument.Usage.REQUIRED), new RubyArgument("expr...", RubyArgument.Usage.OPTIONAL));
+        new PythonBuiltinMethod(objectClass.metaClass(), "subclass", new PythonCallableArgument("subclass_name",
+                PythonCallableArgument.Usage.REQUIRED),
+                new PythonCallableArgument("instance_fields", PythonCallableArgument.Usage.OPTIONAL), new PythonCallableArgument(
+                        "class_fields", PythonCallableArgument.Usage.OPTIONAL));
+        new PythonBuiltinMethod(objectClass, "has_superclass", new PythonCallableArgument("name",
+                PythonCallableArgument.Usage.REQUIRED));
+        new PythonBuiltinMethod(objectClass.metaClass(), "has_superclass", new PythonCallableArgument("name",
+                PythonCallableArgument.Usage.REQUIRED));
+        new PythonBuiltinMethod(objectClass, "has_method",
+                new PythonCallableArgument("name", PythonCallableArgument.Usage.REQUIRED));
+        new PythonBuiltinMethod(objectClass, "classname");
+        new PythonBuiltinMethod(objectClass, "error", new PythonCallableArgument("message", PythonCallableArgument.Usage.REQUIRED));
+        new PythonBuiltinMethod(objectClass.metaClass(), "export", new PythonCallableArgument("attr...",
+                PythonCallableArgument.Usage.OPTIONAL));
+        new PythonBuiltinMethod(objectClass, "submustprovide", new PythonCallableArgument("message",
+                PythonCallableArgument.Usage.OPTIONAL));
+        new PythonBuiltinMethod(objectClass.metaClass(), "submustprovide", new PythonCallableArgument("message",
+                PythonCallableArgument.Usage.OPTIONAL));
+        new PythonBuiltinMethod(objectClass, "mesg", new PythonCallableArgument("method", PythonCallableArgument.Usage.REQUIRED),
+                new PythonCallableArgument("expr...", PythonCallableArgument.Usage.OPTIONAL));
+        new PythonBuiltinMethod(objectClass.metaClass(), "mesg", new PythonCallableArgument("method",
+                PythonCallableArgument.Usage.REQUIRED), new PythonCallableArgument("expr...", PythonCallableArgument.Usage.OPTIONAL));
         
         new NewMethod(objectClass.metaClass(), model);
         
-        new RubyBuiltinProcedure(model, "eval", new RubyArgument("code", RubyArgument.Usage.REQUIRED));
+        new PythonBuiltinProcedure(model, "eval", new PythonCallableArgument("code", PythonCallableArgument.Usage.REQUIRED));
         
-        new RubyBuiltinProcedure(model, "array", new RubyArgument("dimensions...",
-                RubyArgument.Usage.OPTIONAL)) {
+        new PythonBuiltinProcedure(model, "array", new PythonCallableArgument("dimensions...",
+                PythonCallableArgument.Usage.OPTIONAL)) {
             
             @Override
             public ValueInfo evaluateBuiltin(ValueInfo[] arguments) {
@@ -77,14 +77,14 @@ public class StandardTypesImpl implements StandardTypes {
                 if (arguments.length <= 1)
                     return TypeSetFactory.typeSetWith(new ArrayType(UnknownType.INSTANCE));
                 else
-                    return RubyUtils.replaceWildcard(new ArrayType(StubType.WILDCARD), arguments[1]
+                    return PythonUtils.replaceWildcard(new ArrayType(StubType.WILDCARD), arguments[1]
                             .getTypeSet());
             }
             
         };
         
-        new RubyBuiltinProcedure(model, "list",
-                new RubyArgument("dimensions...", RubyArgument.Usage.OPTIONAL)) {
+        new PythonBuiltinProcedure(model, "list",
+                new PythonCallableArgument("dimensions...", PythonCallableArgument.Usage.OPTIONAL)) {
             
             @Override
             public ValueInfo evaluateBuiltin(ValueInfo[] arguments) {
@@ -94,8 +94,8 @@ public class StandardTypesImpl implements StandardTypes {
             
         };
         
-        new RubyBuiltinProcedure(model, "dict",
-                new RubyArgument("dimensions...", RubyArgument.Usage.OPTIONAL)) {
+        new PythonBuiltinProcedure(model, "dict",
+                new PythonCallableArgument("dimensions...", PythonCallableArgument.Usage.OPTIONAL)) {
             
             @Override
             public ValueInfo evaluateBuiltin(ValueInfo[] arguments) {
@@ -108,7 +108,7 @@ public class StandardTypesImpl implements StandardTypes {
             
         };
         
-        new RubyBuiltinProcedure(model, "sort", new RubyArgument("collection", RubyArgument.Usage.REQUIRED)) {
+        new PythonBuiltinProcedure(model, "sort", new PythonCallableArgument("collection", PythonCallableArgument.Usage.REQUIRED)) {
             
             @Override
             public ValueInfo evaluateBuiltin(ValueInfo[] arguments) {
@@ -120,11 +120,11 @@ public class StandardTypesImpl implements StandardTypes {
             
         };
         
-        new RubyBuiltinProcedure(model, "ty", new RubyArgument("expr...", RubyArgument.Usage.OPTIONAL));
-        new RubyBuiltinProcedure(model, "type", new RubyArgument("expr...", RubyArgument.Usage.OPTIONAL));
-        new RubyBuiltinProcedure(model, "typef", new RubyArgument("expr...", RubyArgument.Usage.OPTIONAL));
+        new PythonBuiltinProcedure(model, "ty", new PythonCallableArgument("expr...", PythonCallableArgument.Usage.OPTIONAL));
+        new PythonBuiltinProcedure(model, "type", new PythonCallableArgument("expr...", PythonCallableArgument.Usage.OPTIONAL));
+        new PythonBuiltinProcedure(model, "typef", new PythonCallableArgument("expr...", PythonCallableArgument.Usage.OPTIONAL));
         
-        new RubyBuiltinProcedure(model, "exif", new RubyArgument("condition", RubyArgument.Usage.REQUIRED));
+        new PythonBuiltinProcedure(model, "exif", new PythonCallableArgument("condition", PythonCallableArgument.Usage.REQUIRED));
         
         for (String name : new String[] { "setscroll", "upcase", "lowcase", "string", "fputstr", "setvideo",
                 "fmtstr", "isnil", "showfield", "fclose", "_prof_", "fopenw", "fparse", "%getkey",
@@ -148,23 +148,23 @@ public class StandardTypesImpl implements StandardTypes {
                 "FNT_GetDefaultFont", "fnt_info", "FNT_Open", "fnt_set", "FontDB_FindFontBG",
                 "FontDB_FindFontComposed", "FontDB_FindFontOT", "FontDB_FindFontPS", "FontDB_GetBGFontNr",
                 "FontDB_GetFontInfo", "FontDB_GetGUIInfo" }) {
-            new RubyBuiltinProcedure(model, name, new RubyArgument("args...", RubyArgument.Usage.OPTIONAL));
+            new PythonBuiltinProcedure(model, name, new PythonCallableArgument("args...", PythonCallableArgument.Usage.OPTIONAL));
         }
     }
     
-    public RubyClass objectClass() {
+    public PythonClass objectClass() {
         return objectClass;
     }
     
-    public RubySimpleType intType() {
+    public PythonSimpleType intType() {
         return intType;
     }
     
-    public RubySimpleType stringType() {
+    public PythonSimpleType stringType() {
         return stringType;
     }
     
-    public RubySimpleType nilType() {
+    public PythonSimpleType nilType() {
         return nilType;
     }
     

@@ -18,12 +18,12 @@ import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.Callable;
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.CallsRequest;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableRequest;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsRequest;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
@@ -169,10 +169,10 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private TypeSet calculateTypeSet(Collection<CallC> calls) {
             if (calls.isEmpty())
                 return emptyTypeSet();
-            Set<RubyClass> klasses = classLookup.findClassesByMethods(methodNames(calls));
+            Set<PythonClass> klasses = classLookup.findClassesByMethods(methodNames(calls));
             if (!klasses.isEmpty()) {
                 TypeSetBuilder subbuilder = new TypeSetBuilder();
-                for (RubyClass klass : klasses)
+                for (PythonClass klass : klasses)
                     subbuilder.add(new ClassType(klass));
                 TypeSet typeset = subbuilder.build();
                 if (!typeset.isEmpty())

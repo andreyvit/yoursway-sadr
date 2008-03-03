@@ -1,9 +1,9 @@
 package com.yoursway.sadr.python.core.runtime.requestors.methods;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 
 public interface MethodRequestor {
     
-    void accept(RubyMethod method);
+    void accept(PythonMethod method);
     
 }

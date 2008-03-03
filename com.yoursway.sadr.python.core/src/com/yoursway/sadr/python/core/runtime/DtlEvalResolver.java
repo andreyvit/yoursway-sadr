@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.core.runtime;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
 public class DtlEvalResolver {
     

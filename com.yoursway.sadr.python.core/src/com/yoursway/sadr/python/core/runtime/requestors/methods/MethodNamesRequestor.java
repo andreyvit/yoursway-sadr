@@ -3,13 +3,13 @@ package com.yoursway.sadr.python.core.runtime.requestors.methods;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 
 public class MethodNamesRequestor implements MethodRequestor {
     
     private final Collection<String> results = new ArrayList<String>();
     
-    public void accept(RubyMethod method) {
+    public void accept(PythonMethod method) {
         results.add(method.name());
     }
     

@@ -10,9 +10,9 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 
 public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements ValueInfoGoal,

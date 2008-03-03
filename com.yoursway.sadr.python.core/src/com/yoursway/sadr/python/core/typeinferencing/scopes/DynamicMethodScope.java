@@ -2,10 +2,10 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
-import com.yoursway.sadr.python.core.runtime.RubyArgument;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
@@ -17,14 +17,14 @@ public class DynamicMethodScope extends ChildScope implements VariableLookup {
     public DynamicMethodScope(MethodScope parent, ValueInfo receiver, ValueInfo[] arguments) {
         super(parent);
         
-        RubyMethod method = parent.getMethod();
+        PythonMethod method = parent.getMethod();
         this.receiver = receiver;
         //        this.receiver = calculateReceiver(method, receiver);
         argumentVariables = createArguments(method, arguments);
     }
     
-    private DtlArgumentVariable[] createArguments(RubyMethod method, ValueInfo[] arguments) {
-        RubyArgument[] args = method.arguments();
+    private DtlArgumentVariable[] createArguments(PythonMethod method, ValueInfo[] arguments) {
+        PythonCallableArgument[] args = method.arguments();
         DtlArgumentVariable[] argVars = new DtlArgumentVariable[args.length];
         for (int i = 0; i < args.length; i++)
             argVars[i] = new DtlArgumentVariable(method, args[i], (arguments.length > i ? arguments[i]
@@ -70,7 +70,7 @@ public class DynamicMethodScope extends ChildScope implements VariableLookup {
         return this;
     }
     
-    public RubyVariable findVariable(String name) {
+    public PythonVariable findVariable(String name) {
         for (DtlArgumentVariable var : argumentVariables)
             if (var.name().equalsIgnoreCase(name))
                 return var;
@@ -81,7 +81,7 @@ public class DynamicMethodScope extends ChildScope implements VariableLookup {
         return parent.createConstruct();
     }
     
-    public RubyVariable lookupVariable(String name) {
+    public PythonVariable lookupVariable(String name) {
         return findVariable(name);
     }
     

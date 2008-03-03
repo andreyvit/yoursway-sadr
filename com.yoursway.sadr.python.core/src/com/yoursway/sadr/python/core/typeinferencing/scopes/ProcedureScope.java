@@ -2,26 +2,26 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
-import com.yoursway.sadr.python.core.runtime.RubyArgument;
-import com.yoursway.sadr.python.core.runtime.RubyLocalVariable;
-import com.yoursway.sadr.python.core.runtime.RubyProcedure;
-import com.yoursway.sadr.python.core.runtime.RubySourceProcedure;
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
+import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.runtime.PythonProcedure;
+import com.yoursway.sadr.python.core.runtime.PythonSourceProcedure;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 
 public class ProcedureScope extends LocalScope {
     
-    private final RubySourceProcedure procedure;
+    private final PythonSourceProcedure procedure;
     private final DtlArgumentVariable[] argumentVariables;
     
-    public ProcedureScope(Scope parent, RubySourceProcedure procedure, MethodDeclaration node) {
+    public ProcedureScope(Scope parent, PythonSourceProcedure procedure, MethodDeclaration node) {
         super(parent, node);
         this.procedure = procedure;
         argumentVariables = createArguments(procedure);
     }
     
-    private DtlArgumentVariable[] createArguments(RubyProcedure procedure) {
-        RubyArgument[] args = procedure.arguments();
+    private DtlArgumentVariable[] createArguments(PythonProcedure procedure) {
+        PythonCallableArgument[] args = procedure.arguments();
         DtlArgumentVariable[] argVars = new DtlArgumentVariable[args.length];
         for (int i = 0; i < args.length; i++)
             argVars[i] = new DtlArgumentVariable(procedure, args[i], (null));
@@ -33,7 +33,7 @@ public class ProcedureScope extends LocalScope {
         return (MethodDeclaration) super.node();
     }
     
-    public RubyProcedure getProcedure() {
+    public PythonProcedure getProcedure() {
         return procedure;
     }
     
@@ -46,7 +46,7 @@ public class ProcedureScope extends LocalScope {
     }
     
     @Override
-    public RubyVariable findOwnVariable(String name) {
+    public PythonVariable findOwnVariable(String name) {
         for (DtlArgumentVariable var : argumentVariables)
             if (var.name().equalsIgnoreCase(name))
                 return var;
@@ -54,10 +54,10 @@ public class ProcedureScope extends LocalScope {
     }
     
     @Override
-    public RubyVariable lookupVariable(String name) {
-        RubyVariable variable = findVariable(name);
+    public PythonVariable lookupVariable(String name) {
+        PythonVariable variable = findVariable(name);
         if (variable == null)
-            variable = new RubyLocalVariable(procedure, null, procedure.scope(), name);
+            variable = new PythonLocalVariable(procedure, null, procedure.scope(), name);
         return variable;
     }
     

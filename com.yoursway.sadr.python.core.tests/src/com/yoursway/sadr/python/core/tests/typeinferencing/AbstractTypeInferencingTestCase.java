@@ -46,16 +46,16 @@ import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.runtime.WholeProjectRuntime;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodNamesRequestor;
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonFileC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
@@ -361,7 +361,7 @@ public abstract class AbstractTypeInferencingTestCase {
             PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
             if (!(node instanceof SimpleReference))
                 throw new IllegalArgumentException();
-            RubyVariable variable = construct.staticContext().variableLookup().findVariable(
+            PythonVariable variable = construct.staticContext().variableLookup().findVariable(
                     ((SimpleReference) node).getName());
             return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, (ServicesMegapack) construct
                     .staticContext());

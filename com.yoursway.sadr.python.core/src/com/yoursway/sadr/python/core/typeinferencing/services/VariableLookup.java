@@ -1,11 +1,11 @@
 package com.yoursway.sadr.python.core.typeinferencing.services;
 
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 
 public interface VariableLookup {
     
-    RubyVariable findVariable(String name);
+    PythonVariable findVariable(String name);
     
-    RubyVariable lookupVariable(String name);
+    PythonVariable lookupVariable(String name);
     
 }

@@ -3,18 +3,18 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.runtime.RubyLocalVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableRequest;
+import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     
-    private final RubyLocalVariable variable;
+    private final PythonLocalVariable variable;
     private final InfoKind kind;
     
-    public LocalVariableValueInfoGoal(RubyLocalVariable variable, InfoKind kind) {
+    public LocalVariableValueInfoGoal(PythonLocalVariable variable, InfoKind kind) {
         this.variable = variable;
         this.kind = kind;
     }

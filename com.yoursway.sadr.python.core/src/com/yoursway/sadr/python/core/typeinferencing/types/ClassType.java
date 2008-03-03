@@ -2,19 +2,19 @@ package com.yoursway.sadr.python.core.typeinferencing.types;
 
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
 public class ClassType extends AbstractType {
     
-    private final RubyClass klass;
+    private final PythonClass klass;
     
-    public ClassType(RubyClass klass) {
+    public ClassType(PythonClass klass) {
         this.klass = klass;
     }
     
-    public RubyClass runtimeClass() {
+    public PythonClass runtimeClass() {
         return klass;
     }
     
@@ -23,7 +23,7 @@ public class ClassType extends AbstractType {
         return klass.toString();
     }
     
-    public void findMethodsByPrefix(String prefix, Collection<RubyMethod> methods) {
+    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
         klass.findMethodsByPrefix(prefix, methods);
     }
     

@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.types;
 
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
 public class StubType implements Type {
@@ -28,7 +28,7 @@ public class StubType implements Type {
         throw new UnsupportedOperationException();
     }
     
-    public void findMethodsByPrefix(String prefix, Collection<RubyMethod> methods) {
+    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
         throw new UnsupportedOperationException();
     }
     
