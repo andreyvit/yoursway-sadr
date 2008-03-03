@@ -36,7 +36,7 @@ public class RubyUtils {
         ASTListNode superClasses = decl.getSuperClasses();
         if (superClasses == null)
             return null;
-        List<ASTNode> children = childrenOf(decl);
+        List<ASTNode> children = childrenOf(superClasses);
         if (children.isEmpty())
             return null;
         ASTNode child = children.get(0);
@@ -249,7 +249,7 @@ public class RubyUtils {
             e1.printStackTrace();
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     public static List<ASTNode> expressionsOf(ExtendedVariableReference evr) {
         return evr.getExpressions();
