@@ -24,6 +24,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.CallHolder;
 import org.eclipse.dltk.python.parser.ast.expressions.EmptyExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 import org.eclipse.dltk.python.parser.ast.expressions.PrintExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
 import org.eclipse.dltk.python.parser.ast.statements.EmptyStatement;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
@@ -80,7 +82,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
             return wrapBinaryExpression(sc, (BinaryExpression) node);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
                 || node instanceof PrintExpression || node instanceof EmptyStatement
-                || node instanceof PythonArgument)
+                || node instanceof PythonArgument || node instanceof PythonListExpression
+                || node instanceof PythonTestListExpression)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }
