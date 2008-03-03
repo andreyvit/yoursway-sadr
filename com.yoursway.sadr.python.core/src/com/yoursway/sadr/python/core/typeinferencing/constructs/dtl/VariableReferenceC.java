@@ -5,10 +5,8 @@ import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.empt
 import org.eclipse.dltk.ast.references.VariableReference;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.python.core.runtime.RubyUtils;
 import com.yoursway.sadr.python.core.runtime.RubyVariable;
@@ -43,17 +41,7 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
             } else {
                 final ValueInfoGoal varGoal = Goals.createVariableTypeGoal(variable, infoKind,
                         (ServicesMegapack) staticContext());
-                requestor.subgoal(new Continuation() {
-                    
-                    public void provideSubgoals(SubgoalRequestor requestor) {
-                        requestor.subgoal(varGoal);
-                    }
-                    
-                    public void done(ContinuationRequestor requestor) {
-                        continuation.consume(varGoal.weakResult(), requestor);
-                    }
-                    
-                });
+                requestor.subgoal(new SingleSubgoalContinuation(varGoal, continuation));
             }
         }
     }
