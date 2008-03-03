@@ -1,6 +1,0 @@
-if col = 1
-	puts("foo")
-	if num > 5
-		type("wowwwww  w w w w")
-	fi
-fi
