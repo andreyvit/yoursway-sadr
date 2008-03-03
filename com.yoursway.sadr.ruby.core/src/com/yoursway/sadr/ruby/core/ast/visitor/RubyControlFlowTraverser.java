@@ -15,7 +15,7 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
@@ -48,9 +48,9 @@ public class RubyControlFlowTraverser {
     }
     
     private final Scope scope;
-    private final Sinner victim;
+    private final ContextSensitiveThing victim;
     
-    public RubyControlFlowTraverser(Sinner victim, Scope scope) {
+    public RubyControlFlowTraverser(ContextSensitiveThing victim, Scope scope) {
         this.victim = victim;
         this.scope = scope;
     }

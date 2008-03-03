@@ -2,15 +2,14 @@ package com.yoursway.sadr.engine;
 
 import java.util.Arrays;
 
-
-public class GoalConfession {
+public class GoalContext {
     
     private final Goal goal;
-    private final Result[] lameExcuses;
+    private final Result[] weakResult;
     
-    public GoalConfession(Goal goal, Result[] lameExcuses) {
+    public GoalContext(Goal goal, Result[] weakResult) {
         this.goal = goal;
-        this.lameExcuses = lameExcuses;
+        this.weakResult = weakResult;
     }
     
     @Override
@@ -18,7 +17,7 @@ public class GoalConfession {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((goal == null) ? 0 : goal.hashCode());
-        result = prime * result + Arrays.hashCode(lameExcuses);
+        result = prime * result + Arrays.hashCode(weakResult);
         return result;
     }
     
@@ -30,13 +29,13 @@ public class GoalConfession {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final GoalConfession other = (GoalConfession) obj;
+        final GoalContext other = (GoalContext) obj;
         if (goal == null) {
             if (other.goal != null)
                 return false;
         } else if (!goal.equals(other.goal))
             return false;
-        if (!Arrays.equals(lameExcuses, other.lameExcuses))
+        if (!Arrays.equals(weakResult, other.weakResult))
             return false;
         return true;
     }

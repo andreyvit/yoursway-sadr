@@ -1,6 +1,6 @@
 package com.yoursway.sadr.engine;
 
-public interface Goal extends Sinner {
+public interface Goal extends ContextSensitiveThing {
     
     void evaluate(ContinuationRequestor requestor);
     
@@ -16,13 +16,13 @@ public interface Goal extends Sinner {
     
     int debugSlot();
     
-    void blame(Goal sin);
+    void addPropagatingGoal(Goal propagatingGoal);
     
-    Karma karma();
+    ContextRelation contextRelation();
     
-    boolean isSaint();
+    boolean isContextFree();
     
-    Result resultWithoutKarma();
+    Result weakResult(); //? contextIgnoringResult
     
     Goal cloneGoal();
     

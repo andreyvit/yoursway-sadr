@@ -8,7 +8,7 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
@@ -16,10 +16,10 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynami
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     
     private final ExpressionValueInfoGoal[] goals;
-    private final Sinner victim;
+    private final ContextSensitiveThing victim;
     private final ValueInfoContinuation continuation;
     
-    public MergeConstructsValueInfosContinuation(Sinner victim, PythonConstruct[] constructs,
+    public MergeConstructsValueInfosContinuation(ContextSensitiveThing victim, PythonConstruct[] constructs,
             PythonDynamicContext dc, InfoKind kind, ValueInfoContinuation continuation) {
         this.victim = victim;
         this.continuation = continuation;

@@ -7,7 +7,7 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
@@ -15,10 +15,10 @@ import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     
     private final ExpressionValueInfoGoal[] goals;
-    private final Sinner victim;
+    private final ContextSensitiveThing victim;
     private final ValueInfoContinuation continuation;
     
-    public MergeConstructsValueInfosContinuation(Sinner victim, Construct<?, ?>[] constructs, InfoKind kind,
+    public MergeConstructsValueInfosContinuation(ContextSensitiveThing victim, Construct<?, ?>[] constructs, InfoKind kind,
             ValueInfoContinuation continuation) {
         this.victim = victim;
         this.continuation = continuation;

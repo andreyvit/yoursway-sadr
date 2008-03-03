@@ -232,13 +232,13 @@ public class AnalysisEngine {
         
     }
     
-    abstract class QWithKarma extends Q {
+    abstract class QWithContextDependence extends Q {
         
-        public QWithKarma(Goal goal) {
+        public QWithContextDependence(Goal goal) {
             super(goal);
         }
         
-        public QWithKarma(Q continuationOf) {
+        public QWithContextDependence(Q continuationOf) {
             super(continuationOf);
         }
         
@@ -246,24 +246,24 @@ public class AnalysisEngine {
         protected void storeIntoCache() {
             if (!goal.cachable())
                 return;
-            if (goal.isSaint())
-                heaven.put(goal, goal.resultWithoutKarma());
+            if (goal.isContextFree())
+                contextFreeCache.put(goal, goal.weakResult());
             else {
-                Karma karma = goal.karma();
+                ContextRelation relation = goal.contextRelation();
                 
-                Karma existingKarma = karmaCache.get(goal);
-                if (existingKarma == null)
-                    karmaCache.put(goal, karma);
-                else if (!existingKarma.equals(karma))
-                    karmaCache.put(goal, existingKarma.takeMoreBlame(karma));
+                ContextRelation existingRelation = contextRelationsCache.get(goal);
+                if (existingRelation == null)
+                    contextRelationsCache.put(goal, relation);
+                else if (!existingRelation.equals(relation))
+                    contextRelationsCache.put(goal, existingRelation.extend(relation));
                 
-                GoalConfession confession = karma.createPrimaryConfession(goal);
-                hell.put(confession, goal.resultWithoutKarma());
+                GoalContext context = relation.createPrimaryContext(goal);
+                contextSensitiveCache.put(context, goal.weakResult());
             }
         }
     }
     
-    final class QQ extends QWithKarma {
+    final class QQ extends QWithContextDependence {
         
         public QQ(Goal goal) {
             super(goal);
@@ -271,20 +271,21 @@ public class AnalysisEngine {
         
         @Override
         protected void pleaseEvaluate() {
-            Karma karma = karmaCache.get(goal);
+            ContextRelation contextRelation = contextRelationsCache.get(goal);
             ContinuationRequestor requestor = this;
-            evaluateWithRequestorAndKarma(karma, requestor);
+            evaluateWithRequestorAndContextRelation(contextRelation, requestor);
         }
         
-        private void evaluateWithRequestorAndKarma(final Karma karma, ContinuationRequestor requestor) {
-            if (karma != null) {
-                karma.createSecondaryConfession(goal, requestor, new ConfessionRequestor() {
+        private void evaluateWithRequestorAndContextRelation(final ContextRelation contextRelation,
+                ContinuationRequestor requestor) {
+            if (contextRelation != null) {
+                contextRelation.createSecondaryContext(goal, requestor, new ContextRequestor() {
                     
-                    public void execute(GoalConfession confession, ContinuationRequestor requestor) {
-                        Result result = hell.get(confession);
+                    public void execute(GoalContext context, ContinuationRequestor requestor) {
+                        Result result = contextSensitiveCache.get(context);
                         if (result != null) {
                             goal.copyAnswerFrom(result);
-                            karma.putBlameOn(goal);
+                            contextRelation.addTo(goal);
                         } else {
                             evaluateWithRequestor(requestor);
                         }
@@ -306,7 +307,7 @@ public class AnalysisEngine {
         }
     }
     
-    final class QQQ extends QWithKarma {
+    final class QQQ extends QWithContextDependence {
         
         private final Continuation continuation;
         
@@ -333,11 +334,11 @@ public class AnalysisEngine {
     
     private final GoalDebug debug = new GoalDebug();
     
-    private final Map<Goal, Result> heaven = new HashMap<Goal, Result>();
+    private final Map<Goal, Result> contextFreeCache = new HashMap<Goal, Result>();
     
-    private final Map<Goal, Karma> karmaCache = new HashMap<Goal, Karma>();
+    private final Map<Goal, ContextRelation> contextRelationsCache = new HashMap<Goal, ContextRelation>();
     
-    private final Map<GoalConfession, Result> hell = new HashMap<GoalConfession, Result>();
+    private final Map<GoalContext, Result> contextSensitiveCache = new HashMap<GoalContext, Result>();
     
     private final AbstractMultiMap<Goal, QQ> sameGoals = new IdentityArrayListHashMultiMap<Goal, QQ>();
     
@@ -351,7 +352,7 @@ public class AnalysisEngine {
     
     private Addition start(Goal goal, Q parent) {
         Goal parentGoal = parent == null ? null : parent.goal();
-        Result cachedResult = heaven.get(goal);
+        Result cachedResult = contextFreeCache.get(goal);
         stats.starting(goal);
         if (cachedResult != null) {
             goal.copyAnswerFrom(cachedResult);
@@ -360,7 +361,7 @@ public class AnalysisEngine {
         }
         Goal activeGoal = activeGoals.get(goal);
         if (activeGoal != null
-                && !(karmaCache.containsKey(goal))
+                && !(contextRelationsCache.containsKey(goal))
                 && (!goal.hasComplexUnnaturalRelationshipWithRecursion() || recursionDepth(goal, parent) > MAX_ITERATIONS)) {
             if (isRecursive(goal, parent)) {
                 goal.causesRecursion();
@@ -429,7 +430,7 @@ public class AnalysisEngine {
     }
     
     public boolean isCached(Goal goal) {
-        return heaven.containsKey(goal);
+        return contextFreeCache.containsKey(goal);
     }
     
     @Override

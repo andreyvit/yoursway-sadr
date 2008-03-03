@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 public abstract class AbstractGoal implements Goal {
     
-    private Collection<Goal> sins;
+    private Collection<Goal> propagatingGoals;
     
     @Override
     public abstract int hashCode();
@@ -25,45 +25,45 @@ public abstract class AbstractGoal implements Goal {
         return true;
     }
     
-    public boolean isSaint() {
-        return sins == null || sins.isEmpty();
+    public boolean isContextFree() {
+        return propagatingGoals == null || propagatingGoals.isEmpty();
     }
     
-    public void blame(final Goal sin) {
-        if (sins == null)
-            sins = new ArrayList<Goal>();
-        sins.add(sin);
+    public void addPropagatingGoal(final Goal propagatingGoal) {
+        if (propagatingGoals == null)
+            propagatingGoals = new ArrayList<Goal>();
+        propagatingGoals.add(propagatingGoal);
     }
     
-    public void blame(final Collection<Goal> sins_) {
-        if (sins_ == null) {
+    public void addPropagatingGoals(final Collection<Goal> propagatingGoals_) {
+        if (propagatingGoals_ == null) {
             System.out.println("!!!!!!");
-            throw new NullPointerException("sins_");
+            throw new NullPointerException("propagatingGoals_");
         }
-        if (sins == null)
-            sins = new ArrayList<Goal>();
-        sins.addAll(sins_);
+        if (propagatingGoals == null)
+            propagatingGoals = new ArrayList<Goal>();
+        propagatingGoals.addAll(propagatingGoals_);
     }
     
-    public Karma karma() {
-        if (sins == null)
-            return Karma.empty();
+    public ContextRelation contextRelation() {
+        if (propagatingGoals == null)
+            return ContextRelation.empty();
         else
-            return new Karma(new HashSet<Goal>(sins()));
+            return new ContextRelation(new HashSet<Goal>(propagatingGoals()));
     }
     
-    protected void punish(Sinner acceptor) {
-        acceptor.blame(sins());
+    protected void punish(ContextSensitiveThing acceptor) { //?
+        acceptor.addPropagatingGoals(propagatingGoals());
     }
     
-    private Collection<Goal> sins() {
-        if (sins == null)
+    private Collection<Goal> propagatingGoals() {
+        if (propagatingGoals == null)
             return Collections.emptyList();
         else
-            return sins;
+            return propagatingGoals;
     }
     
-    protected Sinner thou() {
+    protected ContextSensitiveThing thou() { //?
         return this;
     }
     
