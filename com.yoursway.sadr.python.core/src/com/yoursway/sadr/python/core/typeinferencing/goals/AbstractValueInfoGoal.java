@@ -8,7 +8,7 @@ import com.yoursway.sadr.engine.AbstractGoal;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 
 public abstract class AbstractValueInfoGoal extends AbstractGoal implements ValueInfoGoal,
         ValueInfoContinuation {
@@ -26,13 +26,13 @@ public abstract class AbstractValueInfoGoal extends AbstractGoal implements Valu
             throw new IllegalStateException("setResult of " + toString() + " has never been called");
     }
     
-    public ValueInfo result(Sinner victim) {
+    public ValueInfo result(ContextSensitiveThing victim) {
         if (victim != null)
             punish(victim);
-        return resultWithoutKarma();
+        return weakResult();
     }
     
-    public ValueInfo resultWithoutKarma() {
+    public ValueInfo weakResult() {
         if (result == null)
             throw new IllegalStateException(getClass().getSimpleName() + ".result() before done()");
         return result;

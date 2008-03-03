@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.ArrayWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
@@ -67,7 +67,7 @@ public class ValueInfoBuilder {
         return new ValueInfo(ts, vs);
     }
     
-    public void addResultOf(ValueInfoGoal goal, Sinner victim) {
+    public void addResultOf(ValueInfoGoal goal, ContextSensitiveThing victim) {
         add(goal.result(victim));
     }
     

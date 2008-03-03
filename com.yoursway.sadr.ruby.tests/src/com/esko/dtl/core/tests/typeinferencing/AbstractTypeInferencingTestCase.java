@@ -324,7 +324,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
-            ValueInfo result = goal.resultWithoutKarma();
+            ValueInfo result = goal.weakResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
             String types = Strings.join(possibleTypes, ",");
@@ -384,7 +384,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
-            ValueInfo result = goal.resultWithoutKarma();
+            ValueInfo result = goal.weakResult();
             String[] possibleValues = result.describePossibleValues();
             Arrays.sort(possibleValues, Strings.getNaturalComparator());
             String values = Strings.join(possibleValues, ",");
@@ -422,7 +422,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
-            ValueInfo result = goal.resultWithoutKarma();
+            ValueInfo result = goal.weakResult();
             AnyMethodRequestor requestor = new AnyMethodRequestor();
             result.findMethod(methodName, requestor);
             

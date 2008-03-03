@@ -1,12 +1,12 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.engine.Goal;
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 
 public interface ValueInfoGoal extends Goal {
     
-    ValueInfo result(Sinner victim);
+    ValueInfo result(ContextSensitiveThing victim);
     
-    ValueInfo resultWithoutKarma();
+    ValueInfo weakResult();
     
 }

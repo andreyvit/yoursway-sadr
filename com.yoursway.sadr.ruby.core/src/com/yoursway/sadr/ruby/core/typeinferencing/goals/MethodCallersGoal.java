@@ -13,7 +13,7 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
@@ -63,13 +63,13 @@ public class MethodCallersGoal extends AbstractGoal {
         done();
     }
     
-    public CallersInfo result(Sinner victim) {
+    public CallersInfo result(ContextSensitiveThing victim) {
         punish(victim);
-        return resultWithoutKarma();
+        return weakResult();
     }
     
     @SuppressWarnings("unchecked")
-    public CallersInfo resultWithoutKarma() {
+    public CallersInfo weakResult() {
         if (callers == null)
             throw new IllegalStateException("MethodCallersGoal.result() before done()");
         return callers;

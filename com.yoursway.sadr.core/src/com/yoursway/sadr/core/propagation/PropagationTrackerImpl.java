@@ -45,7 +45,7 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
             public void consume(IValueInfo result, ContinuationRequestor requestor) {
                 for (Goal goal : propagatedGoals)
                     entryPoints.remove(goal);
-                currentQuery.goal().blame(propagatingGoal);
+                currentQuery.goal().addPropagatingGoal(propagatingGoal);
                 continuation.consume(result, requestor);
             }
             

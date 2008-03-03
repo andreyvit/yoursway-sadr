@@ -7,7 +7,7 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.Sinner;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
@@ -18,11 +18,11 @@ public final class AssignmentsContinuation extends AbstractContinuation {
     
     private final AssignmentInfo[] assignments;
     
-    private final Sinner victim;
+    private final ContextSensitiveThing victim;
     
     private final ValueInfoContinuation continuation;
     
-    public AssignmentsContinuation(Sinner victim, AssignmentInfo[] ass, PythonDynamicContext dc,
+    public AssignmentsContinuation(ContextSensitiveThing victim, AssignmentInfo[] ass, PythonDynamicContext dc,
             InfoKind kind, ValueInfoContinuation continuation) {
         this.victim = victim;
         assignments = ass;

@@ -50,7 +50,7 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
                     }
                     
                     public void done(ContinuationRequestor requestor) {
-                        continuation.consume(varGoal.resultWithoutKarma(), requestor);
+                        continuation.consume(varGoal.weakResult(), requestor);
                     }
                     
                 });
