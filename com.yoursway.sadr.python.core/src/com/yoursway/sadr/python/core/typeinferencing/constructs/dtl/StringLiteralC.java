@@ -26,9 +26,17 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     
     private String stringValue() {
         String v = node.getValue();
+        v = unquote(v);
         v = v.replaceAll("\\n", "\n");
         v = v.replaceAll("<CR>", "\n");
         return v;
+    }
+    
+    private static String unquote(String text) {
+        if (text.startsWith("\"") && text.endsWith("\"") || text.startsWith("'") && text.endsWith("'")
+                || text.startsWith("`") && text.endsWith("`"))
+            return text.substring(1, text.length() - 1);
+        return text;
     }
     
 }
