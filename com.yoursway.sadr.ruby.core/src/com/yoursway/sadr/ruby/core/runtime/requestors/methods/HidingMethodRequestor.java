@@ -15,7 +15,7 @@ public class HidingMethodRequestor implements MethodRequestor {
     }
     
     public void accept(RubyMethod method) {
-        String name = method.name().toLowerCase();
+        String name = method.name();
         if (hiddenMethods.contains(name))
             return;
         hiddenMethods.add(name);
