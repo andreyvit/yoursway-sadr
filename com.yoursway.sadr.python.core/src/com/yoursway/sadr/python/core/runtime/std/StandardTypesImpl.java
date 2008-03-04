@@ -126,30 +126,32 @@ public class StandardTypesImpl implements StandardTypes {
         
         new RubyBuiltinProcedure(model, "exif", new RubyArgument("condition", RubyArgument.Usage.REQUIRED));
         
-        for (String name : new String[] { "setscroll", "upcase", "lowcase", "string", "fputstr", "setvideo",
-                "fmtstr", "isnil", "showfield", "fclose", "_prof_", "fopenw", "fparse", "%getkey",
-                "is_ident", "isnumber", "isstring", "isarray", "isinst", "sizeof", "isdict", "symbol", "int",
-                "chr", "mod", "repl", "load_bltin", "lookup", "compile", "MSG_Error", "break", "exit",
-                "continue", "dumpobj", "LOC_Translate", "MSG_Info", "msg_warning", "MSG_Message", "extr",
-                "%date", "%time", "collapse", "compress", "concat", "elem", "ffspec", "fopenr", "fgetstr",
-                "logtype", "ascii2unicode", "number", "posstr", "pow", "slist", "stackdump", "tail", "head",
-                "throw", "totwobyte", "trim", "typa", "isdefined", "length",
-                "lognam",
-                "logty",
-                "match",
-                "mirrodo",
-                "slist",
-                "str2dis",
-                //
-                "gra_align", "gra_box", "gra_cap", "gra_clip", "gra_color", "gra_image", "gra_coldef",
-                "gra_dash", "gra_info", "gra_inkget", "gra_inkdef", "gra_inkload", "gra_inktab", "gra_name",
-                "gra_origin", "gra_outlinebox", "gra_page", "gra_paintmode", "gra_rule", "gra_select",
-                "gra_size", "gra_textmeasure", "gra_text", "gra_width", "backgroundedtext",
-                "FNT_GetDefaultFont", "fnt_info", "FNT_Open", "fnt_set", "FontDB_FindFontBG",
-                "FontDB_FindFontComposed", "FontDB_FindFontOT", "FontDB_FindFontPS", "FontDB_GetBGFontNr",
-                "FontDB_GetFontInfo", "FontDB_GetGUIInfo" }) {
-            new RubyBuiltinProcedure(model, name, new RubyArgument("args...", RubyArgument.Usage.OPTIONAL));
-        }
+        if (false)
+            for (String name : new String[] { "setscroll", "upcase", "lowcase", "string", "fputstr",
+                    "setvideo", "fmtstr", "isnil", "showfield", "fclose", "_prof_", "fopenw", "fparse",
+                    "%getkey", "is_ident", "isnumber", "isstring", "isarray", "isinst", "sizeof", "isdict",
+                    "symbol", "int", "chr", "mod", "repl", "load_bltin", "lookup", "compile", "MSG_Error",
+                    "break", "exit", "continue", "dumpobj", "LOC_Translate", "MSG_Info", "msg_warning",
+                    "MSG_Message", "extr", "%date", "%time", "collapse", "compress", "concat", "elem",
+                    "ffspec", "fopenr", "fgetstr", "logtype", "ascii2unicode", "number", "posstr", "pow",
+                    "slist", "stackdump", "tail", "head", "throw", "totwobyte", "trim", "typa", "isdefined",
+                    "length", "lognam",
+                    "logty",
+                    "match",
+                    "mirrodo",
+                    "slist",
+                    "str2dis",
+                    //
+                    "gra_align", "gra_box", "gra_cap", "gra_clip", "gra_color", "gra_image", "gra_coldef",
+                    "gra_dash", "gra_info", "gra_inkget", "gra_inkdef", "gra_inkload", "gra_inktab",
+                    "gra_name", "gra_origin", "gra_outlinebox", "gra_page", "gra_paintmode", "gra_rule",
+                    "gra_select", "gra_size", "gra_textmeasure", "gra_text", "gra_width", "backgroundedtext",
+                    "FNT_GetDefaultFont", "fnt_info", "FNT_Open", "fnt_set", "FontDB_FindFontBG",
+                    "FontDB_FindFontComposed", "FontDB_FindFontOT", "FontDB_FindFontPS",
+                    "FontDB_GetBGFontNr", "FontDB_GetFontInfo", "FontDB_GetGUIInfo" }) {
+                new RubyBuiltinProcedure(model, name,
+                        new RubyArgument("args...", RubyArgument.Usage.OPTIONAL));
+            }
     }
     
     public RubyClass objectClass() {
