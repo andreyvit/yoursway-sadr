@@ -2,19 +2,19 @@ package com.yoursway.sadr.python.core.typeinferencing.types;
 
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
 public class MetaClassType extends AbstractType {
     
-    private final RubyMetaClass klass;
+    private final PythonMetaClass klass;
     
-    public MetaClassType(RubyMetaClass klass) {
+    public MetaClassType(PythonMetaClass klass) {
         this.klass = klass;
     }
     
-    public RubyMetaClass runtimeMetaClass() {
+    public PythonMetaClass runtimeMetaClass() {
         return klass;
     }
     
@@ -23,7 +23,7 @@ public class MetaClassType extends AbstractType {
         return klass.toString();
     }
     
-    public void findMethodsByPrefix(String prefix, Collection<RubyMethod> methods) {
+    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
         klass.findMethodsByPrefix(prefix, methods);
     }
     

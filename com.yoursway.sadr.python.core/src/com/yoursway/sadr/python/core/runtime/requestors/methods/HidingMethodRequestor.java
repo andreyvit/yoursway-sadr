@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.core.runtime.requestors.methods;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 
 public class HidingMethodRequestor implements MethodRequestor {
     
@@ -14,7 +14,7 @@ public class HidingMethodRequestor implements MethodRequestor {
         this.next = next;
     }
     
-    public void accept(RubyMethod method) {
+    public void accept(PythonMethod method) {
         String name = method.name().toLowerCase();
         if (hiddenMethods.contains(name))
             return;

@@ -9,8 +9,8 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 
 public final class AssignmentsContinuation extends AbstractContinuation {
     

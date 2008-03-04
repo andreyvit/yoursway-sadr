@@ -7,13 +7,13 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.Callable;
-import com.yoursway.sadr.python.core.runtime.RubyBuiltinMethod;
-import com.yoursway.sadr.python.core.runtime.RubyBuiltinProcedure;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.MethodDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonStaticContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.ReturnsRequest;
+import com.yoursway.sadr.python.core.runtime.PythonBuiltinMethod;
+import com.yoursway.sadr.python.core.runtime.PythonBuiltinProcedure;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicMethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicProcedureScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
@@ -35,11 +35,11 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
     
     public void evaluate(ContinuationRequestor requestor) {
         if (callable.isBuiltin()) {
-            if (callable instanceof RubyBuiltinMethod) {
-                RubyBuiltinMethod method = (RubyBuiltinMethod) callable;
+            if (callable instanceof PythonBuiltinMethod) {
+                PythonBuiltinMethod method = (PythonBuiltinMethod) callable;
                 consume(method.evaluateBuiltin(receiver, arguments), requestor);
             } else {
-                RubyBuiltinProcedure method = (RubyBuiltinProcedure) callable;
+                PythonBuiltinProcedure method = (PythonBuiltinProcedure) callable;
                 consume(method.evaluateBuiltin(arguments), requestor);
             }
             return;

@@ -4,7 +4,7 @@ import org.eclipse.dltk.ast.ASTNode;
 
 public interface LocalVariableContainer {
     
-    void addLocalVariable(RubyLocalVariable localVariable);
+    void addLocalVariable(PythonLocalVariable localVariable);
     
     ASTNode node();
     

@@ -3,22 +3,22 @@ package com.yoursway.sadr.python.core.runtime.requestors.methods;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 
 public class CollectingMethodRequestor implements MethodRequestor {
     
-    private final Collection<RubyMethod> results = new ArrayList<RubyMethod>();
+    private final Collection<PythonMethod> results = new ArrayList<PythonMethod>();
     
-    public void accept(RubyMethod method) {
+    public void accept(PythonMethod method) {
         results.add(method);
     }
     
-    public Collection<RubyMethod> asCollection() {
+    public Collection<PythonMethod> asCollection() {
         return results;
     }
     
-    public RubyMethod[] asArray() {
-        return results.toArray(new RubyMethod[results.size()]);
+    public PythonMethod[] asArray() {
+        return results.toArray(new PythonMethod[results.size()]);
     }
     
     public boolean anythingFound() {

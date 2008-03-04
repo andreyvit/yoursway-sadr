@@ -3,17 +3,17 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.runtime.Callable;
-import com.yoursway.sadr.python.core.runtime.RubyArgument;
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 
-public class DtlArgumentVariable extends RubyVariable {
+public class DtlArgumentVariable extends PythonVariable {
     
     private final ValueInfo valueInfo;
-    private final RubyArgument argument;
+    private final PythonCallableArgument argument;
     private final Callable callable;
     
-    public DtlArgumentVariable(Callable callable, RubyArgument argument, ValueInfo valueInfo) {
+    public DtlArgumentVariable(Callable callable, PythonCallableArgument argument, ValueInfo valueInfo) {
         this.callable = callable;
         this.argument = argument;
         this.valueInfo = valueInfo;

@@ -11,32 +11,32 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
-import com.yoursway.sadr.python.core.runtime.RubyField;
-import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.runtime.RubySourceMethod;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableRequest;
+import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
+import com.yoursway.sadr.python.core.runtime.PythonField;
+import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.PythonSourceMethod;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 
 public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     
-    private final RubyField field;
+    private final PythonField field;
     private final InfoKind kind;
     
-    public FieldValueInfoGoal(RubyField field, InfoKind kind) {
+    public FieldValueInfoGoal(PythonField field, InfoKind kind) {
         this.field = field;
         this.kind = kind;
     }
     
     public void evaluate(ContinuationRequestor requestor) {
         final VariableRequest request = new VariableRequest(field, kind);
-        Continuations.iterate(findPossibleWriters(), new IterationContinuation<RubyMethod>() {
+        Continuations.iterate(findPossibleWriters(), new IterationContinuation<PythonMethod>() {
             
-            public void iteration(RubyMethod method, ContinuationRequestor requestor,
+            public void iteration(PythonMethod method, ContinuationRequestor requestor,
                     SimpleContinuation continuation) {
-                if (method instanceof RubySourceMethod) {
-                    RubySourceMethod sm = ((RubySourceMethod) method);
+                if (method instanceof PythonSourceMethod) {
+                    PythonSourceMethod sm = ((PythonSourceMethod) method);
                     IConstruct construct = sm.scope().createConstruct();
                     PropagationTracker tracker = sm.scope().propagationTracker();
                     tracker.traverseEntirely(construct, request, requestor, continuation);
@@ -49,12 +49,12 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
                 FieldValueInfoGoal.this));
     }
     
-    private List<RubyMethod> findPossibleWriters() {
-        RubyBasicClass container = field.container();
-        ArrayList<RubyMethod> methods = new ArrayList<RubyMethod>();
+    private List<PythonMethod> findPossibleWriters() {
+        PythonBasicClass container = field.container();
+        ArrayList<PythonMethod> methods = new ArrayList<PythonMethod>();
         container.findMethodsByPrefix("", methods);
-        if (container instanceof RubyMetaClass)
-            ((RubyMetaClass) container).instanceClass().findMethodsByPrefix("", methods);
+        if (container instanceof PythonMetaClass)
+            ((PythonMetaClass) container).instanceClass().findMethodsByPrefix("", methods);
         return methods;
     }
     

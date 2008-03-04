@@ -4,10 +4,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.propagation.PropagationTracker;
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonStaticContext;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
@@ -76,7 +76,7 @@ public abstract class ChildScope extends AbstractScope {
         return parent.fileScope();
     }
     
-    public RubyClass currentClass() {
+    public PythonClass currentClass() {
         return parent.currentClass();
     }
     

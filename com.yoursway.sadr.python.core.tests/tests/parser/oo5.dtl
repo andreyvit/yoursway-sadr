@@ -1,1 +1,0 @@
-dtl$object:subclass("imp$object", "iPID,iFID,iUserData")

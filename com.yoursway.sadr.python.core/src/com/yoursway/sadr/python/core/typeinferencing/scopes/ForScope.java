@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.dltk.python.parser.ast.statements.ForEachStatement;
 
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 
 public class ForScope extends LocalScope {
@@ -29,7 +29,7 @@ public class ForScope extends LocalScope {
     }
     
     @Override
-    public RubyVariable findOwnVariable(String name) {
+    public PythonVariable findOwnVariable(String name) {
         if (name.equalsIgnoreCase(counter.name()))
             return counter;
         return null;

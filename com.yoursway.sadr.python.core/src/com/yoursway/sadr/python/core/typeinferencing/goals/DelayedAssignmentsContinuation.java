@@ -7,8 +7,8 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.VariableRequest;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 
 public final class DelayedAssignmentsContinuation implements SimpleContinuation {
     private final VariableRequest request;

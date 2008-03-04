@@ -2,9 +2,9 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
 
-public class ForCounterVariable extends RubyVariable {
+public class ForCounterVariable extends PythonVariable {
     
     private final ForScope scope;
     

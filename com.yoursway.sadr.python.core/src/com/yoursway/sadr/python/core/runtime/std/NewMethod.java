@@ -6,10 +6,10 @@ package com.yoursway.sadr.python.core.runtime.std;
 import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.createResult;
 import static com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSetFactory.valueSetWith;
 
-import com.yoursway.sadr.python.core.runtime.RubyArgument;
-import com.yoursway.sadr.python.core.runtime.RubyBuiltinMethod;
-import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
-import com.yoursway.sadr.python.core.runtime.RubyRuntimeModel;
+import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
+import com.yoursway.sadr.python.core.runtime.PythonBuiltinMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
+import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory;
@@ -17,13 +17,13 @@ import com.yoursway.sadr.python.core.typeinferencing.typesets.internal.SingleTyp
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.Value;
 
-public final class NewMethod extends RubyBuiltinMethod {
+public final class NewMethod extends PythonBuiltinMethod {
     
-    private final RubyMetaClass klass;
-    private final RubyRuntimeModel model;
+    private final PythonMetaClass klass;
+    private final PythonRuntimeModel model;
     
-    public NewMethod(RubyMetaClass klass, RubyRuntimeModel model) {
-        super(klass, "new", new RubyArgument("arg", RubyArgument.Usage.OPTIONAL));
+    public NewMethod(PythonMetaClass klass, PythonRuntimeModel model) {
+        super(klass, "new", new PythonCallableArgument("arg", PythonCallableArgument.Usage.OPTIONAL));
         this.klass = klass;
         this.model = model;
     }

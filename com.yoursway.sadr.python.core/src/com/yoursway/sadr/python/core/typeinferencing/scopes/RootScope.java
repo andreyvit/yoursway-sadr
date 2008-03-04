@@ -4,11 +4,11 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.propagation.PropagationTracker;
 import com.yoursway.sadr.core.propagation.PropagationTrackerImpl;
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.runtime.RubyRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonStaticContext;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
@@ -20,13 +20,13 @@ import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
 public class RootScope extends AbstractScope {
     
-    private final RubyRuntimeModel model;
+    private final PythonRuntimeModel model;
     private final OuteriorNodeLookup outeriorNodeLookup;
     private final SearchService searchService;
     
     private final PropagationTracker<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> propagationTracker;
     
-    public RootScope(RubyRuntimeModel model, OuteriorNodeLookup outeriorNodeLookup,
+    public RootScope(PythonRuntimeModel model, OuteriorNodeLookup outeriorNodeLookup,
             SearchService searchService) {
         this.model = model;
         this.outeriorNodeLookup = outeriorNodeLookup;
@@ -83,7 +83,7 @@ public class RootScope extends AbstractScope {
         throw new UnsupportedOperationException();
     }
     
-    public RubyClass currentClass() {
+    public PythonClass currentClass() {
         throw new UnsupportedOperationException();
     }
     

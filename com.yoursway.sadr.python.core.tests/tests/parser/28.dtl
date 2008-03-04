@@ -1,4 +1,0 @@
-if len >= 2
-	global x = 1408
-	ty(x)
-fi

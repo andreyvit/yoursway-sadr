@@ -1,12 +1,12 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
-import com.yoursway.sadr.python.core.runtime.RubyMetaClass;
+import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
 
 public class MetaClassValue extends AbstractValue implements ValueTraits {
     
-    private final RubyMetaClass metaClass;
+    private final PythonMetaClass metaClass;
     
-    public MetaClassValue(RubyMetaClass metaClass) {
+    public MetaClassValue(PythonMetaClass metaClass) {
         this.metaClass = metaClass;
     }
     

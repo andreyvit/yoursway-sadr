@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.yoursway.sadr.core.IValueInfo;
-import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.runtime.RubyUtils;
+import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
 import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
@@ -86,11 +86,11 @@ public class ValueInfo implements IValueInfo {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (Type type : typeSet.containedTypes()) {
             if (type instanceof ClassType || type instanceof MetaClassType) {
-                RubyBasicClass klass = (type instanceof ClassType ? ((ClassType) type).runtimeClass()
+                PythonBasicClass klass = (type instanceof ClassType ? ((ClassType) type).runtimeClass()
                         : ((MetaClassType) type).runtimeMetaClass());
-                RubyBasicClass sup = (klass).superclassOfTheSameKind();
+                PythonBasicClass sup = (klass).superclassOfTheSameKind();
                 if (sup != null)
-                    builder.add(RubyUtils.createType(sup));
+                    builder.add(PythonUtils.createType(sup));
             }
         }
         // TODO: handle values
@@ -118,22 +118,22 @@ public class ValueInfo implements IValueInfo {
         return builder.build();
     }
     
-    public Collection<RubyBasicClass> possibleClasses() {
-        Collection<RubyBasicClass> list = new ArrayList<RubyBasicClass>();
+    public Collection<PythonBasicClass> possibleClasses() {
+        Collection<PythonBasicClass> list = new ArrayList<PythonBasicClass>();
         for (Type type : typeSet.containedTypes()) {
-            RubyBasicClass klass = RubyUtils.unwrapType(type);
+            PythonBasicClass klass = PythonUtils.unwrapType(type);
             if (klass != null)
                 list.add(klass);
         }
         return list;
     }
     
-    public RubyMethod[] findMethodsByPrefix(String prefix) {
+    public PythonMethod[] findMethodsByPrefix(String prefix) {
         return typeSet.findMethodsByPrefix(prefix);
     }
     
     public void findMethodsByPrefix(String prefix, MethodRequestor requestor) {
-        for (RubyMethod method : typeSet.findMethodsByPrefix(prefix))
+        for (PythonMethod method : typeSet.findMethodsByPrefix(prefix))
             requestor.accept(method);
     }
     

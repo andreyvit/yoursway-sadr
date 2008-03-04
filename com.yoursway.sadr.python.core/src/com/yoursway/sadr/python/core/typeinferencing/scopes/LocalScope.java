@@ -2,9 +2,9 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.core.runtime.RubyVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonFileC;
+import com.yoursway.sadr.python.core.runtime.PythonVariable;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
 public abstract class LocalScope extends ChildScope implements VariableLookup {
@@ -30,17 +30,17 @@ public abstract class LocalScope extends ChildScope implements VariableLookup {
         return this;
     }
     
-    public RubyVariable findVariable(String name) {
-        RubyVariable result = findOwnVariable(name);
+    public PythonVariable findVariable(String name) {
+        PythonVariable result = findOwnVariable(name);
         if (result != null)
             return result;
         return parent.variableLookup().findVariable(name);
     }
     
-    public RubyVariable lookupVariable(String name) {
+    public PythonVariable lookupVariable(String name) {
         return findVariable(name);
     }
     
-    public abstract RubyVariable findOwnVariable(String name);
+    public abstract PythonVariable findOwnVariable(String name);
     
 }

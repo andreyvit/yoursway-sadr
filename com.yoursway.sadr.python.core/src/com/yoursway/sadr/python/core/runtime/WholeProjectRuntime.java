@@ -21,8 +21,8 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Query;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.contributions.FileContributionsManager;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonFileC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.RootScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -31,12 +31,12 @@ import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 public class WholeProjectRuntime {
     
     private final class CodeGathererImpl implements CodeGatherer {
-        private final RubyRuntimeModelCreator creator;
+        private final PythonRuntimeModelCreator creator;
         private final LinkedList<Runnable> postProcessingQueue;
         
         //        private final DtlEvalResolver evalResolver;
         
-        private CodeGathererImpl(RubyRuntimeModelCreator creator, LinkedList<Runnable> postProcessingQueue,
+        private CodeGathererImpl(PythonRuntimeModelCreator creator, LinkedList<Runnable> postProcessingQueue,
                 DtlEvalResolver evalResolver) {
             this.creator = creator;
             this.postProcessingQueue = postProcessingQueue;
@@ -85,7 +85,7 @@ public class WholeProjectRuntime {
         
     }
     
-    protected RubyRuntimeModel runtimeModel;
+    protected PythonRuntimeModel runtimeModel;
     
     protected AnalysisEngine engine;
     
@@ -104,10 +104,10 @@ public class WholeProjectRuntime {
         engine = new AnalysisEngine();
         asts.clear();
         ISourceParser parser = createSourceParser();
-        runtimeModel = new RubyRuntimeModel();
+        runtimeModel = new PythonRuntimeModel();
         contributionsManager = new FileContributionsManager(runtimeModel);
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
-        final RubyRuntimeModelCreator creator = new RubyRuntimeModelCreator();
+        final PythonRuntimeModelCreator creator = new PythonRuntimeModelCreator();
         final DtlEvalResolver evalResolver = new DtlEvalResolver(engine);
         final LinkedList<Runnable> postProcessingQueue = new LinkedList<Runnable>();
         final CodeGatherer codeGatherer = new CodeGathererImpl(creator, postProcessingQueue, evalResolver);
@@ -145,7 +145,7 @@ public class WholeProjectRuntime {
     
     private List<ISourceModule> findSourceModules(IScriptProject project) {
         List<ISourceModule> modules = new ArrayList<ISourceModule>();
-        RubyUtils.findSourceModules(project, modules);
+        PythonUtils.findSourceModules(project, modules);
         return modules;
     }
     
@@ -165,7 +165,7 @@ public class WholeProjectRuntime {
         return scopes.get(module);
     }
     
-    public RubyRuntimeModel getModel() {
+    public PythonRuntimeModel getModel() {
         return runtimeModel;
     }
     

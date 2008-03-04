@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
 public interface ConstructBoundGoal {
     

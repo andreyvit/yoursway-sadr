@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.types;
 
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
 public class UnknownType implements Type {
@@ -24,7 +24,7 @@ public class UnknownType implements Type {
     public void findMethod(String name, MethodRequestor requestor) {
     }
     
-    public void findMethodsByPrefix(String prefix, Collection<RubyMethod> methods) {
+    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
     }
     
 }

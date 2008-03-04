@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.typesets;
 
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.types.Type;
 
@@ -12,7 +12,7 @@ public interface TypeSet {
     
     Collection<Type> containedTypes();
     
-    RubyMethod[] findMethodsByPrefix(String prefix);
+    PythonMethod[] findMethodsByPrefix(String prefix);
     
     String[] describePossibleTypes();
     

@@ -1,16 +1,16 @@
 package com.yoursway.sadr.python.core.runtime.std;
 
-import com.yoursway.sadr.python.core.runtime.RubyClass;
-import com.yoursway.sadr.python.core.runtime.RubySimpleType;
+import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
 
 public interface StandardTypes {
     
-    RubyClass objectClass();
+    PythonClass objectClass();
     
-    RubySimpleType intType();
+    PythonSimpleType intType();
     
-    RubySimpleType stringType();
+    PythonSimpleType stringType();
     
-    RubySimpleType nilType();
+    PythonSimpleType nilType();
     
 }

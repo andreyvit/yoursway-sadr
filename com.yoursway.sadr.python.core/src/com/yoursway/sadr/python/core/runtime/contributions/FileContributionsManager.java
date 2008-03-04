@@ -13,10 +13,10 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
-import com.yoursway.sadr.python.core.runtime.RubyRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.rq.IndexRequest;
+import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -29,9 +29,9 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
     
     private final Map<ISourceModule, DtlFile> files = new HashMap<ISourceModule, DtlFile>();
     
-    private final RubyRuntimeModel model;
+    private final PythonRuntimeModel model;
     
-    public FileContributionsManager(RubyRuntimeModel model) {
+    public FileContributionsManager(PythonRuntimeModel model) {
         this.model = model;
     }
     
@@ -78,7 +78,7 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
             return file.file();
         }
         
-        public RubyRuntimeModel model() {
+        public PythonRuntimeModel model() {
             return model;
         }
         

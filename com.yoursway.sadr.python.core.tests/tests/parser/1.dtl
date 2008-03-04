@@ -1,1 +1,0 @@
-subclass("imp$object", "iPID,iFID,iUserData")

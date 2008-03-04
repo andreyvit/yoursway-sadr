@@ -1,4 +1,0 @@
-procedure point:show()
-	type(self:classname())
-	super:show()
-end
