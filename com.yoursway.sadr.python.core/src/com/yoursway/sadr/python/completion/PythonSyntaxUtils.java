@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.completion;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.internal.core.SourceRange;
 
-public class RubySyntaxUtils {
+public class PythonSyntaxUtils {
     
     public static final String ARRAY_GET_METHOD = "[]".intern();
     

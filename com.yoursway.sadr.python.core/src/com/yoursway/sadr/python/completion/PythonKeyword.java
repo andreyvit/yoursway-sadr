@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RubyKeyword {
+public class PythonKeyword {
     
     private final String name;
     
-    private static final Map<String, RubyKeyword> keywords = new HashMap<String, RubyKeyword>();
+    private static final Map<String, PythonKeyword> keywords = new HashMap<String, PythonKeyword>();
     
-    private RubyKeyword(String name) {
+    private PythonKeyword(String name) {
         this.name = name;
         keywords.put(name, this);
     }

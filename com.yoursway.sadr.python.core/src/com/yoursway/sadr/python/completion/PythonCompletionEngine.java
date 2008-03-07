@@ -24,14 +24,14 @@ import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.ASTUtils;
-import com.yoursway.sadr.python.core.runtime.RubyBasicClass;
-import com.yoursway.sadr.python.core.runtime.RubyMethod;
-import com.yoursway.sadr.python.core.runtime.RubyProcedure;
-import com.yoursway.sadr.python.core.runtime.RubyRuntimeModel;
+import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.PythonProcedure;
+import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.runtime.WholeProjectRuntime;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.dtl.PythonFileC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
@@ -51,7 +51,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
     private final HashSet<String> completedNames = new HashSet<String>();
     private final WeakHashSet intresting = new WeakHashSet();
     
-    private RubyRuntimeModel runtimeModel;
+    private PythonRuntimeModel runtimeModel;
     
     private AnalysisEngine engine;
     
@@ -92,7 +92,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         position--;
         int len = 0;
         while (position >= 0 && len < maxLen
-                && RubySyntaxUtils.isLessStrictIdentifierCharacter(content.charAt(position)))
+                && PythonSyntaxUtils.isLessStrictIdentifierCharacter(content.charAt(position)))
             position--;
         if (position + 1 > original)
             return "";
@@ -156,7 +156,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
             }
             
             if (enableKeywordCompletion && wordStarting != null)
-                for (String element : RubyKeyword.findByPrefix(wordStarting))
+                for (String element : PythonKeyword.findByPrefix(wordStarting))
                     reportKeyword(element);
             
         } finally {
@@ -167,16 +167,16 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
     private void completeCallWithoutReceiver(VariableReference node, int position) {
         String prefix = node.getName().substring(0, position - node.sourceStart());
         // procedures
-        for (RubyProcedure procedure : runtimeModel.findProceduresMatching(prefix))
+        for (PythonProcedure procedure : runtimeModel.findProceduresMatching(prefix))
             reportProcedure(procedure, 4242);
         // self methods
         PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
         if (construct.staticContext() instanceof MethodScope) {
             MethodScope methodScope = (MethodScope) construct.staticContext();
-            RubyBasicClass klass = methodScope.getMethod().klass();
-            Collection<RubyMethod> result = new ArrayList<RubyMethod>();
+            PythonBasicClass klass = methodScope.getMethod().klass();
+            Collection<PythonMethod> result = new ArrayList<PythonMethod>();
             klass.findMethodsByPrefix(prefix, result);
-            for (RubyMethod m : result)
+            for (PythonMethod m : result)
                 reportMethod(m, 4242);
         }
     }
@@ -203,8 +203,8 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(),
                 InfoKind.TYPE);
         engine.evaluate(goal);
-        ValueInfo types = goal.resultWithoutKarma();
-        for (RubyMethod method : types.findMethodsByPrefix(prefix))
+        ValueInfo types = goal.weakResult();
+        for (PythonMethod method : types.findMethodsByPrefix(prefix))
             reportMethod(method, 4242);
     }
     
@@ -213,7 +213,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         return field.getElementName();
     }
     
-    private void reportProcedure(RubyProcedure procedure, int rel) {
+    private void reportProcedure(PythonProcedure procedure, int rel) {
         String elementName = procedure.name();
         if (completedNames.contains(elementName))
             return;
@@ -249,7 +249,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         
     }
     
-    private void reportMethod(RubyMethod method, int rel) {
+    private void reportMethod(PythonMethod method, int rel) {
         String elementName = method.name();
         if (completedNames.contains(elementName))
             return;
