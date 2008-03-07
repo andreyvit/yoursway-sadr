@@ -1,7 +1,7 @@
-package com.esko.dtl.core.tests.typeinferencing;
+package com.yoursway.sadr.ruby.core.tests.typeinferencing;
 
-import static com.esko.dtl.core.tests.TestingUtils.callerOutside;
 import static com.yoursway.sadr.engine.util.Strings.join;
+import static com.yoursway.sadr.ruby.core.tests.TestingUtils.callerOutside;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -43,9 +43,6 @@ import org.eclipse.dltk.ruby.core.RubyNature;
 import org.eclipse.dltk.ruby.internal.parsers.jruby.ASTUtils;
 import org.junit.After;
 
-import com.esko.dtl.core.tests.DtlTestsPlugin;
-import com.esko.dtl.core.tests.internal.FileUtil;
-import com.esko.dtl.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
@@ -54,6 +51,9 @@ import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodNamesRequestor;
+import com.yoursway.sadr.ruby.core.tests.RubyTestsPlugin;
+import com.yoursway.sadr.ruby.core.tests.internal.FileUtil;
+import com.yoursway.sadr.ruby.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
@@ -77,7 +77,7 @@ public abstract class AbstractTypeInferencingTestCase {
         //        if (projectLocation == null)
         //            throw new AssertionError("Test project not found.");
         //        URL resolvedProjectLocation = Platform.resolve(projectLocation);
-        IPath tempPath = DtlTestsPlugin.getDefault().getStateLocation().append("testprojects").append(
+        IPath tempPath = RubyTestsPlugin.getDefault().getStateLocation().append("testprojects").append(
                 projectName);
         tempDirectory = tempPath.toFile();
         FileUtil.recursiveDelete(tempDirectory);
@@ -98,7 +98,7 @@ public abstract class AbstractTypeInferencingTestCase {
         String className = getClass().getSimpleName();
         String basePath = "/tests/" + className + "/" + methodName;
         
-        URL projectLocation = DtlTestsPlugin.getDefault().getBundle().getEntry(basePath);
+        URL projectLocation = RubyTestsPlugin.getDefault().getBundle().getEntry(basePath);
         if (projectLocation == null)
             throw new AssertionError("Test project not found.");
         URL resolvedProjectLocation = FileLocator.resolve(projectLocation);
@@ -227,7 +227,7 @@ public abstract class AbstractTypeInferencingTestCase {
     }
     
     protected static String readFile(final String fileName) throws IOException {
-        InputStream in = DtlTestsPlugin.openResource(fileName);
+        InputStream in = RubyTestsPlugin.openResource(fileName);
         return readAndClose(in);
     }
     

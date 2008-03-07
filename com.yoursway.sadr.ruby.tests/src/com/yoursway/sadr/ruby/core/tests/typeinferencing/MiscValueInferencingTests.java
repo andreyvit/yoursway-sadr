@@ -1,4 +1,4 @@
-package com.esko.dtl.core.tests.typeinferencing;
+package com.yoursway.sadr.ruby.core.tests.typeinferencing;
 
 import org.junit.Test;
 

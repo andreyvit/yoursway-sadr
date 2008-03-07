@@ -1,4 +1,4 @@
-package com.esko.dtl.core.tests;
+package com.yoursway.sadr.ruby.core.tests;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -13,18 +13,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class DtlTestsPlugin extends Plugin {
+public class RubyTestsPlugin extends Plugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.yoursway.sadr.ruby.tests";
 
 	// The shared instance
-	private static DtlTestsPlugin plugin;
+	private static RubyTestsPlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public DtlTestsPlugin() {
+	public RubyTestsPlugin() {
 	}
 
 	/*
@@ -69,13 +69,13 @@ public class DtlTestsPlugin extends Plugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static DtlTestsPlugin getDefault() {
+	public static RubyTestsPlugin getDefault() {
 		return plugin;
 	}
 	
 
     public static InputStream openResource(String path) throws IOException {
-        URL url = DtlTestsPlugin.getDefault().getBundle().getEntry(path);
+        URL url = RubyTestsPlugin.getDefault().getBundle().getEntry(path);
         return new BufferedInputStream(url.openStream());
     }
 

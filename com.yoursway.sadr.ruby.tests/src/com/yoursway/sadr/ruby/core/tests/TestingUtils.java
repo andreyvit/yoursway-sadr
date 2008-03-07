@@ -1,4 +1,4 @@
-package com.esko.dtl.core.tests;
+package com.yoursway.sadr.ruby.core.tests;
 
 public class TestingUtils {
 

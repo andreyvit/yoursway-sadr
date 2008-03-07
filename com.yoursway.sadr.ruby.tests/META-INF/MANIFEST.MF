@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Tests Plug-in
 Bundle-SymbolicName: com.yoursway.sadr.ruby.tests
 Bundle-Version: 1.0.0
-Bundle-Activator: com.esko.dtl.core.tests.DtlTestsPlugin
+Bundle-Activator: com.yoursway.sadr.ruby.core.tests.RubyTestsPlugin
 Bundle-Vendor: YOURSWAY
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
