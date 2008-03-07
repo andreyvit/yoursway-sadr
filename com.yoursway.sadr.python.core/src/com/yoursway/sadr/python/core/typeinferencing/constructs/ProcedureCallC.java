@@ -16,9 +16,10 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.Callable;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 
-public class ProcedureCallC extends CallC {
+public class ProcedureCallC extends CallC implements IndexAffector {
     
     ProcedureCallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
         super(sc, node, originalNode);
