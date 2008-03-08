@@ -4,6 +4,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.ASTVisitor;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.osgi.util.NLS;
 
@@ -19,7 +20,6 @@ import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.CollectingMethodRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.MethodScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
@@ -31,14 +31,15 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
     }
     
     private String checkArguments(CallExpression call, RubyArgument[] arguments, boolean report) {
-        DtlSymbol name = call.getName(); //? SimpleReference?
+        SimpleReference name = call.getCallName();
         int callArgsCount = call.getArgs().getChilds().size();
         int min = 0;
         int max = arguments.length;
         for (RubyArgument a : arguments)
             if (a.usage() == RubyArgument.Usage.REQUIRED)
                 min++;
-        //?
+        //? argument list to array
+        //
         //else if (a.usage() == RubyArgument.Usage.ELLIPSIS)
         //    max = -1;
         if (callArgsCount < min || (max >= 0 && callArgsCount > max)) {
@@ -60,7 +61,7 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
     }
     
     private void checkArguments(CallExpression call, RubyMethod[] methods) {
-        DtlSymbol name = call.getName();
+        SimpleReference name = call.getCallName();
         int callArgsCount = call.getArgs().getChilds().size();
         boolean found = false;
         String errorMessage = null;
@@ -81,12 +82,12 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
     
     private void checkCall(CallExpression call) {
         ASTNode receiver = call.getReceiver();
-        String name = call.getName();
+        SimpleReference name = call.getCallName();
         boolean found = false;
         boolean warn = true;
         String errorMessage = null;
         if (receiver == null) {
-            RubyProcedure p = runtime.getModel().findProcedure(name);
+            RubyProcedure p = runtime.getModel().findProcedure(name.getName());
             if (p != null) {
                 found = true;
                 checkArguments(call, p.arguments(), true);
@@ -98,7 +99,7 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
             runtime.getEngine().evaluate(goal);
             ValueInfo types = goal.weakResult();
             CollectingMethodRequestor rq = new CollectingMethodRequestor();
-            types.findMethod(name, rq);
+            types.findMethod(name.getName(), rq);
             found = rq.anythingFound();
             if (!found) {
                 for (RubyBasicClass t1 : types.possibleClasses()) {
@@ -112,10 +113,11 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
                     errorMessage = NLS.bind(msg, name);
                     warn = false;
                 } else {
-                    //? ignoreCase???
-                    if (name.equalsIgnoreCase("init") && (call.getReceiver() instanceof DtlSymbol)
-                            && ((DtlSymbol) call.getReceiver()).getName().equalsIgnoreCase("super"))
-                        return;
+                    //? ignoreCase??? SimpleReference??? super.init??? super???
+                    //if (name.getName().equalsIgnoreCase("init")
+                    //        && (call.getReceiver() instanceof SimpleReference)
+                    //        && ((SimpleReference) call.getReceiver()).getName().equalsIgnoreCase("super"))
+                    //    return;
                     String[] possibleTypes = types.describePossibleTypes();
                     String msg = "Method named \"{0}\" does not exist in any of the following types: {1}.";
                     errorMessage = NLS.bind(msg, name, Strings.join(possibleTypes, ", "));
@@ -143,20 +145,20 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
                 CallExpression call = (CallExpression) node;
                 checkCall(call);
             } else if (node instanceof MethodDeclaration) {
-                MethodDeclaration decl = (MethodDeclaration) node;
-                if (decl.getReceiver() != null) {
-                    Scope scope = RubyUtils.restoreScope(currentFileScope, decl.getNameNode());
-                    if (scope instanceof MethodScope) {
-                        MethodScope methodScope = (MethodScope) scope;
-                        RubyBasicClass t1 = methodScope.getMethod().klass();
-                        RubyClass klass = (t1 instanceof RubyClass ? (RubyClass) t1 : ((RubyMetaClass) t1)
-                                .instanceClass());
-                        if (klass.isUndefined())
-                            reporter.warning(NLS.bind("Defining method {0} in an undefined class {1}", decl
-                                    .getName(), klass.name()), decl.getNameNode().sourceStart(), decl
-                                    .getNameNode().sourceEnd());
-                    }
-                }
+                //MethodDeclaration decl = (MethodDeclaration) node;
+                //if (decl.getReceiver() != null) {
+                //    Scope scope = RubyUtils.restoreScope(currentFileScope, decl.getNameNode());
+                //    if (scope instanceof MethodScope) {
+                //        MethodScope methodScope = (MethodScope) scope;
+                //        RubyBasicClass t1 = methodScope.getMethod().klass();
+                //        RubyClass klass = (t1 instanceof RubyClass ? (RubyClass) t1 : ((RubyMetaClass) t1)
+                //                .instanceClass());
+                //        if (klass.isUndefined())
+                //            reporter.warning(NLS.bind("Defining method {0} in an undefined class {1}", decl
+                //                    .getName(), klass.name()), decl.getNameNode().sourceStart(), decl
+                //                    .getNameNode().sourceEnd());
+                //    }
+                //}
             }
             return true;
         }
