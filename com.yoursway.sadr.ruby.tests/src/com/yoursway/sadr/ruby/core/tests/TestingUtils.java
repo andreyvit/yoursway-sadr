@@ -1,7 +1,7 @@
 package com.yoursway.sadr.ruby.core.tests;
 
 public class TestingUtils {
-
+    
     public static String callerOutside(Class<?> klass) {
         boolean thisClassMet = false;
         for (StackTraceElement element : Thread.currentThread().getStackTrace()) {

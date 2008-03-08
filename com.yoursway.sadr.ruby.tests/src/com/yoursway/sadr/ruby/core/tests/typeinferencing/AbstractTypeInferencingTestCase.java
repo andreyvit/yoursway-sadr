@@ -1,19 +1,13 @@
 package com.yoursway.sadr.ruby.core.tests.typeinferencing;
 
 import static com.yoursway.sadr.engine.util.Strings.join;
-import static com.yoursway.sadr.ruby.core.tests.TestingUtils.callerOutside;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,24 +18,15 @@ import java.util.regex.Pattern;
 import junit.framework.Assert;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.ruby.core.RubyNature;
 import org.eclipse.dltk.ruby.internal.parsers.jruby.ASTUtils;
-import org.junit.After;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
@@ -51,8 +36,8 @@ import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodNamesRequestor;
+import com.yoursway.sadr.ruby.core.tests.AbstractTestCase;
 import com.yoursway.sadr.ruby.core.tests.RubyTestsPlugin;
-import com.yoursway.sadr.ruby.core.tests.internal.FileUtil;
 import com.yoursway.sadr.ruby.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
@@ -61,52 +46,11 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
-public abstract class AbstractTypeInferencingTestCase {
+public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
     
-    protected IProject testProject;
-    private File tempDirectory;
-    
-    private void createProject(String projectName, File projectLocation) throws Exception {
-        final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        testProject = workspace.getRoot().getProject(projectName);
-        if (testProject.exists())
-            testProject.delete(false, true, null);
-        IProjectDescription description = workspace.newProjectDescription(testProject.getName());
-        description.setNatureIds(new String[] { RubyNature.NATURE_ID });
-        //        URL projectLocation = DtlTestsPlugin.getDefault().getBundle().getEntry("test_projects/" + projectName);
-        //        if (projectLocation == null)
-        //            throw new AssertionError("Test project not found.");
-        //        URL resolvedProjectLocation = Platform.resolve(projectLocation);
-        IPath tempPath = RubyTestsPlugin.getDefault().getStateLocation().append("testprojects").append(
-                projectName);
-        tempDirectory = tempPath.toFile();
-        FileUtil.recursiveDelete(tempDirectory);
-        recursiveCopy(projectLocation, tempDirectory);
-        //      recursiveCopy(new File(resolvedProjectLocation.getPath()), tempDirectory);
-        description.setLocation(tempPath);
-        testProject.create(description, null);
-        testProject.open(null);
-    }
-    
-    @After
-    public void tearDown() throws Exception {
-        testProject.delete(true, true, null);
-    }
-    
+    @Override
     protected void runTest() throws Exception {
-        String methodName = callerOutside(AbstractTypeInferencingTestCase.class);
-        String className = getClass().getSimpleName();
-        String basePath = "/tests/" + className + "/" + methodName;
-        
-        URL projectLocation = RubyTestsPlugin.getDefault().getBundle().getEntry(basePath);
-        if (projectLocation == null)
-            throw new AssertionError("Test project not found.");
-        URL resolvedProjectLocation = FileLocator.resolve(projectLocation);
-        File file = new File(resolvedProjectLocation.getPath());
-        createProject("test", file);
-        
-        IScriptProject scriptProject = DLTKCore.create(testProject);
-        WholeProjectRuntime projectRuntime = new WholeProjectRuntime(scriptProject);
+        WholeProjectRuntime projectRuntime = createProjectRuntime(getClass(), "");
         
         AnalysisEngine engine = projectRuntime.getEngine();
         
@@ -245,43 +189,6 @@ public abstract class AbstractTypeInferencingTestCase {
             return result.toString();
         } finally {
             in.close();
-        }
-    }
-    
-    private static void recursiveCopy(File source, File destination) throws IOException {
-        if (source.isDirectory()) {
-            destination.mkdirs();
-            File[] files = source.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                File file = files[i];
-                recursiveCopy(file, new File(destination, file.getName()));
-            }
-        } else {
-            copyFile(source, destination);
-        }
-    }
-    
-    private static void copyFile(File source, File destination) throws IOException {
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(source);
-            out = new FileOutputStream(destination);
-            copyStream(in, out);
-        } finally {
-            if (in != null)
-                in.close();
-            if (out != null)
-                out.close();
-        }
-    }
-    
-    private static void copyStream(InputStream in, OutputStream out) throws IOException {
-        byte[] buf = new byte[10240];
-        int size = in.read(buf);
-        while (size > 0) {
-            out.write(buf, 0, size);
-            size = in.read(buf);
         }
     }
     
