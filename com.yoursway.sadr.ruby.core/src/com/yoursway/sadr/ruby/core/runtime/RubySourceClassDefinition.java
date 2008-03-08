@@ -50,11 +50,11 @@ public class RubySourceClassDefinition extends RubyClassDefinition implements Co
     
     public void addLocalVariable(RubyLocalVariable localVariable) {
         localVariables.add(localVariable);
-        namesToLocalVariables.put(localVariable.name().toLowerCase(), localVariable);
+        namesToLocalVariables.put(localVariable.name(), localVariable);
     }
     
     public RubyVariable findLocalVariable(String name) {
-        return namesToLocalVariables.get(name.toLowerCase());
+        return namesToLocalVariables.get(name);
     }
     
     public ASTNode node() {
