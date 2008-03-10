@@ -20,3 +20,6 @@ def ggg()
 	m.boz(Foo.new)
 	gboz(Foo.new)
 end
+
+
+a = Foo.new ## expr a => Foo

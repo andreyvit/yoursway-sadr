@@ -22,12 +22,12 @@ public abstract class RubyBasicClass {
         if (method == null)
             throw new NullPointerException();
         methods.add(method);
-        namesToMethods.put(name.toLowerCase(), method);
+        namesToMethods.put(name, method);
     }
     
     public void addField(RubyField field) {
         fields.add(field);
-        namesToFields.put(field.name().toLowerCase(), field);
+        namesToFields.put(field.name(), field);
     }
     
     public void findMethodsByPrefix(String prefix, Collection<RubyMethod> requestor) {
@@ -53,7 +53,8 @@ public abstract class RubyBasicClass {
     }
     
     public RubyMethod findMethod(String name) {
-        return namesToMethods.get(name.toLowerCase());
+        return namesToMethods.get(name);
+        // TODO? find in superclass
     }
     
     public abstract RubyBasicClass superclassOfTheSameKind();
@@ -62,7 +63,7 @@ public abstract class RubyBasicClass {
     public abstract String toString();
     
     public RubyField findField(String name) {
-        RubyField field = namesToFields.get(name.toLowerCase());
+        RubyField field = namesToFields.get(name);
         if (field != null)
             return field;
         RubyBasicClass sup = superclassOfTheSameKind();
@@ -73,7 +74,7 @@ public abstract class RubyBasicClass {
     
     public boolean definesAtLeastOneOf(String[] methods) {
         for (String method : methods)
-            if (namesToMethods.containsKey(method.toLowerCase()))
+            if (namesToMethods.containsKey(method))
                 return true;
         return false;
     }

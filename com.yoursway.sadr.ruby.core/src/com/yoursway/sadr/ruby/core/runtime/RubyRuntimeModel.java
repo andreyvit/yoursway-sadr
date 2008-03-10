@@ -24,19 +24,19 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     
     private final Collection<RubyClass> klasses = new ArrayList<RubyClass>();
     
-    private final Map<String, RubyClass> lowercaseNamesToClasses = new HashMap<String, RubyClass>();
+    private final Map<String, RubyClass> namesToClasses = new HashMap<String, RubyClass>();
     
     private final Collection<RubyProcedure> procedures = new ArrayList<RubyProcedure>();
     
-    private final Map<String, RubyProcedure> lowercaseNamesToProcedures = new HashMap<String, RubyProcedure>();
+    private final Map<String, RubyProcedure> namesToProcedures = new HashMap<String, RubyProcedure>();
     
     private final Collection<RubyGlobalVariable> globalVariables = new ArrayList<RubyGlobalVariable>();
     
-    private final Map<String, RubyGlobalVariable> lowercaseNamesToGlobalVariables = new HashMap<String, RubyGlobalVariable>();
+    private final Map<String, RubyGlobalVariable> namesToGlobalVariables = new HashMap<String, RubyGlobalVariable>();
     
     private final Collection<RubySimpleType> simpleTypes = new ArrayList<RubySimpleType>();
     
-    private final Map<String, RubySimpleType> lowercaseNamesToSimpleTypes = new HashMap<String, RubySimpleType>();
+    private final Map<String, RubySimpleType> namesToSimpleTypes = new HashMap<String, RubySimpleType>();
     
     private final Map<String, RubyClass[]> methodToClasses = new HashMap<String, RubyClass[]>();
     
@@ -56,7 +56,7 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     }
     
     public RubyClass findClass(String name) {
-        return lowercaseNamesToClasses.get(name.toLowerCase());
+        return namesToClasses.get(name);
     }
     
     public RubyGlobalVariable lookupGlobalVariable(String name) {
@@ -67,24 +67,23 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     }
     
     private RubyGlobalVariable findGlobalVariable(String name) {
-        String lowerName = name.toLowerCase();
-        RubyGlobalVariable globalVariable = lowercaseNamesToGlobalVariables.get(lowerName);
+        RubyGlobalVariable globalVariable = namesToGlobalVariables.get(name);
         return globalVariable;
     }
     
     public void addClass(RubyClass klass) {
         klasses.add(klass);
-        lowercaseNamesToClasses.put(klass.name().toLowerCase(), klass);
+        namesToClasses.put(klass.name(), klass);
     }
     
     public void addProcedure(RubyProcedure procedure) {
         procedures.add(procedure);
-        lowercaseNamesToProcedures.put(procedure.name().toLowerCase(), procedure);
+        namesToProcedures.put(procedure.name(), procedure);
     }
     
     public void addGlobalVariable(RubyGlobalVariable globalVariable) {
         globalVariables.add(globalVariable);
-        lowercaseNamesToGlobalVariables.put(globalVariable.name().toLowerCase(), globalVariable);
+        namesToGlobalVariables.put(globalVariable.name(), globalVariable);
     }
     
     public RubyProcedure[] findProceduresMatching(String prefix) {
@@ -97,7 +96,7 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     
     public void addSimpleType(RubySimpleType simpleType) {
         simpleTypes.add(simpleType);
-        lowercaseNamesToSimpleTypes.put(simpleType.name().toLowerCase(), simpleType);
+        namesToSimpleTypes.put(simpleType.name(), simpleType);
     }
     
     public StandardTypes standardTypes() {
@@ -109,7 +108,7 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     }
     
     public RubyProcedure findProcedure(String name) {
-        return lowercaseNamesToProcedures.get(name.toLowerCase());
+        return namesToProcedures.get(name);
     }
     
     public RubyClass[] allClasses() {
@@ -117,11 +116,10 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     }
     
     public RubyClass[] findClassesWithMethod(String method) {
-        String lower = method.toLowerCase();
-        RubyClass[] result = methodToClasses.get(lower);
+        RubyClass[] result = methodToClasses.get(method);
         if (result == null) {
             result = calculateClassesWithMethod(method);
-            methodToClasses.put(lower, result);
+            methodToClasses.put(method, result);
         }
         return result;
     }

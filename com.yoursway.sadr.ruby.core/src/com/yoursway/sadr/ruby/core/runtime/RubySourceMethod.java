@@ -75,11 +75,11 @@ public class RubySourceMethod extends RubyMethod implements NodeBoundItem, Local
     
     public void addLocalVariable(RubyLocalVariable localVariable) {
         localVariables.add(localVariable);
-        namesToLocalVariables.put(localVariable.name().toLowerCase(), localVariable);
+        namesToLocalVariables.put(localVariable.name(), localVariable);
     }
     
     public RubyVariable findLocalVariable(String name) {
-        return namesToLocalVariables.get(name.toLowerCase());
+        return namesToLocalVariables.get(name);
     }
     
     public Construct<Scope, ASTNode> construct() {
