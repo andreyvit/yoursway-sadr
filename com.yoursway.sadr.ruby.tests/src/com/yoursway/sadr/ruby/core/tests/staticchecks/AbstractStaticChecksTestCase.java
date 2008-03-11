@@ -26,7 +26,7 @@ public abstract class AbstractStaticChecksTestCase extends AbstractTestCase {
     
     @Override
     protected void runTest() throws Exception {
-        WholeProjectRuntime projectRuntime = createProjectRuntime(getClass(), "staticchecks/");
+        WholeProjectRuntime projectRuntime = createProjectRuntime(getClass());
         
         for (StaticCheckAssertion a : assertions)
             a.init(projectRuntime);

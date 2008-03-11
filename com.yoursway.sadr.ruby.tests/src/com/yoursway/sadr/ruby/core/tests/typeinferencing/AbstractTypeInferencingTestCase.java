@@ -6,8 +6,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,10 +15,6 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.SimpleReference;
@@ -37,8 +31,7 @@ import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodNamesRequestor;
 import com.yoursway.sadr.ruby.core.tests.AbstractTestCase;
-import com.yoursway.sadr.ruby.core.tests.RubyTestsPlugin;
-import com.yoursway.sadr.ruby.core.tests.internal.StringInputStream;
+import com.yoursway.sadr.ruby.core.tests.TestUtils;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
@@ -50,7 +43,7 @@ public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
     
     @Override
     protected void runTest() throws Exception {
-        WholeProjectRuntime projectRuntime = createProjectRuntime(getClass(), "");
+        WholeProjectRuntime projectRuntime = createProjectRuntime(getClass());
         
         AnalysisEngine engine = projectRuntime.getEngine();
         
@@ -157,51 +150,8 @@ public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
     }
     
     protected static void assertCorrectString0(String fileName, Object object) throws IOException {
-        String content = readFile(fileName);
+        String content = TestUtils.readFile(fileName);
         assertEquals(content.trim(), object.toString().trim());
-    }
-    
-    protected static String joinPath(String c1, String c2) {
-        IPath path = new Path(c1).append(c2);
-        return path.toPortableString();
-    }
-    
-    protected static String joinPath(String c1, String c2, String c3) {
-        return joinPath(joinPath(c1, c2), c3);
-    }
-    
-    protected static String readFile(final String fileName) throws IOException {
-        InputStream in = RubyTestsPlugin.openResource(fileName);
-        return readAndClose(in);
-    }
-    
-    public static String readAndClose(InputStream in) throws IOException {
-        try {
-            StringBuffer result = new StringBuffer();
-            InputStreamReader reader = new InputStreamReader(in);
-            char[] buf = new char[1024];
-            while (true) {
-                int read = reader.read(buf);
-                if (read <= 0)
-                    break;
-                result.append(buf, 0, read);
-            }
-            return result.toString();
-        } finally {
-            in.close();
-        }
-    }
-    
-    protected static String removeExtension(final String fileName) {
-        return new Path(fileName).removeFileExtension().lastSegment();
-    }
-    
-    protected static void replaceContents(IFile oldFile, IFile newFile) throws IOException, CoreException {
-        String oldName = removeExtension(oldFile.getName());
-        String newName = removeExtension(newFile.getName());
-        String original = readAndClose(newFile.getContents());
-        String fixed = original.replaceAll("class " + newName, "class " + oldName);
-        oldFile.setContents(new StringInputStream(fixed), true, false, null);
     }
     
     public interface IAssertion {
