@@ -17,6 +17,8 @@ Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.sadr.ruby,
  com.yoursway.sadr.ruby.core.ast.visitor,
  com.yoursway.sadr.ruby.core.internal,
+ com.yoursway.sadr.ruby.core.rewriting,
+ com.yoursway.sadr.ruby.core.rewriting.edits,
  com.yoursway.sadr.ruby.core.runtime,
  com.yoursway.sadr.ruby.core.runtime.contributions,
  com.yoursway.sadr.ruby.core.runtime.requestors.methods,

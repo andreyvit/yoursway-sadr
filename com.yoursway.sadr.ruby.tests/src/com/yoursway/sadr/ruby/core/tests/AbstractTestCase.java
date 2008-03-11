@@ -76,6 +76,24 @@ public abstract class AbstractTestCase {
     }
     
     protected WholeProjectRuntime createProjectRuntime(Class<?> klass) throws Exception {
+        String basePath = calculateBasePath(klass);
+        File file = locateBundleResourceFolder(basePath);
+        createProject("test", file);
+        
+        IScriptProject scriptProject = DLTKCore.create(testProject);
+        return new WholeProjectRuntime(scriptProject);
+    }
+    
+    private File locateBundleResourceFolder(String basePath) throws AssertionError, IOException {
+        URL projectLocation = RubyTestsPlugin.getDefault().getBundle().getEntry(basePath);
+        if (projectLocation == null)
+            throw new AssertionError("Test project not found.");
+        URL resolvedProjectLocation = FileLocator.resolve(projectLocation);
+        File file = new File(resolvedProjectLocation.getPath());
+        return file;
+    }
+    
+    private String calculateBasePath(Class<?> klass) {
         String methodName = callerOutside(klass.getSuperclass());
         String className = klass.getSimpleName();
         String prefix = "com.yoursway.sadr.ruby.core.tests.";
@@ -84,16 +102,7 @@ public abstract class AbstractTestCase {
         String testsDir = klass.getName().substring(prefix.length());
         testsDir = testsDir.substring(0, testsDir.lastIndexOf('.'));
         String basePath = "/tests/" + testsDir + "/" + className + "/" + methodName;
-        
-        URL projectLocation = RubyTestsPlugin.getDefault().getBundle().getEntry(basePath);
-        if (projectLocation == null)
-            throw new AssertionError("Test project not found.");
-        URL resolvedProjectLocation = FileLocator.resolve(projectLocation);
-        File file = new File(resolvedProjectLocation.getPath());
-        createProject("test", file);
-        
-        IScriptProject scriptProject = DLTKCore.create(testProject);
-        return new WholeProjectRuntime(scriptProject);
+        return basePath;
     }
     
     private static void copyFile(File source, File destination) throws IOException {

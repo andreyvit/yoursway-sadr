@@ -1,0 +1,6 @@
+
+class Bar
+  def newname(x)
+    puts "Hello, world!"
+  end
+end
