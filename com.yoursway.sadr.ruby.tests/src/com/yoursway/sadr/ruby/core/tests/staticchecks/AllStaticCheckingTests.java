@@ -1,0 +1,1 @@
+package com.yoursway.sadr.ruby.core.tests.staticchecks;import org.junit.runner.RunWith;import org.junit.runners.Suite;@RunWith(Suite.class)@Suite.SuiteClasses( { MethodCallCheckTests.class })public class AllStaticCheckingTests {}

@@ -75,10 +75,15 @@ public abstract class AbstractTestCase {
         testProject.open(null);
     }
     
-    protected WholeProjectRuntime createProjectRuntime(Class<?> klass, String testsDir) throws Exception {
+    protected WholeProjectRuntime createProjectRuntime(Class<?> klass) throws Exception {
         String methodName = callerOutside(klass.getSuperclass());
         String className = klass.getSimpleName();
-        String basePath = "/tests/" + testsDir + className + "/" + methodName;
+        String prefix = "com.yoursway.sadr.ruby.core.tests.";
+        if (!klass.getName().startsWith(prefix))
+            throw new IllegalArgumentException("Test cases must be in " + prefix + "*");
+        String testsDir = klass.getName().substring(prefix.length());
+        testsDir = testsDir.substring(0, testsDir.lastIndexOf('.'));
+        String basePath = "/tests/" + testsDir + "/" + className + "/" + methodName;
         
         URL projectLocation = RubyTestsPlugin.getDefault().getBundle().getEntry(basePath);
         if (projectLocation == null)
