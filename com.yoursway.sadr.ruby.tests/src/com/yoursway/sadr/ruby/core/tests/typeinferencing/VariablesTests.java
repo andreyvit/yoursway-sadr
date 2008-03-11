@@ -28,5 +28,10 @@ public class VariablesTests extends AbstractTypeInferencingTestCase {
     public void funcAssignedToGlobal() throws Exception {
         runTest();
     }
- 
+    
+    @Test
+    public void variableInFileScope() throws Exception {
+        runTest();
+    }
+    
 }
