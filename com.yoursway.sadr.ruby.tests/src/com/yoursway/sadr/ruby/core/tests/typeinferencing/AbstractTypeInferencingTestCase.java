@@ -41,7 +41,6 @@ import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
     
-    @Override
     protected void runTest() throws Exception {
         WholeProjectRuntime projectRuntime = createProjectRuntime(getClass());
         

@@ -29,8 +29,6 @@ public abstract class AbstractTestCase {
     private IProject testProject;
     private File tempDirectory;
     
-    protected abstract void runTest() throws Exception;
-    
     public AbstractTestCase() {
         super();
     }
