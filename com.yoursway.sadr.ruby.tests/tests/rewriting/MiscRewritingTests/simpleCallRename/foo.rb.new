@@ -1,0 +1,6 @@
+
+class Bar
+  def foo(x)
+    x.newname(42)
+  end
+end

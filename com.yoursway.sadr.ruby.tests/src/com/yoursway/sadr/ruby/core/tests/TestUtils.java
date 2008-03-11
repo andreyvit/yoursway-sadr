@@ -11,23 +11,22 @@ import org.eclipse.core.runtime.Path;
 
 import com.yoursway.sadr.ruby.core.tests.internal.StringInputStream;
 
-
 public class TestUtils {
-
+    
     public static String joinPath(String c1, String c2) {
         IPath path = new Path(c1).append(c2);
         return path.toPortableString();
     }
-
+    
     public static String joinPath(String c1, String c2, String c3) {
         return joinPath(joinPath(c1, c2), c3);
     }
-
+    
     public static String readFile(final String fileName) throws IOException {
         InputStream in = RubyTestsPlugin.openResource(fileName);
         return TestUtils.readAndClose(in);
     }
-
+    
     public static String readAndClose(InputStream in) throws IOException {
         try {
             StringBuffer result = new StringBuffer();
@@ -44,11 +43,15 @@ public class TestUtils {
             in.close();
         }
     }
-
+    
     public static String removeExtension(final String fileName) {
         return new Path(fileName).removeFileExtension().lastSegment();
     }
-
+    
+    public static IPath appendToFileName(IPath path, String suffix) {
+        return Path.fromPortableString(path.toPortableString() + suffix);
+    }
+    
     public static void replaceContents(IFile oldFile, IFile newFile) throws IOException, CoreException {
         String oldName = removeExtension(oldFile.getName());
         String newName = removeExtension(newFile.getName());
