@@ -21,5 +21,3 @@ def ggg()
 	gboz(Foo.new)
 end
 
-
-a = Foo.new ## expr a => Foo
