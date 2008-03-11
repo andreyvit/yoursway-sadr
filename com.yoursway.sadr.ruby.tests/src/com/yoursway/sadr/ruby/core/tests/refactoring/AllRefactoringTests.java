@@ -1,0 +1,1 @@
+package com.yoursway.sadr.ruby.core.tests.refactoring;import org.junit.runner.RunWith;import org.junit.runners.Suite;@RunWith(Suite.class)@Suite.SuiteClasses( { MiscRefactoringTests.class })public class AllRefactoringTests {}

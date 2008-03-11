@@ -8,12 +8,12 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
 import com.yoursway.sadr.engine.AbstractGoal;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
@@ -64,7 +64,8 @@ public class MethodCallersGoal extends AbstractGoal {
     }
     
     public CallersInfo result(ContextSensitiveThing victim) {
-        punish(victim);
+        if (victim != null)
+            punish(victim);
         return weakResult();
     }
     

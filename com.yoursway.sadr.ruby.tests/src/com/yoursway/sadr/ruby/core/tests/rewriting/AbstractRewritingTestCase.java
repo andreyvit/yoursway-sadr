@@ -27,7 +27,6 @@ import com.yoursway.sadr.ruby.core.tests.TestUtils;
 
 public abstract class AbstractRewritingTestCase extends AbstractTestCase {
     
-    @Override
     protected void runTest() throws Exception {
         WholeProjectRuntime projectRuntime = createProjectRuntime(getClass());
         

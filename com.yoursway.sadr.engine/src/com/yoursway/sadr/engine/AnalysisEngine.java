@@ -155,7 +155,7 @@ public class AnalysisEngine {
             stats.finishedEvaluation(goal);
         }
         
-        private void maybeDone() {
+        protected void maybeDone() {
             if (!isContinuationCreated()) {
                 if (childrenCountOrState != DONE_CALLED)
                     signalContinueOrDoneViolation();
@@ -167,12 +167,16 @@ public class AnalysisEngine {
             goal.done();
             storeIntoCache();
             finished(goal, (parent == null ? null : parent.goal()));
-            if (parent != null)
-                ((Q) parent).decrementChildrenCount(goal);
+            signalFinishedToParent();
             for (QQ qq : sameGoals.get(goal)) {
                 qq.goal().copyAnswerFrom(goal);
                 qq.handleFinished();
             }
+        }
+        
+        protected void signalFinishedToParent() {
+            if (parent != null)
+                ((Q) parent).decrementChildrenCount(goal);
         }
         
         protected abstract void signalContinueOrDoneViolation();
@@ -328,6 +332,40 @@ public class AnalysisEngine {
         
     }
     
+    final class ContinuationQuery extends Q {
+        
+        private final SimpleContinuation continuation;
+        
+        public ContinuationQuery(SimpleContinuation continuation) {
+            super(new DummyGoal());
+            this.continuation = continuation;
+        }
+        
+        @Override
+        public Q parent() {
+            return null;
+        }
+        
+        @Override
+        public void recursive() {
+        }
+        
+        @Override
+        protected void pleaseEvaluate() {
+            continuation.run(this);
+        }
+        
+        @Override
+        protected void signalContinueOrDoneViolation() {
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()", goal);
+        }
+        
+        @Override
+        protected void storeIntoCache() {
+        }
+        
+    }
+    
     private final QueryQueue queue = new QueryQueue();
     
     private final Map<Goal, Goal> activeGoals = new HashMap<Goal, Goal>();
@@ -422,10 +460,16 @@ public class AnalysisEngine {
         if (!addition.shouldCreateQuery())
             return;
         queue.enqueue(new QQ(goal));
+        executeQueue();
+    }
+    
+    private void executeQueue() {
         Query current;
         while ((current = queue.poll()) != null) {
             current.evaluate();
-            stats.finishedQuery(current.goal());
+            Goal goal = current.goal();
+            if (goal != null)
+                stats.finishedQuery(goal);
         }
     }
     
@@ -438,6 +482,11 @@ public class AnalysisEngine {
         StringBuilder res = new StringBuilder();
         res.append(super.toString());
         return res.toString();
+    }
+    
+    public void execute(SimpleContinuation continuation) {
+        queue.enqueue(new ContinuationQuery(continuation));
+        executeQueue();
     }
     
 }
