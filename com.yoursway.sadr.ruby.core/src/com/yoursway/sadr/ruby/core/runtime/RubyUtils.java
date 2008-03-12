@@ -144,12 +144,14 @@ public class RubyUtils {
     }
     
     public static Scope restoreScope(FileScope fileScope, ASTNode node) {
-        System.out.println();
         LocalScope parentScope = findParentScope(fileScope, node);
         ScopeRequestor requestor = new ScopeRequestor(parentScope);
         RubyAstTraverser traverser = new RubyExtendedAstTraverser(fileScope.nodeLookup());
         traverser.traverse(parentScope.node(), new RootScoper(node, parentScope, requestor));
-        return requestor.getInnerScope();
+        Scope innerScope = requestor.getInnerScope();
+        if (innerScope == null)
+            throw new AssertionError("restoreScope: subscoper failed to find scope");
+        return innerScope;
     }
     
     public static Scope restoreSubscope(Scope scope, ASTNode node) {
