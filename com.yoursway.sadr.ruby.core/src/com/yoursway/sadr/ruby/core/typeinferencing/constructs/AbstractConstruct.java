@@ -10,6 +10,8 @@ public abstract class AbstractConstruct implements IConstruct {
     private final StaticContext staticContext;
     
     public AbstractConstruct(StaticContext sc) {
+        if (sc == null)
+            throw new NullPointerException("AbstractConstruct(sc == null)");
         this.staticContext = sc;
     }
     

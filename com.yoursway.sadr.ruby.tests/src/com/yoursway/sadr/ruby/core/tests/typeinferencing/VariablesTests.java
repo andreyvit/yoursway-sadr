@@ -10,6 +10,11 @@ public class VariablesTests extends AbstractTypeInferencingTestCase {
     }
     
     @Test
+    public void localVariableType2() throws Exception {
+        runTest();
+    }
+    
+    @Test
     public void localVariableAssignments() throws Exception {
         runTest();
     }
