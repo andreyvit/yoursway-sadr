@@ -1,6 +1,6 @@
 
 class Foo:
-  def foo:
+  def foo():
     pass
 
 class Bar:
@@ -8,7 +8,7 @@ class Bar:
     x.foo()
     print x ## expr x => Foo
 
-  def gboz(x)
-    x.foo()
-    print x ## expr x => Foo
+def gboz(x):
+  x.foo()
+  print x ## expr x => Foo
 

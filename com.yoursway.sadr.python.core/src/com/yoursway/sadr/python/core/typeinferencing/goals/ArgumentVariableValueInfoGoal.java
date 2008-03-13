@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
+
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
@@ -19,6 +21,7 @@ import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
@@ -248,11 +251,17 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         return "" + variable;
     }
     
-    private static String[] methodNames(Collection<CallC> calls) {
+    private String[] methodNames(Collection<CallC> calls) {
         Collection<String> methodsColl = new ArrayList<String>(calls.size());
         for (CallC call : calls) {
-            String name = call.node().getName();
-            methodsColl.add(name);
+            PythonCallExpression node = call.node();
+            String name;
+            if (variable.callable() instanceof PythonMethod)
+                name = node.getMethodName();
+            else
+                name = node.getProcedureName();
+            if (name != null)
+                methodsColl.add(name);
         }
         return methodsColl.toArray(new String[methodsColl.size()]);
     }

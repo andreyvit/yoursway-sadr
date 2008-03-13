@@ -7,8 +7,7 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
@@ -21,13 +20,13 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRe
 
 public class ProcedureCallC extends CallC implements IndexAffector {
     
-    ProcedureCallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
-        super(sc, node, originalNode);
+    ProcedureCallC(PythonStaticContext sc, PythonCallExpression node) {
+        super(sc, node);
     }
     
     public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
-        final String name = node.getName();
+        final String name = node.getProcedureName();
         Callable procedure = staticContext().procedureLookup().findProcedure(name);
         if (procedure != null)
             requestor.subgoal(new CallablesReturnTypeCont(infoKind, arguments(), dc,
@@ -40,7 +39,7 @@ public class ProcedureCallC extends CallC implements IndexAffector {
     public void calculateEffectiveControlFlowGraph(
             ContinuationRequestor requestor,
             ControlFlowGraphRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
-        if (node.getName().equalsIgnoreCase("eval")) {
+        if (node.getProcedureName().equalsIgnoreCase("eval")) {
             List<PythonConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
             for (ModuleDeclaration root : staticContext().extentionsOf(node))
                 constructs.add(new EvalRootC(staticContext(), root));
@@ -54,7 +53,7 @@ public class ProcedureCallC extends CallC implements IndexAffector {
     }
     
     public void actOnIndex(IndexRequest request) {
-        request.addProcedureCall(node.getName(), this);
+        request.addProcedureCall(node.getProcedureName(), this);
     }
     
 }
