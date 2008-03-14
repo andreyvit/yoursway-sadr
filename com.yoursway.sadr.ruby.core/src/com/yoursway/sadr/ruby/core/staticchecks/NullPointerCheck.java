@@ -26,7 +26,7 @@ public class NullPointerCheck extends OneModuleRuntimeBasedCheck {
             Scope scope = RubyUtils.restoreScope(currentFileScope, call);
             ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(scope, receiver, InfoKind.TYPE);
             runtime.getEngine().evaluate(goal);
-            ValueInfo types = goal.weakResult();
+            ValueInfo types = goal.roughResult();
             if (types.isEmpty()) {
                 //?
                 //String msg = "Cannot check a call to \"{0}\" because could not inference the type of the receiver.";

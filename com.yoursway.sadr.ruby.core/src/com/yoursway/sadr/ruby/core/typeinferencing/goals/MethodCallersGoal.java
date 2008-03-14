@@ -45,7 +45,7 @@ public class MethodCallersGoal extends AbstractGoal {
     }
     
     public void copyAnswerFrom(Goal goal) {
-        copyAnswerFrom(((MethodCallersGoal) goal).result(thou()));
+        copyAnswerFrom(((MethodCallersGoal) goal).result(thing()));
     }
     
     public void copyAnswerFrom(Result result) {
@@ -63,14 +63,14 @@ public class MethodCallersGoal extends AbstractGoal {
         done();
     }
     
-    public CallersInfo result(ContextSensitiveThing victim) {
-        if (victim != null)
-            punish(victim);
-        return weakResult();
+    public CallersInfo result(ContextSensitiveThing thing) {
+        if (thing != null)
+            expandTo(thing);
+        return roughResult();
     }
     
     @SuppressWarnings("unchecked")
-    public CallersInfo weakResult() {
+    public CallersInfo roughResult() {
         if (callers == null)
             throw new IllegalStateException("MethodCallersGoal.result() before done()");
         return callers;
@@ -135,7 +135,7 @@ public class MethodCallersGoal extends AbstractGoal {
         private Construct<Scope, CallExpression>[] collectSuitableCallers(RubyMethod method) {
             List<Construct<Scope, CallExpression>> realCallers = new ArrayList<Construct<Scope, CallExpression>>();
             for (int i = 0; i < constructs.length; i++)
-                for (RubyBasicClass klass : goals[i].result(thou()).possibleClasses())
+                for (RubyBasicClass klass : goals[i].result(thing()).possibleClasses())
                     if (method.canBeCalledFrom(klass))
                         realCallers.add(constructs[i]);
             return realCallers.toArray(createArray(realCallers.size()));

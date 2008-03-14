@@ -48,10 +48,10 @@ public class RubyControlFlowTraverser {
     }
     
     private final Scope scope;
-    private final ContextSensitiveThing victim;
+    private final ContextSensitiveThing thing;
     
-    public RubyControlFlowTraverser(ContextSensitiveThing victim, Scope scope) {
-        this.victim = victim;
+    public RubyControlFlowTraverser(ContextSensitiveThing thing, Scope scope) {
+        this.thing = thing;
         this.scope = scope;
     }
     
@@ -137,7 +137,7 @@ public class RubyControlFlowTraverser {
             }
             
             public void done(ContinuationRequestor requestor) {
-                ValueSet valueSet = conditionGoal.result(victim).getValueSet();
+                ValueSet valueSet = conditionGoal.result(thing).getValueSet();
                 boolean visitThen = false, visitElse = false;
                 for (Value value : valueSet.containedValues()) {
                     ValueTraits tr = value.traits();

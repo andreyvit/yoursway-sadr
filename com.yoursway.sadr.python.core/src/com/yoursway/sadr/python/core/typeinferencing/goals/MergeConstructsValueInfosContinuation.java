@@ -4,11 +4,11 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
@@ -16,12 +16,12 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicCon
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     
     private final ExpressionValueInfoGoal[] goals;
-    private final ContextSensitiveThing victim;
+    private final ContextSensitiveThing thing;
     private final ValueInfoContinuation continuation;
     
-    public MergeConstructsValueInfosContinuation(ContextSensitiveThing victim, PythonConstruct[] constructs,
+    public MergeConstructsValueInfosContinuation(ContextSensitiveThing thing, PythonConstruct[] constructs,
             PythonDynamicContext dc, InfoKind kind, ValueInfoContinuation continuation) {
-        this.victim = victim;
+        this.thing = thing;
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[constructs.length];
         for (int i = 0; i < constructs.length; i++)
@@ -36,7 +36,7 @@ public final class MergeConstructsValueInfosContinuation implements Continuation
     public void done(ContinuationRequestor requestor) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (ValueInfoGoal goal : goals)
-            builder.addResultOf(goal, victim);
+            builder.addResultOf(goal, thing);
         continuation.consume(builder.build(), requestor);
     }
     

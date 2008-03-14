@@ -251,7 +251,7 @@ public class AnalysisEngine {
             if (!goal.cachable())
                 return;
             if (goal.isContextFree())
-                contextFreeCache.put(goal, goal.weakResult());
+                contextFreeCache.put(goal, goal.roughResult());
             else {
                 ContextRelation relation = goal.contextRelation();
                 
@@ -262,7 +262,7 @@ public class AnalysisEngine {
                     contextRelationsCache.put(goal, existingRelation.extend(relation));
                 
                 GoalContext context = relation.createPrimaryContext(goal);
-                contextSensitiveCache.put(context, goal.weakResult());
+                contextSensitiveCache.put(context, goal.roughResult());
             }
         }
     }

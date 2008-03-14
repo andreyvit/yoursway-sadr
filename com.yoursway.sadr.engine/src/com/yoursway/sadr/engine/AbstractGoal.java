@@ -52,7 +52,7 @@ public abstract class AbstractGoal implements Goal {
             return new ContextRelation(new HashSet<Goal>(propagatingGoals()));
     }
     
-    protected void punish(ContextSensitiveThing acceptor) { //?
+    protected void expandTo(ContextSensitiveThing acceptor) {
         acceptor.addPropagatingGoals(propagatingGoals());
     }
     
@@ -63,7 +63,7 @@ public abstract class AbstractGoal implements Goal {
             return propagatingGoals;
     }
     
-    protected ContextSensitiveThing thou() { //?
+    protected ContextSensitiveThing thing() {
         return this;
     }
     

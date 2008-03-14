@@ -5,8 +5,8 @@ import com.yoursway.sadr.engine.ContextSensitiveThing;
 
 public interface ValueInfoGoal extends Goal {
     
-    ValueInfo result(ContextSensitiveThing victim);
+    ValueInfo result(ContextSensitiveThing thing);
     
-    ValueInfo weakResult();
+    ValueInfo roughResult();
     
 }

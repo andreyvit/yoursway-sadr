@@ -40,7 +40,7 @@ final class DummyGoal extends AbstractGoal {
     public void evaluate(ContinuationRequestor requestor) {
     }
     
-    public Result weakResult() {
+    public Result roughResult() {
         return null;
     }
     

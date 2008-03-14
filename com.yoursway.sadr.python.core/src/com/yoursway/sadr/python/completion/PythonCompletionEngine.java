@@ -203,7 +203,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(),
                 InfoKind.TYPE);
         engine.evaluate(goal);
-        ValueInfo types = goal.weakResult();
+        ValueInfo types = goal.roughResult();
         for (PythonMethod method : types.findMethodsByPrefix(prefix))
             reportMethod(method, 4242);
     }

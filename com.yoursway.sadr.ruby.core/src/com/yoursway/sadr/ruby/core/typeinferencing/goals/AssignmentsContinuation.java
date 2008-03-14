@@ -20,13 +20,13 @@ public final class AssignmentsContinuation extends AbstractContinuation {
     
     private final AssignmentInfo[] assignments;
     
-    private final ContextSensitiveThing victim;
+    private final ContextSensitiveThing thing;
     
     private final ValueInfoContinuation continuation;
     
-    public AssignmentsContinuation(ContextSensitiveThing victim, AssignmentInfo[] ass, InfoKind kind,
+    public AssignmentsContinuation(ContextSensitiveThing thing, AssignmentInfo[] ass, InfoKind kind,
             ValueInfoContinuation continuation) {
-        this.victim = victim;
+        this.thing = thing;
         assignments = ass;
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[assignments.length];
@@ -45,7 +45,7 @@ public final class AssignmentsContinuation extends AbstractContinuation {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (int i = 0; i < assignments.length; i++) {
             ValueInfoGoal goal = goals[i];
-            ValueInfo result = goal.result(victim);
+            ValueInfo result = goal.result(thing);
             builder.add(assignments[i].wildcard(), result);
         }
         continuation.consume(builder.build(), requestor);

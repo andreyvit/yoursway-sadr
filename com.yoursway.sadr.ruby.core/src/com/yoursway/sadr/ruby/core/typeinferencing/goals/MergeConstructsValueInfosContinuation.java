@@ -15,12 +15,12 @@ import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     
     private final ExpressionValueInfoGoal[] goals;
-    private final ContextSensitiveThing victim;
+    private final ContextSensitiveThing thing;
     private final ValueInfoContinuation continuation;
     
-    public MergeConstructsValueInfosContinuation(ContextSensitiveThing victim, Construct<?, ?>[] constructs, InfoKind kind,
+    public MergeConstructsValueInfosContinuation(ContextSensitiveThing thing, Construct<?, ?>[] constructs, InfoKind kind,
             ValueInfoContinuation continuation) {
-        this.victim = victim;
+        this.thing = thing;
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[constructs.length];
         for (int i = 0; i < constructs.length; i++)
@@ -35,7 +35,7 @@ public final class MergeConstructsValueInfosContinuation implements Continuation
     public void done(ContinuationRequestor requestor) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (ValueInfoGoal goal : goals)
-            builder.addResultOf(goal, victim);
+            builder.addResultOf(goal, thing);
         continuation.consume(builder.build(), requestor);
     }
     

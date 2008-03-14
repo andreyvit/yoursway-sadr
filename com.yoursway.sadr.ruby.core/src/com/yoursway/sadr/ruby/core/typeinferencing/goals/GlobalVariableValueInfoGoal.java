@@ -40,7 +40,7 @@ public class GlobalVariableValueInfoGoal extends AbstractValueInfoGoal {
             
         });
         AssignmentInfo[] arr = assignments.toArray(new AssignmentInfo[assignments.size()]);
-        requestor.subgoal(new AssignmentsContinuation(thou(), arr, kind, this));
+        requestor.subgoal(new AssignmentsContinuation(thing(), arr, kind, this));
     }
     
     @Override

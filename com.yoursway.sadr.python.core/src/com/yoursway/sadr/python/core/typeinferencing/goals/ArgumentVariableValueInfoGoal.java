@@ -94,7 +94,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private PythonConstruct[] collectValueNodes() {
             List<PythonConstruct> values = new ArrayList<PythonConstruct>();
             int index = variable.index();
-            CallersInfo callers = callersGoal.result(thou());
+            CallersInfo callers = callersGoal.result(thing());
             for (CallC caller : callers.callers()) {
                 List<PythonConstruct> args = caller.arguments();
                 if (args.size() > index)
@@ -126,7 +126,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void done(ContinuationRequestor requestor) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             for (ValueInfoGoal goal : valueGoals)
-                builder.addResultOf(goal, thou());
+                builder.addResultOf(goal, thing());
             if (!builder.looksEmpty())
                 continuation.consume(builder.build(), requestor);
             else
