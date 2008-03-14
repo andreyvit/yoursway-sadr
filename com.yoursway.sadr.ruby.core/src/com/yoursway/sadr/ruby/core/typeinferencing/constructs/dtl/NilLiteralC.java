@@ -1,6 +1,6 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
-import org.eclipse.dltk.ast.references.SimpleReference;
+import org.eclipse.dltk.ast.expressions.NilLiteral;
 
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
@@ -12,9 +12,9 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.NilValue;
 
-public class NilLiteralC extends DtlConstruct<SimpleReference> {
+public class NilLiteralC extends DtlConstruct<NilLiteral> {
     
-    NilLiteralC(StaticContext sc, SimpleReference node) {
+    NilLiteralC(StaticContext sc, NilLiteral node) {
         super(sc, node);
     }
     

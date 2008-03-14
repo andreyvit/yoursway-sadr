@@ -42,14 +42,17 @@ public abstract class AbstractStaticChecksTestCase extends AbstractTestCase {
         int errors, warnings, infos;
         
         public void error(String message, int startOffset, int endOffset) {
+            System.out.println("Error: " + message + " - " + startOffset + ":" + endOffset);
             errors++;
         }
         
         public void warning(String message, int startOffset, int endOffset) {
+            System.out.println("Warning: " + message + " - " + startOffset + ":" + endOffset);
             warnings++;
         }
         
         public void info(String message, int startOffset, int endOffset) {
+            System.out.println("Info: " + message + " - " + startOffset + ":" + endOffset);
             infos++;
         }
         
