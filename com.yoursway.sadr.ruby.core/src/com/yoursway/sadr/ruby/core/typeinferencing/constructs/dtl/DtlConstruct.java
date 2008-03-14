@@ -30,6 +30,7 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.AbstractConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraph;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraphRequestor;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
 
@@ -85,6 +86,9 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
                 || node instanceof Block || node instanceof RubyMethodArgument
                 || node instanceof RubyDotExpression)
             return new UnhandledC(sc, node);
+        
+        if (node == null)
+            return new EmptyConstruct(sc);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }
     
