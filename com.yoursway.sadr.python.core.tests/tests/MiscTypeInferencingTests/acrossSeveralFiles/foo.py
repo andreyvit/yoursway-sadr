@@ -4,4 +4,5 @@ class Foo:
     return 10
 
   def bar(self):
-    print self.xx ## expr self.xx => int
+    x = self.xx
+    print x ## expr x => int

@@ -68,6 +68,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
                 return new ProcedureCallC(sc, (PythonCallExpression) node);
             return new MethodCallC(sc, (PythonCallExpression) node);
         }
+        if (node instanceof PythonVariableAccessExpression)
+            return new FieldAccessC(sc, (PythonVariableAccessExpression) node);
         if (node instanceof ReturnStatement)
             return new ReturnC(sc, (ReturnStatement) node);
         if (node instanceof Assignment)
@@ -83,8 +85,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
                 || node instanceof PrintExpression || node instanceof EmptyStatement
                 || node instanceof PythonArgument || node instanceof PythonListExpression
-                || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
-                || node instanceof ExpressionList)
+                || node instanceof PythonTestListExpression || node instanceof ExpressionList)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }

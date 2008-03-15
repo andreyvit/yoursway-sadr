@@ -16,7 +16,10 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
+import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.ArrayWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -51,33 +54,37 @@ public class PythonUtils {
     public static Wildcard assignmentWildcardExpression(ASTNode node) {
         if (node instanceof VariableReference)
             return StarWildcard.INSTANCE;
-        if (node instanceof ExtendedVariableReference)
-            return StarWildcard.INSTANCE;
-        //        else if (node instanceof RubyArrayAccessExpression) {
-        //            return new ArrayWildcard(assignmentWildcardExpression(((RubyArrayAccessExpression) node)
-        //                    .getArray()));
-        else
-            throw new AssertionError("assignmentWildcardExpression: not symbol, dot or array");
+        if (node instanceof PythonArrayAccessExpression) {
+            PythonArrayAccessExpression expr = (PythonArrayAccessExpression) node;
+            return new ArrayWildcard(assignmentWildcardExpression(expr.getArray()));
+        }
+        if (node instanceof PythonVariableAccessExpression) {
+            PythonVariableAccessExpression expr = (PythonVariableAccessExpression) node;
+            if (expr.getReceiver() instanceof VariableReference)
+                if (((VariableReference) expr.getReceiver()).getName().equals("self"))
+                    return StarWildcard.INSTANCE;
+            // TODO: field access wildcard
+            return assignmentWildcardExpression(expr.getReceiver());
+        }
+        throw new AssertionError("assignmentWildcardExpression: not symbol, dot or array");
     }
     
-    @SuppressWarnings("unchecked")
     public static ASTNode assignmentTerminalNode(ASTNode node) {
         if (node instanceof VariableReference)
             return node;
-        if (node instanceof ExtendedVariableReference) {
-            ExtendedVariableReference evr = (ExtendedVariableReference) node;
-            List<ASTNode> cc = evr.getExpressions();
-            if (cc.size() == 2 && cc.get(0) instanceof VariableReference
-                    && ((VariableReference) cc.get(0)).getName().equals("self")
-                    && cc.get(1) instanceof VariableReference) {
-                return cc.get(1);
-            }
-            throw new AssertionError("fucking ExtendedVariableReference");
+        if (node instanceof PythonArrayAccessExpression) {
+            PythonArrayAccessExpression expr = (PythonArrayAccessExpression) node;
+            return assignmentTerminalNode(expr.getArray());
         }
-        //        else if (node instanceof RubyArrayAccessExpression)
-        //            return assignmentTerminalNode(((RubyArrayAccessExpression) node).getArray());
-        else
-            throw new AssertionError("assignmentTerminalNode: not symbol, dot or array");
+        if (node instanceof PythonVariableAccessExpression) {
+            PythonVariableAccessExpression expr = (PythonVariableAccessExpression) node;
+            if (expr.getReceiver() instanceof VariableReference)
+                if (((VariableReference) expr.getReceiver()).getName().equals("self"))
+                    return expr.variable();
+            return assignmentTerminalNode(expr.getReceiver());
+        }
+        throw new AssertionError("assignmentTerminalNode: not symbol, dot or array: "
+                + node.getClass().getSimpleName());
     }
     
     public static TypeSet replaceWildcard(Type wildcard, TypeSet replacement) {

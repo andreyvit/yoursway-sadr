@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dltk.ast.ASTNode;
+
 import com.yoursway.sadr.python.core.runtime.requestors.methods.HidingMethodRequestor;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
@@ -76,6 +78,20 @@ public abstract class PythonBasicClass {
             if (namesToMethods.containsKey(method.toLowerCase()))
                 return true;
         return false;
+    }
+    
+    public PythonField lookupField(String name) {
+        PythonField field = findField(name);
+        if (field == null)
+            field = new PythonField(this, name) {
+                
+                @Override
+                public ASTNode[] getNodesForSelection() {
+                    return null;
+                }
+                
+            };
+        return field;
     }
     
 }
