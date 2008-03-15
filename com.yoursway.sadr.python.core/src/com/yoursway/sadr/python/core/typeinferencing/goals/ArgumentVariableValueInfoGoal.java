@@ -21,6 +21,7 @@ import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
@@ -96,6 +97,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private PythonConstruct[] collectValueNodes() {
             List<PythonConstruct> values = new ArrayList<PythonConstruct>();
             int index = variable.index();
+            if (callable instanceof PythonMethod)
+                index--;
             CallersInfo callers = callersGoal.result(thou());
             for (CallC caller : callers.callers()) {
                 List<PythonConstruct> args = caller.arguments();
