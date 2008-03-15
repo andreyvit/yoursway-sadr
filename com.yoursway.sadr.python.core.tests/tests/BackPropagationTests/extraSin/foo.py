@@ -8,6 +8,6 @@ def bozz():
   a = 1
   b = 2
   z = bar(a, b)
-  print z   ## expr z => Fixnum
+  print z   ## expr z => int
   w = bar("a", "b")
-  print w   ## expr w => Fixnum
+  print w   ## expr w => int
