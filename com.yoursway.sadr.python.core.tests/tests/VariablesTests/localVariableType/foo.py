@@ -1,8 +1,8 @@
 
-class Foo:
+class Foo(object):
   pass
 
 def ggg():
-  m = Foo.new()
+  m = Foo()
   print m ## expr m => Foo
 

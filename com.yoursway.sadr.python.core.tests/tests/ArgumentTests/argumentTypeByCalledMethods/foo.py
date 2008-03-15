@@ -1,14 +1,14 @@
 
 class Foo:
-  def foo:
+  def foo(self):
     pass
 
 class Bar:
-  def boz(x):
+  def boz(self, x):
     x.foo()
     print x ## expr x => Foo
 
-  def gboz(x)
-    x.foo()
-    print x ## expr x => Foo
+def gboz(x):
+  x.foo()
+  print x ## expr x => Foo
 

@@ -361,7 +361,7 @@ public abstract class AbstractTypeInferencingTestCase {
             PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
             if (!(node instanceof SimpleReference))
                 throw new IllegalArgumentException();
-            PythonVariable variable = construct.staticContext().variableLookup().findVariable(
+            PythonVariable variable = construct.staticContext().variableLookup().lookupVariable(
                     ((SimpleReference) node).getName());
             return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, (ServicesMegapack) construct
                     .staticContext());

@@ -3,6 +3,6 @@ class Foo:
   pass
 
 def bar():
-  x = Foo.new()
+  x = Foo()
   y = x
   print y ## expr y => Foo

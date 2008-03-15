@@ -2,8 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
-import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
@@ -18,14 +17,14 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 
 public class MethodCallC extends CallC implements IndexAffector {
     
-    MethodCallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
-        super(sc, node, originalNode);
+    MethodCallC(PythonStaticContext sc, PythonCallExpression node) {
+        super(sc, node);
     }
     
     public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
         final PythonConstruct receiver = wrap(innerContext(), node.getReceiver());
-        final String name = node.getName();
+        final String name = node.getMethodName();
         requestor.subgoal(new Continuation() {
             
             final ValueInfoGoal recvGoal = new ExpressionValueInfoGoal(receiver, dc, infoKind);
@@ -49,7 +48,7 @@ public class MethodCallC extends CallC implements IndexAffector {
     }
     
     public void actOnIndex(IndexRequest request) {
-        request.addMethodCall(node.getName(), this);
+        request.addMethodCall(node.getMethodName(), this);
     }
     
 }
