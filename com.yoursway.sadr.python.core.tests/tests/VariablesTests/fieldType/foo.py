@@ -4,4 +4,4 @@ class Foo:
     self.xxx = 7
 
   def bar(self):
-    print self.xxx ## expr xxx => Fixnum
+    print self.xxx ## expr self.xxx => int

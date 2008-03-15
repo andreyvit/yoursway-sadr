@@ -9,5 +9,5 @@ def bozz():
   a = 1
   b = 5
   z = f(a)
-  print z  ## expr z => Fixnum
+  print z  ## expr z => int
   print z  ## value z => 11

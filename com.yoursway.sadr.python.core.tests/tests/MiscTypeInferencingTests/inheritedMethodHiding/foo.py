@@ -10,4 +10,4 @@ class Bar(Foo):
 def boz():
   f = Bar()
   z = f.foo()
-  print z ## expr z => String
+  print z ## expr z => str
