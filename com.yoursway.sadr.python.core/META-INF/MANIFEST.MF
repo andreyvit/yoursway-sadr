@@ -8,9 +8,9 @@ Bundle-Vendor: YourSway
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dltk.core,
  com.yoursway.sadr.core,
- com.yoursway.sadr.engine;bundle-version="1.0.0",
- org.eclipse.core.resources;bundle-version="3.3.0",
- com.google.collections;bundle-version="1.0.0",
+ com.yoursway.sadr.engine,
+ org.eclipse.core.resources,
+ com.google.collections,
  org.eclipse.dltk.python.core
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy

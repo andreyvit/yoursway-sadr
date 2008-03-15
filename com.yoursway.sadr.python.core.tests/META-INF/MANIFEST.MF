@@ -7,11 +7,11 @@ Bundle-Activator: com.yoursway.sadr.python.core.tests.Activator
 Bundle-Vendor: YOURSWAY
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- com.yoursway.sadr.core;bundle-version="1.0.0",
- com.yoursway.sadr.engine;bundle-version="1.0.0",
- org.eclipse.core.resources;bundle-version="3.3.0",
- org.eclipse.dltk.core;bundle-version="1.0.0",
- org.junit4;bundle-version="4.3.1",
+ com.yoursway.sadr.core,
+ com.yoursway.sadr.engine,
+ org.eclipse.core.resources,
+ org.eclipse.dltk.core,
+ org.junit4,
  org.eclipse.dltk.python.core,
  com.yoursway.sadr.python.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
