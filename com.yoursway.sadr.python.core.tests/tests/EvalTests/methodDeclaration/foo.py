@@ -2,7 +2,7 @@
 class Foo:
   def test(self, x):
     x = self.idontexist()
-    print x ## expr x => Fixnum
+    print x ## expr x => int
 
 def ggg():
   m = """

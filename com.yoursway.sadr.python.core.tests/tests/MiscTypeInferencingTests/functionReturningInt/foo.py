@@ -5,4 +5,4 @@ class Foo:
   
   def bar(s):
     x = s.foo()
-    print x ## expr x => Fixnum
+    print x ## expr x => int
