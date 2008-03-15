@@ -8,9 +8,7 @@ import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.expressions.CallArgumentsList;
-import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.ast.expressions.Expression;
+import org.eclipse.dltk.ast.expressions.ExpressionList;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.VariableReference;
@@ -20,12 +18,11 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonForStatement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
-import org.eclipse.dltk.python.parser.ast.expressions.CallHolder;
-import org.eclipse.dltk.python.parser.ast.expressions.EmptyExpression;
-import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 import org.eclipse.dltk.python.parser.ast.expressions.PrintExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 import org.eclipse.dltk.python.parser.ast.statements.EmptyStatement;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
@@ -35,7 +32,6 @@ import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
-import com.yoursway.sadr.python.core.runtime.PythonUtils;
 
 public abstract class PythonConstructImpl<N extends ASTNode> extends
         AbstractConstruct<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> implements
@@ -66,8 +62,12 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
             return new IntegerLiteralC(sc, (NumericLiteral) node);
         if (node instanceof VariableReference)
             return wrapVariableReference(sc, (VariableReference) node);
-        if (node instanceof ExtendedVariableReference)
-            return wrapExtendedReference(sc, (ExtendedVariableReference) node);
+        if (node instanceof PythonCallExpression) {
+            PythonCallExpression expression = (PythonCallExpression) node;
+            if (expression.getReceiver() == null)
+                return new ProcedureCallC(sc, (PythonCallExpression) node);
+            return new MethodCallC(sc, (PythonCallExpression) node);
+        }
         if (node instanceof ReturnStatement)
             return new ReturnC(sc, (ReturnStatement) node);
         if (node instanceof Assignment)
@@ -83,32 +83,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
                 || node instanceof PrintExpression || node instanceof EmptyStatement
                 || node instanceof PythonArgument || node instanceof PythonListExpression
-                || node instanceof PythonTestListExpression)
+                || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
+                || node instanceof ExpressionList)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
-    }
-    
-    @SuppressWarnings("unchecked")
-    private PythonConstruct wrapExtendedReference(PythonStaticContext sc, ExtendedVariableReference node) {
-        List<ASTNode> expressions = node.getExpressions();
-        if (expressions.size() == 3 && expressions.get(0) instanceof VariableReference
-                && expressions.get(1) instanceof VariableReference
-                && expressions.get(2) instanceof CallHolder) {
-            VariableReference receiver = (VariableReference) expressions.get(0);
-            VariableReference funcName = (VariableReference) expressions.get(1);
-            CallHolder call = (CallHolder) expressions.get(2);
-            Expression arguments = call.getArguments();
-            CallArgumentsList list;
-            if (arguments instanceof EmptyExpression)
-                list = new CallArgumentsList(0, 0);
-            else {
-                list = new CallArgumentsList(0, 0);
-                for (ASTNode a : PythonUtils.childrenOf(arguments))
-                    list.addNode(a);
-            }
-            return new MethodCallC(sc, new CallExpression(receiver, funcName.getName(), list), node);
-        }
-        return new ExtendedReferenceC(sc, node);
     }
     
     private PythonConstruct wrapVariableReference(PythonStaticContext sc, VariableReference node) {

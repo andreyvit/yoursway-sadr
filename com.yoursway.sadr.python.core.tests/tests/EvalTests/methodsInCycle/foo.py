@@ -1,11 +1,13 @@
 
 class Foo:
   def boo(self):
-    x = Foo.new()
+    x = Foo()
     print x ## has-method x foo8
 
 def define_foo(n):
-  eval("class Foo; def foo" + n + "; end; end")
+  eval("""
+  class Foo: 
+    def foo""" + n + "(self):")
 
-for i in range(1, 10): 
+for i in range(1, 11): 
   define_foo(i)

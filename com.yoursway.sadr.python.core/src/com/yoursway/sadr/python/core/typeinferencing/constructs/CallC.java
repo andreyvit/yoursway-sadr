@@ -3,14 +3,14 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import static com.yoursway.sadr.python.core.runtime.PythonUtils.childrenOf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -32,16 +32,16 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 
-public abstract class CallC extends PythonConstructImpl<CallExpression> implements CallsAffector {
+public abstract class CallC extends PythonConstructImpl<PythonCallExpression> implements CallsAffector {
     
-    private final ExtendedVariableReference originalNode;
-    
-    CallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
+    CallC(PythonStaticContext sc, PythonCallExpression node) {
         super(sc, node);
-        this.originalNode = originalNode;
     }
     
     public List<PythonConstruct> arguments() {
+        if (node.getArgs() == null) {
+            return Collections.emptyList();
+        }
         return Lists.transform(childrenOf(node.getArgs()), new Function<ASTNode, PythonConstruct>() {
             
             public PythonConstruct apply(ASTNode from) {
@@ -140,11 +140,6 @@ public abstract class CallC extends PythonConstructImpl<CallExpression> implemen
             ; // TODO
         }
         return doit;
-    }
-    
-    @Override
-    protected boolean isNode(ASTNode node) {
-        return originalNode == node || this.node == node;
     }
     
     public PythonConstruct receiver() {
