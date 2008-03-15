@@ -5,9 +5,9 @@ class Foo:
 
 class Bar(Foo):
   def foo(self):
-    return "test"
+    return 'test'
 
 def boz():
-  f = Bar.new()
+  f = Bar()
   z = f.foo()
   print z ## expr z => String
