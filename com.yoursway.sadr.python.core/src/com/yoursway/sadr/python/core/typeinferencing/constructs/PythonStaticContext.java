@@ -10,6 +10,7 @@ import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
+import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
@@ -29,5 +30,7 @@ public interface PythonStaticContext extends
     ValueInfo selfType();
     
     VariableLookup variableLookup();
+    
+    InstanceRegistrar instanceRegistrar();
     
 }
