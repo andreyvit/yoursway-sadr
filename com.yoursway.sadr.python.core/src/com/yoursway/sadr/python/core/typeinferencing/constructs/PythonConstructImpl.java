@@ -106,6 +106,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         String operator = node.getOperator();
         if (operator.equals("+"))
             return new BinaryAdditionC(sc, node);
+        if (operator.equals("%"))
+            return new BinaryPercentC(sc, node);
         Comparison comparison = BinaryComparisonC.parseComparison(operator);
         if (comparison != null)
             return new BinaryComparisonC(sc, node, comparison);

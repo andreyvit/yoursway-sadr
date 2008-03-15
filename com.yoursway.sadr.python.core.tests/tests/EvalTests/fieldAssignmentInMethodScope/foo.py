@@ -1,7 +1,7 @@
 
 class Foo:
   def test(self, x):
-    print self.xx ## value self.xx => 42
+    q = self.xx ## value q => 42
   def ggg(self, n)
     m = "self.xx = " + n
     eval(m)

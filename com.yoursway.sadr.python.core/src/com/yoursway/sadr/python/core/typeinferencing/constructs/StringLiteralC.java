@@ -33,6 +33,9 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     }
     
     private static String unquote(String text) {
+        if (text.startsWith("\"\"\"") && text.endsWith("\"\"\"") || text.startsWith("'''")
+                && text.endsWith("'''"))
+            return text.substring(3, text.length() - 3);
         if (text.startsWith("\"") && text.endsWith("\"") || text.startsWith("'") && text.endsWith("'")
                 || text.startsWith("`") && text.endsWith("`"))
             return text.substring(1, text.length() - 1);

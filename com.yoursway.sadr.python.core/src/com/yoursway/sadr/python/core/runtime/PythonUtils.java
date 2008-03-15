@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.runtime;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class PythonUtils {
     
     @SuppressWarnings("unchecked")
     public static List<ASTNode> childrenOf(ASTNode node) {
+        if (node == null)
+            return emptyList();
         return node.getChilds();
     }
     

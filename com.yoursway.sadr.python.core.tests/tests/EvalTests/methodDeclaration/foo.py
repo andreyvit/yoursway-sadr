@@ -1,13 +1,12 @@
 
 class Foo:
   def test(self, x):
-    x = self.idontexist()
+    x = idontexist()
     print x ## expr x => int
 
 def ggg():
   m = """
-  class Foo():
-    def %s(self):
-      self.xx = 10
-  """ % name
+  def idontexist():
+    return 10
+  """
   eval(m)

@@ -18,6 +18,9 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonUtils;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalRequest;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalsAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
@@ -27,7 +30,7 @@ import com.yoursway.sadr.python.core.typeinferencing.typesets.internal.SingleTyp
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.Value;
 
-public class ProcedureCallC extends CallC implements IndexAffector {
+public class ProcedureCallC extends CallC implements IndexAffector, EvalsAffector {
     
     ProcedureCallC(PythonStaticContext sc, PythonCallExpression node) {
         super(sc, node);
@@ -74,6 +77,14 @@ public class ProcedureCallC extends CallC implements IndexAffector {
     
     public void actOnIndex(IndexRequest request) {
         request.addProcedureCall(node.getProcedureName(), this);
+    }
+    
+    public void actOnEval(EvalRequest request) {
+        ASTNode args = node.getArgs();
+        List<ASTNode> children = PythonUtils.childrenOf(args);
+        if (node.getProcedureName().equals("eval") && children.size() > 0) {
+            request.addEval(this, subconstructFor(children.get(0)));
+        }
     }
     
 }
