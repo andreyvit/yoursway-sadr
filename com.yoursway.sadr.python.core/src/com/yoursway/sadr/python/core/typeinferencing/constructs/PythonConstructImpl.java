@@ -19,6 +19,7 @@ import org.eclipse.dltk.python.parser.ast.PythonForStatement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PrintExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
@@ -70,6 +71,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         }
         if (node instanceof PythonVariableAccessExpression)
             return new FieldAccessC(sc, (PythonVariableAccessExpression) node);
+        if (node instanceof PythonArrayAccessExpression)
+            return new ArrayAccessC(sc, (PythonArrayAccessExpression) node);
         if (node instanceof ReturnStatement)
             return new ReturnC(sc, (ReturnStatement) node);
         if (node instanceof Assignment)

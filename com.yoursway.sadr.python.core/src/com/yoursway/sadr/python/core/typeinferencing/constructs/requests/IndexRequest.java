@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs.requests;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.Request;
@@ -35,10 +36,12 @@ public class IndexRequest implements
     }
     
     public void addMethodCall(String name, CallC construct) {
+        Assert.isNotNull(name);
         methodsCalls.put(name, construct);
     }
     
     public void addProcedureCall(String name, CallC construct) {
+        Assert.isNotNull(name);
         procedureCalls.put(name, construct);
     }
     
