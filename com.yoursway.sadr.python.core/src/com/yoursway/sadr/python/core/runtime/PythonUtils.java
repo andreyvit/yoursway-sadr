@@ -10,7 +10,6 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IParent;
 import org.eclipse.dltk.core.ISourceModule;
@@ -18,12 +17,7 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
-import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
-import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.ArrayWildcard;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.AbstractType;
@@ -53,42 +47,6 @@ public class PythonUtils {
         if (node == null)
             return emptyList();
         return node.getChilds();
-    }
-    
-    public static Wildcard assignmentWildcardExpression(ASTNode node) {
-        if (node instanceof VariableReference)
-            return StarWildcard.INSTANCE;
-        if (node instanceof PythonArrayAccessExpression) {
-            PythonArrayAccessExpression expr = (PythonArrayAccessExpression) node;
-            return new ArrayWildcard(assignmentWildcardExpression(expr.getArray()));
-        }
-        if (node instanceof PythonVariableAccessExpression) {
-            PythonVariableAccessExpression expr = (PythonVariableAccessExpression) node;
-            if (expr.getReceiver() instanceof VariableReference)
-                if (((VariableReference) expr.getReceiver()).getName().equals("self"))
-                    return StarWildcard.INSTANCE;
-            // TODO: field access wildcard
-            return assignmentWildcardExpression(expr.getReceiver());
-        }
-        throw new AssertionError("assignmentWildcardExpression: not symbol, dot or array");
-    }
-    
-    public static ASTNode assignmentTerminalNode(ASTNode node) {
-        if (node instanceof VariableReference)
-            return node;
-        if (node instanceof PythonArrayAccessExpression) {
-            PythonArrayAccessExpression expr = (PythonArrayAccessExpression) node;
-            return assignmentTerminalNode(expr.getArray());
-        }
-        if (node instanceof PythonVariableAccessExpression) {
-            PythonVariableAccessExpression expr = (PythonVariableAccessExpression) node;
-            if (expr.getReceiver() instanceof VariableReference)
-                if (((VariableReference) expr.getReceiver()).getName().equals("self"))
-                    return expr.variable();
-            return assignmentTerminalNode(expr.getReceiver());
-        }
-        throw new AssertionError("assignmentTerminalNode: not symbol, dot or array: "
-                + node.getClass().getSimpleName());
     }
     
     public static TypeSet replaceWildcard(Type wildcard, TypeSet replacement) {
@@ -264,6 +222,16 @@ public class PythonUtils {
     @SuppressWarnings("unchecked")
     public static List<ASTNode> expressionsOf(ExtendedVariableReference evr) {
         return evr.getExpressions();
+    }
+    
+    public static boolean isXDerivedFromY(PythonBasicClass candidateKlass, PythonBasicClass klass) {
+        if (candidateKlass.equals(klass))
+            return true;
+        PythonBasicClass superclass = candidateKlass.superclassOfTheSameKind();
+        if (superclass == null)
+            return false;
+        else
+            return isXDerivedFromY(superclass, klass);
     }
     
     //    public static IModelElement[] dtlClassToIType(RubyClass klass) {

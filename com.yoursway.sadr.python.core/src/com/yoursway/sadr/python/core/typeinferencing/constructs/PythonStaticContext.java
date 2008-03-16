@@ -12,6 +12,7 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
+import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
 public interface PythonStaticContext extends
@@ -32,5 +33,7 @@ public interface PythonStaticContext extends
     VariableLookup variableLookup();
     
     InstanceRegistrar instanceRegistrar();
+    
+    SearchService searchService();
     
 }

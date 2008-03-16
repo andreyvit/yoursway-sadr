@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 import static com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory.emptyTypeSet;
 
 import java.util.ArrayList;
@@ -239,6 +240,18 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private void evaluateWithoutFlow(final Callable callable, PythonConstruct construct,
             ContinuationRequestor requestor) {
+        if (callable instanceof PythonMethod) {
+            if (variable.index() == 0) {
+                // TODO: need a dynamic context here 
+                ValueInfo selfType = construct.staticContext().selfType();
+                if (selfType != null)
+                    consume(selfType, requestor);
+                else
+                    consume(emptyValueInfo(), requestor);
+                return;
+            }
+        }
+        
         VariableRequest request = new VariableRequest(variable, kind);
         construct.staticContext().propagationTracker().traverseEntirely(
                 construct,

@@ -1,61 +1,58 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.yoursway.sadr.engine.util.Lists.filter;
 
-import com.yoursway.sadr.core.constructs.IConstruct;
-import com.yoursway.sadr.core.propagation.PropagationTracker;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import com.google.common.base.Predicate;
 import com.yoursway.sadr.engine.ContinuationRequestor;
-import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.IterationContinuation;
-import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonField;
-import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
-import com.yoursway.sadr.python.core.runtime.PythonMethod;
-import com.yoursway.sadr.python.core.runtime.PythonSourceMethod;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
+import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequestor;
+import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 
 public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     
     private final PythonField field;
     private final InfoKind kind;
+    private final SearchService searchService;
     
-    public FieldValueInfoGoal(PythonField field, InfoKind kind) {
+    private final static Predicate<AssignmentInfo> RECEIVER_NOT_NULL = new Predicate<AssignmentInfo>() {
+        
+        public boolean apply(AssignmentInfo t) {
+            return t.receiver() != null;
+        }
+        
+    };
+    
+    public FieldValueInfoGoal(PythonField field, InfoKind kind, SearchService searchService) {
         this.field = field;
         this.kind = kind;
+        this.searchService = searchService;
     }
     
     public void evaluate(ContinuationRequestor requestor) {
-        final VariableRequest request = new VariableRequest(field, kind);
-        Continuations.iterate(findPossibleWriters(), new IterationContinuation<PythonMethod>() {
-            
-            public void iteration(PythonMethod method, ContinuationRequestor requestor,
-                    SimpleContinuation continuation) {
-                if (method instanceof PythonSourceMethod) {
-                    PythonSourceMethod sm = ((PythonSourceMethod) method);
-                    IConstruct construct = sm.scope().createConstruct();
-                    PropagationTracker tracker = sm.scope().propagationTracker();
-                    tracker.traverseEntirely(construct, request, requestor, continuation);
-                } else {
-                    continuation.run(requestor);
-                }
-            }
-            
-        }, requestor, new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
-                FieldValueInfoGoal.this));
+        ArrayList<AssignmentInfo> assignments = findAssignmentsUsingSearch();
+        AssignmentInfo[] arr = assignments.toArray(new AssignmentInfo[assignments.size()]);
+        requestor.subgoal(new FilterByReceiversContinuation(field.container(), arr,
+                new EmptyDynamicContext(), kind, this));
     }
     
-    private List<PythonMethod> findPossibleWriters() {
-        PythonBasicClass container = field.container();
-        ArrayList<PythonMethod> methods = new ArrayList<PythonMethod>();
-        container.findMethodsByPrefix("", methods);
-        if (container instanceof PythonMetaClass)
-            ((PythonMetaClass) container).instanceClass().findMethodsByPrefix("", methods);
-        return methods;
+    private ArrayList<AssignmentInfo> findAssignmentsUsingSearch() {
+        final Collection<AssignmentInfo> assignments = new ArrayList<AssignmentInfo>(1000);
+        searchService.findAssignments(field.name(), new AssignmentsRequestor() {
+            
+            public void assignment(AssignmentInfo info, FileScope fileScope) {
+                assignments.add(info);
+            }
+            
+        });
+        return newArrayList(filter(assignments, RECEIVER_NOT_NULL));
     }
     
     @Override
@@ -99,7 +96,7 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     public Goal cloneGoal() {
-        return new FieldValueInfoGoal(field, kind);
+        return new FieldValueInfoGoal(field, kind, searchService);
     }
     
 }

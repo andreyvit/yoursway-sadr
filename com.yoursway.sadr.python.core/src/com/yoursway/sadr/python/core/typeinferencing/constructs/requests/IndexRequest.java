@@ -14,7 +14,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticCont
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 
 public class IndexRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
+        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor {
     
     private final AbstractMultiMap<String, CallC> procedureCalls;
     
@@ -45,10 +45,6 @@ public class IndexRequest implements
         procedureCalls.put(name, construct);
     }
     
-    public void addAssignment(String name, AssignmentInfo info) {
-        assignments.put(name, info);
-    }
-    
     public void enter(PythonConstruct construct, ContinuationRequestor requestor,
             VisitorRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
         accept(construct);
@@ -56,6 +52,10 @@ public class IndexRequest implements
     }
     
     public void leave() {
+    }
+    
+    public void accept(AssignmentInfo info) {
+        assignments.put(info.variableName(), info);
     }
     
 }

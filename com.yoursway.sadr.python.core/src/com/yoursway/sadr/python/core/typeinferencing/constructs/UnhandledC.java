@@ -14,8 +14,8 @@ public class UnhandledC extends PythonConstructImpl<ASTNode> {
         super(sc, node);
     }
     
-    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationRequestor requestor, ValueInfoContinuation continuation) {
+    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
+            ValueInfoContinuation continuation) {
         continuation.consume(emptyValueInfo(), requestor);
     }
     

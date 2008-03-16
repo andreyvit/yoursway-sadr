@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.engine.util.Lists.filter;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTListNode;
@@ -33,6 +34,7 @@ import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 
 public abstract class PythonConstructImpl<N extends ASTNode> extends
         AbstractConstruct<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> implements
@@ -94,11 +96,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
     }
     
     private PythonConstruct wrapVariableReference(PythonStaticContext sc, VariableReference node) {
-        String name = node.getName();
-        if (name.equals("self"))
-            return new SelfC(sc, node);
-        if (name.equals("super"))
-            return new SuperC(sc, node);
         return new VariableReferenceC(sc, node);
     }
     
@@ -168,5 +165,9 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         }
         
     };
+    
+    public Collection<MumblaWumblaThreesome> mumblaWumbla() {
+        return null;
+    }
     
 }
