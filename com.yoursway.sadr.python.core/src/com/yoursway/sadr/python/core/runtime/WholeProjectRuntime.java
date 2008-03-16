@@ -115,7 +115,8 @@ public class WholeProjectRuntime {
             for (ISourceModule m : modules) {
                 ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
                         .getSourceAsCharArray(), null);
-                FileScope fileScope = new FileScope(rootScope, m, rootNode);
+                PythonModule module = new PythonModule(runtimeModel, m.getElementName());
+                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
                 asts.put(m, rootNode);
                 scopes.put(m, fileScope);
                 codeGatherer.add(new PythonFileC(fileScope, rootNode), null);

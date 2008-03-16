@@ -1,5 +1,8 @@
 package com.yoursway.sadr.python.core.runtime;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +27,11 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     
     private final Collection<PythonClass> klasses = new ArrayList<PythonClass>();
     
+    private final Collection<PythonModule> modules = newArrayList();
+    
     private final Map<String, PythonClass> namesToClasses = new HashMap<String, PythonClass>();
+    
+    private final Map<String, PythonModule> namesToModules = newHashMap();
     
     private final Collection<PythonProcedure> procedures = new ArrayList<PythonProcedure>();
     
@@ -148,6 +155,11 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     
     public PythonVariable lookupVariable(String name) {
         return null;
+    }
+    
+    public void addModule(PythonModule module) {
+        modules.add(module);
+        namesToModules.put(module.name(), module);
     }
     
 }
