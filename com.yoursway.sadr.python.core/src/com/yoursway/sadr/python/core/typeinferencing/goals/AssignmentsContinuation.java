@@ -29,7 +29,7 @@ public final class AssignmentsContinuation extends AbstractContinuation {
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[assignments.length];
         for (int i = 0; i < assignments.length; i++) {
-            PythonConstruct construct = assignments[i].construct();
+            PythonConstruct construct = assignments[i].rhs();
             goals[i] = new ExpressionValueInfoGoal(construct, dc, kind);
         }
     }

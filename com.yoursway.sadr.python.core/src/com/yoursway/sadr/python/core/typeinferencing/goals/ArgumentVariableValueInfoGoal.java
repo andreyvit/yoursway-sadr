@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 import static com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory.emptyTypeSet;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
@@ -94,6 +96,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private PythonConstruct[] collectValueNodes() {
             List<PythonConstruct> values = new ArrayList<PythonConstruct>();
             int index = variable.index();
+            if (callable instanceof PythonMethod)
+                index--;
             CallersInfo callers = callersGoal.result(thing());
             for (CallC caller : callers.callers()) {
                 List<PythonConstruct> args = caller.arguments();
@@ -234,6 +238,18 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private void evaluateWithoutFlow(final Callable callable, PythonConstruct construct,
             ContinuationRequestor requestor) {
+        if (callable instanceof PythonMethod) {
+            if (variable.index() == 0) {
+                // TODO: need a dynamic context here 
+                ValueInfo selfType = construct.staticContext().selfType();
+                if (selfType != null)
+                    consume(selfType, requestor);
+                else
+                    consume(emptyValueInfo(), requestor);
+                return;
+            }
+        }
+        
         VariableRequest request = new VariableRequest(variable, kind);
         construct.staticContext().propagationTracker().traverseEntirely(
                 construct,
@@ -248,11 +264,13 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         return "" + variable;
     }
     
-    private static String[] methodNames(Collection<CallC> calls) {
+    private String[] methodNames(Collection<CallC> calls) {
         Collection<String> methodsColl = new ArrayList<String>(calls.size());
         for (CallC call : calls) {
-            String name = call.node().getName();
-            methodsColl.add(name);
+            PythonCallExpression node = call.node();
+            String name = node.getMethodName();
+            if (name != null)
+                methodsColl.add(name);
         }
         return methodsColl.toArray(new String[methodsColl.size()]);
     }

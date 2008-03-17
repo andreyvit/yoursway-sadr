@@ -14,9 +14,10 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
+import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 
 public class VariableRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
+        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor {
     
     private final PythonVariable variable;
     
@@ -35,10 +36,6 @@ public class VariableRequest implements
             ((VariableAffector) construct).actOnVariable(this);
     }
     
-    public void add(AssignmentInfo info) {
-        assigned.add(info);
-    }
-    
     public AssignmentInfo[] assigned() {
         return assigned.toArray(new AssignmentInfo[assigned.size()]);
     }
@@ -50,6 +47,19 @@ public class VariableRequest implements
     }
     
     public void leave() {
+    }
+    
+    public void accept(AssignmentInfo info) {
+        if (matches(info.threesome()))
+            add(info);
+    }
+    
+    private boolean matches(MumblaWumblaThreesome threesome) {
+        return variable.name().equals(threesome.variableName());
+    }
+    
+    private void add(AssignmentInfo info) {
+        assigned.add(info);
     }
     
 }

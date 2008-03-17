@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
+import com.yoursway.sadr.python.core.runtime.PythonField;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
@@ -161,4 +162,13 @@ public class ValueInfo implements IValueInfo {
         throw new IllegalArgumentException("Illegal input ValueInfo: " + result);
     }
     
+    public Collection<PythonField> lookupField(String name) {
+        Collection<PythonField> list = new ArrayList<PythonField>();
+        for (Type type : typeSet.containedTypes()) {
+            PythonBasicClass klass = PythonUtils.unwrapType(type);
+            if (klass != null)
+                list.add(klass.lookupField(name));
+        }
+        return list;
+    }
 }

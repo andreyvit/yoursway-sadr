@@ -3,10 +3,10 @@ class Foo:
   pass
 
 class Bar:
-  def boz(xxxxx):
+  def boz(self, xxxxx):
     print xxxxx ## expr xxxxx => Foo
 
   def ggg():
-    m = Bar.new()
-    m.boz(Foo.new())
+    m = Bar()
+    m.boz(Foo())
 

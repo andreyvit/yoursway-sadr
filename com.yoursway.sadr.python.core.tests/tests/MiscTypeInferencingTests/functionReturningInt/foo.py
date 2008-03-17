@@ -1,8 +1,8 @@
 
 class Foo:
-  def foo():
+  def foo(s):
     return 10
   
-  def bar():
-    x = self.foo()
-    print x ## expr x => Fixnum
+  def bar(s):
+    x = s.foo()
+    print x ## expr x => int

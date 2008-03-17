@@ -211,7 +211,7 @@ public class ASTUtils {
                 int realStart = s.sourceStart();
                 int realEnd = s.sourceEnd();
                 
-                if (realStart >= 0 && realEnd >= 0 && pos >= realStart && pos < realEnd)
+                if (realStart >= 0 && realEnd >= 0 && pos == realStart)
                     result = s;
                 return true;
             }

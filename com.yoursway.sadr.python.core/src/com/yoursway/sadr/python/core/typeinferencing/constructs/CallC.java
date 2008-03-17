@@ -3,14 +3,14 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import static com.yoursway.sadr.python.core.runtime.PythonUtils.childrenOf;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -21,27 +21,26 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.Callable;
-import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.CallInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.CallableReturnValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 
-public abstract class CallC extends PythonConstructImpl<CallExpression> implements CallsAffector {
+public abstract class CallC extends PythonConstructImpl<PythonCallExpression> implements CallsAffector {
     
-    private final ExtendedVariableReference originalNode;
-    
-    CallC(PythonStaticContext sc, CallExpression node, ExtendedVariableReference originalNode) {
+    CallC(PythonStaticContext sc, PythonCallExpression node) {
         super(sc, node);
-        this.originalNode = originalNode;
     }
     
     public List<PythonConstruct> arguments() {
+        if (node.getArgs() == null) {
+            return Collections.emptyList();
+        }
         return Lists.transform(childrenOf(node.getArgs()), new Function<ASTNode, PythonConstruct>() {
             
             public PythonConstruct apply(ASTNode from) {
@@ -121,30 +120,13 @@ public abstract class CallC extends PythonConstructImpl<CallExpression> implemen
     }
     
     public void actOnCalls(CallsRequest request) {
-        ASTNode receiver = node.getReceiver();
+        PythonConstruct receiver = receiver();
         if (receiver != null) {
-            ASTNode terminal = PythonUtils.assignmentTerminalNode(receiver);
-            if (matches(request, terminal)) {
-                Wildcard wildcard = PythonUtils.assignmentWildcardExpression(receiver);
-                request.add(new CallInfo(wildcard, this));
-            }
+            Collection<MumblaWumblaThreesome> swingerParty = receiver.mumblaWumbla();
+            for (MumblaWumblaThreesome threesome : swingerParty)
+                if (request.variable().name().equals(threesome.variableName()))
+                    request.add(new CallInfo(threesome.wildcard(), this));
         }
-    }
-    
-    protected boolean matches(CallsRequest request, ASTNode terminal) {
-        boolean doit = false;
-        if (terminal instanceof VariableReference) {
-            doit = (((VariableReference) terminal).getName().equalsIgnoreCase(request.variable().name()));
-        } else {
-            //if (terminal instanceof RubyColonExpression) {
-            ; // TODO
-        }
-        return doit;
-    }
-    
-    @Override
-    protected boolean isNode(ASTNode node) {
-        return originalNode == node || this.node == node;
     }
     
     public PythonConstruct receiver() {

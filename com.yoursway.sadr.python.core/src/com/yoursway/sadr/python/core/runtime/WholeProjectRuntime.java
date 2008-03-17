@@ -34,17 +34,17 @@ public class WholeProjectRuntime {
         private final PythonRuntimeModelCreator creator;
         private final LinkedList<Runnable> postProcessingQueue;
         
-        //        private final DtlEvalResolver evalResolver;
+        private final PythonEvalResolver evalResolver;
         
         private CodeGathererImpl(PythonRuntimeModelCreator creator, LinkedList<Runnable> postProcessingQueue,
-                DtlEvalResolver evalResolver) {
+                PythonEvalResolver evalResolver) {
             this.creator = creator;
             this.postProcessingQueue = postProcessingQueue;
-            //            this.evalResolver = evalResolver;
+            this.evalResolver = evalResolver;
         }
         
         public void add(final PythonConstruct root, ASTNode fakeParent) {
-            FileScope fileScope = ((Scope) root.staticContext()).fileScope();
+            final FileScope fileScope = ((Scope) root.staticContext()).fileScope();
             ContinuationRequestor tenderRequestor = new ContinuationRequestor() {
                 
                 public Query currentQuery() {
@@ -70,8 +70,8 @@ public class WholeProjectRuntime {
                                     postProcessingQueue.add(new Runnable() {
                                         
                                         public void run() {
-                                            //                                            evalResolver.process(CodeGathererImpl.this, contributionsManager
-                                            //                                                    .createContext(fileScope), root);
+                                            evalResolver.process(CodeGathererImpl.this, contributionsManager
+                                                    .createContext(fileScope), root);
                                         }
                                         
                                     });
@@ -108,14 +108,15 @@ public class WholeProjectRuntime {
         contributionsManager = new FileContributionsManager(runtimeModel);
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
         final PythonRuntimeModelCreator creator = new PythonRuntimeModelCreator();
-        final DtlEvalResolver evalResolver = new DtlEvalResolver(engine);
+        final PythonEvalResolver evalResolver = new PythonEvalResolver(engine);
         final LinkedList<Runnable> postProcessingQueue = new LinkedList<Runnable>();
         final CodeGatherer codeGatherer = new CodeGathererImpl(creator, postProcessingQueue, evalResolver);
         try {
             for (ISourceModule m : modules) {
                 ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
                         .getSourceAsCharArray(), null);
-                FileScope fileScope = new FileScope(rootScope, m, rootNode);
+                PythonModule module = new PythonModule(runtimeModel, m.getElementName());
+                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
                 asts.put(m, rootNode);
                 scopes.put(m, fileScope);
                 codeGatherer.add(new PythonFileC(fileScope, rootNode), null);

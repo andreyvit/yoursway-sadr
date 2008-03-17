@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.runtime;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,6 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IParent;
 import org.eclipse.dltk.core.ISourceModule;
@@ -17,8 +18,6 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.AbstractType;
@@ -45,39 +44,9 @@ public class PythonUtils {
     
     @SuppressWarnings("unchecked")
     public static List<ASTNode> childrenOf(ASTNode node) {
+        if (node == null)
+            return emptyList();
         return node.getChilds();
-    }
-    
-    public static Wildcard assignmentWildcardExpression(ASTNode node) {
-        if (node instanceof VariableReference)
-            return StarWildcard.INSTANCE;
-        if (node instanceof ExtendedVariableReference)
-            return StarWildcard.INSTANCE;
-        //        else if (node instanceof RubyArrayAccessExpression) {
-        //            return new ArrayWildcard(assignmentWildcardExpression(((RubyArrayAccessExpression) node)
-        //                    .getArray()));
-        else
-            throw new AssertionError("assignmentWildcardExpression: not symbol, dot or array");
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static ASTNode assignmentTerminalNode(ASTNode node) {
-        if (node instanceof VariableReference)
-            return node;
-        if (node instanceof ExtendedVariableReference) {
-            ExtendedVariableReference evr = (ExtendedVariableReference) node;
-            List<ASTNode> cc = evr.getExpressions();
-            if (cc.size() == 2 && cc.get(0) instanceof VariableReference
-                    && ((VariableReference) cc.get(0)).getName().equals("self")
-                    && cc.get(1) instanceof VariableReference) {
-                return cc.get(1);
-            }
-            throw new AssertionError("fucking ExtendedVariableReference");
-        }
-        //        else if (node instanceof RubyArrayAccessExpression)
-        //            return assignmentTerminalNode(((RubyArrayAccessExpression) node).getArray());
-        else
-            throw new AssertionError("assignmentTerminalNode: not symbol, dot or array");
     }
     
     public static TypeSet replaceWildcard(Type wildcard, TypeSet replacement) {
@@ -253,6 +222,16 @@ public class PythonUtils {
     @SuppressWarnings("unchecked")
     public static List<ASTNode> expressionsOf(ExtendedVariableReference evr) {
         return evr.getExpressions();
+    }
+    
+    public static boolean isXDerivedFromY(PythonBasicClass candidateKlass, PythonBasicClass klass) {
+        if (candidateKlass.equals(klass))
+            return true;
+        PythonBasicClass superclass = candidateKlass.superclassOfTheSameKind();
+        if (superclass == null)
+            return false;
+        else
+            return isXDerivedFromY(superclass, klass);
     }
     
     //    public static IModelElement[] dtlClassToIType(RubyClass klass) {

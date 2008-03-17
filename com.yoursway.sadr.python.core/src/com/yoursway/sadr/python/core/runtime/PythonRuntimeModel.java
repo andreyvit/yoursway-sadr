@@ -1,5 +1,8 @@
 package com.yoursway.sadr.python.core.runtime;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,15 +27,19 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     
     private final Collection<PythonClass> klasses = new ArrayList<PythonClass>();
     
-    private final Map<String, PythonClass> lowercaseNamesToClasses = new HashMap<String, PythonClass>();
+    private final Collection<PythonModule> modules = newArrayList();
+    
+    private final Map<String, PythonClass> namesToClasses = new HashMap<String, PythonClass>();
+    
+    private final Map<String, PythonModule> namesToModules = newHashMap();
     
     private final Collection<PythonProcedure> procedures = new ArrayList<PythonProcedure>();
     
-    private final Map<String, PythonProcedure> lowercaseNamesToProcedures = new HashMap<String, PythonProcedure>();
+    private final Map<String, PythonProcedure> namesToProcedures = new HashMap<String, PythonProcedure>();
     
     private final Collection<PythonSimpleType> simpleTypes = new ArrayList<PythonSimpleType>();
     
-    private final Map<String, PythonSimpleType> lowercaseNamesToSimpleTypes = new HashMap<String, PythonSimpleType>();
+    private final Map<String, PythonSimpleType> namesToSimpleTypes = new HashMap<String, PythonSimpleType>();
     
     private final Map<String, PythonClass[]> methodToClasses = new HashMap<String, PythonClass[]>();
     
@@ -52,17 +59,17 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     }
     
     public PythonClass findClass(String name) {
-        return lowercaseNamesToClasses.get(name.toLowerCase());
+        return namesToClasses.get(name);
     }
     
     public void addClass(PythonClass klass) {
         klasses.add(klass);
-        lowercaseNamesToClasses.put(klass.name().toLowerCase(), klass);
+        namesToClasses.put(klass.name(), klass);
     }
     
     public void addProcedure(PythonProcedure procedure) {
         procedures.add(procedure);
-        lowercaseNamesToProcedures.put(procedure.name().toLowerCase(), procedure);
+        namesToProcedures.put(procedure.name(), procedure);
     }
     
     public PythonProcedure[] findProceduresMatching(String prefix) {
@@ -75,7 +82,7 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     
     public void addSimpleType(PythonSimpleType simpleType) {
         simpleTypes.add(simpleType);
-        lowercaseNamesToSimpleTypes.put(simpleType.name().toLowerCase(), simpleType);
+        namesToSimpleTypes.put(simpleType.name(), simpleType);
     }
     
     public StandardTypes standardTypes() {
@@ -87,7 +94,7 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     }
     
     public PythonProcedure findProcedure(String name) {
-        return lowercaseNamesToProcedures.get(name.toLowerCase());
+        return namesToProcedures.get(name);
     }
     
     public PythonClass[] allClasses() {
@@ -95,11 +102,10 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     }
     
     public PythonClass[] findClassesWithMethod(String method) {
-        String lower = method.toLowerCase();
-        PythonClass[] result = methodToClasses.get(lower);
+        PythonClass[] result = methodToClasses.get(method);
         if (result == null) {
             result = calculateClassesWithMethod(method);
-            methodToClasses.put(lower, result);
+            methodToClasses.put(method, result);
         }
         return result;
     }
@@ -149,6 +155,11 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     
     public PythonVariable lookupVariable(String name) {
         return null;
+    }
+    
+    public void addModule(PythonModule module) {
+        modules.add(module);
+        namesToModules.put(module.name(), module);
     }
     
 }

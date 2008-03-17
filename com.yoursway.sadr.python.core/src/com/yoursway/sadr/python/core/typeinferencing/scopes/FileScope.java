@@ -10,6 +10,8 @@ import org.eclipse.dltk.core.ISourceModule;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.runtime.PythonModule;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
@@ -21,14 +23,21 @@ public class FileScope extends LocalScope implements NodeLookup {
     
     private final AbstractMultiMap<ASTNode, ModuleDeclaration> extentions = new ArrayListHashMultiMap<ASTNode, ModuleDeclaration>();
     
-    public FileScope(RootScope parent, ISourceModule file, ModuleDeclaration node) {
+    private final PythonModule module;
+    
+    public FileScope(RootScope parent, PythonModule module, ISourceModule file, ModuleDeclaration node) {
         super(parent, node);
+        this.module = module;
         this.file = file;
     }
     
     @Override
     public ModuleDeclaration node() {
         return (ModuleDeclaration) super.node();
+    }
+    
+    public PythonModule module() {
+        return module;
     }
     
     @Override
@@ -45,13 +54,24 @@ public class FileScope extends LocalScope implements NodeLookup {
         return file.getElementName();
     }
     
+    @Override
+    public PythonVariable lookupVariable(String name) {
+        PythonVariable variable = findVariable(name);
+        if (variable == null)
+            variable = new PythonLocalVariable(module, null, this, name);
+        return variable;
+    }
+    
     public NodeBoundItem lookup(ASTNode node) {
         return ((RootScope) parent).outeriorNodeLookup().lookup(file, node);
     }
     
     @Override
     public PythonVariable findOwnVariable(String name) {
-        return null; // none for now
+        PythonVariable var = module.findLocalVariable(name);
+        if (var != null)
+            return var;
+        return null;
     }
     
     public ValueInfo selfType() {

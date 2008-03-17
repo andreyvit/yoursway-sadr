@@ -14,7 +14,7 @@ public class Goals {
         if (variable instanceof PythonLocalVariable)
             return new LocalVariableValueInfoGoal((PythonLocalVariable) variable, kind);
         if (variable instanceof PythonField)
-            return new FieldValueInfoGoal((PythonField) variable, kind);
+            return new FieldValueInfoGoal((PythonField) variable, kind, megapack.searchService());
         if (variable instanceof DtlArgumentVariable)
             return new ArgumentVariableValueInfoGoal((DtlArgumentVariable) variable, kind, megapack);
         //        if (variable instanceof ForCounterVariable)

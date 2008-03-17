@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.ArrayWildcard;
+import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.FieldWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
@@ -102,6 +103,9 @@ public class ValueInfoBuilder {
             ArrayWildcard arr = (ArrayWildcard) wildcard;
             Type replaced = replaceWildcard(arr.component(), replacement);
             return new ArrayType(replaced);
+        } else if (wildcard instanceof FieldWildcard) {
+            FieldWildcard w = (FieldWildcard) wildcard;
+            return replaceWildcard(w.receiver(), replacement);
         }
         throw new AssertionError("Unreachable in MutableTypeSetResultImpl.replaceWildcard");
     }

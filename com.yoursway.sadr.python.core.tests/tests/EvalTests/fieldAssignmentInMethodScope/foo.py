@@ -1,12 +1,12 @@
 
 class Foo:
-  def test(x):
-    print self.xx ## value self.xx => 42
-  def ggg(n)
+  def test(self, x):
+    q = self.xx ## value q => 42
+  def ggg(self, n)
     m = "self.xx = " + n
     eval(m)
 
 def boo():
   num = "42"
-  f = Foo.new()
+  f = Foo()
   f.ggg(num)
