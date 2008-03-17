@@ -27,7 +27,7 @@ public class NullPointerCheckTests extends AbstractStaticChecksTestCase {
         resetAssertions();
         //> addAssertion(new MethodCallCheck(), "0:0:0");
         addAssertion(new NullPointerCheck(), "0:0:0");
-        runTest(); //! exception
+        runTest();
     }
     
 }

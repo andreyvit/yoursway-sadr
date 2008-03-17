@@ -24,29 +24,13 @@ public class NullPointerCheck extends OneModuleRuntimeBasedCheck {
         
         if (receiver != null) {
             Scope scope = RubyUtils.restoreScope(currentFileScope, call);
-            ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(scope, receiver, InfoKind.TYPE);
+            ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(scope, receiver, InfoKind.NULLABILITY);
             runtime.getEngine().evaluate(goal);
-            ValueInfo types = goal.roughResult();
-            if (types.isEmpty()) {
-                //?
-                //String msg = "Cannot check a call to \"{0}\" because could not inference the type of the receiver.";
-                //errorMessage = NLS.bind(msg, name);
-                //warn = false;
-            } else {
-                String[] possibleTypes = types.describePossibleTypes();
-                
-                for (String each : possibleTypes) {
-                    if (each == "NilClass") {
-                        reporter.warning("Method can be invoked for nil", receiver.sourceStart(), receiver
-                                .sourceEnd());
-                        //? change message to "nil pointer dereferencing" or "method not exist"?
-                        break;
-                    }
-                    
-                }
-                
-                //String msg = "Method named \"{0}\" does not exist in any of the following types: {1}.";
-                //errorMessage = NLS.bind(msg, name, Strings.join(possibleTypes, ", "));
+            ValueInfo info = goal.roughResult();
+            
+            if (info.getNullability() == Nullability.CanBeNull) {
+                String message = "Object might be nil in this call."; //? The object can be nil in this invocation
+                reporter.warning(message, receiver.sourceStart(), receiver.sourceEnd());
             }
         }
         

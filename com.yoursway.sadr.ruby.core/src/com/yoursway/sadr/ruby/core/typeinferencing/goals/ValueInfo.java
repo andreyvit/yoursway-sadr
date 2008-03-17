@@ -1,5 +1,6 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
+import static com.yoursway.sadr.ruby.core.staticchecks.Nullability.Unknown;
 import static com.yoursway.sadr.ruby.core.typeinferencing.typesets.TypeSetFactory.emptyTypeSet;
 import static com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSetFactory.emptyValueSet;
 
@@ -11,6 +12,7 @@ import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodRequestor;
+import com.yoursway.sadr.ruby.core.staticchecks.Nullability;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.ArrayType;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.ClassType;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.MetaClassType;
@@ -64,10 +66,18 @@ public class ValueInfo implements Result {
     
     private final TypeSet typeSet;
     private final ValueSet valueSet;
+    private final Nullability nullability;
     
     public ValueInfo(TypeSet typeSet, ValueSet valueSet) {
         this.typeSet = typeSet;
         this.valueSet = valueSet;
+        this.nullability = Unknown;
+    }
+    
+    public ValueInfo(TypeSet typeSet, ValueSet valueSet, Nullability nullable) {
+        this.typeSet = typeSet;
+        this.valueSet = valueSet;
+        this.nullability = nullable;
     }
     
     public TypeSet getTypeSet() {
@@ -76,6 +86,19 @@ public class ValueInfo implements Result {
     
     public ValueSet getValueSet() {
         return valueSet;
+    }
+    
+    public Nullability getNullability() {
+        if (nullability != Nullability.Unknown) {
+            return nullability;
+        } else {
+            for (String each : describePossibleTypes()) {
+                if (each == "NilClass") {
+                    return Nullability.CanBeNull;
+                }
+            }
+            return Nullability.CannotBeNull;
+        }
     }
     
     public void findMethod(String name, MethodRequestor requestor) {
