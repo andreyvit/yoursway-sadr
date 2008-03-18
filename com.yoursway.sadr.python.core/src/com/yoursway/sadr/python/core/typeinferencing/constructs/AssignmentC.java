@@ -59,6 +59,14 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Vari
     }
     
     public void actOnModel(ModelRequest request) {
+        PythonConstruct lhs = lhs();
+        Collection<MumblaWumblaThreesome> swingerParty = lhs.mumblaWumbla();
+        for (MumblaWumblaThreesome threesome : swingerParty)
+            if (threesome.receiver() == null) {
+                String name = threesome.variableName();
+                staticContext().variableLookup().lookupVariable(name);
+            }
+        
         //        Statement left = node.getLeft();
         //        if (left instanceof ExtendedVariableReference) {
         //            ExtendedVariableReference evr = (ExtendedVariableReference) left;
