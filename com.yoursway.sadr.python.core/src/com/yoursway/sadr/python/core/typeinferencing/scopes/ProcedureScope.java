@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
-import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonSourceProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
@@ -57,7 +57,7 @@ public class ProcedureScope extends LocalScope {
     public PythonVariable lookupVariable(String name) {
         PythonVariable variable = findVariable(name);
         if (variable == null)
-            variable = new PythonLocalVariable(procedure, null, procedure.scope(), name);
+            variable = new PythonScopedVariable(procedure, null, procedure.scope(), name);
         return variable;
     }
     

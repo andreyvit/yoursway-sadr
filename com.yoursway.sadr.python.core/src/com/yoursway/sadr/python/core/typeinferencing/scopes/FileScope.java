@@ -10,7 +10,7 @@ import org.eclipse.dltk.core.ISourceModule;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
-import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonModule;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
@@ -58,7 +58,7 @@ public class FileScope extends LocalScope implements NodeLookup {
     public PythonVariable lookupVariable(String name) {
         PythonVariable variable = findVariable(name);
         if (variable == null)
-            variable = new PythonLocalVariable(module, null, this, name);
+            variable = new PythonScopedVariable(module, null, this, name);
         return variable;
     }
     

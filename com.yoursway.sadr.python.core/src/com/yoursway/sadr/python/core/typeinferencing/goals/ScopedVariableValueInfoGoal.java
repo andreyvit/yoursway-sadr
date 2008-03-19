@@ -3,18 +3,18 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
+public class ScopedVariableValueInfoGoal extends AbstractValueInfoGoal {
     
-    private final PythonLocalVariable variable;
+    private final PythonScopedVariable variable;
     private final InfoKind kind;
     
-    public LocalVariableValueInfoGoal(PythonLocalVariable variable, InfoKind kind) {
+    public ScopedVariableValueInfoGoal(PythonScopedVariable variable, InfoKind kind) {
         this.variable = variable;
         this.kind = kind;
     }
@@ -49,7 +49,7 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final LocalVariableValueInfoGoal other = (LocalVariableValueInfoGoal) obj;
+        final ScopedVariableValueInfoGoal other = (ScopedVariableValueInfoGoal) obj;
         if (kind == null) {
             if (other.kind != null)
                 return false;
@@ -68,7 +68,7 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     public Goal cloneGoal() {
-        return new LocalVariableValueInfoGoal(variable, kind);
+        return new ScopedVariableValueInfoGoal(variable, kind);
     }
     
 }

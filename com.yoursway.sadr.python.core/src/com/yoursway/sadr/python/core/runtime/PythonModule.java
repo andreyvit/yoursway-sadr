@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class PythonModule implements LocalVariableContainer {
     
-    private final Collection<PythonLocalVariable> localVariables = new ArrayList<PythonLocalVariable>();
-    private final Map<String, PythonLocalVariable> namesToLocalVariables = new HashMap<String, PythonLocalVariable>();
+    private final Collection<PythonScopedVariable> localVariables = new ArrayList<PythonScopedVariable>();
+    private final Map<String, PythonScopedVariable> namesToLocalVariables = new HashMap<String, PythonScopedVariable>();
     
     private final String name;
     
@@ -29,7 +29,7 @@ public class PythonModule implements LocalVariableContainer {
         return name;
     }
     
-    public void addLocalVariable(PythonLocalVariable localVariable) {
+    public void addLocalVariable(PythonScopedVariable localVariable) {
         localVariables.add(localVariable);
         namesToLocalVariables.put(localVariable.name().toLowerCase(), localVariable);
     }

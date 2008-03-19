@@ -8,7 +8,7 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
-import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.PythonSourceMethod;
@@ -81,7 +81,7 @@ public class MethodScope extends LocalScope {
     public PythonVariable lookupVariable(String name) {
         PythonVariable variable = findVariable(name);
         if (variable == null)
-            variable = new PythonLocalVariable(method, null, method.scope(), name);
+            variable = new PythonScopedVariable(method, null, method.scope(), name);
         return variable;
     }
     
