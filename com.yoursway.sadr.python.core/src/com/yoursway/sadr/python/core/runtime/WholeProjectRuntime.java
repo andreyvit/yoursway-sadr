@@ -25,7 +25,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.RootScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 
 public class WholeProjectRuntime {
@@ -44,7 +43,7 @@ public class WholeProjectRuntime {
         }
         
         public void add(final PythonConstruct root, ASTNode fakeParent) {
-            final FileScope fileScope = ((Scope) root.staticContext()).fileScope();
+            final FileScope fileScope = root.staticContext().nearestScope().fileScope();
             ContinuationRequestor tenderRequestor = new ContinuationRequestor() {
                 
                 public Query currentQuery() {

@@ -4,7 +4,10 @@ import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.empt
 
 import java.util.List;
 
+import org.eclipse.dltk.ast.ASTNode;
+
 import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.core.propagation.ConstructBoundGoal;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
@@ -13,10 +16,12 @@ import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 
 public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements ValueInfoGoal,
-        ConstructBoundGoal, BackwardPropagationEntryPoint, ValueInfoContinuation {
+        ConstructBoundGoal<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>,
+        BackwardPropagationEntryPoint, ValueInfoContinuation {
     
     private final InfoKind kind;
     

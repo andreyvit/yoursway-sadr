@@ -6,4 +6,6 @@ public interface StaticContext<C extends IConstruct<C, SC, DC, N>, SC extends St
     
     PropagationTracker<C, SC, DC, N> propagationTracker();
     
+    C parentConstruct();
+    
 }

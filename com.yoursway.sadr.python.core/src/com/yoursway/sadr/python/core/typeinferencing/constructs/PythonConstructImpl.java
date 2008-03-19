@@ -35,6 +35,7 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public abstract class PythonConstructImpl<N extends ASTNode> extends
         AbstractConstruct<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> implements
@@ -51,12 +52,21 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         throw new UnsupportedOperationException();
     }
     
+    protected Scope nearestScope() {
+        return staticContext().nearestScope();
+    }
+    
     public N node() {
         return node;
     }
     
+    public PythonConstruct parent() {
+        return staticContext().parentConstruct();
+    }
+    
     @Override
     protected PythonConstruct wrap(PythonStaticContext sc, ASTNode node) {
+        sc = new PythonParentStaticContext(sc, this);
         if (node instanceof ModuleDeclaration)
             throw new RuntimeException("ModuleDeclaration cannot be wrapped with wrap()");
         if (node instanceof StringLiteral)
@@ -168,6 +178,31 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
     
     public Collection<MumblaWumblaThreesome> mumblaWumbla() {
         return null;
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((node == null) ? 0 : node.hashCode());
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PythonConstructImpl other = (PythonConstructImpl) obj;
+        if (node == null) {
+            if (other.node != null)
+                return false;
+        } else if (!node.equals(other.node))
+            return false;
+        return true;
     }
     
 }

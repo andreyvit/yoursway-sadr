@@ -14,7 +14,6 @@ import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.ClassScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaration> implements ModelAffector {
     
@@ -36,7 +35,7 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
                 }
             }
         if (scope == null)
-            scope = new ClassScope((Scope) staticContext(), this, klass);
+            scope = new ClassScope(nearestScope(), this, klass);
         return scope;
     }
     

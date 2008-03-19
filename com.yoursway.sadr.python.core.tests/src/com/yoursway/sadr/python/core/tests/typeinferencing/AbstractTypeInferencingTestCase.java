@@ -61,7 +61,6 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.services.ServicesMegapack;
 
 public abstract class AbstractTypeInferencingTestCase {
     
@@ -363,7 +362,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 throw new IllegalArgumentException();
             PythonVariable variable = construct.staticContext().variableLookup().lookupVariable(
                     ((SimpleReference) node).getName());
-            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, (ServicesMegapack) construct
+            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, new EmptyDynamicContext(), construct
                     .staticContext());
         }
         

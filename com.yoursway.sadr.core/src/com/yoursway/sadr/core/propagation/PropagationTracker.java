@@ -1,6 +1,7 @@
 package com.yoursway.sadr.core.propagation;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.core.constructs.BackwardRequest;
 import com.yoursway.sadr.core.constructs.DynamicContext;
 import com.yoursway.sadr.core.constructs.IConstruct;
 import com.yoursway.sadr.core.constructs.Request;
@@ -18,6 +19,10 @@ public interface PropagationTracker<C extends IConstruct<C, SC, DC, N>, SC exten
             SimpleContinuation continuation);
     
     void traverseStatically(C construct, Request<C, SC, DC, N> request, ContinuationRequestor requestor,
+            SimpleContinuation continuation);
+    
+    public void traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
+            BackwardRequest<C, SC, DC, N> request, ContinuationRequestor requestor,
             SimpleContinuation continuation);
     
 }

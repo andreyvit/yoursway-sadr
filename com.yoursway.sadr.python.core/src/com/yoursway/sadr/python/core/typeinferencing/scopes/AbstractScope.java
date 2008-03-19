@@ -20,4 +20,8 @@ public abstract class AbstractScope implements Scope {
         return nodeLookup().extentionsOf(node);
     }
     
+    public Scope nearestScope() {
+        return this;
+    }
+    
 }

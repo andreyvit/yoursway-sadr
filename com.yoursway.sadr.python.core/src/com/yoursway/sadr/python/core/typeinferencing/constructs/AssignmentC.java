@@ -16,7 +16,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRe
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableAffector;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 
@@ -42,7 +41,7 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Vari
         return wrap(innerContext(), node.getRight());
     }
     
-    public void actOnVariable(VariableRequest request) {
+    public void actOnVariable(AssignmentInfoRequestor request) {
         provideAssignmentInfo(request);
     }
     

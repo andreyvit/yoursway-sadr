@@ -26,12 +26,12 @@ import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.python.core.typeinferencing.services.ServicesMegapack;
 import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSet;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetBuilder;
@@ -197,11 +197,11 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private final DtlArgumentVariable variable;
     private final ClassLookup classLookup;
-    private final ServicesMegapack megapack;
+    private final PythonStaticContext megapack;
     private final InfoKind kind;
     
     public ArgumentVariableValueInfoGoal(DtlArgumentVariable variable, InfoKind kind,
-            ServicesMegapack megapack) {
+            PythonStaticContext megapack) {
         this.variable = variable;
         this.kind = kind;
         this.megapack = megapack;

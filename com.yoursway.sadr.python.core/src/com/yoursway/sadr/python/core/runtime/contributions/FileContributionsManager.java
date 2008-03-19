@@ -19,7 +19,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.OuteriorNodeLookup;
@@ -58,7 +57,7 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
     
     public void addToIndex(PythonConstruct root, ContinuationRequestor requestor,
             SimpleContinuation continuation) {
-        FileScope file = ((Scope) root.staticContext()).fileScope();
+        FileScope file = root.staticContext().nearestScope().fileScope();
         lookup(file).addToIndex(root, requestor, continuation);
     }
     

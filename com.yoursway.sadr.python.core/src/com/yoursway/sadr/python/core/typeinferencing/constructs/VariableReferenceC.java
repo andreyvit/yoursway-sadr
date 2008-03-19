@@ -18,7 +18,6 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
-import com.yoursway.sadr.python.core.typeinferencing.services.ServicesMegapack;
 import com.yoursway.sadr.python.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.python.core.typeinferencing.values.MetaClassValue;
 
@@ -44,8 +43,8 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
             if (variable == null) {
                 continuation.consume(emptyValueInfo(), requestor);
             } else {
-                final ValueInfoGoal varGoal = Goals.createVariableTypeGoal(variable, infoKind,
-                        (ServicesMegapack) staticContext());
+                final ValueInfoGoal varGoal = Goals.createVariableTypeGoal(variable, infoKind, dc,
+                        staticContext());
                 requestor.subgoal(new SingleSubgoalContinuation(varGoal, continuation));
             }
         }

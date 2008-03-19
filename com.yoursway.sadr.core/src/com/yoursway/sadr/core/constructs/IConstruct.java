@@ -18,6 +18,8 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     
     C subconstructFor(ASTNode node);
     
+    C parent();
+    
     List<C> enclosedConstructs();
     
     void evaluateValue(DC dc, InfoKind infoKind, ContinuationRequestor requestor,
