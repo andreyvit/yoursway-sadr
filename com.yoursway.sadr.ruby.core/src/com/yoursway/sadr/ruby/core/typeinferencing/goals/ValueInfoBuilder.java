@@ -1,6 +1,7 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
 import com.yoursway.sadr.engine.ContextSensitiveThing;
+import com.yoursway.sadr.ruby.core.staticchecks.Nullability;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.ArrayWildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
@@ -64,7 +65,15 @@ public class ValueInfoBuilder {
     public ValueInfo build() {
         TypeSet ts = typeSetBuilder.build();
         ValueSet vs = valueSetBuilder.build();
-        return new ValueInfo(ts, vs);
+        
+        Nullability nullability = Nullability.CannotBeNull; //?
+        for (String typename : ts.describePossibleTypes()) {
+            if (typename == "NilClass") {
+                nullability = Nullability.CanBeNull; //?
+            }
+        }
+        
+        return new ValueInfo(ts, vs, nullability);
     }
     
     public void addResultOf(ValueInfoGoal goal, ContextSensitiveThing thing) {

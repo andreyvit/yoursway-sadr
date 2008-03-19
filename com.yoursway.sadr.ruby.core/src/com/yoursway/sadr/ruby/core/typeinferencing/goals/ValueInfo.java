@@ -57,24 +57,18 @@ public class ValueInfo implements Result {
     }
     
     public static ValueInfo emptyValueInfo() {
-        return new ValueInfo(emptyTypeSet(), emptyValueSet());
+        return new ValueInfo(emptyTypeSet(), emptyValueSet(), Unknown);
     }
     
-    public static ValueInfo createResult(TypeSet typeSet, ValueSet valueSet) {
-        return new ValueInfo(typeSet, valueSet);
+    public static ValueInfo createResult(TypeSet typeSet, ValueSet valueSet, Nullability nullability) {
+        return new ValueInfo(typeSet, valueSet, nullability);
     }
     
     private final TypeSet typeSet;
     private final ValueSet valueSet;
     private final Nullability nullability;
     
-    public ValueInfo(TypeSet typeSet, ValueSet valueSet) {
-        this.typeSet = typeSet;
-        this.valueSet = valueSet;
-        this.nullability = Unknown;
-    }
-    
-    public ValueInfo(TypeSet typeSet, ValueSet valueSet, Nullability nullable) {
+    ValueInfo(TypeSet typeSet, ValueSet valueSet, Nullability nullable) {
         this.typeSet = typeSet;
         this.valueSet = valueSet;
         this.nullability = nullable;
@@ -89,16 +83,7 @@ public class ValueInfo implements Result {
     }
     
     public Nullability getNullability() {
-        if (nullability != Nullability.Unknown) {
-            return nullability;
-        } else {
-            for (String each : describePossibleTypes()) {
-                if (each == "NilClass") {
-                    return Nullability.CanBeNull;
-                }
-            }
-            return Nullability.CannotBeNull;
-        }
+        return nullability;
     }
     
     public void findMethod(String name, MethodRequestor requestor) {
