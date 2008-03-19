@@ -1,0 +1,1 @@
+package com.yoursway.sadr.python.idioms.core.tests.typeinferencing;import org.junit.runner.RunWith;import org.junit.runners.Suite;@RunWith(Suite.class)@Suite.SuiteClasses( { ControlFlowTests.class })public class AllPythonTypeInferencingTests {}
