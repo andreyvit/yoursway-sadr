@@ -36,6 +36,7 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 
 public abstract class PythonConstructImpl<N extends ASTNode> extends
         AbstractConstruct<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> implements
@@ -106,6 +107,9 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
     }
     
     private PythonConstruct wrapVariableReference(PythonStaticContext sc, VariableReference node) {
+        String repr = node.getName();
+        if (repr != null && (repr.equals(BooleanValue.TRUE) || repr.equals(BooleanValue.FALSE)))
+            return new BooleanLiteralC(sc, node);
         return new VariableReferenceC(sc, node);
     }
     

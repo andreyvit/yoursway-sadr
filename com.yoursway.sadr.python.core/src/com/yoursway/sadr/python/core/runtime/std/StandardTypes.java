@@ -13,4 +13,6 @@ public interface StandardTypes {
     
     PythonSimpleType nilType();
     
+    PythonSimpleType boolType();
+    
 }

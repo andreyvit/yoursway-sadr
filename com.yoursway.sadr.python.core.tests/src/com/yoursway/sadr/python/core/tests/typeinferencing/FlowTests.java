@@ -7,4 +7,14 @@ public final class FlowTests extends AbstractTypeInferencingTestCase {
     public void flowTest() throws Exception {
         runTest();
     }
+    
+    @Test
+    public void functionChangesValueTest() throws Exception {
+        runTest();
+    }
+    
+    @Test
+    public void ValDependsOnCondition() throws Exception {
+        runTest();
+    }
 }
