@@ -4,7 +4,7 @@ import org.junit.Test;
 
 public final class FlowTests extends AbstractTypeInferencingTestCase {
     @Test
-    public void flowTest() throws Exception {
+    public void dumbFlowTest() throws Exception {
         runTest();
     }
     

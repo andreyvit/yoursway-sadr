@@ -18,6 +18,7 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalsAffector;
@@ -36,16 +37,28 @@ public class ProcedureCallC extends CallC implements IndexAffector, EvalsAffecto
         super(sc, node);
     }
     
+    private void classNewInstance(PythonClass klass, PythonDynamicContext dc, InfoKind infoKind,
+            ContinuationRequestor requestor, ValueInfoContinuation continuation) {
+        Value value = new InstanceValue(klass, staticContext().instanceRegistrar());
+        SingleTypeSet ts = TypeSetFactory.typeSetWith(new ClassType(klass));
+        PythonMethod[] methods = ts.findMethodsByPrefix("__new__");
+        if (methods.length > 0) {
+            PythonMethod method = methods[0];
+            requestor.subgoal(new CallablesReturnTypeCont(infoKind, arguments(), dc,
+                    new Callable[] { method }, null, continuation));
+        } else {
+            ValueInfo result = createResult(ts, valueSetWith(value));
+            continuation.consume(result, requestor);
+        }
+    }
+    
     public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         final String name = node.getProcedureName();
         if (name != null) {
             PythonClass klass = staticContext().classLookup().findClass(name);
             if (klass != null) {
-                Value value = new InstanceValue(klass, staticContext().instanceRegistrar());
-                SingleTypeSet ts = TypeSetFactory.typeSetWith(new ClassType(klass));
-                ValueInfo result = createResult(ts, valueSetWith(value));
-                continuation.consume(result, requestor);
+                classNewInstance(klass, dc, infoKind, requestor, continuation);
                 return;
             }
         }
