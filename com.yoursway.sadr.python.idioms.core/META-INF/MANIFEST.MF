@@ -1,10 +1,18 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests Plug-in
-Bundle-SymbolicName: com.yoursway.sadr.python.idiomsfinder.core.tests
+Bundle-SymbolicName: com.yoursway.sadr.python.idioms.core
 Bundle-Version: 1.0.0
-Bundle-Activator: com.yoursway.sadr.python.idioms.core.tests.Activator
+Bundle-Activator: com.yoursway.sadr.python.idioms.core.Activator
 Bundle-Vendor: YourSway
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ com.yoursway.sadr.core,
+ com.yoursway.sadr.engine,
+ org.eclipse.core.resources,
+ org.eclipse.dltk.core,
+ org.eclipse.dltk.python.core,
+ com.yoursway.sadr.python.core,
+ com.google.collections;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Eclipse-LazyStart: true
+Export-Package: com.yoursway.sadr.python.idioms.core

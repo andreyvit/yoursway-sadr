@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.idioms.core.tests.typeinferencing;
 
-import static com.yoursway.sadr.engine.util.Strings.join;
 import static com.yoursway.sadr.python.idioms.core.tests.TestingUtils.callerOutside;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -15,7 +14,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -34,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
@@ -43,22 +40,15 @@ import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
-import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
-import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.runtime.WholeProjectRuntime;
-import com.yoursway.sadr.python.core.runtime.requestors.methods.AnyMethodRequestor;
-import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodNamesRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.services.ServicesMegapack;
+import com.yoursway.sadr.python.idioms.core.Idiom;
+import com.yoursway.sadr.python.idioms.core.IdiomMatcher;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;
 import com.yoursway.sadr.python.idioms.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.idioms.core.tests.internal.StringInputStream;
@@ -172,37 +162,36 @@ public abstract class AbstractTypeInferencingTestCase {
 			String line, String originalLine, int lineOffset, int delimiterPos) {
 		IAssertion assertion;
 		if ("idiom".equals(test)) {
-			String expr = tok.nextToken();
-			int namePos = locate(expr, line, originalLine, delimiterPos,
-					lineOffset);
-			needToken(tok, "=>");
-			String correctClassRef = tok.nextToken();
-			assertion = new IdiomAppliesAssertion(expr, namePos,
-					correctClassRef);
+			int namePos = locate(line, originalLine, delimiterPos, lineOffset);
+			String pattern = tok.nextToken();
+			if(pattern.equals("no")) {
+	            pattern = tok.nextToken();
+				assertion = new IdiomAppliesAssertion(namePos, pattern, false);
+			} else {
+				assertion = new IdiomAppliesAssertion(namePos, pattern, true);
+			}
 		} else {
 			throw new IllegalArgumentException("Unknown assertion: " + test);
 		}
 		return assertion;
 	}
 
-	private void needToken(StringTokenizer tok, String token) {
+	protected void needToken(StringTokenizer tok, String token) {
 		String arrow = tok.nextToken();
 		assertTrue(arrow.equals(token));
 	}
 
-	private int locate(String expr, String line, String originalLine,
+	private int locate(String line, String originalLine,
 			int delimiterPos, int lineOffset) {
-		Pattern pat = Pattern.compile("(?<!\\w)" + Pattern.quote(expr)
-				+ "(?!\\w)");
+		Pattern pat = Pattern.compile("\\w");
 		Matcher matcher = pat.matcher(originalLine);
 		assertTrue(matcher.find());
 		int namePosInsideLine = matcher.start();
 		assertTrue(matcher.find());
 
 		// check that there are no more possible matches
-		int secondPos = matcher.start();
-		if (secondPos < delimiterPos)
-			throw new IllegalArgumentException("Ambiguous match of " + expr
+		if (namePosInsideLine >= delimiterPos)
+			throw new IllegalArgumentException("No symbols before comment!"
 					+ " in " + line);
 
 		int namePos = namePosInsideLine + lineOffset;
@@ -312,22 +301,34 @@ public abstract class AbstractTypeInferencingTestCase {
 
 	class IdiomAppliesAssertion implements IAssertion {
 
-		private final String correctClassRef;
+		private final int lineOffset;
+		private final String pattern;
+		private final boolean should;
 
-		private final String expression;
-
-		private final int namePos;
-
-		public IdiomAppliesAssertion(String expression, int namePos,
-				String correctClassRef) {
-			this.expression = expression;
-			this.namePos = namePos;
-			this.correctClassRef = correctClassRef;
+		public IdiomAppliesAssertion(int namePos, String pattern, boolean should) {
+			this.lineOffset = namePos;
+			this.pattern = pattern;
+			this.should = should;
 		}
 
 		public void check(FileScope fileScope, ModuleDeclaration rootNode,
 				ISourceModule cu, AnalysisEngine engine,
 				StringBuilder expected, StringBuilder actual) throws Exception {
+			System.out.println();
+			ASTNode node = ASTUtils.findNodeAt(rootNode, lineOffset);
+			 assertNotNull(node);
+			PythonConstruct construct = new PythonFileC(fileScope,
+					 fileScope.node()).subconstructFor(node);
+			assertNotNull(construct);
+			Idiom idiom = new Idiom(this.pattern);
+			IdiomMatcher match = idiom.match(construct);
+			if(should){
+				assertNotNull("Idiom should match here!", match);
+				match.apply(construct);
+			} else {
+                assertTrue("Idiom should never match here!", match == null);
+			}
+			
 			// ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
 			// engine.evaluate(goal);
 			// ValueInfo result = goal.weakResult();

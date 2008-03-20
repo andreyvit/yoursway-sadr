@@ -9,4 +9,14 @@ public class ControlFlowTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
     
+    @Test
+    public void prefixMatching() throws Exception {
+    	runTest();
+    }
+    
+    @Test
+    public void extraVariable() throws Exception {
+    	runTest();
+    }
+    
 }
