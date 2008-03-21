@@ -3,15 +3,14 @@
  */
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
-import org.eclipse.dltk.ast.ASTNode;
-
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 
 public final class AssignmentsContinuation extends AbstractContinuation {
     
@@ -23,15 +22,15 @@ public final class AssignmentsContinuation extends AbstractContinuation {
     
     private final ValueInfoContinuation continuation;
     
-    public AssignmentsContinuation(ContextSensitiveThing thing, AssignmentInfo[] ass, InfoKind kind,
-            ValueInfoContinuation continuation) {
+    public AssignmentsContinuation(ContextSensitiveThing thing, AssignmentInfo[] ass, RubyDynamicContext dc,
+            InfoKind kind, ValueInfoContinuation continuation) {
         this.thing = thing;
         assignments = ass;
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[assignments.length];
         for (int i = 0; i < assignments.length; i++) {
-            RubyConstruct construct = assignments[i].construct();
-            goals[i] = new ExpressionValueInfoGoal(construct.scope(), construct.node(), kind);
+            RubyConstruct construct = assignments[i].rhs();
+            goals[i] = new ExpressionValueInfoGoal(construct, dc, kind);
         }
     }
     

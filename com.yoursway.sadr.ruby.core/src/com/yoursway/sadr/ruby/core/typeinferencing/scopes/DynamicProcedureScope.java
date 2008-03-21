@@ -52,4 +52,9 @@ public class DynamicProcedureScope extends ChildScope implements VariableLookup 
     public RubyConstruct createConstruct() {
         return parent.createConstruct();
     }
+    
+    public RubyVariable lookupVariable(String name) {
+        return findVariable(name);
+    }
+    
 }

@@ -3,6 +3,7 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yoursway.sadr.core.propagation.PropagationTracker;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.Goal;
@@ -16,7 +17,6 @@ import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubySourceMethod;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
 
 public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     

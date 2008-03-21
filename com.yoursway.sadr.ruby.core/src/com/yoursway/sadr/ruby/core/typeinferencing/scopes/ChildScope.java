@@ -1,12 +1,17 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.core.propagation.PropagationTracker;
+import com.yoursway.sadr.ruby.core.runtime.RubyClass;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.NodeLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ProcedureLookup;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.SearchService;
 
 public abstract class ChildScope extends AbstractScope {
@@ -38,7 +43,7 @@ public abstract class ChildScope extends AbstractScope {
         return parent.instanceRegistrar();
     }
     
-    public PropagationTracker propagationTracker() {
+    public PropagationTracker<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> propagationTracker() {
         return parent.propagationTracker();
     }
     
@@ -69,6 +74,14 @@ public abstract class ChildScope extends AbstractScope {
     
     public FileScope fileScope() {
         return parent.fileScope();
+    }
+    
+    public RubyClass currentClass() {
+        return parent.currentClass();
+    }
+    
+    public RubyConstruct parentConstruct() {
+        return parent.parentConstruct();
     }
     
 }

@@ -21,7 +21,7 @@ public class StringLiteralC extends DtlConstruct<StringLiteral> {
     public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
-        RubySimpleType t = rubyStaticContext().builtins().stringType();
+        RubySimpleType t = staticContext().builtins().stringType();
         builder.add(new SimpleType(t), new StringValue(stringValue()));
         continuation.consume(builder.build(), requestor);
     }

@@ -1,25 +1,24 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
-import org.eclipse.dltk.ast.expressions.CallExpression;
-
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
 
 public class CallInfo {
     
     private final Wildcard wildcard;
-    private final CallExpression node;
+    private final CallC construct;
     
-    public CallInfo(Wildcard wildcard, CallExpression node) {
+    public CallInfo(Wildcard wildcard, CallC construct) {
         this.wildcard = wildcard;
-        this.node = node;
+        this.construct = construct;
     }
     
     public Wildcard getWildcard() {
         return wildcard;
     }
     
-    public CallExpression getNode() {
-        return node;
+    public CallC construct() {
+        return construct;
     }
     
 }

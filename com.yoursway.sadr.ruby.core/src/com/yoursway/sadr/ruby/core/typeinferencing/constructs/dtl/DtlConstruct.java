@@ -2,6 +2,7 @@ package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
 import static com.yoursway.sadr.engine.util.Lists.filter;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTListNode;
@@ -34,6 +35,8 @@ import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class DtlConstruct<N extends ASTNode> extends
         AbstractConstruct<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> implements
@@ -48,6 +51,10 @@ public abstract class DtlConstruct<N extends ASTNode> extends
     
     public RubyConstruct staticallyEnclosingConstruct() {
         throw new UnsupportedOperationException();
+    }
+    
+    protected Scope nearestScope() {
+        return staticContext().nearestScope();
     }
     
     public N node() {
@@ -169,5 +176,9 @@ public abstract class DtlConstruct<N extends ASTNode> extends
         }
         
     };
+    
+    public Collection<ThingAccessInfo> accessInfos() {
+        return null;
+    }
     
 }

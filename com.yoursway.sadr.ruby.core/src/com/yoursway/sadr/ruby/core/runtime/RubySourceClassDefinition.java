@@ -10,27 +10,27 @@ import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.runtime.contributions.ContributableItem;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ClassDeclarationC;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ClassScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class RubySourceClassDefinition extends RubyClassDefinition implements ContributableItem,
         LocalVariableContainer {
     
     private final RubyClass superclass;
     private final RubyClassDeclaration node;
-    private final Scope scope;
+    private final ClassScope scope;
     
     private final Collection<RubyLocalVariable> localVariables = new ArrayList<RubyLocalVariable>();
     
     private final Map<String, RubyLocalVariable> namesToLocalVariables = new HashMap<String, RubyLocalVariable>();
     
-    public RubySourceClassDefinition(RubyClass klass, Context context,
-            Construct<Scope, RubyClassDeclaration> construct, RubyClass superclass) {
-        super(klass);
+    public RubySourceClassDefinition(ClassScope scope, Context context, ClassDeclarationC construct,
+            RubyClass superclass) {
+        super(scope.klass());
+        this.scope = scope;
         this.node = construct.node();
         this.superclass = superclass;
         context.add(this);
-        this.scope = new ClassScope(construct.scope(), this, node);
     }
     
     @Override
@@ -38,7 +38,7 @@ public class RubySourceClassDefinition extends RubyClassDefinition implements Co
         return superclass;
     }
     
-    public Scope scope() {
+    public ClassScope scope() {
         return scope;
     }
     

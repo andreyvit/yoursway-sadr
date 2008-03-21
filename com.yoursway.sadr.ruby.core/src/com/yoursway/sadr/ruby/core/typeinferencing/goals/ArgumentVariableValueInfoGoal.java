@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
+import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
@@ -19,17 +19,17 @@ import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
-import com.yoursway.sadr.ruby.core.ast.visitor.RubyControlFlowTraverser;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyClass;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
+import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DtlArgumentVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ServicesMegapack;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.ClassType;
 import com.yoursway.sadr.ruby.core.typeinferencing.typesets.TypeSet;
@@ -48,9 +48,9 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             this.continuation = continuation;
         }
         
-        public void consume(ValueInfo result, ContinuationRequestor requestor) {
+        public void consume(IValueInfo result, ContinuationRequestor requestor) {
             final ValueInfoBuilder builder = new ValueInfoBuilder();
-            builder.add(result);
+            builder.add(ValueInfo.from(result));
             
             ValueInfo valueInfo = variable.valueInfo();
             if (valueInfo != null && !valueInfo.isEmpty())
@@ -58,7 +58,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             else {
                 requestor.subgoal(new ArgumentTypeByCallersCont(callable, new ValueInfoContinuation() {
                     
-                    public void consume(ValueInfo result, ContinuationRequestor requestor) {
+                    public void consume(IValueInfo result, ContinuationRequestor requestor) {
                         continueWith(builder, result, requestor);
                     }
                     
@@ -67,9 +67,9 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             
         }
         
-        private void continueWith(ValueInfoBuilder builder, ValueInfo valueInfo,
+        private void continueWith(ValueInfoBuilder builder, IValueInfo valueInfo,
                 ContinuationRequestor requestor) {
-            builder.add(valueInfo);
+            builder.add(ValueInfo.from(valueInfo));
             continuation.consume(builder.build(), requestor);
         }
     }
@@ -94,20 +94,17 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             requestor.subgoal(new NodeValuesCont(collectValueNodes(), callable, continuation));
         }
         
-        @SuppressWarnings("unchecked")
         private RubyConstruct[] collectValueNodes() {
             List<RubyConstruct> values = new ArrayList<RubyConstruct>();
             int index = variable.index();
             CallersInfo callers = callersGoal.result(thing());
-            for (Construct<Scope, CallExpression> caller : callers.callers()) {
-                ASTNode[] args = RubyUtils.argumentsOf(caller.node());
-                if (args.length > index) {
-                    ASTNode arg = args[index];
-                    Scope scope = RubyUtils.restoreSubscope(caller.scope(), arg);
-                    values.add(new RubyConstruct(scope, arg));
+            for (CallC caller : callers.callers()) {
+                List<RubyConstruct> args = caller.arguments();
+                if (args.size() > index) {
+                    values.add(args.get(index));
                 }
             }
-            return values.toArray(new Construct[values.size()]);
+            return values.toArray(new RubyConstruct[values.size()]);
         }
     }
     
@@ -117,13 +114,12 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private final ValueInfoGoal[] valueGoals;
         private final ValueInfoContinuation continuation;
         
-        private NodeValuesCont(RubyConstruct[] cs, Callable callable,
-                ValueInfoContinuation continuation) {
+        private NodeValuesCont(RubyConstruct[] cs, Callable callable, ValueInfoContinuation continuation) {
             this.callable = callable;
             this.continuation = continuation;
             valueGoals = new ValueInfoGoal[cs.length];
             for (int i = 0; i < valueGoals.length; i++)
-                valueGoals[i] = new ExpressionValueInfoGoal(cs[i].scope(), cs[i].node(), kind);
+                valueGoals[i] = new ExpressionValueInfoGoal(cs[i], new EmptyDynamicContext(), kind);
         }
         
         public void provideSubgoals(SubgoalRequestor requestor) {
@@ -155,15 +151,15 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         }
         
         public void done(ContinuationRequestor requestor) {
-            final CallsVisitor visitor = new CallsVisitor(variable);
             RubyConstruct construct = callable.construct();
-            new RubyControlFlowTraverser(thing(), construct.scope()).traverse(construct.node(), requestor,
-                    visitor, new SimpleContinuation() {
+            final CallsRequest request = new CallsRequest(variable, kind);
+            construct.staticContext().propagationTracker().traverseEntirely(construct, request, requestor,
+                    new SimpleContinuation() {
                         
                         public void run(ContinuationRequestor requestor) {
-                            CallInfo[] calls = visitor.calls();
+                            CallInfo[] calls = request.calls();
                             
-                            AbstractMultiMap<Wildcard, CallExpression> wildcardsToCalls = groupCallsByWildcard(calls);
+                            AbstractMultiMap<Wildcard, CallC> wildcardsToCalls = groupCallsByWildcard(calls);
                             ValueInfoBuilder builder = new ValueInfoBuilder();
                             for (Wildcard wildcard : wildcardsToCalls.keySet())
                                 builder.add(wildcard, calculateTypeSet(wildcardsToCalls.get(wildcard)));
@@ -173,7 +169,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
                     });
         }
         
-        private TypeSet calculateTypeSet(Collection<CallExpression> calls) {
+        private TypeSet calculateTypeSet(Collection<CallC> calls) {
             if (calls.isEmpty())
                 return emptyTypeSet();
             Set<RubyClass> klasses = classLookup.findClassesByMethods(methodNames(calls));
@@ -188,10 +184,10 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             return TypeSetFactory.typeSetWith(new ClassType(classLookup.standardTypes().objectClass()));
         }
         
-        private AbstractMultiMap<Wildcard, CallExpression> groupCallsByWildcard(CallInfo[] calls) {
-            AbstractMultiMap<Wildcard, CallExpression> wildcardsToCalls = new ArrayListHashMultiMap<Wildcard, CallExpression>();
+        private AbstractMultiMap<Wildcard, CallC> groupCallsByWildcard(CallInfo[] calls) {
+            AbstractMultiMap<Wildcard, CallC> wildcardsToCalls = new ArrayListHashMultiMap<Wildcard, CallC>();
             for (CallInfo call : calls)
-                wildcardsToCalls.put(call.getWildcard(), call.getNode());
+                wildcardsToCalls.put(call.getWildcard(), call.construct());
             return wildcardsToCalls;
         }
     }
@@ -241,11 +237,31 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private void evaluateWithoutFlow(final Callable callable, RubyConstruct construct,
             ContinuationRequestor requestor) {
-        RubyConstruct c = construct.asAnotherMyself();
-        PropagationTracker tracker = construct.scope().propagationTracker();
+        //        RubyConstruct c = construct.asAnotherMyself();
+        //        PropagationTracker tracker = construct.scope().propagationTracker();
+        //        VariableRequest request = new VariableRequest(variable, kind);
+        //        tracker.traverseEntirely(c, request, requestor, new DelayedAssignmentsContinuation(request, kind,
+        //                new ArgumentTypeByCallersInitiator(callable, this)));
+        
+        if (callable instanceof RubyMethod) {
+            if (variable.index() == 0) {
+                // TODO: need a dynamic context here 
+                ValueInfo selfType = construct.staticContext().selfType();
+                if (selfType != null)
+                    consume(selfType, requestor);
+                else
+                    consume(ValueInfo.emptyValueInfo(), requestor);
+                return;
+            }
+        }
+        
         VariableRequest request = new VariableRequest(variable, kind);
-        tracker.traverseEntirely(c, request, requestor, new DelayedAssignmentsContinuation(request, kind,
-                new ArgumentTypeByCallersInitiator(callable, this)));
+        construct.staticContext().propagationTracker().traverseEntirely(
+                construct,
+                request,
+                requestor,
+                new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
+                        new ArgumentTypeByCallersInitiator(callable, this)));
     }
     
     @Override
@@ -253,11 +269,13 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         return "" + variable;
     }
     
-    private static String[] methodNames(Collection<CallExpression> calls) {
+    private String[] methodNames(Collection<CallC> calls) {
         Collection<String> methodsColl = new ArrayList<String>(calls.size());
-        for (CallExpression call : calls) {
-            String name = call.getName();
-            methodsColl.add(name);
+        for (CallC call : calls) {
+            CallExpression node = call.node();
+            String name = node.getName();
+            if (name != null)
+                methodsColl.add(name);
         }
         return methodsColl.toArray(new String[methodsColl.size()]);
     }

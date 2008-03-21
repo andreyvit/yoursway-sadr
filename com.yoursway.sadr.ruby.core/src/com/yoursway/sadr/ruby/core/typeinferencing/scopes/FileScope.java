@@ -13,6 +13,7 @@ import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstTraverser;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
+import com.yoursway.sadr.ruby.core.runtime.RubyClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.runtime.contributions.NodeBoundItem;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
@@ -111,6 +112,11 @@ public class FileScope extends LocalScope implements NodeLookup {
     @Override
     public FileScope fileScope() {
         return this;
+    }
+    
+    @Override
+    public RubyClass currentClass() {
+        return null;
     }
     
 }

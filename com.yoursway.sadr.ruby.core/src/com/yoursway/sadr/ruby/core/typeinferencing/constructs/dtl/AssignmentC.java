@@ -2,6 +2,8 @@ package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
+import java.util.Collection;
+
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.ruby.ast.RubyAssignment;
@@ -10,16 +12,21 @@ import org.eclipse.dltk.ruby.ast.RubyColonExpression;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
 
-public class AssignmentC extends DtlConstruct<RubyAssignment> implements VariableAffector {
+public class AssignmentC extends DtlConstruct<RubyAssignment> implements VariableAffector, IndexAffector,
+        ModelAffector {
     
     AssignmentC(RubyStaticContext sc, RubyAssignment node) {
         super(sc, node);
@@ -30,20 +37,28 @@ public class AssignmentC extends DtlConstruct<RubyAssignment> implements Variabl
         continuation.consume(emptyValueInfo(), requestor);
     }
     
-    public void actOnVariable(VariableRequest subject) {
-        ASTNode lhs = node.getLeft();
-        ASTNode rhs = node.getRight();
-        if (rhs != null) {
-            ASTNode terminal = RubyUtils.assignmentTerminalNode(lhs);
-            Wildcard wildcard = RubyUtils.assignmentWildcardExpression(lhs);
-            if (matches(subject, terminal)) {
-                Scope subscope = RubyUtils.restoreSubscope((Scope) rubyStaticContext(), rhs);
-                RubyConstruct construct = new RubyConstruct(subscope, rhs);
-                AssignmentInfo info = new AssignmentInfo(wildcard, construct);
-                subject.add(info);
-            }
-        }
-        
+    public RubyConstruct lhs() {
+        return wrap(innerContext(), node.getLeft());
+    }
+    
+    public RubyConstruct rhs() {
+        return wrap(innerContext(), node.getRight());
+    }
+    
+    public void actOnVariable(AssignmentInfoRequestor request) {
+        provideAssignmentInfo(request);
+    }
+    
+    public void actOnIndex(IndexRequest request) {
+        provideAssignmentInfo(request);
+    }
+    
+    private void provideAssignmentInfo(AssignmentInfoRequestor request) {
+        RubyConstruct lhs = lhs();
+        RubyConstruct rhs = rhs();
+        Collection<ThingAccessInfo> accessInfos = lhs.accessInfos();
+        for (ThingAccessInfo access : accessInfos)
+            request.accept(new AssignmentInfo(access, rhs));
     }
     
     protected boolean matches(VariableRequest request, ASTNode terminal) {
@@ -54,6 +69,16 @@ public class AssignmentC extends DtlConstruct<RubyAssignment> implements Variabl
             ; // TODO
         }
         return doit;
+    }
+    
+    public void actOnModel(ModelRequest request) {
+        RubyConstruct lhs = lhs();
+        Collection<ThingAccessInfo> accessInfos = lhs.accessInfos();
+        for (ThingAccessInfo access : accessInfos)
+            if (access.receiver() == null) {
+                String name = access.variableName();
+                staticContext().variableLookup().lookupVariable(name);
+            }
     }
     
 }

@@ -1,11 +1,9 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.services;
 
-import org.eclipse.dltk.ast.expressions.CallExpression;
-
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 
 public interface CallsRequestor {
     
-    void call(CallExpression call, FileScope fileScope);
+    void call(CallC call);
     
 }

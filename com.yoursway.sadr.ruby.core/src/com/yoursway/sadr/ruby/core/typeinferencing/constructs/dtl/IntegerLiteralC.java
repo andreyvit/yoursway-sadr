@@ -21,7 +21,7 @@ public class IntegerLiteralC extends DtlConstruct<NumericLiteral> {
     public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
-        RubySimpleType t = rubyStaticContext().builtins().intType();
+        RubySimpleType t = staticContext().builtins().intType();
         long v = node.getIntValue();
         builder.add(new SimpleType(t), new IntegerValue(v));
         continuation.consume(builder.build(), requestor);

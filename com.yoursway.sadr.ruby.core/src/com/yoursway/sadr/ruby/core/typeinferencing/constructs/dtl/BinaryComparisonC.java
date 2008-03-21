@@ -53,12 +53,12 @@ public class BinaryComparisonC extends DtlConstruct<CallExpression> {
             }
             
             public void done(ContinuationRequestor requestor) {
-                BinaryCoercion coercion = new BinaryCoercion(rubyStaticContext().classLookup());
+                BinaryCoercion coercion = new BinaryCoercion(staticContext().classLookup());
                 ValueInfo leftInfo = leftGoal.result(null);
                 ValueInfo rightInfo = rightGoal.result(null);
                 
                 final ValueInfoBuilder builder = new ValueInfoBuilder();
-                builder.add(new SimpleType(rubyStaticContext().builtins().intType()));
+                builder.add(new SimpleType(staticContext().builtins().intType()));
                 coercion.coerce(leftInfo, rightInfo, new BinaryCoercionRequestor() {
                     
                     public void intType() {

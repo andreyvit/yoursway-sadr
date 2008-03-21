@@ -1,5 +1,7 @@
 package com.yoursway.sadr.ruby.core.runtime;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -330,5 +332,12 @@ public class RubyUtils {
     //        }
     //        return result.toArray(new IModelElement[result.size()]);
     //    }
+    
+    @SuppressWarnings("unchecked")
+    public static List<ASTNode> childrenOf(ASTNode node) {
+        if (node == null)
+            return emptyList();
+        return node.getChilds();
+    }
     
 }

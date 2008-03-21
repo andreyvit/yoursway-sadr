@@ -1,6 +1,7 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
@@ -13,6 +14,7 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
 
 public class EmptyConstruct extends
         AbstractConstruct<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> implements
@@ -46,11 +48,6 @@ public class EmptyConstruct extends
         return null;
     }
     
-    public RubyStaticContext rubyStaticContext() {
-        throw new NotImplementedException();
-        // return null;
-    }
-    
     public RubyConstruct staticallyEnclosingConstruct() {
         throw new NotImplementedException();
         // return null;
@@ -67,6 +64,11 @@ public class EmptyConstruct extends
     }
     
     public RubyConstruct parent() {
+        throw new NotImplementedException();
+        // return null;
+    }
+    
+    public Collection<ThingAccessInfo> accessInfos() {
         throw new NotImplementedException();
         // return null;
     }

@@ -162,4 +162,12 @@ public class ValueInfo implements Result, IValueInfo {
         return valueSet.containedValues();
     }
     
+    public static ValueInfo from(IValueInfo result) {
+        if (result instanceof ValueInfo)
+            return (ValueInfo) result;
+        if (result.isEmpty())
+            return emptyValueInfo();
+        throw new IllegalArgumentException("Illegal input ValueInfo: " + result);
+    }
+    
 }

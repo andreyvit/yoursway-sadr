@@ -21,7 +21,7 @@ public class NilLiteralC extends DtlConstruct<NilLiteral> {
     public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
-        RubySimpleType t = rubyStaticContext().builtins().nilType();
+        RubySimpleType t = staticContext().builtins().nilType();
         builder.add(new SimpleType(t), new NilValue());
         continuation.consume(builder.build(), requestor);
     }

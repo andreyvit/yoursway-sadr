@@ -19,9 +19,8 @@ import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.SearchService;
 
@@ -76,7 +75,7 @@ public class MethodCallersGoal extends AbstractGoal {
     }
     
     public void evaluate(ContinuationRequestor requestor) {
-        final List<Construct<Scope, CallExpression>> possibleCallers = new ArrayList<Construct<Scope, CallExpression>>();
+        final List<CallC> possibleCallers = new ArrayList<CallC>();
         boolean isMethod = (callable instanceof RubyMethod);
         //        for (FileScope fileScope : searchService.searchForEverything()) {
         //            PossibleCallsVisitor visitor = new PossibleCallsVisitor(callable.name(), isMethod);
@@ -89,9 +88,8 @@ public class MethodCallersGoal extends AbstractGoal {
         String name = callable.name();
         CallsRequestor cr = new CallsRequestor() {
             
-            public void call(CallExpression call, FileScope fileScope) {
-                Scope scope = RubyUtils.restoreScope(fileScope, call);
-                possibleCallers.add(new Construct<Scope, CallExpression>(scope, call));
+            public void call(CallC call) {
+                possibleCallers.add(call);
             }
             
         };
@@ -99,8 +97,7 @@ public class MethodCallersGoal extends AbstractGoal {
             searchService.findMethodCalls(name, cr);
         else
             searchService.findProcedureCalls(name, cr);
-        Construct<Scope, CallExpression>[] array = possibleCallers
-                .toArray(createArray(possibleCallers.size()));
+        CallC[] array = possibleCallers.toArray(createArray(possibleCallers.size()));
         if (!isMethod) {
             this.callers = new CallersInfo(array);
             requestor.done();
@@ -111,14 +108,14 @@ public class MethodCallersGoal extends AbstractGoal {
     class MethodCallersRefiner implements Continuation {
         
         private final ExpressionValueInfoGoal[] goals;
-        private final Construct<Scope, CallExpression>[] constructs;
+        private final CallC[] constructs;
         
-        public MethodCallersRefiner(Construct<Scope, CallExpression>[] constructs) {
+        public MethodCallersRefiner(CallC[] constructs) {
             this.constructs = constructs;
             goals = new ExpressionValueInfoGoal[constructs.length];
             for (int i = 0; i < constructs.length; i++)
-                goals[i] = new ExpressionValueInfoGoal(constructs[i].scope(), constructs[i].node()
-                        .getReceiver(), InfoKind.TYPE);
+                goals[i] = new ExpressionValueInfoGoal(constructs[i].receiver(), new EmptyDynamicContext(),
+                        InfoKind.TYPE);
         }
         
         public void provideSubgoals(SubgoalRequestor requestor) {
@@ -131,8 +128,8 @@ public class MethodCallersGoal extends AbstractGoal {
             requestor.done();
         }
         
-        private Construct<Scope, CallExpression>[] collectSuitableCallers(RubyMethod method) {
-            List<Construct<Scope, CallExpression>> realCallers = new ArrayList<Construct<Scope, CallExpression>>();
+        private CallC[] collectSuitableCallers(RubyMethod method) {
+            List<CallC> realCallers = new ArrayList<CallC>();
             for (int i = 0; i < constructs.length; i++)
                 for (RubyBasicClass klass : goals[i].result(thing()).possibleClasses())
                     if (method.canBeCalledFrom(klass))
@@ -199,9 +196,8 @@ public class MethodCallersGoal extends AbstractGoal {
         return "MethodCallersGoal <" + callable + ">";
     }
     
-    @SuppressWarnings("unchecked")
-    private Construct<Scope, CallExpression>[] createArray(int size) {
-        return new Construct[size];
+    private CallC[] createArray(int size) {
+        return new CallC[size];
     }
     
     public int debugSlot() {

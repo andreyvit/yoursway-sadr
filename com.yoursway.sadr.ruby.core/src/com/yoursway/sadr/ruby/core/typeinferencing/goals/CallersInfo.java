@@ -1,19 +1,17 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
-import org.eclipse.dltk.ast.expressions.CallExpression;
-
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 
 public class CallersInfo implements Result {
     
-    private final Construct<Scope, CallExpression>[] callers;
+    private final CallC[] callers;
     
-    public CallersInfo(Construct<Scope, CallExpression>[] callers) {
+    public CallersInfo(CallC[] callers) {
         this.callers = callers;
     }
     
-    public Construct<Scope, CallExpression>[] callers() {
+    public CallC[] callers() {
         return callers;
     }
     

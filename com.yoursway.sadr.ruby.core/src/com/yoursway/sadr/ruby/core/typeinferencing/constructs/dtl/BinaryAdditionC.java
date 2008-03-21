@@ -1,8 +1,6 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
-import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
@@ -10,6 +8,7 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.std.StandardTypes;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.BinaryCoercion;
@@ -18,7 +17,6 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.IntegerValue;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.StringValue;
@@ -31,17 +29,13 @@ public class BinaryAdditionC extends DtlConstruct<CallExpression> {
     
     public void evaluateValue(final RubyDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
-        final ASTNode leftArg = node.getReceiver();
-        ASTNode rightArg0 = (ASTNode) node.getArgs().getChilds().get(0);
-        if (rightArg0 instanceof RubyCallArgument)
-            rightArg0 = ((RubyCallArgument) rightArg0).getValue();
-        final ASTNode rightArg = rightArg0;
+        final RubyConstruct leftArg = wrap(innerContext(), node.getLeft());
+        final RubyConstruct rightArg = wrap(innerContext(), node.getRight());
         requestor.subgoal(new Continuation() {
             
-            private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal((Scope) dc, leftArg, infoKind);
+            private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal(leftArg, dc, infoKind);
             
-            private final ValueInfoGoal rightGoal = new ExpressionValueInfoGoal((Scope) dc, rightArg,
-                    infoKind);
+            private final ValueInfoGoal rightGoal = new ExpressionValueInfoGoal(rightArg, dc, infoKind);
             
             public void provideSubgoals(SubgoalRequestor requestor) {
                 requestor.subgoal(leftGoal);
@@ -49,8 +43,8 @@ public class BinaryAdditionC extends DtlConstruct<CallExpression> {
             }
             
             public void done(ContinuationRequestor requestor) {
-                final StandardTypes builtins = rubyStaticContext().builtins();
-                BinaryCoercion coercion = new BinaryCoercion(rubyStaticContext().classLookup());
+                final StandardTypes builtins = staticContext().builtins();
+                BinaryCoercion coercion = new BinaryCoercion(staticContext().classLookup());
                 ValueInfo leftInfo = leftGoal.result(null);
                 ValueInfo rightInfo = rightGoal.result(null);
                 

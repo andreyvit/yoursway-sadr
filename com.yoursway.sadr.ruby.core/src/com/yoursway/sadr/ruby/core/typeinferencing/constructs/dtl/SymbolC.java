@@ -30,7 +30,7 @@ public class SymbolC extends DtlConstruct<SimpleReference> {
     public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             final ValueInfoContinuation continuation) {
         String name = node.getName();
-        RubyMetaClass mc = RubyUtils.resolveStaticClassReference(rubyStaticContext().classLookup(), node);
+        RubyMetaClass mc = RubyUtils.resolveStaticClassReference(staticContext().classLookup(), node);
         if (mc != null) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             //            RubySimpleType t = staticContext().builtins().intType();

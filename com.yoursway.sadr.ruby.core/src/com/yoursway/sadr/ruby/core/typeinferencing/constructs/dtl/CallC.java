@@ -1,6 +1,9 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
+import static com.yoursway.sadr.ruby.core.runtime.RubyUtils.childrenOf;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +11,8 @@ import java.util.Map;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
@@ -15,18 +20,32 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallableReturnValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class CallC extends DtlConstruct<CallExpression> {
     
     CallC(RubyStaticContext sc, CallExpression node) {
         super(sc, node);
+    }
+    
+    public List<RubyConstruct> arguments() {
+        if (node.getArgs() == null) {
+            return Collections.emptyList();
+        }
+        return Lists.transform(childrenOf(node.getArgs()), new Function<ASTNode, RubyConstruct>() {
+            
+            public RubyConstruct apply(ASTNode from) {
+                return wrap(innerContext(), from);
+            }
+            
+        });
     }
     
     protected class CallablesReturnTypeCont implements Continuation {
@@ -38,17 +57,18 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
         private final ValueInfoContinuation continuation;
         private final InfoKind infoKind;
         
-        public CallablesReturnTypeCont(InfoKind infoKind, ASTNode[] arguments, Callable[] callables,
-                ValueInfo receiver, ValueInfoContinuation continuation) {
+        public CallablesReturnTypeCont(InfoKind infoKind, List<RubyConstruct> arguments,
+                RubyDynamicContext dc, Callable[] callables, ValueInfo receiver,
+                ValueInfoContinuation continuation) {
             this.infoKind = infoKind;
             this.callables = callables;
             this.receiver = receiver;
             this.continuation = continuation;
             argGoals = new HashMap<Callable, List<ValueInfoGoal>>(callables.length);
             //            for (Callable c : callables) {
-            ArrayList<ValueInfoGoal> list = new ArrayList<ValueInfoGoal>(arguments.length);
-            for (ASTNode arg : arguments)
-                list.add(new ExpressionValueInfoGoal((Scope) rubyStaticContext(), arg, infoKind));
+            ArrayList<ValueInfoGoal> list = new ArrayList<ValueInfoGoal>(arguments.size());
+            for (RubyConstruct arg : arguments)
+                list.add(new ExpressionValueInfoGoal(arg, dc, infoKind));
             argGoals.put(null, list);
             //            }
         }
@@ -95,6 +115,13 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
             });
         }
         
+    }
+    
+    public RubyConstruct receiver() {
+        ASTNode receiver = node.getReceiver();
+        if (receiver == null)
+            return null;
+        return wrap(innerContext(), receiver);
     }
     
 }
