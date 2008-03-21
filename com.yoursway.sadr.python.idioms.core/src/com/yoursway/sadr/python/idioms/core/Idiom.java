@@ -28,10 +28,10 @@ public class Idiom {
 		matchers = bodies.toArray(new IdiomMatcher[bodies.size()]);
 	}
 
-	public IdiomMatcher match(PythonConstruct construct) {
+	public IdiomMatch match(PythonConstruct construct) {
 		for(IdiomMatcher matcher: matchers){
-			if(matcher.match(construct))
-				return matcher;
+			IdiomMatch match = matcher.match(construct);
+			if(match != null) return match;
 		}
 		return null;
 	}

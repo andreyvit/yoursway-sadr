@@ -48,6 +48,7 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGo
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.idioms.core.Idiom;
+import com.yoursway.sadr.python.idioms.core.IdiomMatch;
 import com.yoursway.sadr.python.idioms.core.IdiomMatcher;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;
 import com.yoursway.sadr.python.idioms.core.tests.internal.FileUtil;
@@ -321,10 +322,10 @@ public abstract class AbstractTypeInferencingTestCase {
 					 fileScope.node()).subconstructFor(node);
 			assertNotNull(construct);
 			Idiom idiom = new Idiom(this.pattern);
-			IdiomMatcher match = idiom.match(construct);
+			IdiomMatch match = idiom.match(construct);
 			if(should){
 				assertNotNull("Idiom should match here!", match);
-				match.apply(construct);
+				match.apply();
 			} else {
                 assertTrue("Idiom should never match here!", match == null);
 			}

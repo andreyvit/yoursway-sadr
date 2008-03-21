@@ -60,10 +60,10 @@ public class IdiomsCollection {
 		return Activator.readAndClose(stream);
 	}
 
-	List<IdiomMatcher> findAvailableIdiomsAt(PythonConstruct construct) {
-		List<IdiomMatcher> applicable = Lists.newArrayList();
+	List<IdiomMatch> findAvailableIdiomsAt(PythonConstruct construct) {
+		List<IdiomMatch> applicable = Lists.newArrayList();
 		for(Idiom idiom: getAllIdioms()){
-			IdiomMatcher match = idiom.match(construct);
+			IdiomMatch match = idiom.match(construct);
 			if(match != null){
 				applicable.add(match);
 			}

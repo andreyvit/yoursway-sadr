@@ -23,6 +23,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 import org.eclipse.dltk.python.parser.ast.statements.EmptyStatement;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
@@ -84,7 +85,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
                 || node instanceof PrintExpression || node instanceof EmptyStatement
                 || node instanceof PythonArgument || node instanceof PythonListExpression
                 || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
-                || node instanceof ExpressionList)
+                || node instanceof ExpressionList || node instanceof UnaryExpression)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }
