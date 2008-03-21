@@ -87,4 +87,8 @@ public class RootScope extends AbstractScope {
         throw new UnsupportedOperationException();
     }
     
+    public PythonConstruct parentConstruct() {
+        return null;
+    }
+    
 }

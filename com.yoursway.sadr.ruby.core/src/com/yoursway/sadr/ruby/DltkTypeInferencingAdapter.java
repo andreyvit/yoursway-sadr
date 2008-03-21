@@ -55,7 +55,7 @@ public class DltkTypeInferencingAdapter implements ITypeInferencer {
             Scope scope = RubyUtils.restoreSubscope(fileScope, newNode);
             ExpressionValueInfoGoal g = new ExpressionValueInfoGoal(scope, newNode, InfoKind.TYPE);
             engine.evaluate(g);
-            ValueInfo result = g.weakResult();
+            ValueInfo result = g.roughResult();
             
             List<IEvaluatedType> types = Lists.newArrayList();
             for (Type type : result.getTypeSet().containedTypes()) {

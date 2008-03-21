@@ -19,9 +19,9 @@ public class PythonSourceClassDefinition extends PythonClassDefinition implement
     private final PythonClass superclass;
     private final PythonClassDeclaration node;
     
-    private final Collection<PythonLocalVariable> localVariables = new ArrayList<PythonLocalVariable>();
+    private final Collection<PythonScopedVariable> localVariables = new ArrayList<PythonScopedVariable>();
     
-    private final Map<String, PythonLocalVariable> namesToLocalVariables = new HashMap<String, PythonLocalVariable>();
+    private final Map<String, PythonScopedVariable> namesToLocalVariables = new HashMap<String, PythonScopedVariable>();
     private final ClassScope scope;
     
     public PythonSourceClassDefinition(ClassScope scope, Context context, ClassDeclarationC construct,
@@ -47,7 +47,7 @@ public class PythonSourceClassDefinition extends PythonClassDefinition implement
         return node; // FIXME
     }
     
-    public void addLocalVariable(PythonLocalVariable localVariable) {
+    public void addLocalVariable(PythonScopedVariable localVariable) {
         localVariables.add(localVariable);
         namesToLocalVariables.put(localVariable.name().toLowerCase(), localVariable);
     }

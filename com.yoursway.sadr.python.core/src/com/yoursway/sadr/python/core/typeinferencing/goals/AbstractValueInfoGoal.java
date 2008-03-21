@@ -26,20 +26,20 @@ public abstract class AbstractValueInfoGoal extends AbstractGoal implements Valu
             throw new IllegalStateException("setResult of " + toString() + " has never been called");
     }
     
-    public ValueInfo result(ContextSensitiveThing victim) {
-        if (victim != null)
-            punish(victim);
-        return weakResult();
+    public ValueInfo result(ContextSensitiveThing thing) {
+        if (thing != null)
+            expandTo(thing);
+        return roughResult();
     }
     
-    public ValueInfo weakResult() {
+    public ValueInfo roughResult() {
         if (result == null)
             throw new IllegalStateException(getClass().getSimpleName() + ".result() before done()");
         return result;
     }
     
     public void copyAnswerFrom(Goal goal) {
-        copyAnswerFrom(((ValueInfoGoal) goal).result(thou()));
+        copyAnswerFrom(((ValueInfoGoal) goal).result(thing()));
     }
     
     public void copyAnswerFrom(Result result) {

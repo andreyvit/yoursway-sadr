@@ -80,4 +80,8 @@ public abstract class ChildScope extends AbstractScope {
         return parent.currentClass();
     }
     
+    public PythonConstruct parentConstruct() {
+        return parent.parentConstruct();
+    }
+    
 }

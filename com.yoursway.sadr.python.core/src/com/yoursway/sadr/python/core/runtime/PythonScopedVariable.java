@@ -6,13 +6,13 @@ import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.runtime.contributions.ContributableItem;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class PythonLocalVariable extends PythonVariable implements ContributableItem {
+public class PythonScopedVariable extends PythonVariable implements ContributableItem {
     
     private final LocalVariableContainer container;
     private final Scope scope;
     private final String name;
     
-    public PythonLocalVariable(LocalVariableContainer container, Context context, Scope scope, String name) {
+    public PythonScopedVariable(LocalVariableContainer container, Context context, Scope scope, String name) {
         this.container = container;
         this.scope = scope;
         this.name = name;

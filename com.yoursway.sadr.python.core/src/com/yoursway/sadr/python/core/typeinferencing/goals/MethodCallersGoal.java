@@ -38,7 +38,7 @@ public class MethodCallersGoal extends AbstractGoal {
     }
     
     public void copyAnswerFrom(Goal goal) {
-        copyAnswerFrom(((MethodCallersGoal) goal).result(thou()));
+        copyAnswerFrom(((MethodCallersGoal) goal).result(thing()));
     }
     
     public void copyAnswerFrom(Result result) {
@@ -56,12 +56,12 @@ public class MethodCallersGoal extends AbstractGoal {
         done();
     }
     
-    public CallersInfo result(ContextSensitiveThing victim) {
-        punish(victim);
-        return weakResult();
+    public CallersInfo result(ContextSensitiveThing thing) {
+        expandTo(thing);
+        return roughResult();
     }
     
-    public CallersInfo weakResult() {
+    public CallersInfo roughResult() {
         if (callers == null)
             throw new IllegalStateException("MethodCallersGoal.result() before done()");
         return callers;
@@ -124,7 +124,7 @@ public class MethodCallersGoal extends AbstractGoal {
         private CallC[] collectSuitableCallers(PythonMethod method) {
             List<CallC> realCallers = new ArrayList<CallC>();
             for (int i = 0; i < constructs.length; i++)
-                for (PythonBasicClass klass : goals[i].result(thou()).possibleClasses())
+                for (PythonBasicClass klass : goals[i].result(thing()).possibleClasses())
                     if (method.canBeCalledFrom(klass))
                         realCallers.add(constructs[i]);
             return realCallers.toArray(createArray(realCallers.size()));

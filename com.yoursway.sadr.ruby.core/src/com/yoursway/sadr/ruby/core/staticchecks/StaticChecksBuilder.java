@@ -19,8 +19,7 @@ import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
 @SuppressWarnings("unchecked")
 public class StaticChecksBuilder implements IScriptBuilder {
     
-    private final IStaticCheck[] checks = new IStaticCheck[] { new MethodCallCheck(),
-            new VariableAccessCheck() };
+    private final IStaticCheck[] checks = new IStaticCheck[] { new MethodCallCheck(), new NullPointerCheck() };
     private WholeProjectRuntime runtime;
     
     public StaticChecksBuilder() {

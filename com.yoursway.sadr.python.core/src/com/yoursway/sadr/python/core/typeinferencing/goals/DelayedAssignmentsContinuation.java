@@ -8,15 +8,15 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.AssignmentInfoProvider;
 
 public final class DelayedAssignmentsContinuation implements SimpleContinuation {
-    private final VariableRequest request;
+    private final AssignmentInfoProvider request;
     private final ValueInfoContinuation continuation;
     private final InfoKind infoKind;
     private final PythonDynamicContext dc;
     
-    public DelayedAssignmentsContinuation(VariableRequest request, PythonDynamicContext dc,
+    public DelayedAssignmentsContinuation(AssignmentInfoProvider request, PythonDynamicContext dc,
             InfoKind infoKind, ValueInfoContinuation continuation) {
         this.request = request;
         this.dc = dc;

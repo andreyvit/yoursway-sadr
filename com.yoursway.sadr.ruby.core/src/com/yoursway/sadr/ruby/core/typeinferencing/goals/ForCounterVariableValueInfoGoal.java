@@ -68,8 +68,8 @@ public class ForCounterVariableValueInfoGoal extends AbstractValueInfoGoal {
                 }
                 
                 private void executeIterations(ValueInfoBuilder builder) {
-                    ValueInfo startInfo = startGoal.result(thou());
-                    ValueInfo endInfo = endGoal.result(thou());
+                    ValueInfo startInfo = startGoal.result(thing());
+                    ValueInfo endInfo = endGoal.result(thing());
                     ValueSet startValues = startInfo.getValueSet();
                     ValueSet endValues = endInfo.getValueSet();
                     for (Value startV : startValues.containedValues()) {

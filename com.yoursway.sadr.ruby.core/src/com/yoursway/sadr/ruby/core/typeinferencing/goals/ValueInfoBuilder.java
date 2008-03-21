@@ -67,8 +67,8 @@ public class ValueInfoBuilder {
         return new ValueInfo(ts, vs);
     }
     
-    public void addResultOf(ValueInfoGoal goal, ContextSensitiveThing victim) {
-        add(goal.result(victim));
+    public void addResultOf(ValueInfoGoal goal, ContextSensitiveThing thing) {
+        add(goal.result(thing));
     }
     
     public boolean isEmpty() {

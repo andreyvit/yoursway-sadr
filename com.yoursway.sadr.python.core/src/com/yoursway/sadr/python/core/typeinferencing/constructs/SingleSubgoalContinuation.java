@@ -23,7 +23,7 @@ public final class SingleSubgoalContinuation implements Continuation {
     }
     
     public void done(ContinuationRequestor requestor) {
-        continuation.consume(varGoal.weakResult(), requestor);
+        continuation.consume(varGoal.roughResult(), requestor);
     }
     
 }

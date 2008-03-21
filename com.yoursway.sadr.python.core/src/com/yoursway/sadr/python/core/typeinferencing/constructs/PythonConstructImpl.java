@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.engine.util.Lists.filter;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTListNode;
@@ -19,6 +20,7 @@ import org.eclipse.dltk.python.parser.ast.PythonForStatement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PrintExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
@@ -33,6 +35,8 @@ import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public abstract class PythonConstructImpl<N extends ASTNode> extends
         AbstractConstruct<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> implements
@@ -49,12 +53,21 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         throw new UnsupportedOperationException();
     }
     
+    protected Scope nearestScope() {
+        return staticContext().nearestScope();
+    }
+    
     public N node() {
         return node;
     }
     
+    public PythonConstruct parent() {
+        return staticContext().parentConstruct();
+    }
+    
     @Override
     protected PythonConstruct wrap(PythonStaticContext sc, ASTNode node) {
+        sc = new PythonParentStaticContext(sc, this);
         if (node instanceof ModuleDeclaration)
             throw new RuntimeException("ModuleDeclaration cannot be wrapped with wrap()");
         if (node instanceof StringLiteral)
@@ -69,6 +82,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
                 return new ProcedureCallC(sc, (PythonCallExpression) node);
             return new MethodCallC(sc, (PythonCallExpression) node);
         }
+        if (node instanceof PythonVariableAccessExpression)
+            return new FieldAccessC(sc, (PythonVariableAccessExpression) node);
+        if (node instanceof PythonArrayAccessExpression)
+            return new ArrayAccessC(sc, (PythonArrayAccessExpression) node);
         if (node instanceof ReturnStatement)
             return new ReturnC(sc, (ReturnStatement) node);
         if (node instanceof Assignment)
@@ -85,17 +102,13 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
                 || node instanceof PrintExpression || node instanceof EmptyStatement
                 || node instanceof PythonArgument || node instanceof PythonListExpression
                 || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
-                || node instanceof ExpressionList || node instanceof UnaryExpression)
+                || node instanceof ExpressionList || node instanceof UnaryExpression
+                || node instanceof PythonTestListExpression)
             return new UnhandledC(sc, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }
     
     private PythonConstruct wrapVariableReference(PythonStaticContext sc, VariableReference node) {
-        String name = node.getName();
-        if (name.equals("self"))
-            return new SelfC(sc, node);
-        if (name.equals("super"))
-            return new SuperC(sc, node);
         return new VariableReferenceC(sc, node);
     }
     
@@ -103,6 +116,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         String operator = node.getOperator();
         if (operator.equals("+"))
             return new BinaryAdditionC(sc, node);
+        if (operator.equals("%"))
+            return new BinaryPercentC(sc, node);
         Comparison comparison = BinaryComparisonC.parseComparison(operator);
         if (comparison != null)
             return new BinaryComparisonC(sc, node, comparison);
@@ -163,5 +178,34 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         }
         
     };
+    
+    public Collection<MumblaWumblaThreesome> mumblaWumbla() {
+        return null;
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((node == null) ? 0 : node.hashCode());
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PythonConstructImpl other = (PythonConstructImpl) obj;
+        if (node == null) {
+            if (other.node != null)
+                return false;
+        } else if (!node.equals(other.node))
+            return false;
+        return true;
+    }
     
 }

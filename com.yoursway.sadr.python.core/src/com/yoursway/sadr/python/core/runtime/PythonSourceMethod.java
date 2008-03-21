@@ -17,9 +17,9 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
 
 public class PythonSourceMethod extends PythonMethod implements NodeBoundItem, LocalVariableContainer {
     
-    private final Collection<PythonLocalVariable> localVariables = new ArrayList<PythonLocalVariable>();
+    private final Collection<PythonScopedVariable> localVariables = new ArrayList<PythonScopedVariable>();
     
-    private final Map<String, PythonLocalVariable> namesToLocalVariables = new HashMap<String, PythonLocalVariable>();
+    private final Map<String, PythonScopedVariable> namesToLocalVariables = new HashMap<String, PythonScopedVariable>();
     
     private final MethodDeclarationC construct;
     
@@ -69,7 +69,7 @@ public class PythonSourceMethod extends PythonMethod implements NodeBoundItem, L
         return node().getName();
     }
     
-    public void addLocalVariable(PythonLocalVariable localVariable) {
+    public void addLocalVariable(PythonScopedVariable localVariable) {
         localVariables.add(localVariable);
         namesToLocalVariables.put(localVariable.name().toLowerCase(), localVariable);
     }

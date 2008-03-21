@@ -9,6 +9,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.ast.expressions.NilLiteral;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.SimpleReference;
@@ -29,6 +30,7 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.AbstractConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraph;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraphRequestor;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
 
@@ -59,12 +61,14 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
             return new StringLiteralC(sc, (StringLiteral) node);
         if (node instanceof NumericLiteral)
             return new IntegerLiteralC(sc, (NumericLiteral) node);
+        if (node instanceof NilLiteral)
+            return new NilLiteralC(sc, (NilLiteral) node);
         if (node instanceof RubySelfReference)
             return new SelfC(sc, (RubySelfReference) node);
         if (node instanceof RubySuperExpression)
             return new SuperC(sc, (RubySuperExpression) node);
         if (node instanceof SimpleReference)
-            return wrapSymbol(sc, (SimpleReference) node);
+            return new SymbolC(sc, (SimpleReference) node);
         if (node instanceof CallExpression)
             return wrapCall(sc, (CallExpression) node);
         if (node instanceof RubyAssignment)
@@ -82,6 +86,9 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
                 || node instanceof Block || node instanceof RubyMethodArgument
                 || node instanceof RubyDotExpression)
             return new UnhandledC(sc, node);
+        
+        if (node == null)
+            return new EmptyConstruct(sc);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }
     
@@ -97,13 +104,6 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
                 return new BinaryComparisonC(sc, node, comparison);
             return new MethodCallC(sc, node);
         }
-    }
-    
-    private IConstruct wrapSymbol(StaticContext sc, SimpleReference s) {
-        String name = s.getName();
-        if ("nil".equalsIgnoreCase(name))
-            return new NilLiteralC(sc, s);
-        return new SymbolC(sc, s);
     }
     
     private IConstruct wrapBinaryExpression(StaticContext sc, RubyBinaryExpression e) {

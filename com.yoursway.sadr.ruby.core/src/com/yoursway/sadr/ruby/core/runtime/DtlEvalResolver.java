@@ -67,7 +67,7 @@ public class DtlEvalResolver {
                     Scope scope = RubyUtils.restoreScope(context.fileScope(), expr);
                     ValueInfoGoal goal = new ExpressionValueInfoGoal(scope, expr, InfoKind.VALUE);
                     engine.evaluate(goal);
-                    ValueSet valueSet = goal.weakResult().getValueSet();
+                    ValueSet valueSet = goal.roughResult().getValueSet();
                     Collection<String> values = new ArrayList<String>();
                     for (Value value : valueSet.containedValues())
                         if (value instanceof StringValue) {

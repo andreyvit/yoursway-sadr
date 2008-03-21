@@ -61,7 +61,6 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.services.ServicesMegapack;
 
 public abstract class AbstractTypeInferencingTestCase {
     
@@ -325,7 +324,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
-            ValueInfo result = goal.weakResult();
+            ValueInfo result = goal.roughResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
             String types = Strings.join(possibleTypes, ",");
@@ -363,7 +362,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 throw new IllegalArgumentException();
             PythonVariable variable = construct.staticContext().variableLookup().lookupVariable(
                     ((SimpleReference) node).getName());
-            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, (ServicesMegapack) construct
+            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, new EmptyDynamicContext(), construct
                     .staticContext());
         }
         
@@ -387,7 +386,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
-            ValueInfo result = goal.weakResult();
+            ValueInfo result = goal.roughResult();
             String[] possibleValues = result.describePossibleValues();
             Arrays.sort(possibleValues, Strings.getNaturalComparator());
             String values = Strings.join(possibleValues, ",");
@@ -425,7 +424,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
             engine.evaluate(goal);
-            ValueInfo result = goal.weakResult();
+            ValueInfo result = goal.roughResult();
             AnyMethodRequestor requestor = new AnyMethodRequestor();
             result.findMethod(methodName, requestor);
             

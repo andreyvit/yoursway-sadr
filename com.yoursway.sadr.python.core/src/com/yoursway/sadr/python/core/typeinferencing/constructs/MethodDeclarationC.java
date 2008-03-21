@@ -17,7 +17,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelRe
 import com.yoursway.sadr.python.core.typeinferencing.scopes.LocalScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.ProcedureScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> implements ModelAffector {
     
@@ -54,10 +53,10 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
         PythonClass klass = staticContext().currentClass();
         if (klass != null) {
             PythonSourceMethod method = new PythonSourceMethod(klass, request.context(), this);
-            innerScope = new MethodScope((Scope) staticContext(), method, node);
+            innerScope = new MethodScope(nearestScope(), method, node);
         } else {
             PythonSourceProcedure procedure = new PythonSourceProcedure(request.context(), this);
-            innerScope = new ProcedureScope((Scope) staticContext(), procedure, node);
+            innerScope = new ProcedureScope(nearestScope(), procedure, node);
         }
     }
     

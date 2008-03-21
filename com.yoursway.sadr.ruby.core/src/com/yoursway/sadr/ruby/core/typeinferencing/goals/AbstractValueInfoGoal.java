@@ -3,10 +3,10 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
 import com.yoursway.sadr.engine.AbstractGoal;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 
 public abstract class AbstractValueInfoGoal extends AbstractGoal implements ValueInfoGoal,
@@ -25,20 +25,20 @@ public abstract class AbstractValueInfoGoal extends AbstractGoal implements Valu
             throw new IllegalStateException("setResult of " + toString() + " has never been called");
     }
     
-    public ValueInfo result(ContextSensitiveThing victim) {
-        if (victim != null)
-            punish(victim);
-        return weakResult();
+    public ValueInfo result(ContextSensitiveThing thing) {
+        if (thing != null)
+            expandTo(thing);
+        return roughResult();
     }
     
-    public ValueInfo weakResult() {
+    public ValueInfo roughResult() {
         if (result == null)
             throw new IllegalStateException(getClass().getSimpleName() + ".result() before done()");
         return result;
     }
     
     public void copyAnswerFrom(Goal goal) {
-        copyAnswerFrom(((ValueInfoGoal) goal).result(thou()));
+        copyAnswerFrom(((ValueInfoGoal) goal).result(thing()));
     }
     
     public void copyAnswerFrom(Result result) {

@@ -3,23 +3,49 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.runtime.PythonLocalVariable;
+import com.yoursway.sadr.engine.SimpleContinuation;
+import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.BackwardVariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
+public class ScopedVariableValueInfoGoal extends AbstractValueInfoGoal {
     
-    private final PythonLocalVariable variable;
+    private final PythonScopedVariable variable;
     private final InfoKind kind;
+    private final PythonDynamicContext dc;
     
-    public LocalVariableValueInfoGoal(PythonLocalVariable variable, InfoKind kind) {
+    public ScopedVariableValueInfoGoal(PythonScopedVariable variable, InfoKind kind, PythonDynamicContext dc) {
         this.variable = variable;
         this.kind = kind;
+        this.dc = dc;
     }
     
     public void evaluate(ContinuationRequestor requestor) {
+        evaluateWithFlow(requestor);
+    }
+    
+    private void evaluateWithFlow(ContinuationRequestor requestor) {
+        Scope scope = variable.scope();
+        BackwardVariableRequest request = new BackwardVariableRequest(variable, kind);
+        SimpleContinuation withoutFlowContinuation = new SimpleContinuation() {
+            
+            public void run(ContinuationRequestor requestor) {
+                evaluateWithoutFlow(requestor);
+            }
+            
+        };
+        scope.propagationTracker().traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
+                request,
+                requestor,
+                new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
+                        new TryAnotherThingContinuation(withoutFlowContinuation, this)));
+    }
+    
+    private void evaluateWithoutFlow(ContinuationRequestor requestor) {
         Scope scope = variable.scope();
         PythonConstruct construct = scope.createConstruct();
         final VariableRequest request = new VariableRequest(variable, kind);
@@ -49,7 +75,7 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final LocalVariableValueInfoGoal other = (LocalVariableValueInfoGoal) obj;
+        final ScopedVariableValueInfoGoal other = (ScopedVariableValueInfoGoal) obj;
         if (kind == null) {
             if (other.kind != null)
                 return false;
@@ -68,7 +94,7 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     public Goal cloneGoal() {
-        return new LocalVariableValueInfoGoal(variable, kind);
+        return new ScopedVariableValueInfoGoal(variable, kind, dc);
     }
     
 }

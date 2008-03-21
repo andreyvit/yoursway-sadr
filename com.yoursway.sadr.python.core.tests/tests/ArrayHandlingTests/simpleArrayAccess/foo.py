@@ -8,6 +8,6 @@ def foo():
   return x
 
 def bar():
-  zzz = foo() ## expr zzz => ?[],Foo[]
+  zzz = foo() ## expr zzz => Foo[]
   y = zzz[1]
   print y ## expr y => Foo

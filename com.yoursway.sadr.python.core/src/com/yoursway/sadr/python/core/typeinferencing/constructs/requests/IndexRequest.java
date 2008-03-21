@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs.requests;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.Request;
@@ -13,7 +14,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticCont
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 
 public class IndexRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
+        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor {
     
     private final AbstractMultiMap<String, CallC> procedureCalls;
     
@@ -35,15 +36,13 @@ public class IndexRequest implements
     }
     
     public void addMethodCall(String name, CallC construct) {
+        Assert.isNotNull(name);
         methodsCalls.put(name, construct);
     }
     
     public void addProcedureCall(String name, CallC construct) {
+        Assert.isNotNull(name);
         procedureCalls.put(name, construct);
-    }
-    
-    public void addAssignment(String name, AssignmentInfo info) {
-        assignments.put(name, info);
     }
     
     public void enter(PythonConstruct construct, ContinuationRequestor requestor,
@@ -53,6 +52,10 @@ public class IndexRequest implements
     }
     
     public void leave() {
+    }
+    
+    public void accept(AssignmentInfo info) {
+        assignments.put(info.variableName(), info);
     }
     
 }

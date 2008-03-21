@@ -22,7 +22,7 @@ public interface Goal extends ContextSensitiveThing {
     
     boolean isContextFree();
     
-    Result weakResult(); //? contextIgnoringResult
+    Result roughResult();
     
     Goal cloneGoal();
     

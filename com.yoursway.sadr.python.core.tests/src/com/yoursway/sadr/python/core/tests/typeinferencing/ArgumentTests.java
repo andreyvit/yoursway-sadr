@@ -10,7 +10,12 @@ public class ArgumentTests extends AbstractTypeInferencingTestCase {
     }
     
     @Test
-    public void argumentTypeByCallers() throws Exception {
+    public void methodArgumentTypeByCallers() throws Exception {
+        runTest();
+    }
+    
+    @Test
+    public void procedureArgumentTypeByCallers() throws Exception {
         runTest();
     }
     

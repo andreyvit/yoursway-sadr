@@ -32,7 +32,7 @@ public abstract class PythonProcedure implements Callable {
     }
     
     public boolean matches(String prefix) {
-        return name.toLowerCase().startsWith(prefix.toLowerCase());
+        return name.startsWith(prefix);
     }
     
     public String qualifiedName() {

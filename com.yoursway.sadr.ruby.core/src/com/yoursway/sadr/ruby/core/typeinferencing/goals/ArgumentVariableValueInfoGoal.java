@@ -99,7 +99,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private Construct<Scope, ASTNode>[] collectValueNodes() {
             List<Construct<Scope, ASTNode>> values = new ArrayList<Construct<Scope, ASTNode>>();
             int index = variable.index();
-            CallersInfo callers = callersGoal.result(thou());
+            CallersInfo callers = callersGoal.result(thing());
             for (Construct<Scope, CallExpression> caller : callers.callers()) {
                 ASTNode[] args = RubyUtils.argumentsOf(caller.node());
                 if (args.length > index) {
@@ -135,7 +135,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void done(ContinuationRequestor requestor) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             for (ValueInfoGoal goal : valueGoals)
-                builder.addResultOf(goal, thou());
+                builder.addResultOf(goal, thing());
             if (!builder.looksEmpty())
                 continuation.consume(builder.build(), requestor);
             else
@@ -158,7 +158,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void done(ContinuationRequestor requestor) {
             final CallsVisitor visitor = new CallsVisitor(variable);
             Construct<Scope, ASTNode> construct = callable.construct();
-            new RubyControlFlowTraverser(thou(), construct.scope()).traverse(construct.node(), requestor,
+            new RubyControlFlowTraverser(thing(), construct.scope()).traverse(construct.node(), requestor,
                     visitor, new SimpleContinuation() {
                         
                         public void run(ContinuationRequestor requestor) {

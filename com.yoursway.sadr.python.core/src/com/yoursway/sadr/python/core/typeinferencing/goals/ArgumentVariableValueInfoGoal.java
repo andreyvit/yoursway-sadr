@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 import static com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory.emptyTypeSet;
 
 import java.util.ArrayList;
@@ -25,12 +26,12 @@ import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.python.core.typeinferencing.services.ServicesMegapack;
 import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSet;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetBuilder;
@@ -97,7 +98,9 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private PythonConstruct[] collectValueNodes() {
             List<PythonConstruct> values = new ArrayList<PythonConstruct>();
             int index = variable.index();
-            CallersInfo callers = callersGoal.result(thou());
+            if (callable instanceof PythonMethod)
+                index--;
+            CallersInfo callers = callersGoal.result(thing());
             for (CallC caller : callers.callers()) {
                 List<PythonConstruct> args = caller.arguments();
                 if (args.size() > index)
@@ -129,7 +132,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void done(ContinuationRequestor requestor) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             for (ValueInfoGoal goal : valueGoals)
-                builder.addResultOf(goal, thou());
+                builder.addResultOf(goal, thing());
             if (!builder.looksEmpty())
                 continuation.consume(builder.build(), requestor);
             else
@@ -194,11 +197,11 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private final DtlArgumentVariable variable;
     private final ClassLookup classLookup;
-    private final ServicesMegapack megapack;
+    private final PythonStaticContext megapack;
     private final InfoKind kind;
     
     public ArgumentVariableValueInfoGoal(DtlArgumentVariable variable, InfoKind kind,
-            ServicesMegapack megapack) {
+            PythonStaticContext megapack) {
         this.variable = variable;
         this.kind = kind;
         this.megapack = megapack;
@@ -237,6 +240,18 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private void evaluateWithoutFlow(final Callable callable, PythonConstruct construct,
             ContinuationRequestor requestor) {
+        if (callable instanceof PythonMethod) {
+            if (variable.index() == 0) {
+                // TODO: need a dynamic context here 
+                ValueInfo selfType = construct.staticContext().selfType();
+                if (selfType != null)
+                    consume(selfType, requestor);
+                else
+                    consume(emptyValueInfo(), requestor);
+                return;
+            }
+        }
+        
         VariableRequest request = new VariableRequest(variable, kind);
         construct.staticContext().propagationTracker().traverseEntirely(
                 construct,
@@ -255,11 +270,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         Collection<String> methodsColl = new ArrayList<String>(calls.size());
         for (CallC call : calls) {
             PythonCallExpression node = call.node();
-            String name;
-            if (variable.callable() instanceof PythonMethod)
-                name = node.getMethodName();
-            else
-                name = node.getProcedureName();
+            String name = node.getMethodName();
             if (name != null)
                 methodsColl.add(name);
         }

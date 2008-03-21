@@ -58,7 +58,7 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
                     new SimpleContinuation() {
                         
                         public void run(ContinuationRequestor requestor) {
-                            requestor.subgoal(new MergeConstructsValueInfosContinuation(thou(), request
+                            requestor.subgoal(new MergeConstructsValueInfosContinuation(thing(), request
                                     .returns(), dc, kind, CallableReturnValueInfoGoal.this));
                         }
                         

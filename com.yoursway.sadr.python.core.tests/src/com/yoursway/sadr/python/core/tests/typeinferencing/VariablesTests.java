@@ -19,4 +19,24 @@ public class VariablesTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
     
+    @Test
+    public void externalFieldAssignment() throws Exception {
+        runTest();
+    }
+    
+    @Test
+    public void classAsStorage() throws Exception {
+        runTest();
+    }
+    
+    @Test
+    public void equalNamesAssignment() throws Exception {
+        runTest();
+    }
+    
+    @Test
+    public void subclassing() throws Exception {
+        runTest();
+    }
+    
 }

@@ -97,7 +97,7 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
             Scope scope = RubyUtils.restoreScope(currentFileScope, call);
             ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(scope, receiver, InfoKind.TYPE);
             runtime.getEngine().evaluate(goal);
-            ValueInfo types = goal.weakResult();
+            ValueInfo types = goal.roughResult();
             CollectingMethodRequestor rq = new CollectingMethodRequestor();
             types.findMethod(name.getName(), rq);
             found = rq.anythingFound();

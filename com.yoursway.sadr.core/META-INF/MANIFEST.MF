@@ -7,7 +7,8 @@ Bundle-Activator: com.yoursway.sadr.core.internal.Activator
 Bundle-Vendor: YOURSWAY
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dltk.core,
- com.yoursway.sadr.engine;bundle-version="1.0.0"
+ com.yoursway.sadr.engine;bundle-version="1.0.0",
+ com.google.collections;bundle-version="1.0.0"
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.sadr.core,

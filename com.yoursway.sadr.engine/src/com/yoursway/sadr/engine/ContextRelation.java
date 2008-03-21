@@ -33,7 +33,7 @@ public class ContextRelation {
     public GoalContext createPrimaryContext(Goal goal) {
         Result[] results = new Result[goals.size()];
         for (int i = 0; i < results.length; i++)
-            results[i] = goals.get(i).weakResult();
+            results[i] = goals.get(i).roughResult();
         return new GoalContext(goal, results);
     }
     
@@ -57,7 +57,7 @@ public class ContextRelation {
             public void done(ContinuationRequestor requestor) {
                 Result[] results = new Result[newGoals.size()];
                 for (int i = 0; i < results.length; i++)
-                    results[i] = newGoals.get(i).weakResult();
+                    results[i] = newGoals.get(i).roughResult();
                 continuation.execute(new GoalContext(goal, results), requestor);
             }
             
