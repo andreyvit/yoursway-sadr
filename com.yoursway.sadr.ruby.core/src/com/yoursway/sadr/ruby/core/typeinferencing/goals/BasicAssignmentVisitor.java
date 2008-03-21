@@ -5,7 +5,6 @@ import org.eclipse.dltk.ruby.ast.RubyAssignment;
 
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
@@ -30,7 +29,7 @@ public abstract class BasicAssignmentVisitor extends RubyAstVisitor<ASTNode> {
             Wildcard wildcard = RubyUtils.assignmentWildcardExpression(lhs);
             if (matches(terminal)) {
                 Scope subscope = RubyUtils.restoreSubscope(scope, rhs);
-                Construct<Scope, ASTNode> construct = new Construct<Scope, ASTNode>(subscope, rhs);
+                RubyConstruct construct = new RubyConstruct(subscope, rhs);
                 AssignmentInfo info = new AssignmentInfo(wildcard, construct);
                 matched(terminal, info);
             }

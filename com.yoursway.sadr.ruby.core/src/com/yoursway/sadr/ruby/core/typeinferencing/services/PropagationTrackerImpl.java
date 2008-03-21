@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
@@ -15,9 +16,8 @@ import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ConstructControlFlowTraverser;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ConstructVisitor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.Request;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.BackwardPropagationEntryPoint;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 
@@ -98,13 +98,13 @@ public class PropagationTrackerImpl implements PropagationTracker {
         return null;
     }
     
-    public void traverseEntirely(IConstruct construct, final Request request,
+    public void traverseEntirely(RubyConstruct rubyConstruct, final Request request,
             ContinuationRequestor requestor, SimpleContinuation continuation) {
         ConstructControlFlowTraverser traverser = new ConstructControlFlowTraverser();
-        traverser.traverse(construct, requestor, new ConstructVisitor() {
+        traverser.traverse(rubyConstruct, requestor, new ConstructVisitor() {
             
-            public ConstructVisitor enter(IConstruct construct) {
-                request.accept(construct);
+            public ConstructVisitor enter(RubyConstruct rubyConstruct) {
+                request.accept(rubyConstruct);
                 return this;
             }
             

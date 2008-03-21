@@ -4,7 +4,7 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.RubyLocalVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
@@ -24,9 +24,9 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
         //        ASTNode node = variable.container().node();
         PropagationTracker tracker = scope.propagationTracker();
         
-        IConstruct construct = scope.createConstruct();
+        RubyConstruct rubyConstruct = scope.createConstruct();
         final VariableRequest request = new VariableRequest(variable, kind);
-        tracker.traverseEntirely(construct, request, requestor, new DelayedAssignmentsContinuation(request,
+        tracker.traverseEntirely(rubyConstruct, request, requestor, new DelayedAssignmentsContinuation(request,
                 kind, this));
     }
     

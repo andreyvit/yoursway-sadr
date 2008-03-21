@@ -1,7 +1,7 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 
 import com.yoursway.sadr.ruby.core.runtime.RubyRuntimeModel;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.InstanceRegistrar;
@@ -73,7 +73,7 @@ public class RootScope extends AbstractScope {
         return propagationTracker;
     }
     
-     public IConstruct createConstruct() {
+     public RubyConstruct createConstruct() {
         throw new UnsupportedOperationException();
     }
 }

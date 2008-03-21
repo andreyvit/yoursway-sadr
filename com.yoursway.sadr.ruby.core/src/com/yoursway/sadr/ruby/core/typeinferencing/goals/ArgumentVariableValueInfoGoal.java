@@ -10,6 +10,7 @@ import java.util.Set;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
@@ -22,10 +23,8 @@ import com.yoursway.sadr.ruby.core.ast.visitor.RubyControlFlowTraverser;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
@@ -96,8 +95,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         }
         
         @SuppressWarnings("unchecked")
-        private Construct<Scope, ASTNode>[] collectValueNodes() {
-            List<Construct<Scope, ASTNode>> values = new ArrayList<Construct<Scope, ASTNode>>();
+        private RubyConstruct[] collectValueNodes() {
+            List<RubyConstruct> values = new ArrayList<RubyConstruct>();
             int index = variable.index();
             CallersInfo callers = callersGoal.result(thing());
             for (Construct<Scope, CallExpression> caller : callers.callers()) {
@@ -105,7 +104,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
                 if (args.length > index) {
                     ASTNode arg = args[index];
                     Scope scope = RubyUtils.restoreSubscope(caller.scope(), arg);
-                    values.add(new Construct<Scope, ASTNode>(scope, arg));
+                    values.add(new RubyConstruct(scope, arg));
                 }
             }
             return values.toArray(new Construct[values.size()]);
@@ -118,7 +117,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private final ValueInfoGoal[] valueGoals;
         private final ValueInfoContinuation continuation;
         
-        private NodeValuesCont(Construct<Scope, ASTNode>[] cs, Callable callable,
+        private NodeValuesCont(RubyConstruct[] cs, Callable callable,
                 ValueInfoContinuation continuation) {
             this.callable = callable;
             this.continuation = continuation;
@@ -157,7 +156,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         
         public void done(ContinuationRequestor requestor) {
             final CallsVisitor visitor = new CallsVisitor(variable);
-            Construct<Scope, ASTNode> construct = callable.construct();
+            RubyConstruct construct = callable.construct();
             new RubyControlFlowTraverser(thing(), construct.scope()).traverse(construct.node(), requestor,
                     visitor, new SimpleContinuation() {
                         
@@ -220,12 +219,12 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     public void evaluate(ContinuationRequestor requestor) {
         final Callable callable = variable.callable();
-        final Construct<Scope, ASTNode> construct = callable.construct();
+        final RubyConstruct construct = callable.construct();
         //evaluateWithFlow(callable, construct, requestor);
         evaluateWithoutFlow(callable, construct, requestor);
     }
     
-    //    private void evaluateWithFlow(final Callable callable, final Construct<Scope, ASTNode> construct,
+    //    private void evaluateWithFlow(final Callable callable, final RubyConstruct construct,
     //            ContinuationRequestor requestor) {
     //        PropagationTracker tracker = construct.scope().propagationTracker();
     //        tracker.initiateBackwardPropagation(this, requestor, new ValueInfoContinuation() {
@@ -240,9 +239,9 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     //        });
     //    }
     
-    private void evaluateWithoutFlow(final Callable callable, Construct<Scope, ASTNode> construct,
+    private void evaluateWithoutFlow(final Callable callable, RubyConstruct construct,
             ContinuationRequestor requestor) {
-        IConstruct c = construct.asAnotherMyself();
+        RubyConstruct c = construct.asAnotherMyself();
         PropagationTracker tracker = construct.scope().propagationTracker();
         VariableRequest request = new VariableRequest(variable, kind);
         tracker.traverseEntirely(c, request, requestor, new DelayedAssignmentsContinuation(request, kind,

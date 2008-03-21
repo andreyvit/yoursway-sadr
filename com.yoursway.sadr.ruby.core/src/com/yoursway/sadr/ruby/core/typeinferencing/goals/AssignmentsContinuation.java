@@ -5,13 +5,12 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
 import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public final class AssignmentsContinuation extends AbstractContinuation {
@@ -31,7 +30,7 @@ public final class AssignmentsContinuation extends AbstractContinuation {
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[assignments.length];
         for (int i = 0; i < assignments.length; i++) {
-            Construct<Scope, ASTNode> construct = assignments[i].construct();
+            RubyConstruct construct = assignments[i].construct();
             goals[i] = new ExpressionValueInfoGoal(construct.scope(), construct.node(), kind);
         }
     }

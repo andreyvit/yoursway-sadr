@@ -8,14 +8,14 @@ import java.util.Map;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallableReturnValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
@@ -25,7 +25,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class CallC extends DtlConstruct<CallExpression> {
     
-    CallC(StaticContext sc, CallExpression node) {
+    CallC(RubyStaticContext sc, CallExpression node) {
         super(sc, node);
     }
     
@@ -48,7 +48,7 @@ public abstract class CallC extends DtlConstruct<CallExpression> {
             //            for (Callable c : callables) {
             ArrayList<ValueInfoGoal> list = new ArrayList<ValueInfoGoal>(arguments.length);
             for (ASTNode arg : arguments)
-                list.add(new ExpressionValueInfoGoal((Scope) staticContext(), arg, infoKind));
+                list.add(new ExpressionValueInfoGoal((Scope) rubyStaticContext(), arg, infoKind));
             argGoals.put(null, list);
             //            }
         }

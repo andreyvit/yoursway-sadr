@@ -7,6 +7,7 @@ import static com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSetFact
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
@@ -23,7 +24,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.values.ArrayValue;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.Value;
 import com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSet;
 
-public class ValueInfo implements Result {
+public class ValueInfo implements Result, IValueInfo {
     
     @Override
     public int hashCode() {

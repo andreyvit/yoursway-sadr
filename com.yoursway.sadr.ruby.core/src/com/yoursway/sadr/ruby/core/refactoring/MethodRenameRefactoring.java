@@ -10,7 +10,6 @@ import com.yoursway.sadr.ruby.core.rewriting.RewritingSession;
 import com.yoursway.sadr.ruby.core.rewriting.WCall;
 import com.yoursway.sadr.ruby.core.rewriting.WMethodDeclaration;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallersInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.MethodCallersGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;

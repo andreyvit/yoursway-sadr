@@ -14,7 +14,6 @@ import org.eclipse.dltk.ruby.ast.RubyVariableKind;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstTraverser;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ClassScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.MethodScope;

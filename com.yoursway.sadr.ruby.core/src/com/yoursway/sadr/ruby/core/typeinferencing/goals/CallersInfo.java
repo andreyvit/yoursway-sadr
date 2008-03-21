@@ -3,7 +3,6 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class CallersInfo implements Result {

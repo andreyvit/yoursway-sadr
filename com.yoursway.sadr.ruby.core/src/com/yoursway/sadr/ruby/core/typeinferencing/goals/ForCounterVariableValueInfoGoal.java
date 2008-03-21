@@ -4,14 +4,14 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ruby.ast.RubyDotExpression;
 import org.eclipse.dltk.ruby.ast.RubyForStatement2;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ForCounterVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ForScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
@@ -111,12 +111,12 @@ public class ForCounterVariableValueInfoGoal extends AbstractValueInfoGoal {
         ForScope scope = variable.scope();
         if (scope == null)
             throw new NullPointerException();
-        IConstruct construct = scope.createConstruct();
+        RubyConstruct rubyConstruct = scope.createConstruct();
         PropagationTracker tracker = scope.propagationTracker();
         
         VariableRequest request = new VariableRequest(variable, kind);
-        tracker.traverseEntirely(construct, request, requestor, new DelayedAssignmentsContinuation(request,
-                kind, new ForCounterContinuation((RubyForStatement2) construct.node(), scope,
+        tracker.traverseEntirely(rubyConstruct, request, requestor, new DelayedAssignmentsContinuation(request,
+                kind, new ForCounterContinuation((RubyForStatement2) rubyConstruct.node(), scope,
                         ForCounterVariableValueInfoGoal.this)));
     }
     

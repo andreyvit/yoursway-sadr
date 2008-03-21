@@ -20,7 +20,6 @@ import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.CallsRequestor;

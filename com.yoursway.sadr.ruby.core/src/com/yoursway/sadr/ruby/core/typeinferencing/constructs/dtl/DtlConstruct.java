@@ -26,35 +26,40 @@ import org.eclipse.dltk.ruby.ast.RubySelfReference;
 import org.eclipse.dltk.ruby.ast.RubySuperExpression;
 
 import com.google.common.base.Predicate;
+import com.yoursway.sadr.core.constructs.AbstractConstruct;
+import com.yoursway.sadr.core.constructs.ControlFlowGraph;
+import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.AbstractConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraph;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 
-public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct {
-    
+public abstract class DtlConstruct<N extends ASTNode> extends
+        AbstractConstruct<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> implements
+        RubyConstruct { //> rename to RubyConstructImpl
+
     protected final N node;
     
-    public DtlConstruct(StaticContext sc, N node) {
+    public DtlConstruct(RubyStaticContext sc, N node) {
         super(sc);
         this.node = node;
     }
     
-    @Override
-    public IConstruct staticallyEnclosingConstruct() {
-        // FIXME: context might have changed!
-        return wrap(staticContext(), staticContext().parentNodeOf(node));
+    public RubyConstruct staticallyEnclosingConstruct() {
+        throw new UnsupportedOperationException();
     }
     
     public N node() {
         return node;
     }
     
+    public RubyConstruct parent() {
+        return staticContext().parentConstruct();
+    }
+    
     @Override
-    protected IConstruct wrap(StaticContext sc, ASTNode node) {
+    protected RubyConstruct wrap(RubyStaticContext sc, ASTNode node) {
         if (node instanceof ModuleDeclaration)
             throw new RuntimeException("ModuleDeclaration cannot be wrapped with wrap()");
         if (node instanceof StringLiteral)
@@ -92,7 +97,7 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
         throw new RuntimeException("No construct found for node " + node.getClass());
     }
     
-    private IConstruct wrapCall(StaticContext sc, CallExpression node) {
+    private RubyConstruct wrapCall(RubyStaticContext sc, CallExpression node) {
         if (node.getReceiver() == null)
             return new ProcedureCallC(sc, node);
         else {
@@ -106,24 +111,50 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
         }
     }
     
-    private IConstruct wrapBinaryExpression(StaticContext sc, RubyBinaryExpression e) {
+    private RubyConstruct wrapBinaryExpression(RubyStaticContext sc, RubyBinaryExpression e) {
         return new UnhandledC(sc, e);
     }
     
-    @Override
-    public IConstruct subconstructFor(ASTNode node) {
-        StaticContext subcontext = staticContext().subcontextFor(node);
-        return wrap(subcontext, node);
+    public RubyConstruct subconstructFor(ASTNode node) {
+        RubyConstruct result = innerSubsonstructFor(node);
+        if (result == null)
+            throw new IllegalArgumentException("Subconstruct not found for node "
+                    + node.getClass().getSimpleName() + " in " + this);
+        return result;
     }
     
-    public void calculateEffectiveControlFlowGraph(ContinuationRequestor requestor,
-            ControlFlowGraphRequestor continuation) {
-        List<IConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
-        continuation.process(new ControlFlowGraph(constructs), requestor);
+    RubyConstruct innerSubsonstructFor(ASTNode node) {
+        if (isNode(node))
+            return this;
+        // TODO check offset here
+        List<RubyConstruct> enclosedConstructs = enclosedConstructs();
+        for (RubyConstruct c : enclosedConstructs) {
+            RubyConstruct sc = ((DtlConstruct<?>) c).innerSubsonstructFor(node);
+            if (sc != null)
+                return sc;
+        }
+        return null;
     }
     
-    protected List<IConstruct> enclosedConstructs() {
-        return wrap(staticContext(), enclosedNodes());
+    protected boolean isNode(ASTNode node) {
+        return node == this.node;
+    }
+    
+    public void calculateEffectiveControlFlowGraph(
+            ContinuationRequestor requestor,
+            ControlFlowGraphRequestor<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> continuation) {
+        List<RubyConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
+        continuation.process(
+                new ControlFlowGraph<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode>(
+                        constructs), requestor);
+    }
+    
+    public List<RubyConstruct> enclosedConstructs() {
+        return wrap(innerContext(), enclosedNodes());
+    }
+    
+    protected RubyStaticContext innerContext() {
+        return staticContext();
     }
     
     @SuppressWarnings("unchecked")
@@ -131,9 +162,9 @@ public abstract class DtlConstruct<N extends ASTNode> extends AbstractConstruct 
         return node.getChilds();
     }
     
-    protected static final Predicate<IConstruct> NOT_METHOD = new Predicate<IConstruct>() {
+    protected static final Predicate<RubyConstruct> NOT_METHOD = new Predicate<RubyConstruct>() {
         
-        public boolean apply(IConstruct t) {
+        public boolean apply(RubyConstruct t) {
             return !(t instanceof MethodDeclarationC);
         }
         

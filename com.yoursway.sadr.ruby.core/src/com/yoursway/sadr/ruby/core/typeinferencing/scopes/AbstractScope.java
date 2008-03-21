@@ -7,7 +7,7 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.std.StandardTypes;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 
 public abstract class AbstractScope implements Scope {
     
@@ -18,7 +18,7 @@ public abstract class AbstractScope implements Scope {
         return nodeLookup().parentOf(node);
     }
     
-    public StaticContext subcontextFor(ASTNode node) {
+    public RubyStaticContext subcontextFor(ASTNode node) {
         return RubyUtils.restoreSubscope(this, node);
     }
     

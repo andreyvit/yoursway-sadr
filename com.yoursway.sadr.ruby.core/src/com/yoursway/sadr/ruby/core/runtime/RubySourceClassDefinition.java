@@ -10,7 +10,6 @@ import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.runtime.contributions.ContributableItem;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ClassScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 

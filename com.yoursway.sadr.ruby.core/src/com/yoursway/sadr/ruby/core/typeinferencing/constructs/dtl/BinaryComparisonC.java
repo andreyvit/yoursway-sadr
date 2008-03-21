@@ -7,13 +7,13 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.BinaryCoercion;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.BinaryCoercionRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
@@ -28,12 +28,12 @@ public class BinaryComparisonC extends DtlConstruct<CallExpression> {
     
     private final Comparison comparison;
     
-    BinaryComparisonC(StaticContext sc, CallExpression node, Comparison comparison) {
+    BinaryComparisonC(RubyStaticContext sc, CallExpression node, Comparison comparison) {
         super(sc, node);
         this.comparison = comparison;
     }
     
-    public void evaluateValue(final DynamicContext dc, final InfoKind infoKind,
+    public void evaluateValue(final RubyDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
         final ASTNode leftArg = node.getReceiver();
         ASTNode rightArg0 = (ASTNode) node.getArgs().getChilds().get(0);
@@ -53,12 +53,12 @@ public class BinaryComparisonC extends DtlConstruct<CallExpression> {
             }
             
             public void done(ContinuationRequestor requestor) {
-                BinaryCoercion coercion = new BinaryCoercion(staticContext().classLookup());
+                BinaryCoercion coercion = new BinaryCoercion(rubyStaticContext().classLookup());
                 ValueInfo leftInfo = leftGoal.result(null);
                 ValueInfo rightInfo = rightGoal.result(null);
                 
                 final ValueInfoBuilder builder = new ValueInfoBuilder();
-                builder.add(new SimpleType(staticContext().builtins().intType()));
+                builder.add(new SimpleType(rubyStaticContext().builtins().intType()));
                 coercion.coerce(leftInfo, rightInfo, new BinaryCoercionRequestor() {
                     
                     public void intType() {

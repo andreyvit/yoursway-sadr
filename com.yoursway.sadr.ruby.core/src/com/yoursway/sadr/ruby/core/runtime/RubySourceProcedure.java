@@ -13,7 +13,6 @@ import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
 import com.yoursway.sadr.ruby.core.runtime.RubyArgument.Usage;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.runtime.contributions.NodeBoundItem;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.LocalScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ProcedureScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
@@ -69,8 +68,8 @@ public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem,
         return scope;
     }
     
-    public Construct<Scope, ASTNode> construct() {
-        return new Construct<Scope, ASTNode>(scope, node);
+    public RubyConstruct construct() {
+        return new RubyConstruct(scope, node);
     }
     
     public boolean isBuiltin() {

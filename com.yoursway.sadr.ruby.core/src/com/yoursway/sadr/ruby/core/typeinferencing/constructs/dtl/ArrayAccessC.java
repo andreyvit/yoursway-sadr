@@ -2,19 +2,19 @@ package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
 import org.eclipse.dltk.ruby.ast.RubyArrayAccessExpression;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 
 public class ArrayAccessC extends DtlConstruct<RubyArrayAccessExpression> {
     
-    ArrayAccessC(StaticContext sc, RubyArrayAccessExpression node) {
+    ArrayAccessC(RubyStaticContext sc, RubyArrayAccessExpression node) {
         super(sc, node);
     }
     
-    public void evaluateValue(final DynamicContext dc, final InfoKind infoKind,
+    public void evaluateValue(final RubyDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
         //        
         //        final Statement name = node.getName();

@@ -2,12 +2,12 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.AbstractGoal;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 
 public abstract class AbstractValueInfoGoal extends AbstractGoal implements ValueInfoGoal,
         ValueInfoContinuation {

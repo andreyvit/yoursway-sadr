@@ -17,7 +17,6 @@ import com.yoursway.sadr.ruby.core.ast.visitor.RubyControlFlowTraverser;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyBuiltinMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubyBuiltinProcedure;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DynamicMethodScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DynamicProcedureScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.MethodScope;
@@ -49,7 +48,7 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
             }
             return;
         }
-        Construct<Scope, ASTNode> construct = callable.construct();
+        RubyConstruct construct = callable.construct();
         if (construct != null) {
             Scope staticScope = construct.scope();
             Scope scope;
@@ -90,7 +89,7 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
             ASTNode expr = (ASTNode) node.getValue().getChilds().get(0);
             if (expr instanceof RubyCallArgument) {
                 RubyCallArgument argument = (RubyCallArgument) expr;
-                returns.add(new Construct<Scope, ASTNode>(scope, argument.getValue()));
+                returns.add(new RubyConstruct(scope, argument.getValue()));
                 
             }
             return null;

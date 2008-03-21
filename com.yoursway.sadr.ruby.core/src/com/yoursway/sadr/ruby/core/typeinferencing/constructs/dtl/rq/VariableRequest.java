@@ -5,8 +5,8 @@ import java.util.Collection;
 
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.Request;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
 
 public class VariableRequest implements Request {
@@ -23,9 +23,9 @@ public class VariableRequest implements Request {
         return variable;
     }
     
-    public void accept(IConstruct construct) {
-        if (construct instanceof VariableAffector)
-            ((VariableAffector) construct).actOnVariable(this);
+    public void accept(RubyConstruct rubyConstruct) {
+        if (rubyConstruct instanceof VariableAffector)
+            ((VariableAffector) rubyConstruct).actOnVariable(this);
     }
     
     public void add(AssignmentInfo info) {

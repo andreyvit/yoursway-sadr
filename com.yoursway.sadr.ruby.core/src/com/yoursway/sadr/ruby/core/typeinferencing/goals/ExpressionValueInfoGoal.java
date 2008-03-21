@@ -5,16 +5,15 @@ import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyV
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.DtlFileC;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
@@ -39,8 +38,8 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
     
     public void evaluate(ContinuationRequestor requestor) {
         DtlFileC fileC = new DtlFileC(scope.fileScope(), scope.fileScope().node());
-        IConstruct construct = fileC.subconstructFor(node);
-        construct.evaluateValue(scope, kind, requestor, this);
+        RubyConstruct rubyConstruct = fileC.subconstructFor(node);
+        rubyConstruct.evaluateValue(scope, kind, requestor, this);
     }
     
     @Override
@@ -89,8 +88,8 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
         return 2;
     }
     
-    public Construct<Scope, ASTNode> construct() {
-        return new Construct<Scope, ASTNode>(scope, node);
+    public RubyConstruct construct() {
+        return new RubyConstruct(scope, node);
     }
     
     public boolean backwardPropagation(final Goal goal, ContinuationRequestor requestor,

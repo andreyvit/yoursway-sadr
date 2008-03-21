@@ -3,14 +3,13 @@
  */
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     

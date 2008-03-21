@@ -3,11 +3,11 @@
  */
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
 
 public final class DelayedAssignmentsContinuation implements SimpleContinuation {
     private final VariableRequest request;

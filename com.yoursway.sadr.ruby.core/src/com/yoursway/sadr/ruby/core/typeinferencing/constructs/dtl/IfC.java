@@ -8,16 +8,15 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ruby.ast.RubyIfStatement;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraph;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
@@ -27,11 +26,11 @@ import com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSet;
 
 public class IfC extends DtlConstruct<RubyIfStatement> {
     
-    IfC(StaticContext sc, RubyIfStatement node) {
+    IfC(RubyStaticContext sc, RubyIfStatement node) {
         super(sc, node);
     }
     
-    public void evaluateValue(DynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
+    public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         continuation.consume(emptyValueInfo(), requestor);
     }
@@ -42,7 +41,7 @@ public class IfC extends DtlConstruct<RubyIfStatement> {
         final ASTNode condition = node.getCondition();
         requestor.subgoal(new Continuation() {
             
-            ValueInfoGoal conditionGoal = new ExpressionValueInfoGoal((Scope) staticContext(), condition,
+            ValueInfoGoal conditionGoal = new ExpressionValueInfoGoal((Scope) rubyStaticContext(), condition,
                     InfoKind.VALUE);
             
             public void provideSubgoals(SubgoalRequestor requestor) {
@@ -62,12 +61,12 @@ public class IfC extends DtlConstruct<RubyIfStatement> {
                 }
                 if (!visitThen && !visitElse)
                     visitThen = visitElse = true;
-                List<IConstruct> staticNodes = new ArrayList<IConstruct>();
-                staticNodes.add(wrap(staticContext(), condition));
+                List<RubyConstruct> staticNodes = new ArrayList<RubyConstruct>();
+                staticNodes.add(wrap(rubyStaticContext(), condition));
                 if (visitThen)
-                    staticNodes.add(wrap(staticContext(), node.getThen()));
+                    staticNodes.add(wrap(rubyStaticContext(), node.getThen()));
                 if (visitElse)
-                    staticNodes.add(wrap(staticContext(), node.getElse()));
+                    staticNodes.add(wrap(rubyStaticContext(), node.getElse()));
                 continuation.process(new ControlFlowGraph(staticNodes), requestor);
             }
             
