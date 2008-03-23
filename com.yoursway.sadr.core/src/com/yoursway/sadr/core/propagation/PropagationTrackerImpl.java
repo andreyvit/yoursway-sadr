@@ -26,6 +26,7 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.Goal;
+import com.yoursway.sadr.engine.GoalReturnValue;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.Query;
 import com.yoursway.sadr.engine.SimpleContinuation;
@@ -70,7 +71,7 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
                         return requestor.currentQuery();
                     }
                     
-                    public void subgoal(Continuation cont) {
+                    public GoalReturnValue subgoal(Continuation cont) {
                         cont.provideSubgoals(new SubgoalRequestor() {
                             
                             public void subgoal(Goal goal) {
@@ -79,7 +80,7 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
                             }
                             
                         });
-                        requestor.subgoal(cont);
+                        return requestor.subgoal(cont);
                     }
                     
                     public void done() {
