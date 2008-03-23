@@ -6,23 +6,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.MethodDeclaration;
-
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
 public class IdiomsCollection {
 	
 	private static final String PATH = "/snippets/";
-	private static IdiomsCollection INSTANCE;
-
-	public static IdiomsCollection getInstance() {
-		if(null == IdiomsCollection.INSTANCE){
-			INSTANCE = new IdiomsCollection();
-		}
-		return INSTANCE;
-	}
+//	private static IdiomsCollection INSTANCE;
+//
+//	public static IdiomsCollection getInstance() {
+//		if(null == IdiomsCollection.INSTANCE){
+//			INSTANCE = new IdiomsCollection();
+//		}
+//		return INSTANCE;
+//	}
 
 	private Map<String, Idiom> idiomList;
 	

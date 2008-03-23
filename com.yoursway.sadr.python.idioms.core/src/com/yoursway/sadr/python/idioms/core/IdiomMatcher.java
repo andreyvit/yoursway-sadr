@@ -1,16 +1,7 @@
 package com.yoursway.sadr.python.idioms.core;
 
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.dltk.ast.statements.Block;
-import org.eclipse.dltk.ast.statements.Statement;
-import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
-import com.google.common.collect.Maps;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
 public class IdiomMatcher {
@@ -30,5 +21,9 @@ public class IdiomMatcher {
 		IdiomMatch idiomMatch = new IdiomMatch(parsedSource, parsedDestination);
 		if(idiomMatch.match(realConstruct)) return idiomMatch;
 		return null;
+	}
+
+	public void printMatchTree() {
+		TreePrinter.printTree(parsedSource.getStatements());
 	}
 }

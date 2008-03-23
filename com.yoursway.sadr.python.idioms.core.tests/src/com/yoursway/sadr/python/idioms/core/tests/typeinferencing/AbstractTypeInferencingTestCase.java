@@ -32,6 +32,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
+import org.eclipse.dltk.ast.expressions.Expression;
+import org.eclipse.dltk.ast.references.VariableReference;
+import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
@@ -50,6 +53,7 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.idioms.core.Idiom;
 import com.yoursway.sadr.python.idioms.core.IdiomMatch;
 import com.yoursway.sadr.python.idioms.core.IdiomMatcher;
+import com.yoursway.sadr.python.idioms.core.TreePrinter;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;
 import com.yoursway.sadr.python.idioms.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.idioms.core.tests.internal.StringInputStream;
@@ -320,13 +324,21 @@ public abstract class AbstractTypeInferencingTestCase {
 			 assertNotNull(node);
 			PythonConstruct construct = new PythonFileC(fileScope,
 					 fileScope.node()).subconstructFor(node);
+			while(construct.node() instanceof VariableReference)
+				construct = construct.parent();
 			assertNotNull(construct);
 			Idiom idiom = new Idiom(this.pattern);
 			IdiomMatch match = idiom.match(construct);
 			if(should){
+				if(match == null) {
+					idiom.printCompareInfo(construct);
+				}
 				assertNotNull("Idiom should match here!", match);
 				match.apply();
 			} else {
+				if(match != null) {
+					idiom.printCompareInfo(construct);
+				}
                 assertTrue("Idiom should never match here!", match == null);
 			}
 			

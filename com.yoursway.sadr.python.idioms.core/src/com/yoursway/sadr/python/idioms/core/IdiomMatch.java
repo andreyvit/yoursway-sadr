@@ -9,11 +9,13 @@ import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.ast.statements.Statement;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
+@SuppressWarnings("unchecked")
 public class IdiomMatch {
-	private Map<String, Statement> matchMemory;
+	private Map<String, ASTNode> matchMemory;
 	private final ModuleDeclaration parsedSource;
 	private final ModuleDeclaration parsedDestination;
 	private PythonConstruct realConstruct;
@@ -27,55 +29,70 @@ public class IdiomMatch {
 	public boolean match(PythonConstruct realConstruct) {
 		this.realConstruct = realConstruct;
 		matchMemory = Maps.newHashMap();
-		return matchStatement(realConstruct, parsedSource.getStatements());
+		List<ASTNode> childs = realConstruct.parent().node().getChilds();
+		int size = parsedSource.getStatements().size();
+		ASTNode first = realConstruct.node();
+		List<ASTNode> slice = sliceNodes(childs, first, size);
+		return matchNodeList(slice, parsedSource.getStatements(), true);
 	}
 
-	private boolean matchStatement(PythonConstruct realConstruct,
-			List<ASTNode> snippetStatements) {
-		for (int i = 0; i < snippetStatements.size(); i++) {
-			if (!matchStatement((Statement) realConstruct.node(),
-					(Statement) snippetStatements.get(i)))
-				return false;
-			realConstruct = getNextSibling(realConstruct);
+	private List<ASTNode> sliceNodes(List<ASTNode> childs, ASTNode first,
+			int size) {
+		List<ASTNode> after = Lists.newArrayList();
+		boolean start = false;
+		for (ASTNode node : childs) {
+			if (node == first) {
+				start = true;
+			}
+			if (start)
+				after.add(node);
+			if (after.size() == size)
+				break;
 		}
-		return true;
+		return after;
 	}
 
-	private PythonConstruct getNextSibling(PythonConstruct realConstruct) {
-		return realConstruct;
-	}
-
-	private boolean matchStatement(Statement real, Statement snippet) {
+	private boolean matchStatement(Statement real, Statement snippet, boolean wild) {
+		if (wild && isWildExpression(snippet)) {
+			return fillPlaceholder((VariableReference) snippet, real);
+		}
+		if (wild && isWildBlock(snippet) && real.getChilds().size() > 0) {
+			VariableReference name = getWildBlockName(snippet);
+			return fillPlaceholder(name, real);
+		}
 		if (real.getKind() != snippet.getKind())
 			return false;
-		if (snippet instanceof VariableReference) {
-			fillWildExpression((VariableReference) snippet, real);
-			return true;
+		if (real instanceof VariableReference && snippet instanceof VariableReference){
+			String snippetVarName = ((VariableReference) snippet).getName();
+			return ((VariableReference) real).getName().equals(snippetVarName);
 		}
-		if (snippet instanceof Block && isWildBlock(snippet)
-				&& real.getChilds().size() > 0) {
-			VariableReference wildAction = (VariableReference) ((Block) snippet)
-					.getChilds().get(0);
-			fillWildExpression(wildAction, real);
-			return true;
-		}
-		return matchNodeList(real.getChilds(), snippet.getChilds());
+		return matchNodeList(real.getChilds(), snippet.getChilds(), wild);
 	}
 
-	private boolean isWildBlock(Statement snippet) {
-		List snippetChilds = snippet.getChilds();
-		return (snippetChilds.size() == 1 && snippetChilds.get(0) instanceof VariableReference);
+	private VariableReference getWildBlockName(Statement snippet) {
+		return (VariableReference) ((Block) snippet).getChilds().get(0);
+	}
+
+	private boolean isWildExpression(Statement snippet) {
+		return snippet instanceof VariableReference;
+	}
+
+	private boolean isWildBlock(ASTNode snippet) {
+		if (!(snippet instanceof Block))
+			return false;
+		List<ASTNode> children = snippet.getChilds();
+		return (children.size() == 1 && children.get(0) instanceof VariableReference);
 	}
 
 	private boolean matchNodeList(List<ASTNode> realChilds,
-			List<ASTNode> snippetChilds) {
-		if (realChilds.size() != snippetChilds.size())
+			List<ASTNode> snippetChilds, boolean wild) {
+		if (realChilds.size() < snippetChilds.size())
 			return false;
-		for (int i = 0; i < realChilds.size(); i++) {
+		for (int i = 0; i < snippetChilds.size(); i++) {
 			ASTNode real = realChilds.get(i);
 			ASTNode snippet = snippetChilds.get(i);
 			if (real instanceof Statement && snippet instanceof Statement) {
-				if (!matchStatement((Statement) real, (Statement) snippet))
+				if (!matchStatement((Statement) real, (Statement) snippet, wild))
 					return false;
 			} else if (real.getClass() != snippet.getClass()) {
 				return false;
@@ -84,8 +101,11 @@ public class IdiomMatch {
 		return true;
 	}
 
-	private void fillWildExpression(VariableReference snippet, Statement real) {
-		matchMemory.put(((VariableReference) snippet).getName(), real);
+	private boolean fillPlaceholder(VariableReference name, Statement real) {
+		Statement previous = (Statement) matchMemory.get(name.getName());
+		if (previous != null && !matchStatement(previous, real, false)) return false;
+		matchMemory.put(name.getName(), real);
+		return true;
 	}
 
 	public String apply() {

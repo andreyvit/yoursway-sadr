@@ -35,4 +35,14 @@ public class Idiom {
 		}
 		return null;
 	}
+
+	public void printCompareInfo(PythonConstruct construct) {
+		System.out.println("<<< --- Real file parse tree ---");
+		TreePrinter.printTree(construct.parent().node().getChilds());
+		for(IdiomMatcher matcher: matchers){
+			System.out.println("--------------------------");
+			matcher.printMatchTree();
+		}
+		System.out.println(">>> --- Snippet parse tree ---");
+	}
 }
