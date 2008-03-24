@@ -10,7 +10,7 @@ import java.util.Map;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
-import com.yoursway.sadr.engine.GoalReturnValue;
+import com.yoursway.sadr.engine.DumbReturnValue;
 import com.yoursway.sadr.engine.Query;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.SubgoalRequestor;
@@ -57,7 +57,7 @@ public class PropagationTrackerImpl implements PropagationTracker {
                         return requestor.currentQuery();
                     }
                     
-                    public GoalReturnValue subgoal(Continuation cont) {
+                    public DumbReturnValue subgoal(Continuation cont) {
                         cont.provideSubgoals(new SubgoalRequestor() {
                             
                             public void subgoal(Goal goal) {

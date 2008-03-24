@@ -2,7 +2,7 @@ package com.yoursway.sadr.engine;
 
 public interface ContinuationRequestor {
     
-    GoalReturnValue subgoal(Continuation cont);
+    DumbReturnValue subgoal(Continuation cont);
     
     void done();
     
