@@ -193,11 +193,12 @@ public class AnalysisEngine {
             }
         }
         
-        public void subgoal(Continuation cont) {
+        public DumbReturnValue subgoal(Continuation cont) {
             QQQ qqq = new QQQ(this, cont);
             SubqueryCreator creator = new SubqueryCreator(this, qqq);
             cont.provideSubgoals(creator);
             creator.done();
+            return DumbReturnValue.instance();
         }
         
         public void done() {

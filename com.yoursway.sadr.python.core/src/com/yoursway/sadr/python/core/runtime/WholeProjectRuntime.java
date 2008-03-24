@@ -18,6 +18,7 @@ import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.DumbReturnValue;
 import com.yoursway.sadr.engine.Query;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.contributions.FileContributionsManager;
@@ -54,7 +55,7 @@ public class WholeProjectRuntime {
                     throw new UnsupportedOperationException();
                 }
                 
-                public void subgoal(Continuation cont) {
+                public DumbReturnValue subgoal(Continuation cont) {
                     throw new UnsupportedOperationException();
                 }
                 
