@@ -27,7 +27,6 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.DumbReturnValue;
 import com.yoursway.sadr.engine.Goal;
-import com.yoursway.sadr.engine.DumbReturnValue;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.Query;
 import com.yoursway.sadr.engine.SimpleContinuation;
