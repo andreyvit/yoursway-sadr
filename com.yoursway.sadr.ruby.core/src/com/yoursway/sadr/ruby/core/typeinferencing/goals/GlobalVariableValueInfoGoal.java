@@ -7,6 +7,7 @@ import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.RubyGlobalVariable;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.AssignmentsRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.SearchService;
@@ -40,7 +41,7 @@ public class GlobalVariableValueInfoGoal extends AbstractValueInfoGoal {
             
         });
         AssignmentInfo[] arr = assignments.toArray(new AssignmentInfo[assignments.size()]);
-        requestor.subgoal(new AssignmentsContinuation(thing(), arr, kind, this));
+        requestor.subgoal(new AssignmentsContinuation(thing(), arr, new EmptyDynamicContext(), kind, this));
     }
     
     @Override

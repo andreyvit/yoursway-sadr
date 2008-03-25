@@ -15,13 +15,13 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableAffector;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
 

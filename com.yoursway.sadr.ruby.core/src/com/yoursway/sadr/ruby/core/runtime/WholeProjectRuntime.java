@@ -9,13 +9,20 @@ import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
+import org.eclipse.dltk.ast.parser.ISourceParser;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.ruby.internal.parser.JRubySourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
+import com.yoursway.sadr.engine.Continuation;
+import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.Query;
+import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.runtime.contributions.FileContributionsManager;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.DtlFileC;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.RootScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.SearchService;
@@ -25,27 +32,54 @@ public class WholeProjectRuntime {
     private final class CodeGathererImpl implements CodeGatherer {
         private final RubyRuntimeModelCreator creator;
         private final LinkedList<Runnable> postProcessingQueue;
-        private final DtlEvalResolver evalResolver;
+        
+        private final RubyEvalResolver evalResolver;
         
         private CodeGathererImpl(RubyRuntimeModelCreator creator, LinkedList<Runnable> postProcessingQueue,
-                DtlEvalResolver evalResolver) {
+                RubyEvalResolver evalResolver) {
             this.creator = creator;
             this.postProcessingQueue = postProcessingQueue;
             this.evalResolver = evalResolver;
         }
         
-        public void add(final FileScope fileScope, final ModuleDeclaration rootNode, ASTNode fakeParent) {
-            fileScope.calculateParents(rootNode, fakeParent);
-            creator.process(contributionsManager.createContext(fileScope), rootNode);
-            contributionsManager.addToIndex(fileScope, rootNode);
-            postProcessingQueue.add(new Runnable() {
+        public void add(final RubyConstruct root, ASTNode fakeParent) {
+            final FileScope fileScope = root.staticContext().nearestScope().fileScope();
+            ContinuationRequestor tenderRequestor = new ContinuationRequestor() {
                 
-                public void run() {
-                    evalResolver.process(CodeGathererImpl.this,
-                            contributionsManager.createContext(fileScope), rootNode);
+                public Query currentQuery() {
+                    throw new UnsupportedOperationException();
                 }
                 
-            });
+                public void done() {
+                    throw new UnsupportedOperationException();
+                }
+                
+                public void subgoal(Continuation cont) {
+                    throw new UnsupportedOperationException();
+                }
+                
+            };
+            creator.process(contributionsManager.createContext(fileScope), root, tenderRequestor,
+                    new SimpleContinuation() {
+                        
+                        public void run(ContinuationRequestor requestor) {
+                            contributionsManager.addToIndex(root, requestor, new SimpleContinuation() {
+                                
+                                public void run(ContinuationRequestor requestor) {
+                                    postProcessingQueue.add(new Runnable() {
+                                        
+                                        public void run() {
+                                            evalResolver.process(CodeGathererImpl.this, contributionsManager
+                                                    .createContext(fileScope), root);
+                                        }
+                                        
+                                    });
+                                }
+                                
+                            });
+                        }
+                        
+                    });
         }
         
     }
@@ -68,22 +102,23 @@ public class WholeProjectRuntime {
     private void init(Collection<ISourceModule> modules) {
         engine = new AnalysisEngine();
         asts.clear();
-        JRubySourceParser parser = new JRubySourceParser();
+        ISourceParser parser = createSourceParser();
         runtimeModel = new RubyRuntimeModel();
         contributionsManager = new FileContributionsManager(runtimeModel);
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
         final RubyRuntimeModelCreator creator = new RubyRuntimeModelCreator();
-        final DtlEvalResolver evalResolver = new DtlEvalResolver(engine);
+        final RubyEvalResolver evalResolver = new RubyEvalResolver(engine);
         final LinkedList<Runnable> postProcessingQueue = new LinkedList<Runnable>();
         final CodeGatherer codeGatherer = new CodeGathererImpl(creator, postProcessingQueue, evalResolver);
         try {
             for (ISourceModule m : modules) {
                 ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
                         .getSourceAsCharArray(), null);
-                FileScope fileScope = new FileScope(rootScope, m, rootNode);
+                RubyFile module = new RubyFile(runtimeModel, m.getElementName());
+                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
                 asts.put(m, rootNode);
                 scopes.put(m, fileScope);
-                codeGatherer.add(fileScope, rootNode, null);
+                codeGatherer.add(new DtlFileC(fileScope, rootNode), null);
             }
             while (!postProcessingQueue.isEmpty()) {
                 Runnable item = postProcessingQueue.remove();
@@ -92,6 +127,11 @@ public class WholeProjectRuntime {
         } catch (ModelException e) {
             e.printStackTrace();
         }
+    }
+    
+    @SuppressWarnings("restriction")
+    private ISourceParser createSourceParser() {
+        return new JRubySourceParser();
     }
     
     public ModuleDeclaration mapEval(ASTNode eval) {

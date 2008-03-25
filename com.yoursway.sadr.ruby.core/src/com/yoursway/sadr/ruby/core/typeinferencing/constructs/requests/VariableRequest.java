@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,8 +13,6 @@ import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.AssignmentInfoProvider;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
 
@@ -34,13 +32,9 @@ public class VariableRequest implements
         return variable;
     }
     
-    public void accept(RubyConstruct rubyConstruct) {
-        if (rubyConstruct instanceof VariableAffector)
-            ((VariableAffector) rubyConstruct).actOnVariable(this);
-    }
-    
-    public void add(AssignmentInfo info) {
-        assigned.add(info);
+    public void accept(RubyConstruct construct) {
+        if (construct instanceof VariableAffector)
+            ((VariableAffector) construct).actOnVariable(this);
     }
     
     public AssignmentInfo[] assigned() {
@@ -54,7 +48,6 @@ public class VariableRequest implements
     }
     
     public void leave() {
-        
     }
     
     public void accept(AssignmentInfo info) {
@@ -62,8 +55,12 @@ public class VariableRequest implements
             add(info);
     }
     
-    private boolean matches(ThingAccessInfo access) {
-        return variable.name().equals(access.variableName());
+    private boolean matches(ThingAccessInfo threesome) {
+        return variable.name().equals(threesome.variableName());
+    }
+    
+    private void add(AssignmentInfo info) {
+        assigned.add(info);
     }
     
 }

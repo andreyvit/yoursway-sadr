@@ -7,6 +7,7 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
+import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
@@ -29,8 +30,8 @@ public class BinaryAdditionC extends DtlConstruct<CallExpression> {
     
     public void evaluateValue(final RubyDynamicContext dc, final InfoKind infoKind,
             ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
-        final RubyConstruct leftArg = wrap(innerContext(), node.getLeft());
-        final RubyConstruct rightArg = wrap(innerContext(), node.getRight());
+        final RubyConstruct leftArg = wrap(innerContext(), node.getReceiver());
+        final RubyConstruct rightArg = wrap(innerContext(), RubyUtils.argumentsOf(node)[0]);
         requestor.subgoal(new Continuation() {
             
             private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal(leftArg, dc, infoKind);

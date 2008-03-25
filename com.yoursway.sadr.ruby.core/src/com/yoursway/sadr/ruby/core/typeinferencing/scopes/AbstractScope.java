@@ -5,22 +5,12 @@ import java.util.Collection;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.std.StandardTypes;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 
 public abstract class AbstractScope implements Scope {
     
     @Override
     public abstract String toString();
-    
-    public ASTNode parentNodeOf(ASTNode node) {
-        return nodeLookup().parentOf(node);
-    }
-    
-    public RubyStaticContext subcontextFor(ASTNode node) {
-        return RubyUtils.restoreSubscope(this, node);
-    }
     
     public StandardTypes builtins() {
         return classLookup().standardTypes();

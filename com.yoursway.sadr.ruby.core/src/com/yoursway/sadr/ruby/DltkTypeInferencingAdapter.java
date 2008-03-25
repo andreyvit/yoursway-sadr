@@ -51,7 +51,9 @@ public class DltkTypeInferencingAdapter implements ITypeInferencer {
             ASTNode newNode = ASTUtils.findMinimalNode(rootNode, node.sourceStart(), node.sourceEnd());
             
             AnalysisEngine engine = runtime.getEngine();
+            
             FileScope fileScope = runtime.getScopeFor(sm);
+            
             Scope scope = RubyUtils.restoreSubscope(fileScope, newNode);
             ExpressionValueInfoGoal g = new ExpressionValueInfoGoal(scope, newNode, InfoKind.TYPE);
             engine.evaluate(g);

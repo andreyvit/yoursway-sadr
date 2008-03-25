@@ -6,7 +6,6 @@ import com.yoursway.sadr.ruby.core.runtime.RubyGlobalVariable;
 import com.yoursway.sadr.ruby.core.runtime.RubyLocalVariable;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DtlArgumentVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ForCounterVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ServicesMegapack;
 
 public class Goals {
@@ -22,8 +21,8 @@ public class Goals {
         if (variable instanceof RubyGlobalVariable)
             return new GlobalVariableValueInfoGoal((RubyGlobalVariable) variable, kind, megapack
                     .searchService());
-        if (variable instanceof ForCounterVariable)
-            return new ForCounterVariableValueInfoGoal((ForCounterVariable) variable, kind);
+        //        if (variable instanceof ForCounterVariable)
+        //            return new ForCounterVariableValueInfoGoal((ForCounterVariable) variable, kind);
         throw new IllegalArgumentException("Unsupported variable type");
     }
     

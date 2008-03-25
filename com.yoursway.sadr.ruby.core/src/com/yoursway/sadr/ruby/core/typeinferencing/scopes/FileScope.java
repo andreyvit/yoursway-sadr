@@ -2,8 +2,6 @@ package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
@@ -11,9 +9,9 @@ import org.eclipse.dltk.core.ISourceModule;
 
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
-import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstTraverser;
-import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.RubyClass;
+import com.yoursway.sadr.ruby.core.runtime.RubyFile;
+import com.yoursway.sadr.ruby.core.runtime.RubyLocalVariable;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.runtime.contributions.NodeBoundItem;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
@@ -23,50 +21,23 @@ public class FileScope extends LocalScope implements NodeLookup {
     
     private final ISourceModule file;
     
-    private final Map<ASTNode, ASTNode> parents = new HashMap<ASTNode, ASTNode>();
-    
     private final AbstractMultiMap<ASTNode, ModuleDeclaration> extentions = new ArrayListHashMultiMap<ASTNode, ModuleDeclaration>();
     
-    public FileScope(RootScope parent, ISourceModule file, ModuleDeclaration node) {
+    private final RubyFile module;
+    
+    public FileScope(RootScope parent, RubyFile module, ISourceModule file, ModuleDeclaration node) {
         super(parent, node);
+        this.module = module;
         this.file = file;
-    }
-    
-    /**
-     * There are might be several <code>ModuleDeclaration</code>s per file
-     * (one root plus one per each eval).
-     * 
-     * @param fakeParent
-     */
-    public void calculateParents(ModuleDeclaration node, ASTNode fakeParent) {
-        new RubyAstTraverser().traverse(node, new ParentRecordingVisitor());
-        if (fakeParent != null) {
-            parents.put(node, fakeParent);
-            extentions.put(fakeParent, node);
-        }
-    }
-    
-    class ParentRecordingVisitor extends RubyAstVisitor<ASTNode> {
-        
-        public ParentRecordingVisitor() {
-            super(null);
-        }
-        
-        public ParentRecordingVisitor(RubyAstVisitor<?> parentVisitor) {
-            super(parentVisitor);
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterNode(ASTNode childNode) {
-            parents.put(childNode, node());
-            return new ParentRecordingVisitor(this);
-        }
-        
     }
     
     @Override
     public ModuleDeclaration node() {
         return (ModuleDeclaration) super.node();
+    }
+    
+    public RubyFile module() {
+        return module;
     }
     
     @Override
@@ -83,21 +54,28 @@ public class FileScope extends LocalScope implements NodeLookup {
         return file.getElementName();
     }
     
+    @Override
+    public RubyVariable lookupVariable(String name) {
+        RubyVariable variable = findVariable(name);
+        if (variable == null)
+            variable = new RubyLocalVariable(module, null, this, name);
+        return variable;
+    }
+    
     public NodeBoundItem lookup(ASTNode node) {
         return ((RootScope) parent).outeriorNodeLookup().lookup(file, node);
     }
     
     @Override
     public RubyVariable findOwnVariable(String name) {
-        return null; // none for now
+        RubyVariable var = module.findLocalVariable(name);
+        if (var != null)
+            return var;
+        return null;
     }
     
     public ValueInfo selfType() {
         return null;
-    }
-    
-    public ASTNode parentOf(ASTNode node) {
-        return parents.get(node);
     }
     
     @Override
