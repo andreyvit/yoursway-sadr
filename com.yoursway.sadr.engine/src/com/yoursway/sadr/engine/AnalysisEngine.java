@@ -113,10 +113,6 @@ public class AnalysisEngine {
         
     }
     
-    /**
-     * Simple {@link Query} implementation. Performs {@link AnalysisStats}
-     * statistics evaluation.
-     */
     abstract class Q extends Query implements ContinuationRequestor {
         
         protected final Goal goal;
@@ -155,16 +151,10 @@ public class AnalysisEngine {
         public void evaluate() {
             stats.startingEvaluation(goal);
             pleaseEvaluate();
-            //FIXME should only call handeFinished if done() return value is provided
             maybeDone(); // TODO wrap in finally
             stats.finishedEvaluation(goal);
         }
         
-        /**
-         * @deprecated the effect of this method should be reached by using
-         *             {@link DumbReturnValue}.
-         */
-        @Deprecated
         protected void maybeDone() {
             if (!isContinuationCreated()) {
                 if (childrenCountOrState != DONE_CALLED)
@@ -247,9 +237,6 @@ public class AnalysisEngine {
         
     }
     
-    /**
-     * Cacheable {@link Query}
-     */
     abstract class QWithContextDependence extends Q {
         
         public QWithContextDependence(Goal goal) {
@@ -281,9 +268,6 @@ public class AnalysisEngine {
         }
     }
     
-    /**
-     * Evaluated with cache look-up.
-     */
     final class QQ extends QWithContextDependence {
         
         public QQ(Goal goal) {
@@ -349,9 +333,6 @@ public class AnalysisEngine {
         
     }
     
-    /**
-     * {@link SimpleContinuation} Query implementation.
-     */
     final class ContinuationQuery extends Q {
         
         private final SimpleContinuation continuation;
@@ -436,7 +417,7 @@ public class AnalysisEngine {
         }
     }
     
-    private static boolean isRecursive(Goal goal, Q parent) {
+    private boolean isRecursive(Goal goal, Q parent) {
         for (Q q = parent; q != null; q = q.parent()) {
             Goal activeGoal = q.goal();
             if (goal.hashCode() == activeGoal.hashCode())
@@ -446,7 +427,7 @@ public class AnalysisEngine {
         return false;
     }
     
-    private static int recursionDepth(Goal goal, Q parent) {
+    private int recursionDepth(Goal goal, Q parent) {
         int depth = 0;
         for (Q q = parent; q != null; q = q.parent()) {
             Goal activeGoal = q.goal();
