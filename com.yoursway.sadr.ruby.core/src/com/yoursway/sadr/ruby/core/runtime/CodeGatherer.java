@@ -1,12 +1,11 @@
 package com.yoursway.sadr.ruby.core.runtime;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 
 public interface CodeGatherer {
     
-    void add(FileScope fileScope, ModuleDeclaration rootNode, ASTNode fakeParent);
+    void add(RubyConstruct root, ASTNode fakeParent);
     
 }

@@ -16,11 +16,11 @@ import com.yoursway.sadr.ruby.core.runtime.RubyClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubyProcedure;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.CollectingMethodRequestor;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
     
@@ -94,8 +94,9 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
             }
             errorMessage = NLS.bind("Global procedure named \"{0}\" does not exist.", name);
         } else {
-            Scope scope = RubyUtils.restoreScope(currentFileScope, call);
-            ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(scope, receiver, InfoKind.TYPE);
+            RubyConstruct callC = currentFileScope.createConstruct().subconstructFor(call);
+            ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(callC, new EmptyDynamicContext(),
+                    InfoKind.TYPE);
             runtime.getEngine().evaluate(goal);
             ValueInfo types = goal.roughResult();
             CollectingMethodRequestor rq = new CollectingMethodRequestor();

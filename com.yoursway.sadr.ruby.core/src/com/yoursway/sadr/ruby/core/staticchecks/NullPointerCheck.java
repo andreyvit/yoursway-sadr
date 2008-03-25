@@ -6,10 +6,10 @@ import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.core.ISourceModule;
 
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class NullPointerCheck extends OneModuleRuntimeBasedCheck {
     
@@ -23,8 +23,9 @@ public class NullPointerCheck extends OneModuleRuntimeBasedCheck {
             return;
         
         if (receiver != null) {
-            Scope scope = RubyUtils.restoreScope(currentFileScope, call);
-            ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(scope, receiver, InfoKind.NULLABILITY);
+            RubyConstruct callC = currentFileScope.createConstruct().subconstructFor(call);
+            ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(callC, new EmptyDynamicContext(),
+                    InfoKind.NULLABILITY);
             runtime.getEngine().evaluate(goal);
             ValueInfo info = goal.roughResult();
             

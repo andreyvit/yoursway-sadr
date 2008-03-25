@@ -1,5 +1,7 @@
 package com.yoursway.sadr.ruby.core.runtime;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,24 +15,14 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.ruby.ast.RubyArrayAccessExpression;
 import org.eclipse.dltk.ruby.ast.RubyCallArgument;
+import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 import org.eclipse.dltk.ruby.ast.RubyColonExpression;
-import org.eclipse.dltk.ruby.ast.RubyForStatement2;
 import org.eclipse.dltk.ruby.ast.RubySelfReference;
 
-import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstTraverser;
-import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
-import com.yoursway.sadr.ruby.core.ast.visitor.RubyExtendedAstTraverser;
-import com.yoursway.sadr.ruby.core.ast.visitor.TargetedAstVisitor;
-import com.yoursway.sadr.ruby.core.runtime.contributions.NodeBoundItem;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.ArrayWildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ForScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.LocalScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.NodeLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.AbstractType;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.ArrayType;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.ClassType;
@@ -99,37 +91,6 @@ public class RubyUtils {
         return Character.isLetter(c) || Character.isDigit(c) || c == '$' || c == '%';
     }
     
-    //    public static String resolveStaticString(ASTNode receiver) {
-    //        if (receiver instanceof StringLiteral)
-    //            return ((StringLiteral) receiver).getValue();
-    //        if (receiver instanceof BinaryExpression && "+".equals(((BinaryExpression) receiver).getExprKind())) {
-    //            BinaryExpression b = (BinaryExpression) receiver;
-    //            String left = resolveStaticString(b.getLeft());
-    //            String right = resolveStaticString(b.getRight());
-    //            if (left != null && right != null)
-    //                return left + right;
-    //            else
-    //                return null;
-    //        }
-    //        return null;
-    //    }
-    
-    //    public static StringLiteral trackStaticString(ASTNode receiver, Pattern pattern) {
-    //        if (receiver instanceof StringLiteral) {
-    //            StringLiteral lit = (StringLiteral) receiver;
-    //            if (pattern.matcher(lit.getValue()).find())
-    //                return lit;
-    //        }
-    //        if (receiver instanceof BinaryExpression && "+".equals(((BinaryExpression) receiver).getExprKind())) {
-    //            BinaryExpression b = (BinaryExpression) receiver;
-    //            StringLiteral res = trackStaticString(b.getLeft(), pattern);
-    //            if (res != null)
-    //                return res;
-    //            return trackStaticString(b.getRight(), pattern);
-    //        }
-    //        return null;
-    //    }
-    //    
     public static RubyMetaClass resolveStaticClassReference(ClassLookup lookup, ASTNode receiver) {
         if (receiver instanceof SimpleReference)
             return resolveStaticClassReference(lookup, (SimpleReference) receiver);
@@ -143,116 +104,6 @@ public class RubyUtils {
         return klass == null ? null : klass.metaClass();
     }
     
-    public static Scope restoreScope(FileScope fileScope, ASTNode node) {
-        LocalScope parentScope = findParentScope(fileScope, node);
-        ScopeRequestor requestor = new ScopeRequestor(parentScope);
-        RubyAstTraverser traverser = new RubyExtendedAstTraverser(fileScope.nodeLookup());
-        traverser.traverse(parentScope.node(), new RootScoper(node, parentScope, requestor));
-        Scope innerScope = requestor.getInnerScope();
-        if (innerScope == null)
-            throw new AssertionError("restoreScope: subscoper failed to find scope");
-        return innerScope;
-    }
-    
-    public static Scope restoreSubscope(Scope scope, ASTNode node) {
-        return restoreScope(scope.fileScope(), node);
-    }
-    
-    private static LocalScope findParentScope(FileScope fileScope, ASTNode node) {
-        NodeLookup nodeLookup = fileScope.nodeLookup();
-        for (ASTNode current = node; current != null; current = fileScope.parentOf(current)) {
-            NodeBoundItem item = nodeLookup.lookup(current);
-            if (item instanceof RubySourceMethod)
-                return ((RubySourceMethod) item).scope();
-            if (item instanceof RubySourceProcedure)
-                return ((RubySourceProcedure) item).scope();
-        }
-        return fileScope;
-    }
-    
-    static class ScopeRequestor {
-        
-        private final List<Scope> scopes = new ArrayList<Scope>();
-        
-        private Scope answer = null;
-        
-        public ScopeRequestor(Scope initialScope) {
-            scopes.add(initialScope);
-        }
-        
-        public void innerScope(Scope innerScope) {
-            scopes.add(innerScope);
-        }
-        
-        public void leave() {
-            scopes.remove(scopes.size() - 1);
-        }
-        
-        public void found() {
-            this.answer = scopes.get(scopes.size() - 1);
-        }
-        
-        public Scope getInnerScope() {
-            return answer;
-        }
-        
-    }
-    
-    abstract static class AbstractScoper<T extends ASTNode> extends TargetedAstVisitor<T> {
-        
-        protected final Scope scope;
-        protected final ScopeRequestor requestor;
-        
-        public AbstractScoper(ASTNode target, Scope scope, ScopeRequestor requestor) {
-            super(target);
-            this.scope = scope;
-            this.requestor = requestor;
-            requestor.innerScope(scope);
-        }
-        
-        public AbstractScoper(TargetedAstVisitor<?> parentVisitor, Scope scope, ScopeRequestor requestor) {
-            super(parentVisitor);
-            this.scope = scope;
-            this.requestor = requestor;
-            requestor.innerScope(scope);
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterNode(ASTNode node) {
-            checkAnswer(node);
-            return this;
-        }
-        
-        protected void checkAnswer(ASTNode node) {
-            if (node == target())
-                requestor.found();
-        }
-        
-        @Override
-        protected void leave() {
-            requestor.leave();
-        }
-        
-    }
-    
-    static class RootScoper extends AbstractScoper<ASTNode> {
-        
-        public RootScoper(ASTNode target, Scope scope, ScopeRequestor requestor) {
-            super(target, scope, requestor);
-        }
-        
-        public RootScoper(TargetedAstVisitor<?> parentVisitor, Scope scope, ScopeRequestor requestor) {
-            super(parentVisitor, scope, requestor);
-        }
-        
-        @Override
-        protected RubyAstVisitor<?> enterForStatement(RubyForStatement2 node) {
-            ForScope forScope = new ForScope(scope, node);
-            return new RootScoper(this, forScope, requestor);
-        }
-        
-    }
-    
     @SuppressWarnings("unchecked")
     public static ASTNode[] argumentsOf(CallExpression n) {
         List<ASTNode> children0 = n.getArgs().getChilds();
@@ -263,14 +114,6 @@ public class RubyUtils {
         }
         return children.toArray(new ASTNode[children.size()]);
     }
-    
-    //    public static StringLiteral trackField(ASTNode node, String fieldName) {
-    //        return trackStaticString(node, fieldTrackingPattern(fieldName));
-    //    }
-    
-    //    private static Pattern fieldTrackingPattern(String fieldName) {
-    //        return Pattern.compile("\\b" + Pattern.quote(fieldName) + "\\b", Pattern.CASE_INSENSITIVE);
-    //    }
     
     public static AbstractType createType(RubyBasicClass klass) {
         return klass instanceof RubyClass ? new ClassType((RubyClass) klass) : new MetaClassType(
@@ -314,21 +157,19 @@ public class RubyUtils {
         }
     }
     
-    //    public static IModelElement[] dtlClassToIType(RubyClass klass) {
-    //        List<IModelElement> result = new ArrayList<IModelElement>();
-    //        Collection<RubyClassDefinition> defs = klass.getDefinitions();
-    //        for (RubyClassDefinition def : defs) {
-    //            if (def instanceof RubySourceClassDefinition) {
-    //                RubySourceClassDefinition def2 = (RubySourceClassDefinition) def;
-    //                DtlProcedureCall callNode = def2.getCallNode();
-    //                org.eclipse.dltk.core.ISourceModule file = def2.fileScope().file();
-    //                int offset = callNode.sourceStart();
-    //                int length = callNode.sourceEnd() - callNode.sourceStart() + 1;
-    //                FakeClass fakeMethod = new FakeClass((ModelElement) file, klass.name(), offset, length);
-    //                result.add(fakeMethod);
-    //            }
-    //        }
-    //        return result.toArray(new IModelElement[result.size()]);
-    //    }
+    @SuppressWarnings("unchecked")
+    public static List<ASTNode> childrenOf(ASTNode node) {
+        if (node == null)
+            return emptyList();
+        return node.getChilds();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static String superclassName(RubyClassDeclaration node) {
+        List superClassNames = node.getSuperClassNames();
+        if (superClassNames.size() != 1)
+            return null;
+        return (String) superClassNames.iterator().next();
+    }
     
 }

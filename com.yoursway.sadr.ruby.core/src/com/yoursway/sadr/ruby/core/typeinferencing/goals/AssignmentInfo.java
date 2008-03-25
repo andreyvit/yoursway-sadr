@@ -1,27 +1,36 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
-import org.eclipse.dltk.ast.ASTNode;
-
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class AssignmentInfo {
     
-    private final Wildcard wildcard;
-    private final Construct<Scope, ASTNode> construct;
+    private final RubyConstruct rhs;
+    private final ThingAccessInfo access;
     
-    public AssignmentInfo(Wildcard wildcard, Construct<Scope, ASTNode> construct) {
-        this.wildcard = wildcard;
-        this.construct = construct;
+    public AssignmentInfo(ThingAccessInfo access, RubyConstruct rhs) {
+        this.access = access; //? lvalue
+        this.rhs = rhs;
+    }
+    
+    public ThingAccessInfo threesome() {
+        return access;
+    }
+    
+    public RubyConstruct rhs() {
+        return rhs;
+    }
+    
+    public String variableName() {
+        return access.variableName();
     }
     
     public Wildcard wildcard() {
-        return wildcard;
+        return access.wildcard();
     }
     
-    public Construct<Scope, ASTNode> construct() {
-        return construct;
+    public RubyConstruct receiver() {
+        return access.receiver();
     }
     
 }

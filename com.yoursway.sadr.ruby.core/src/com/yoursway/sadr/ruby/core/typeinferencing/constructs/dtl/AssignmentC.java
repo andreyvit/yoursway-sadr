@@ -2,49 +2,63 @@ package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
+import java.util.Collection;
+
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.ruby.ast.RubyAssignment;
 import org.eclipse.dltk.ruby.ast.RubyColonExpression;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.DynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableAffector;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
 
-public class AssignmentC extends DtlConstruct<RubyAssignment> implements VariableAffector {
+public class AssignmentC extends DtlConstruct<RubyAssignment> implements VariableAffector, IndexAffector,
+        ModelAffector {
     
-    AssignmentC(StaticContext sc, RubyAssignment node) {
+    AssignmentC(RubyStaticContext sc, RubyAssignment node) {
         super(sc, node);
     }
     
-    public void evaluateValue(DynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
+    public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
             ValueInfoContinuation continuation) {
         continuation.consume(emptyValueInfo(), requestor);
     }
     
-    public void actOnVariable(VariableRequest subject) {
-        ASTNode lhs = node.getLeft();
-        ASTNode rhs = node.getRight();
-        if (rhs != null) {
-            ASTNode terminal = RubyUtils.assignmentTerminalNode(lhs);
-            Wildcard wildcard = RubyUtils.assignmentWildcardExpression(lhs);
-            if (matches(subject, terminal)) {
-                Scope subscope = RubyUtils.restoreSubscope((Scope) staticContext(), rhs);
-                Construct<Scope, ASTNode> construct = new Construct<Scope, ASTNode>(subscope, rhs);
-                AssignmentInfo info = new AssignmentInfo(wildcard, construct);
-                subject.add(info);
-            }
-        }
-        
+    public RubyConstruct lhs() {
+        return wrap(innerContext(), node.getLeft());
+    }
+    
+    public RubyConstruct rhs() {
+        return wrap(innerContext(), node.getRight());
+    }
+    
+    public void actOnVariable(AssignmentInfoRequestor request) {
+        provideAssignmentInfo(request);
+    }
+    
+    public void actOnIndex(IndexRequest request) {
+        provideAssignmentInfo(request);
+    }
+    
+    private void provideAssignmentInfo(AssignmentInfoRequestor request) {
+        RubyConstruct lhs = lhs();
+        RubyConstruct rhs = rhs();
+        Collection<ThingAccessInfo> accessInfos = lhs.accessInfos();
+        for (ThingAccessInfo access : accessInfos)
+            request.accept(new AssignmentInfo(access, rhs));
     }
     
     protected boolean matches(VariableRequest request, ASTNode terminal) {
@@ -56,4 +70,15 @@ public class AssignmentC extends DtlConstruct<RubyAssignment> implements Variabl
         }
         return doit;
     }
+    
+    public void actOnModel(ModelRequest request) {
+        RubyConstruct lhs = lhs();
+        Collection<ThingAccessInfo> accessInfos = lhs.accessInfos();
+        for (ThingAccessInfo access : accessInfos)
+            if (access.receiver() == null) {
+                String name = access.variableName();
+                staticContext().variableLookup().lookupVariable(name);
+            }
+    }
+    
 }

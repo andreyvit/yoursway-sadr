@@ -14,9 +14,9 @@ import com.yoursway.sadr.ruby.core.runtime.RubyField;
 import com.yoursway.sadr.ruby.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubySourceMethod;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 
 public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     
@@ -36,15 +36,16 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
                     SimpleContinuation continuation) {
                 if (method instanceof RubySourceMethod) {
                     RubySourceMethod sm = ((RubySourceMethod) method);
-                    IConstruct construct = sm.scope().createConstruct();
-                    PropagationTracker tracker = sm.scope().propagationTracker();
-                    tracker.traverseEntirely(construct, request, requestor, continuation);
+                    RubyConstruct rubyConstruct = sm.scope().createConstruct();
+                    sm.scope().propagationTracker().traverseEntirely(rubyConstruct, request, requestor,
+                            continuation);
                 } else {
                     continuation.run(requestor);
                 }
             }
             
-        }, requestor, new DelayedAssignmentsContinuation(request, kind, FieldValueInfoGoal.this));
+        }, requestor, new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
+                FieldValueInfoGoal.this));
     }
     
     private List<RubyMethod> findPossibleWriters() {

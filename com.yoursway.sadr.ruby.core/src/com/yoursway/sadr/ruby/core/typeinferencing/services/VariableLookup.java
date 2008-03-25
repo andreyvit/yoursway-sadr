@@ -6,4 +6,6 @@ public interface VariableLookup {
     
     RubyVariable findVariable(String name);
     
+    RubyVariable lookupVariable(String name);
+    
 }

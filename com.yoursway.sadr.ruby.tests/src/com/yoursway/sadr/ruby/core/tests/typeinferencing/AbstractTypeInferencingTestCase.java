@@ -25,19 +25,20 @@ import org.eclipse.dltk.ruby.internal.parsers.jruby.ASTUtils;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodNamesRequestor;
 import com.yoursway.sadr.ruby.core.tests.AbstractTestCase;
 import com.yoursway.sadr.ruby.core.tests.TestUtils;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyFileC;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
     
@@ -192,8 +193,8 @@ public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
-            return new ExpressionValueInfoGoal(scope, node, InfoKind.TYPE);
+            RubyConstruct construct = new RubyFileC(fileScope, fileScope.node()).subconstructFor(node);
+            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.TYPE);
         }
         
     }
@@ -213,11 +214,13 @@ public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
         
         public ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
+            RubyConstruct construct = new RubyFileC(fileScope, fileScope.node()).subconstructFor(node);
             if (!(node instanceof SimpleReference))
                 throw new IllegalArgumentException();
-            RubyVariable variable = scope.variableLookup().findVariable(((SimpleReference) node).getName());
-            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, scope);
+            RubyVariable variable = construct.staticContext().variableLookup().lookupVariable(
+                    ((SimpleReference) node).getName());
+            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, new EmptyDynamicContext(), construct
+                    .staticContext());
         }
         
     }
@@ -254,8 +257,8 @@ public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
-            return new ExpressionValueInfoGoal(scope, node, InfoKind.VALUE);
+            RubyConstruct construct = new RubyFileC(fileScope, fileScope.node()).subconstructFor(node);
+            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
         }
         
     }
@@ -295,8 +298,8 @@ public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
         public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
             assertNotNull(node);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
-            return new ExpressionValueInfoGoal(scope, node, InfoKind.VALUE);
+            RubyConstruct construct = new RubyFileC(fileScope, fileScope.node()).subconstructFor(node);
+            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
         }
         
     }

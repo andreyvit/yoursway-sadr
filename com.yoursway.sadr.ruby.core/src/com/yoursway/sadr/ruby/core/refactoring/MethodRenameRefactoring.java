@@ -10,10 +10,9 @@ import com.yoursway.sadr.ruby.core.rewriting.RewritingSession;
 import com.yoursway.sadr.ruby.core.rewriting.WCall;
 import com.yoursway.sadr.ruby.core.rewriting.WMethodDeclaration;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallersInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.MethodCallersGoal;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class MethodRenameRefactoring implements SimpleContinuation {
     
@@ -31,7 +30,7 @@ public class MethodRenameRefactoring implements SimpleContinuation {
     }
     
     public void run(ContinuationRequestor requestor) {
-        final MethodCallersGoal goal = new MethodCallersGoal(method, method.construct().scope()
+        final MethodCallersGoal goal = new MethodCallersGoal(method, method.construct().staticContext()
                 .searchService());
         requestor.subgoal(new Continuation() {
             
@@ -49,7 +48,7 @@ public class MethodRenameRefactoring implements SimpleContinuation {
     
     void executeWithInfo(CallersInfo info, ContinuationRequestor requestor) {
         renameMethod();
-        for (Construct<Scope, CallExpression> caller : info.callers())
+        for (CallC caller : info.callers())
             renameCall(caller.node());
         continuation.run(requestor);
     }

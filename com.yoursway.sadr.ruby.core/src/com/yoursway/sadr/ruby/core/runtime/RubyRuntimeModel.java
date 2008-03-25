@@ -1,5 +1,8 @@
 package com.yoursway.sadr.ruby.core.runtime;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,6 +24,10 @@ import com.yoursway.sadr.ruby.core.typeinferencing.services.VariableLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.InstanceRegistrarImpl;
 
 public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureLookup {
+    
+    private final Collection<RubyFile> modules = newArrayList();
+    
+    private final Map<String, RubyFile> namesToModules = newHashMap();
     
     private final Collection<RubyClass> klasses = new ArrayList<RubyClass>();
     
@@ -165,6 +172,15 @@ public class RubyRuntimeModel implements ClassLookup, VariableLookup, ProcedureL
     
     public InstanceRegistrar instanceRegistrar() {
         return instanceRegistrar;
+    }
+    
+    public RubyVariable lookupVariable(String name) {
+        return null;
+    }
+    
+    public void addFile(RubyFile module) {
+        modules.add(module);
+        namesToModules.put(module.name(), module);
     }
     
 }

@@ -13,25 +13,21 @@ import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
 import com.yoursway.sadr.ruby.core.runtime.RubyArgument.Usage;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.runtime.contributions.NodeBoundItem;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.MethodDeclarationC;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.LocalScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ProcedureScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem, LocalVariableContainer {
-    
-    private final MethodDeclaration node;
     
     private final Collection<RubyLocalVariable> localVariables = new ArrayList<RubyLocalVariable>();
     
     private final Map<String, RubyLocalVariable> namesToLocalVariables = new HashMap<String, RubyLocalVariable>();
     
-    private final ProcedureScope scope;
+    private final MethodDeclarationC construct;
     
-    public RubySourceProcedure(Context context, Construct<Scope, MethodDeclaration> construct) {
+    public RubySourceProcedure(Context context, MethodDeclarationC construct) {
         super(context.model(), construct.node().getName(), createArguments(construct.node()));
-        this.node = construct.node();
-        this.scope = new ProcedureScope(construct.scope(), this, node);
+        this.construct = construct;
         context.add(this);
     }
     
@@ -53,7 +49,7 @@ public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem,
     }
     
     public ASTNode node() {
-        return node;
+        return construct.node();
     }
     
     public void addLocalVariable(RubyLocalVariable localVariable) {
@@ -66,11 +62,11 @@ public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem,
     }
     
     public LocalScope scope() {
-        return scope;
+        return construct.methodScope();
     }
     
-    public Construct<Scope, ASTNode> construct() {
-        return new Construct<Scope, ASTNode>(scope, node);
+    public RubyConstruct construct() {
+        return construct;
     }
     
     public boolean isBuiltin() {

@@ -3,6 +3,7 @@
  */
 package com.yoursway.sadr.ruby.core.runtime.std;
 
+import static com.yoursway.sadr.ruby.core.staticchecks.Nullability.CannotBeNull;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.createResult;
 import static com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSetFactory.valueSetWith;
 
@@ -37,6 +38,6 @@ public final class NewMethod extends RubyBuiltinMethod {
         //        return builder.build();
         Value value = new InstanceValue(klass.instanceClass(), model.instanceRegistrar());
         SingleTypeSet ts = TypeSetFactory.typeSetWith(new ClassType(klass.instanceClass()));
-        return createResult(ts, valueSetWith(value));
+        return createResult(ts, valueSetWith(value), CannotBeNull);
     }
 }

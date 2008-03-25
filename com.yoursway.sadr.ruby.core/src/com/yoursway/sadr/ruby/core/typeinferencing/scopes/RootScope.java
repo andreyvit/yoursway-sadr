@@ -1,15 +1,20 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 
+import org.eclipse.dltk.ast.ASTNode;
+
+import com.yoursway.sadr.core.propagation.PropagationTracker;
+import com.yoursway.sadr.core.propagation.PropagationTrackerImpl;
+import com.yoursway.sadr.ruby.core.runtime.RubyClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyRuntimeModel;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.NodeLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.OuteriorNodeLookup;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ProcedureLookup;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTrackerImpl;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.SearchService;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.VariableLookup;
 
@@ -19,13 +24,14 @@ public class RootScope extends AbstractScope {
     private final OuteriorNodeLookup outeriorNodeLookup;
     private final SearchService searchService;
     
-    private final PropagationTracker propagationTracker;
+    private final PropagationTracker<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> propagationTracker;
     
-    public RootScope(RubyRuntimeModel model, OuteriorNodeLookup outeriorNodeLookup, SearchService searchService) {
+    public RootScope(RubyRuntimeModel model, OuteriorNodeLookup outeriorNodeLookup,
+            SearchService searchService) {
         this.model = model;
         this.outeriorNodeLookup = outeriorNodeLookup;
         this.searchService = searchService;
-        propagationTracker = new PropagationTrackerImpl();
+        propagationTracker = PropagationTrackerImpl.create();
     }
     
     public ClassLookup classLookup() {
@@ -69,11 +75,19 @@ public class RootScope extends AbstractScope {
         throw new UnsupportedOperationException();
     }
     
-    public PropagationTracker propagationTracker() {
+    public PropagationTracker<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> propagationTracker() {
         return propagationTracker;
     }
     
-     public IConstruct createConstruct() {
+    public RubyConstruct createConstruct() {
         throw new UnsupportedOperationException();
+    }
+    
+    public RubyClass currentClass() {
+        throw new UnsupportedOperationException();
+    }
+    
+    public RubyConstruct parentConstruct() {
+        return null;
     }
 }
