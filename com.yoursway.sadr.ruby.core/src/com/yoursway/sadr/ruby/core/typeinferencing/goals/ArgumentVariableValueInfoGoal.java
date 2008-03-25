@@ -24,13 +24,13 @@ import com.yoursway.sadr.ruby.core.runtime.RubyClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.ServicesMegapack;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.ClassType;
 import com.yoursway.sadr.ruby.core.typeinferencing.typesets.TypeSet;
 import com.yoursway.sadr.ruby.core.typeinferencing.typesets.TypeSetBuilder;
@@ -194,11 +194,11 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private final DtlArgumentVariable variable;
     private final ClassLookup classLookup;
-    private final ServicesMegapack megapack;
+    private final RubyStaticContext megapack;
     private final InfoKind kind;
     
     public ArgumentVariableValueInfoGoal(DtlArgumentVariable variable, InfoKind kind,
-            ServicesMegapack megapack) {
+            RubyStaticContext megapack) {
         this.variable = variable;
         this.kind = kind;
         this.megapack = megapack;

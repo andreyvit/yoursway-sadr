@@ -25,7 +25,6 @@ import org.eclipse.dltk.ruby.internal.parsers.jruby.ASTUtils;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.AnyMethodRequestor;
@@ -40,7 +39,6 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
     
@@ -216,11 +214,13 @@ public abstract class AbstractTypeInferencingTestCase extends AbstractTestCase {
         
         public ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
             ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
-            Scope scope = RubyUtils.restoreScope(fileScope, node);
+            RubyConstruct construct = new RubyFileC(fileScope, fileScope.node()).subconstructFor(node);
             if (!(node instanceof SimpleReference))
                 throw new IllegalArgumentException();
-            RubyVariable variable = scope.variableLookup().findVariable(((SimpleReference) node).getName());
-            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, scope);
+            RubyVariable variable = construct.staticContext().variableLookup().lookupVariable(
+                    ((SimpleReference) node).getName());
+            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, new EmptyDynamicContext(), construct
+                    .staticContext());
         }
         
     }

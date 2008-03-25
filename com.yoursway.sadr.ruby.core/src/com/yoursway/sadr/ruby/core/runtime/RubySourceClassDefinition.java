@@ -10,7 +10,7 @@ import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.runtime.contributions.ContributableItem;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ClassDeclarationC;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.ClassDeclarationC;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ClassScope;
 
 public class RubySourceClassDefinition extends RubyClassDefinition implements ContributableItem,

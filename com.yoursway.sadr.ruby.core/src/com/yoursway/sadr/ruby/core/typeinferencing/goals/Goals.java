@@ -5,13 +5,14 @@ import com.yoursway.sadr.ruby.core.runtime.RubyField;
 import com.yoursway.sadr.ruby.core.runtime.RubyGlobalVariable;
 import com.yoursway.sadr.ruby.core.runtime.RubyLocalVariable;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DtlArgumentVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.ServicesMegapack;
 
 public class Goals {
     
     public static ValueInfoGoal createVariableTypeGoal(RubyVariable variable, InfoKind kind,
-            ServicesMegapack megapack) {
+            RubyDynamicContext dc, RubyStaticContext megapack) {
         if (variable instanceof RubyLocalVariable)
             return new LocalVariableValueInfoGoal((RubyLocalVariable) variable, kind);
         if (variable instanceof RubyField)

@@ -18,6 +18,7 @@ import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.ruby.ast.RubyAssignment;
 import org.eclipse.dltk.ruby.ast.RubyBinaryExpression;
 import org.eclipse.dltk.ruby.ast.RubyCallArgument;
+import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 import org.eclipse.dltk.ruby.ast.RubyDotExpression;
 import org.eclipse.dltk.ruby.ast.RubyForStatement2;
 import org.eclipse.dltk.ruby.ast.RubyIfStatement;
@@ -91,6 +92,8 @@ public abstract class DtlConstruct<N extends ASTNode> extends
             return new MethodDeclarationC(sc, (MethodDeclaration) node);
         if (node instanceof RubyBinaryExpression)
             return wrapBinaryExpression(sc, (RubyBinaryExpression) node);
+        if (node instanceof RubyClassDeclaration)
+            return new ClassDeclarationC(sc, (RubyClassDeclaration) node);
         //        if (node instanceof RubyArrayAccessExpression)
         //            return new ArrayAccessC(sc, (ArrayAccess) node);
         if (node instanceof ASTListNode || node instanceof RubyReturnStatement
