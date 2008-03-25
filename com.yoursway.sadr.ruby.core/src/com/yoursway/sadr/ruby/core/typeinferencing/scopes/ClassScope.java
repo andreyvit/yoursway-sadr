@@ -53,4 +53,9 @@ public class ClassScope extends LocalScope {
         return createResult(typeSetWith(RubyUtils.createType(klass)), ValueSetFactory.valueSetWith(value),
                 CannotBeNull);
     }
+    
+    @Override
+    public RubyClass currentClass() {
+        return klass;
+    }
 }

@@ -20,12 +20,12 @@ import org.eclipse.dltk.ti.types.IEvaluatedType;
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.WholeProjectRuntime;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.ClassType;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.Type;
@@ -53,9 +53,10 @@ public class DltkTypeInferencingAdapter implements ITypeInferencer {
             AnalysisEngine engine = runtime.getEngine();
             
             FileScope fileScope = runtime.getScopeFor(sm);
+            RubyConstruct construct = fileScope.createConstruct().subconstructFor(newNode);
             
-            Scope scope = RubyUtils.restoreSubscope(fileScope, newNode);
-            ExpressionValueInfoGoal g = new ExpressionValueInfoGoal(scope, newNode, InfoKind.TYPE);
+            ExpressionValueInfoGoal g = new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(),
+                    InfoKind.TYPE);
             engine.evaluate(g);
             ValueInfo result = g.roughResult();
             
