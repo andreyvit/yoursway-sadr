@@ -1,12 +1,10 @@
-from gen_java_test import mkdir
-from gen_java_test import gen_test_class 
+from test_gen import TestBuilder
 
-JAVA_HOME = "src/com/yoursway/sadr/python/core/tests/typeinferencing/"
-FILE_NAME = "foo.py"
+JUNIT_TESTS_PATH = "src/com/yoursway/sadr/python/core/tests/typeinferencing/"
 value_klass = """
 class Q(object):pass
 """
-bin_klass = """
+klass = """
 class Foo(object):
     def %s (self, arg0, arg1):
         return Q()
@@ -40,7 +38,13 @@ BINARY_OPERATORS = {
     "__rrshift__": ">>",
     "__rand__": "&",
     "__rxor__": "^",
-    "__ror__": "|"
+    "__ror__": "|",
+    "__lt__": "<", 
+    "__le__": "<=",
+    "__eq__": "==",
+    "__ne__": "!=",
+    "__gt__": ">",
+    "__ge__": ">="
 }
 
 UNARY_OPERATORS = {
@@ -68,26 +72,11 @@ TEST_BINOP = "x = Foo() %s Foo() ## expr x => Q"
 TEST_ASS = "x = Foo()\n x %s Foo() ## expr x => Q"
 TEST_UNOP = "x = %sFoo() ## expr x => Q"
 
-def make_java_test(name):
-    return """
-    @Test
-    public void %s() throws Exception {
-        runTest();
-    }
-""" % name
-
-def make_test(test_name, operator, symname, test_str):
-    mkdir(test_name + "/" + operator)
-    file = open(test_name + "/" + operator + "/" + FILE_NAME, "w")
-    print >> file, value_klass, bin_klass % operator
-    print >> file, test_str
-    
-def gen_tests(test_name, operators, test_str):
-    java_tests = ''
+def gen_tests(suite_name, operators, test_str):
+    builder = TestBuilder("../" + JUNIT_TESTS_PATH, suite_name)
     for oper, symname in operators.items():
-        make_test(test_name, oper, symname, test_str % symname)
-        java_tests += make_java_test(oper)
-    gen_test_class("../" + JAVA_HOME, test_name, java_tests)
+        script_content = value_klass + klass % oper + test_str % symname
+        builder.addTest(oper, script_content)
 
 if __name__ == "__main__":
     gen_tests("BinaryOperators", BINARY_OPERATORS, TEST_BINOP)

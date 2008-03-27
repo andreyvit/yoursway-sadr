@@ -68,4 +68,5 @@ public final class AssignmentOperators extends AbstractTypeInferencingTestCase {
     public void __itruediv__() throws Exception {
         runTest();
     }
+
 }

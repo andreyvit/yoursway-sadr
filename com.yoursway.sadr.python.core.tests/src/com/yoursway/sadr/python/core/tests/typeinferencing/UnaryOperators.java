@@ -18,4 +18,5 @@ public final class UnaryOperators extends AbstractTypeInferencingTestCase {
     public void __invert__() throws Exception {
         runTest();
     }
+
 }

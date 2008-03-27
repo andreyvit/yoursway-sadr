@@ -20,6 +20,11 @@ public final class BinaryOperators extends AbstractTypeInferencingTestCase {
     }
 
     @Test
+    public void __ne__() throws Exception {
+        runTest();
+    }
+
+    @Test
     public void __radd__() throws Exception {
         runTest();
     }
@@ -60,6 +65,11 @@ public final class BinaryOperators extends AbstractTypeInferencingTestCase {
     }
 
     @Test
+    public void __lt__() throws Exception {
+        runTest();
+    }
+
+    @Test
     public void __rshift__() throws Exception {
         runTest();
     }
@@ -95,6 +105,16 @@ public final class BinaryOperators extends AbstractTypeInferencingTestCase {
     }
 
     @Test
+    public void __gt__() throws Exception {
+        runTest();
+    }
+
+    @Test
+    public void __eq__() throws Exception {
+        runTest();
+    }
+
+    @Test
     public void __rxor__() throws Exception {
         runTest();
     }
@@ -115,6 +135,11 @@ public final class BinaryOperators extends AbstractTypeInferencingTestCase {
     }
 
     @Test
+    public void __le__() throws Exception {
+        runTest();
+    }
+
+    @Test
     public void __mul__() throws Exception {
         runTest();
     }
@@ -130,7 +155,13 @@ public final class BinaryOperators extends AbstractTypeInferencingTestCase {
     }
 
     @Test
+    public void __ge__() throws Exception {
+        runTest();
+    }
+
+    @Test
     public void __or__() throws Exception {
         runTest();
     }
+
 }
