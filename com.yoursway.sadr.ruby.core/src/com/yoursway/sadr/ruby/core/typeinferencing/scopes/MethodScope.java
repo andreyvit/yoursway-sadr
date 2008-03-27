@@ -1,5 +1,6 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 
+import static com.yoursway.sadr.ruby.core.staticchecks.Nullability.CannotBeNull;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.createResult;
 import static com.yoursway.sadr.ruby.core.typeinferencing.typesets.TypeSetFactory.typeSetWith;
 
@@ -83,7 +84,8 @@ public class MethodScope extends LocalScope {
             value = new MetaClassValue((RubyMetaClass) klass);
         else
             value = new InstanceValue((RubyClass) klass, instanceRegistrar());
-        return createResult(typeSetWith(RubyUtils.createType(klass)), ValueSetFactory.valueSetWith(value));
+        return createResult(typeSetWith(RubyUtils.createType(klass)), ValueSetFactory.valueSetWith(value),
+                CannotBeNull);
     }
     
 }

@@ -1,9 +1,6 @@
 package com.yoursway.sadr.ruby.core.runtime;
 
-import org.eclipse.dltk.ast.ASTNode;
-
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 
 public interface Callable {
     
@@ -13,7 +10,7 @@ public interface Callable {
     
     RubyArgument[] arguments();
     
-    Construct<Scope, ASTNode> construct();
+    RubyConstruct construct();
     
     String[] parameterNames();
     

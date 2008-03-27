@@ -2,11 +2,8 @@ package com.yoursway.sadr.ruby.core.runtime;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
-import org.eclipse.dltk.ast.ASTNode;
-
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
 public class RubyBuiltinProcedure extends RubyProcedure {
     
@@ -14,7 +11,7 @@ public class RubyBuiltinProcedure extends RubyProcedure {
         super(model, name, arguments);
     }
     
-    public Construct<Scope, ASTNode> construct() {
+    public RubyConstruct construct() {
         throw new UnsupportedOperationException();
     }
     

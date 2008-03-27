@@ -7,6 +7,7 @@ import static com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSetFact
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
@@ -23,7 +24,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.values.ArrayValue;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.Value;
 import com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSet;
 
-public class ValueInfo implements Result {
+public class ValueInfo implements Result, IValueInfo {
     
     @Override
     public int hashCode() {
@@ -57,24 +58,18 @@ public class ValueInfo implements Result {
     }
     
     public static ValueInfo emptyValueInfo() {
-        return new ValueInfo(emptyTypeSet(), emptyValueSet());
+        return new ValueInfo(emptyTypeSet(), emptyValueSet(), Unknown);
     }
     
-    public static ValueInfo createResult(TypeSet typeSet, ValueSet valueSet) {
-        return new ValueInfo(typeSet, valueSet);
+    public static ValueInfo createResult(TypeSet typeSet, ValueSet valueSet, Nullability nullability) {
+        return new ValueInfo(typeSet, valueSet, nullability);
     }
     
     private final TypeSet typeSet;
     private final ValueSet valueSet;
     private final Nullability nullability;
     
-    public ValueInfo(TypeSet typeSet, ValueSet valueSet) {
-        this.typeSet = typeSet;
-        this.valueSet = valueSet;
-        this.nullability = Unknown;
-    }
-    
-    public ValueInfo(TypeSet typeSet, ValueSet valueSet, Nullability nullable) {
+    ValueInfo(TypeSet typeSet, ValueSet valueSet, Nullability nullable) {
         this.typeSet = typeSet;
         this.valueSet = valueSet;
         this.nullability = nullable;
@@ -89,16 +84,7 @@ public class ValueInfo implements Result {
     }
     
     public Nullability getNullability() {
-        if (nullability != Nullability.Unknown) {
-            return nullability;
-        } else {
-            for (String each : describePossibleTypes()) {
-                if (each == "NilClass") {
-                    return Nullability.CanBeNull;
-                }
-            }
-            return Nullability.CannotBeNull;
-        }
+        return nullability;
     }
     
     public void findMethod(String name, MethodRequestor requestor) {
@@ -174,6 +160,14 @@ public class ValueInfo implements Result {
     
     public Collection<Value> containedValues() {
         return valueSet.containedValues();
+    }
+    
+    public static ValueInfo from(IValueInfo result) {
+        if (result instanceof ValueInfo)
+            return (ValueInfo) result;
+        if (result.isEmpty())
+            return emptyValueInfo();
+        throw new IllegalArgumentException("Illegal input ValueInfo: " + result);
     }
     
 }

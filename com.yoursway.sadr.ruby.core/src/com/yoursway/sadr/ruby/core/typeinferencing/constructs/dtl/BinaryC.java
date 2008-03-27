@@ -2,11 +2,11 @@ package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
 
 import org.eclipse.dltk.ruby.ast.RubyBinaryExpression;
 
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.StaticContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 
 public abstract class BinaryC extends DtlConstruct<RubyBinaryExpression> {
     
-    BinaryC(StaticContext sc, RubyBinaryExpression node) {
+    BinaryC(RubyStaticContext sc, RubyBinaryExpression node) {
         super(sc, node);
     }
     

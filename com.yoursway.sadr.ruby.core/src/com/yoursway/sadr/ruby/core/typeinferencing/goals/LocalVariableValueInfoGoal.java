@@ -3,11 +3,13 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.runtime.RubyLocalVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.rq.VariableRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.BackwardVariableRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.ruby.core.typeinferencing.services.PropagationTracker;
 
 public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     
@@ -20,14 +22,32 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     public void evaluate(ContinuationRequestor requestor) {
+        evaluateWithFlow(requestor);
+    }
+    
+    private void evaluateWithFlow(ContinuationRequestor requestor) {
         Scope scope = variable.scope();
-        //        ASTNode node = variable.container().node();
-        PropagationTracker tracker = scope.propagationTracker();
-        
-        IConstruct construct = scope.createConstruct();
+        BackwardVariableRequest request = new BackwardVariableRequest(variable, kind);
+        SimpleContinuation withoutFlowContinuation = new SimpleContinuation() {
+            
+            public void run(ContinuationRequestor requestor) {
+                evaluateWithoutFlow(requestor);
+            }
+            
+        };
+        scope.propagationTracker().traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
+                request,
+                requestor,
+                new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
+                        new TryAnotherThingContinuation(withoutFlowContinuation, this)));
+    }
+    
+    private void evaluateWithoutFlow(ContinuationRequestor requestor) {
+        Scope scope = variable.scope();
+        RubyConstruct construct = scope.createConstruct();
         final VariableRequest request = new VariableRequest(variable, kind);
-        tracker.traverseEntirely(construct, request, requestor, new DelayedAssignmentsContinuation(request,
-                kind, this));
+        scope.propagationTracker().traverseEntirely(construct, request, requestor,
+                new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind, this));
     }
     
     @Override

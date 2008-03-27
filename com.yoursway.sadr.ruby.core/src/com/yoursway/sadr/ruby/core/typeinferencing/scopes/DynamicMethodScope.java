@@ -5,7 +5,7 @@ import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyV
 import com.yoursway.sadr.ruby.core.runtime.RubyArgument;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.IConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.VariableLookup;
 
@@ -77,8 +77,12 @@ public class DynamicMethodScope extends ChildScope implements VariableLookup {
         return parent.variableLookup().findVariable(name);
     }
     
-    public IConstruct createConstruct() {
+    public RubyConstruct createConstruct() {
         return parent.createConstruct();
+    }
+    
+    public RubyVariable lookupVariable(String name) {
+        return findVariable(name);
     }
     
 }

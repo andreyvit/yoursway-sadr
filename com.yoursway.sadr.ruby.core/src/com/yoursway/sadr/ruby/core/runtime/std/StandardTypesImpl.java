@@ -1,5 +1,6 @@
 package com.yoursway.sadr.ruby.core.runtime.std;
 
+import static com.yoursway.sadr.ruby.core.staticchecks.Nullability.CannotBeNull;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.createResult;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 import static com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSetFactory.valueSetWith;
@@ -71,7 +72,7 @@ public class StandardTypesImpl implements StandardTypes {
             
             @Override
             public ValueInfo evaluateBuiltin(ValueInfo[] arguments) {
-                return createResult(evaluateType(arguments), valueSetWith(new ArrayValue()));
+                return createResult(evaluateType(arguments), valueSetWith(new ArrayValue()), CannotBeNull);
             }
             
             private TypeSet evaluateType(ValueInfo[] arguments) {
@@ -90,7 +91,7 @@ public class StandardTypesImpl implements StandardTypes {
             @Override
             public ValueInfo evaluateBuiltin(ValueInfo[] arguments) {
                 SingleTypeSet ts = TypeSetFactory.typeSetWith(new ArrayType(UnknownType.INSTANCE));
-                return createResult(ts, valueSetWith(new ArrayValue()));
+                return createResult(ts, valueSetWith(new ArrayValue()), CannotBeNull);
             }
             
         };
@@ -104,7 +105,7 @@ public class StandardTypesImpl implements StandardTypes {
                 for (int i = 0; i < arguments.length; i++)
                     type = new ArrayType(type);
                 SingleTypeSet ts = TypeSetFactory.typeSetWith(type);
-                return createResult(ts, valueSetWith(new ArrayValue()));
+                return createResult(ts, valueSetWith(new ArrayValue()), CannotBeNull);
             }
             
         };

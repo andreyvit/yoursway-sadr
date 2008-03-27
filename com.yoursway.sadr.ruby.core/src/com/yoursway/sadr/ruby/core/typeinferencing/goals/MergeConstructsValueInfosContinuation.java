@@ -3,14 +3,15 @@
  */
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
+import com.yoursway.sadr.core.ValueInfoContinuation;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestor;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.Construct;
-import com.yoursway.sadr.ruby.core.typeinferencing.engine.ValueInfoContinuation;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     
@@ -18,13 +19,13 @@ public final class MergeConstructsValueInfosContinuation implements Continuation
     private final ContextSensitiveThing thing;
     private final ValueInfoContinuation continuation;
     
-    public MergeConstructsValueInfosContinuation(ContextSensitiveThing thing, Construct<?, ?>[] constructs, InfoKind kind,
-            ValueInfoContinuation continuation) {
+    public MergeConstructsValueInfosContinuation(ContextSensitiveThing thing, RubyConstruct[] constructs,
+            RubyDynamicContext dc, InfoKind kind, ValueInfoContinuation continuation) {
         this.thing = thing;
         this.continuation = continuation;
         goals = new ExpressionValueInfoGoal[constructs.length];
         for (int i = 0; i < constructs.length; i++)
-            goals[i] = new ExpressionValueInfoGoal(constructs[i].scope(), constructs[i].node(), kind);
+            goals[i] = new ExpressionValueInfoGoal(constructs[i], dc, kind);
     }
     
     public void provideSubgoals(SubgoalRequestor requestor) {
