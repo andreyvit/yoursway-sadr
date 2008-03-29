@@ -1,1 +1,4 @@
 /*/bin
+*.pyc
+*.pyo
+*.pydevproject
