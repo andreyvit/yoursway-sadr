@@ -11,7 +11,8 @@ import org.eclipse.dltk.compiler.problem.IProblemReporter;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
@@ -39,7 +40,7 @@ public class PythonEvalResolver {
         root.staticContext().propagationTracker().traverseStatically(root, request, null,
                 new SimpleContinuation() {
                     
-                    public void run(ContinuationRequestor requestor) {
+                    public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
                         for (EvalInfo info : request.evalArgs()) {
                             PythonConstruct arg = info.getArgument();
                             ValueInfoGoal goal = new ExpressionValueInfoGoal(arg, new EmptyDynamicContext(),
@@ -71,7 +72,7 @@ public class PythonEvalResolver {
                                         .node());
                             }
                         }
-                        
+                        return requestor.done();
                     }
                     
                 });

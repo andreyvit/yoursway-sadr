@@ -2,6 +2,6 @@ package com.yoursway.sadr.engine;
 
 public interface ContextRequestor {
     
-    void execute(GoalContext context, ContinuationRequestor requestor);
+    void execute(GoalContext context, ContinuationScheduler requestor);
     
 }

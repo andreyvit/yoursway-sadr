@@ -3,7 +3,8 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.RubyGlobalVariable;
@@ -31,7 +32,7 @@ public class GlobalVariableValueInfoGoal extends AbstractValueInfoGoal {
         super.copyAnswerFrom(cachedGoal);
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         final Collection<AssignmentInfo> assignments = new ArrayList<AssignmentInfo>(1000);
         searchService.findAssignments(variable.name(), new AssignmentsRequestor() {
             
@@ -41,7 +42,8 @@ public class GlobalVariableValueInfoGoal extends AbstractValueInfoGoal {
             
         });
         AssignmentInfo[] arr = assignments.toArray(new AssignmentInfo[assignments.size()]);
-        requestor.subgoal(new AssignmentsContinuation(thing(), arr, new EmptyDynamicContext(), kind, this));
+        return requestor.schedule(new AssignmentsContinuation(thing(), arr, new EmptyDynamicContext(), kind,
+                this));
     }
     
     @Override

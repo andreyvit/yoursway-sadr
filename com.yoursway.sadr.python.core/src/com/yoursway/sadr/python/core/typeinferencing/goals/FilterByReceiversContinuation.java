@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
@@ -43,11 +43,11 @@ public class FilterByReceiversContinuation implements Continuation {
             requestor.subgoal(goal);
     }
     
-    public void done(ContinuationRequestor requestor) {
+    public void done(ContinuationScheduler requestor) {
         List<AssignmentInfo> thisFieldAssignments = newArrayList();
         for (int i = 0; i < goals.length; i++)
             checkCandidateReceiver(thisFieldAssignments, assignments[i], goals[i].result(null));
-        requestor.subgoal(new AssignmentsContinuation(null, thisFieldAssignments
+        requestor.schedule(new AssignmentsContinuation(null, thisFieldAssignments
                 .toArray(new AssignmentInfo[thisFieldAssignments.size()]), new EmptyDynamicContext(),
                 infoKind, continuation));
     }

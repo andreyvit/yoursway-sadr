@@ -5,7 +5,8 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.SimpleContinuation;
 
 public final class TryAnotherThingContinuation implements ValueInfoContinuation {
@@ -18,11 +19,11 @@ public final class TryAnotherThingContinuation implements ValueInfoContinuation 
         this.continuation = continuation;
     }
     
-    public void consume(IValueInfo result, ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken consume(IValueInfo result, ContinuationScheduler requestor) {
         if (result.isEmpty())
-            alternative.run(requestor);
+            return alternative.run(requestor);
         else
-            continuation.consume(result, requestor);
+            return continuation.consume(result, requestor);
     }
     
 }

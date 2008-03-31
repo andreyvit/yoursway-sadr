@@ -8,7 +8,8 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.core.constructs.VisitorRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
@@ -47,10 +48,10 @@ public class EvalRequest implements
             ((EvalsAffector) construct).actOnEval(this);
     }
     
-    public void enter(PythonConstruct construct, ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken enter(PythonConstruct construct, ContinuationScheduler requestor,
             VisitorRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
         accept(construct);
-        continuation.consume(this, requestor);
+        return continuation.consume(this, requestor);
     }
     
     public void leave() {

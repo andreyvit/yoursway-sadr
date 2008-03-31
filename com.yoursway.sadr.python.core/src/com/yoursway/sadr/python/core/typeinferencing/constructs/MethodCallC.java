@@ -6,7 +6,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.CollectingMethodRequestor;
@@ -21,11 +22,11 @@ public class MethodCallC extends CallC implements IndexAffector {
         super(sc, node);
     }
     
-    public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
-            ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,
+            final InfoKind infoKind, ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
         final PythonConstruct receiver = wrap(innerContext(), node.getReceiver());
         final String name = node.getMethodName();
-        requestor.subgoal(new Continuation() {
+        return requestor.schedule(new Continuation() {
             
             final ValueInfoGoal recvGoal = new ExpressionValueInfoGoal(receiver, dc, infoKind);
             
@@ -33,11 +34,11 @@ public class MethodCallC extends CallC implements IndexAffector {
                 requestor.subgoal(recvGoal);
             }
             
-            public void done(ContinuationRequestor requestor) {
+            public void done(ContinuationScheduler requestor) {
                 CollectingMethodRequestor rq = new CollectingMethodRequestor();
                 recvGoal.result(null).findMethod(name, rq);
                 if (rq.anythingFound())
-                    requestor.subgoal(new CallablesReturnTypeCont(infoKind, arguments(), dc, rq.asArray(),
+                    requestor.schedule(new CallablesReturnTypeCont(infoKind, arguments(), dc, rq.asArray(),
                             recvGoal.result(null), continuation));
                 else
                     continuation.consume(emptyValueInfo(), requestor);

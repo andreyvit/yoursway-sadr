@@ -5,7 +5,8 @@ import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyV
 import org.eclipse.dltk.ruby.ast.RubySuperExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
@@ -17,13 +18,13 @@ public class SuperC extends DtlConstruct<RubySuperExpression> {
         super(sc, node);
     }
     
-    public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(RubyDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         ValueInfo selfType = dc.selfType();
         if (selfType != null)
-            continuation.consume(selfType, requestor);
+            return continuation.consume(selfType, requestor);
         else
-            continuation.consume(emptyValueInfo(), requestor);
+            return continuation.consume(emptyValueInfo(), requestor);
     }
     
 }

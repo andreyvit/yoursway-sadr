@@ -11,7 +11,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpres
 import com.google.common.base.Function;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.PythonField;
@@ -43,9 +44,9 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
         super(sc, node);
     }
     
-    public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
-            ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
-        requestor.subgoal(new Continuation() {
+    public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,
+            final InfoKind infoKind, ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
+        return requestor.schedule(new Continuation() {
             
             private final ValueInfoGoal receiverGoal = new ExpressionValueInfoGoal(receiver(), dc, infoKind);
             
@@ -53,10 +54,10 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
                 requestor.subgoal(receiverGoal);
             }
             
-            public void done(ContinuationRequestor requestor) {
+            public void done(ContinuationScheduler requestor) {
                 ValueInfo receiverInfo = receiverGoal.result(null);
                 Collection<PythonField> fields = receiverInfo.lookupField(name());
-                requestor.subgoal(new MergeFieldsValueInfosContinuation(fields, infoKind, continuation,
+                requestor.schedule(new MergeFieldsValueInfosContinuation(fields, infoKind, continuation,
                         staticContext().searchService()));
             }
             

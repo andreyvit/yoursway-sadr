@@ -5,7 +5,8 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.core.constructs.VisitorRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
@@ -45,10 +46,10 @@ public class IndexRequest implements
         procedureCalls.put(name, construct);
     }
     
-    public void enter(PythonConstruct construct, ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken enter(PythonConstruct construct, ContinuationScheduler requestor,
             VisitorRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
         accept(construct);
-        continuation.consume(this, requestor);
+        return continuation.consume(this, requestor);
     }
     
     public void leave() {

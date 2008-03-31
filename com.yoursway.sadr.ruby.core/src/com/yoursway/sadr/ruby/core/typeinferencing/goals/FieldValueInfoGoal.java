@@ -3,7 +3,8 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
@@ -28,20 +29,19 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
         this.kind = kind;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         final VariableRequest request = new VariableRequest(field, kind);
-        Continuations.iterate(findPossibleWriters(), new IterationContinuation<RubyMethod>() {
+        return Continuations.iterate(findPossibleWriters(), new IterationContinuation<RubyMethod>() {
             
-            public void iteration(RubyMethod method, ContinuationRequestor requestor,
-                    SimpleContinuation continuation) {
+            public ContinuationRequestorCalledToken iteration(RubyMethod method,
+                    ContinuationScheduler requestor, SimpleContinuation continuation) {
                 if (method instanceof RubySourceMethod) {
                     RubySourceMethod sm = ((RubySourceMethod) method);
                     RubyConstruct rubyConstruct = sm.scope().createConstruct();
-                    sm.scope().propagationTracker().traverseEntirely(rubyConstruct, request, requestor,
-                            continuation);
-                } else {
-                    continuation.run(requestor);
-                }
+                    return sm.scope().propagationTracker().traverseEntirely(rubyConstruct, request,
+                            requestor, continuation);
+                } else
+                    return continuation.run(requestor);
             }
             
         }, requestor, new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,

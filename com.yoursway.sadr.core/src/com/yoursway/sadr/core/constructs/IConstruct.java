@@ -5,7 +5,8 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 
 public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N> {
@@ -22,10 +23,10 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     
     List<C> enclosedConstructs();
     
-    void evaluateValue(DC dc, InfoKind infoKind, ContinuationRequestor requestor,
+    ContinuationRequestorCalledToken evaluateValue(DC dc, InfoKind infoKind, ContinuationScheduler requestor,
             ValueInfoContinuation continuation);
     
-    void calculateEffectiveControlFlowGraph(ContinuationRequestor requestor,
+    ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(ContinuationScheduler requestor,
             ControlFlowGraphRequestor<C, SC, DC, N> continuation);
     
 }

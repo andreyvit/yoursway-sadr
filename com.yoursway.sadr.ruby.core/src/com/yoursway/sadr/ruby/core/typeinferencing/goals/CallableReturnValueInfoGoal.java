@@ -2,7 +2,8 @@ package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
 import java.util.Arrays;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
@@ -33,16 +34,15 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
         this.arguments = args;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         if (callable.isBuiltin()) {
             if (callable instanceof RubyBuiltinMethod) {
                 RubyBuiltinMethod method = (RubyBuiltinMethod) callable;
-                consume(method.evaluateBuiltin(receiver, arguments), requestor);
+                return consume(method.evaluateBuiltin(receiver, arguments), requestor);
             } else {
                 RubyBuiltinProcedure method = (RubyBuiltinProcedure) callable;
-                consume(method.evaluateBuiltin(arguments), requestor);
+                return consume(method.evaluateBuiltin(arguments), requestor);
             }
-            return;
         }
         RubyConstruct construct = callable.construct();
         if (construct != null) {
@@ -54,16 +54,17 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
                 dc = new DynamicProcedureScope((ProcedureScope) staticScope, arguments);
             
             final ReturnsRequest request = new ReturnsRequest();
-            construct.staticContext().propagationTracker().traverseEntirely(construct, request, requestor,
-                    new SimpleContinuation() {
+            return construct.staticContext().propagationTracker().traverseEntirely(construct, request,
+                    requestor, new SimpleContinuation() {
                         
-                        public void run(ContinuationRequestor requestor) {
-                            requestor.subgoal(new MergeConstructsValueInfosContinuation(thing(), request
-                                    .returns(), dc, kind, CallableReturnValueInfoGoal.this));
+                        public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                            return requestor.schedule(new MergeConstructsValueInfosContinuation(thing(),
+                                    request.returns(), dc, kind, CallableReturnValueInfoGoal.this));
                         }
                         
                     });
-        }
+        } else
+            return requestor.done();
     }
     
     @Override

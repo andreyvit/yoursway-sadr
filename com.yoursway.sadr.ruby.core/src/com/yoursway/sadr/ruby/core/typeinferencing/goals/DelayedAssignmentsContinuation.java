@@ -4,7 +4,8 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
@@ -24,7 +25,8 @@ public final class DelayedAssignmentsContinuation implements SimpleContinuation 
         this.continuation = continuation;
     }
     
-    public void run(ContinuationRequestor requestor) {
-        requestor.subgoal(new AssignmentsContinuation(null, request.assigned(), dc, infoKind, continuation));
+    public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+        return requestor.schedule(new AssignmentsContinuation(null, request.assigned(), dc, infoKind,
+                continuation));
     }
 }

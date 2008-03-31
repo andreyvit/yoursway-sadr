@@ -3,7 +3,8 @@ package com.yoursway.sadr.ruby.core.refactoring;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.rewriting.RewritingSession;
@@ -29,16 +30,16 @@ public class MethodRenameRefactoring implements SimpleContinuation {
         this.continuation = continuation;
     }
     
-    public void run(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
         final MethodCallersGoal goal = new MethodCallersGoal(method, method.construct().staticContext()
                 .searchService());
-        requestor.subgoal(new Continuation() {
+        return requestor.schedule(new Continuation() {
             
             public void provideSubgoals(SubgoalRequestor requestor) {
                 requestor.subgoal(goal);
             }
             
-            public void done(ContinuationRequestor requestor) {
+            public void done(ContinuationScheduler requestor) {
                 CallersInfo info = goal.result(null);
                 executeWithInfo(info, requestor);
             }
@@ -46,7 +47,7 @@ public class MethodRenameRefactoring implements SimpleContinuation {
         });
     }
     
-    void executeWithInfo(CallersInfo info, ContinuationRequestor requestor) {
+    void executeWithInfo(CallersInfo info, ContinuationScheduler requestor) {
         renameMethod();
         for (CallC caller : info.callers())
             renameCall(caller.node());

@@ -17,8 +17,8 @@ import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
-import com.yoursway.sadr.engine.DumbReturnValue;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.Query;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.contributions.FileContributionsManager;
@@ -45,17 +45,17 @@ public class WholeProjectRuntime {
         
         public void add(final PythonConstruct root, ASTNode fakeParent) {
             final FileScope fileScope = root.staticContext().nearestScope().fileScope();
-            ContinuationRequestor tenderRequestor = new ContinuationRequestor() {
+            ContinuationScheduler tenderRequestor = new ContinuationScheduler() {
                 
                 public Query currentQuery() {
                     throw new UnsupportedOperationException();
                 }
                 
-                public void done() {
+                public ContinuationRequestorCalledToken done() {
                     throw new UnsupportedOperationException();
                 }
                 
-                public DumbReturnValue subgoal(Continuation cont) {
+                public ContinuationRequestorCalledToken schedule(Continuation cont) {
                     throw new UnsupportedOperationException();
                 }
                 
@@ -63,10 +63,10 @@ public class WholeProjectRuntime {
             creator.process(contributionsManager.createContext(fileScope), root, tenderRequestor,
                     new SimpleContinuation() {
                         
-                        public void run(ContinuationRequestor requestor) {
-                            contributionsManager.addToIndex(root, requestor, new SimpleContinuation() {
+                        public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                            return contributionsManager.addToIndex(root, requestor, new SimpleContinuation() {
                                 
-                                public void run(ContinuationRequestor requestor) {
+                                public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
                                     postProcessingQueue.add(new Runnable() {
                                         
                                         public void run() {
@@ -75,6 +75,7 @@ public class WholeProjectRuntime {
                                         }
                                         
                                     });
+                                    return requestor.done();
                                 }
                                 
                             });
@@ -82,7 +83,6 @@ public class WholeProjectRuntime {
                         
                     });
         }
-        
     }
     
     protected PythonRuntimeModel runtimeModel;

@@ -3,7 +3,6 @@ package com.yoursway.sadr.ruby.core.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +15,8 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.ruby.internal.parser.JRubySourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
-import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
-import com.yoursway.sadr.engine.DumbReturnValue;
-import com.yoursway.sadr.engine.Query;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.runtime.contributions.FileContributionsManager;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
@@ -32,57 +29,42 @@ public class WholeProjectRuntime {
     
     private final class CodeGathererImpl implements CodeGatherer {
         private final RubyRuntimeModelCreator creator;
-        private final LinkedList<Runnable> postProcessingQueue;
-        
         private final RubyEvalResolver evalResolver;
+        private final AnalysisEngine analysisEngine;
         
-        private CodeGathererImpl(RubyRuntimeModelCreator creator, LinkedList<Runnable> postProcessingQueue,
-                RubyEvalResolver evalResolver) {
+        private CodeGathererImpl(RubyRuntimeModelCreator creator, RubyEvalResolver evalResolver,
+                AnalysisEngine analysisEngine) {
             this.creator = creator;
-            this.postProcessingQueue = postProcessingQueue;
             this.evalResolver = evalResolver;
+            this.analysisEngine = analysisEngine;
         }
         
         public void add(final RubyConstruct root, ASTNode fakeParent) {
             final FileScope fileScope = root.staticContext().nearestScope().fileScope();
-            ContinuationRequestor tenderRequestor = new ContinuationRequestor() {
-                
-                public Query currentQuery() {
-                    throw new UnsupportedOperationException();
-                }
-                
-                public void done() {
-                    throw new UnsupportedOperationException();
-                }
-                
-                public DumbReturnValue subgoal(Continuation cont) {
-                    throw new UnsupportedOperationException();
-                }
-                
-            };
-            creator.process(contributionsManager.createContext(fileScope), root, tenderRequestor,
-                    new SimpleContinuation() {
-                        
-                        public void run(ContinuationRequestor requestor) {
-                            contributionsManager.addToIndex(root, requestor, new SimpleContinuation() {
-                                
-                                public void run(ContinuationRequestor requestor) {
-                                    postProcessingQueue.add(new Runnable() {
-                                        
-                                        public void run() {
-                                            evalResolver.process(CodeGathererImpl.this, contributionsManager
-                                                    .createContext(fileScope), root);
-                                        }
-                                        
-                                    });
+            
+            analysisEngine.execute(new SimpleContinuation() {
+                public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                    return creator.process(contributionsManager.createContext(fileScope), root, requestor,
+                            new SimpleContinuation() {
+                                public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                                    return contributionsManager.addToIndex(root, requestor,
+                                            new SimpleContinuation() {
+                                                public ContinuationRequestorCalledToken run(
+                                                        ContinuationScheduler requestor) {
+                                                    
+                                                    return evalResolver.process(CodeGathererImpl.this,
+                                                            contributionsManager.createContext(fileScope),
+                                                            root);
+                                                }
+                                            }
+
+                                    );
                                 }
                                 
                             });
-                        }
-                        
-                    });
+                }
+            });
         }
-        
     }
     
     protected RubyRuntimeModel runtimeModel;
@@ -109,8 +91,7 @@ public class WholeProjectRuntime {
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
         final RubyRuntimeModelCreator creator = new RubyRuntimeModelCreator();
         final RubyEvalResolver evalResolver = new RubyEvalResolver(engine);
-        final LinkedList<Runnable> postProcessingQueue = new LinkedList<Runnable>();
-        final CodeGatherer codeGatherer = new CodeGathererImpl(creator, postProcessingQueue, evalResolver);
+        final CodeGatherer codeGatherer = new CodeGathererImpl(creator, evalResolver, null);
         try {
             for (ISourceModule m : modules) {
                 ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
@@ -120,10 +101,6 @@ public class WholeProjectRuntime {
                 asts.put(m, rootNode);
                 scopes.put(m, fileScope);
                 codeGatherer.add(new DtlFileC(fileScope, rootNode), null);
-            }
-            while (!postProcessingQueue.isEmpty()) {
-                Runnable item = postProcessingQueue.remove();
-                item.run();
             }
         } catch (ModelException e) {
             e.printStackTrace();

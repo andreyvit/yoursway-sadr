@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.common.base.Predicate;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonField;
@@ -36,10 +37,10 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
         this.searchService = searchService;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         ArrayList<AssignmentInfo> assignments = findAssignmentsUsingSearch();
         AssignmentInfo[] arr = assignments.toArray(new AssignmentInfo[assignments.size()]);
-        requestor.subgoal(new FilterByReceiversContinuation(field.container(), arr,
+        return requestor.schedule(new FilterByReceiversContinuation(field.container(), arr,
                 new EmptyDynamicContext(), kind, this));
     }
     

@@ -16,7 +16,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
@@ -82,12 +82,12 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> im
             }
         }
         
-        public void done(ContinuationRequestor requestor) {
+        public void done(ContinuationScheduler requestor) {
             //            final ValueInfo[] args = new ValueInfo[argGoals.size()];
             //            for (int i = 0; i < args.length; i++)
             //                args[i] = argGoals.get(i).result(null);
             
-            requestor.subgoal(new Continuation() {
+            requestor.schedule(new Continuation() {
                 
                 final ValueInfoGoal[] retGoals = new ValueInfoGoal[callables.length];
                 
@@ -107,7 +107,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> im
                         requestor.subgoal(goal);
                 }
                 
-                public void done(ContinuationRequestor requestor) {
+                public void done(ContinuationScheduler requestor) {
                     ValueInfoBuilder builder = new ValueInfoBuilder();
                     for (ValueInfoGoal goal : retGoals)
                         builder.addResultOf(goal, null);

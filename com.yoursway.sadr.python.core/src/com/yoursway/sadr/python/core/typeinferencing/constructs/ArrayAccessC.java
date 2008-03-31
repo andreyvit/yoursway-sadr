@@ -11,7 +11,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpressio
 import com.google.common.base.Function;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
@@ -32,10 +33,10 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
         super(sc, node);
     }
     
-    public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
-            ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,
+            final InfoKind infoKind, ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
         final Expression array = node.getArray();
-        requestor.subgoal(new Continuation() {
+        return requestor.schedule(new Continuation() {
             
             private final ValueInfoGoal nameGoal = new ExpressionValueInfoGoal(subconstructFor(array), dc,
                     infoKind);
@@ -44,7 +45,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
                 requestor.subgoal(nameGoal);
             }
             
-            public void done(ContinuationRequestor requestor) {
+            public void done(ContinuationScheduler requestor) {
                 continuation.consume(nameGoal.result(null).unwrapArray(), requestor);
             }
             

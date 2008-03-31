@@ -34,7 +34,8 @@ import com.google.common.base.Predicate;
 import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
@@ -153,11 +154,11 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         return node == this.node;
     }
     
-    public void calculateEffectiveControlFlowGraph(
-            ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
+            ContinuationScheduler requestor,
             ControlFlowGraphRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
         List<PythonConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
-        continuation.process(
+        return continuation.process(
                 new ControlFlowGraph<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>(
                         constructs), requestor);
     }

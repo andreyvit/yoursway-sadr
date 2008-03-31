@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.yoursway.sadr.engine.AbstractGoal;
+import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
@@ -67,7 +68,7 @@ public class MethodCallersGoal extends AbstractGoal {
         return callers;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         final List<CallC> possibleCallers = new ArrayList<CallC>();
         boolean isMethod = (callable instanceof PythonMethod);
         //        for (FileScope fileScope : searchService.searchForEverything()) {
@@ -93,9 +94,9 @@ public class MethodCallersGoal extends AbstractGoal {
         CallC[] array = possibleCallers.toArray(createArray(possibleCallers.size()));
         if (!isMethod) {
             this.callers = new CallersInfo(array);
-            requestor.done();
+            return requestor.done();
         } else
-            requestor.subgoal(new MethodCallersRefiner(array));
+            return requestor.schedule(new MethodCallersRefiner(array));
     }
     
     class MethodCallersRefiner implements Continuation {
@@ -116,7 +117,7 @@ public class MethodCallersGoal extends AbstractGoal {
                 requestor.subgoal(goal);
         }
         
-        public void done(ContinuationRequestor requestor) {
+        public void done(ContinuationScheduler requestor) {
             callers = new CallersInfo(collectSuitableCallers((PythonMethod) callable));
             requestor.done();
         }

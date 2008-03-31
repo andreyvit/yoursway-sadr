@@ -23,9 +23,9 @@ import com.yoursway.sadr.core.constructs.IConstruct;
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.core.constructs.StaticContext;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Continuations;
-import com.yoursway.sadr.engine.DumbReturnValue;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.Query;
@@ -41,8 +41,8 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
     
     private final Map<Goal, Query> entryPoints = new HashMap<Goal, Query>();
     
-    public void initiateBackwardPropagation(final Goal propagatingGoal,
-            final ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken initiateBackwardPropagation(final Goal propagatingGoal,
+            final ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
         final Query currentQuery = requestor.currentQuery();
         
         Query query = calculateStartingPoint(currentQuery);
@@ -51,11 +51,11 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
         
         ValueInfoContinuation continuation2 = new ValueInfoContinuation() {
             
-            public void consume(IValueInfo result, ContinuationRequestor requestor) {
+            public ContinuationRequestorCalledToken consume(IValueInfo result, ContinuationScheduler requestor) {
                 for (Goal goal : propagatedGoals)
                     entryPoints.remove(goal);
                 currentQuery.goal().addPropagatingGoal(propagatingGoal);
-                continuation.consume(result, requestor);
+                return continuation.consume(result, requestor);
             }
             
         };
@@ -65,13 +65,13 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
             if (goal instanceof BackwardPropagationEntryPoint) {
                 final Query epQuery = query;
                 final BackwardPropagationEntryPoint ep = (BackwardPropagationEntryPoint) goal;
-                if (ep.backwardPropagation(propagatingGoal, new ContinuationRequestor() {
+                if (ep.backwardPropagation(propagatingGoal, new ContinuationScheduler() {
                     
                     public Query currentQuery() {
                         return requestor.currentQuery();
                     }
                     
-                    public DumbReturnValue subgoal(Continuation cont) {
+                    public ContinuationRequestorCalledToken schedule(Continuation cont) {
                         cont.provideSubgoals(new SubgoalRequestor() {
                             
                             public void subgoal(Goal goal) {
@@ -80,19 +80,19 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
                             }
                             
                         });
-                        return requestor.subgoal(cont);
+                        return requestor.schedule(cont);
                     }
                     
-                    public void done() {
-                        requestor.done();
+                    public ContinuationRequestorCalledToken done() {
+                        return requestor.done();
                     }
                     
                 }, continuation2))
-                    return;
+                    return requestor.done();
             }
         }
         
-        continuation2.consume(ValueInfos.empty(), requestor);
+        return continuation2.consume(ValueInfos.empty(), requestor);
     }
     
     private Query calculateStartingPoint(final Query currentQuery) {
@@ -123,77 +123,83 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
         return null;
     }
     
-    public void traverseEntirely(C construct, final Request<C, SC, DC, N> request,
-            ContinuationRequestor requestor, SimpleContinuation continuation) {
+    public ContinuationRequestorCalledToken traverseEntirely(C construct,
+            final Request<C, SC, DC, N> request, ContinuationScheduler requestor,
+            SimpleContinuation continuation) {
         AbstractConstructTraverser<C, SC, DC, N> traverser = new ConstructControlFlowTraverser<C, SC, DC, N>();
-        traverser.traverse(construct, requestor, request, continuation);
+        return traverser.traverse(construct, requestor, request, continuation);
     }
     
-    public void traverseStatically(C construct, final Request<C, SC, DC, N> request,
-            ContinuationRequestor requestor, SimpleContinuation continuation) {
+    public ContinuationRequestorCalledToken traverseStatically(C construct,
+            final Request<C, SC, DC, N> request, ContinuationScheduler requestor,
+            SimpleContinuation continuation) {
         AbstractConstructTraverser<C, SC, DC, N> traverser = new ConstructStaticStructureTraverser<C, SC, DC, N>();
-        traverser.traverse(construct, requestor, request, continuation);
+        return traverser.traverse(construct, requestor, request, continuation);
     }
     
-    public void traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
-            BackwardRequest<C, SC, DC, N> request, ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
+            BackwardRequest<C, SC, DC, N> request, ContinuationScheduler requestor,
             SimpleContinuation continuation) {
         Query query = requestor.currentQuery();
         ConstructBoundGoal<C, SC, DC, N> cbg = findPreviousConstructBoundGoal(query);
         C construct = cbg.construct();
-        traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(construct, request, requestor,
-                continuation);
+        return traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(construct, request,
+                requestor, continuation);
     }
     
-    private void traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(final C construct,
-            final BackwardRequest<C, SC, DC, N> request, ContinuationRequestor requestor,
+    private ContinuationRequestorCalledToken traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(
+            final C construct, final BackwardRequest<C, SC, DC, N> request, ContinuationScheduler requestor,
             final SimpleContinuation continuation) {
         final C parent = construct.parent();
         if (parent == null) {
-            continuation.run(requestor);
-            return;
+            return continuation.run(requestor);
         }
-        parent.calculateEffectiveControlFlowGraph(requestor, new ControlFlowGraphRequestor<C, SC, DC, N>() {
-            
-            public void process(ControlFlowGraph<C, SC, DC, N> effectiveGraph, ContinuationRequestor requestor) {
-                CfgCursor<C, SC, DC, N> cursor = effectiveGraph.cursorAt(construct);
-                if (cursor == null)
-                    traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(parent, request,
-                            requestor, continuation);
-                else
-                    traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct__(parent, cursor
-                            .previous(), request, requestor, continuation);
-            }
-            
-        });
+        return parent.calculateEffectiveControlFlowGraph(requestor,
+                new ControlFlowGraphRequestor<C, SC, DC, N>() {
+                    
+                    public ContinuationRequestorCalledToken process(
+                            ControlFlowGraph<C, SC, DC, N> effectiveGraph, ContinuationScheduler requestor) {
+                        CfgCursor<C, SC, DC, N> cursor = effectiveGraph.cursorAt(construct);
+                        if (cursor == null)
+                            return traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(parent,
+                                    request, requestor, continuation);
+                        else
+                            return traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct__(parent,
+                                    cursor.previous(), request, requestor, continuation);
+                    }
+                    
+                });
     }
     
-    protected void traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct__(final C parent,
-            final CfgCursor<C, SC, DC, N> cursor, final BackwardRequest<C, SC, DC, N> request,
-            ContinuationRequestor requestor, final SimpleContinuation continuation) {
+    protected ContinuationRequestorCalledToken traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct__(
+            final C parent, final CfgCursor<C, SC, DC, N> cursor,
+            final BackwardRequest<C, SC, DC, N> request, ContinuationScheduler requestor,
+            final SimpleContinuation continuation) {
         if (cursor.isBof()) {
-            traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(parent, request, requestor,
-                    continuation);
+            return traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct_(parent, request,
+                    requestor, continuation);
         } else {
             C construct = cursor.current();
-            construct.calculateEffectiveControlFlowGraph(requestor,
+            return construct.calculateEffectiveControlFlowGraph(requestor,
                     new ControlFlowGraphRequestor<C, SC, DC, N>() {
                         
-                        public void process(ControlFlowGraph<C, SC, DC, N> effectiveGraph,
-                                ContinuationRequestor requestor) {
-                            Continuations.iterate(effectiveGraph.getNodes().iterator(),
+                        public ContinuationRequestorCalledToken process(
+                                ControlFlowGraph<C, SC, DC, N> effectiveGraph, ContinuationScheduler requestor) {
+                            return Continuations.iterate(effectiveGraph.getNodes().iterator(),
                                     new IterationContinuation<C>() {
                                         
-                                        public void iteration(C value, ContinuationRequestor requestor,
+                                        public ContinuationRequestorCalledToken iteration(C value,
+                                                ContinuationScheduler requestor,
                                                 SimpleContinuation continuation) {
                                             request.visit(value);
-                                            continuation.run(requestor);
+                                            return continuation.run(requestor);
                                         }
                                         
                                     }, requestor, new SimpleContinuation() {
                                         
-                                        public void run(ContinuationRequestor requestor) {
-                                            traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct___(
+                                        public ContinuationRequestorCalledToken run(
+                                                ContinuationScheduler requestor) {
+                                            return traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct___(
                                                     parent, cursor, request, requestor, continuation);
                                         }
                                         
@@ -204,19 +210,19 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
         }
     }
     
-    protected void traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct___(C parent,
-            CfgCursor<C, SC, DC, N> cursor, BackwardRequest<C, SC, DC, N> request,
-            ContinuationRequestor requestor, SimpleContinuation continuation) {
+    protected ContinuationRequestorCalledToken traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct___(
+            C parent, CfgCursor<C, SC, DC, N> cursor, BackwardRequest<C, SC, DC, N> request,
+            ContinuationScheduler requestor, SimpleContinuation continuation) {
         C construct = cursor.current();
         request.visit(construct);
         if (request.done())
-            continuation.run(requestor);
+            return continuation.run(requestor);
         else
-            traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct__(parent, cursor.previous(),
-                    request, requestor, continuation);
+            return traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct__(parent, cursor
+                    .previous(), request, requestor, continuation);
     }
     
-    public Collection<C> callStack(DC dc, ContinuationRequestor requestor) {
+    public Collection<C> callStack(DC dc, ContinuationScheduler requestor) {
         Query query = requestor.currentQuery();
         ConstructBoundGoal<C, SC, DC, N> cbg = findPreviousConstructBoundGoal(query);
         Collection<C> result = newArrayList();

@@ -4,13 +4,13 @@ package com.yoursway.sadr.engine;
  * The only way to get an instance of this class is calling API methods.
  */
 
-public final class DumbReturnValue {
+public final class DumbReturnValue implements ContinuationRequestorCalledToken {
     private DumbReturnValue() {
     }
     
-    private static final DumbReturnValue instance = new DumbReturnValue();
+    private static final ContinuationRequestorCalledToken instance = new DumbReturnValue();
     
-    static DumbReturnValue instance() {
+    static ContinuationRequestorCalledToken instance() {
         return instance;
     }
 }

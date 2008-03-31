@@ -12,7 +12,8 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
 
@@ -30,17 +31,17 @@ public class EmptyConstruct extends
         //return null;
     }
     
-    public void calculateEffectiveControlFlowGraph(
-            ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
+            ContinuationScheduler requestor,
             ControlFlowGraphRequestor<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> continuation) {
         List<RubyConstruct> emptyList = new ArrayList<RubyConstruct>();
-        continuation
+        return continuation
                 .process(new ControlFlowGraph<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode>(
                         emptyList), requestor);
     }
     
-    public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(RubyDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         throw new NotImplementedException();
     }
     

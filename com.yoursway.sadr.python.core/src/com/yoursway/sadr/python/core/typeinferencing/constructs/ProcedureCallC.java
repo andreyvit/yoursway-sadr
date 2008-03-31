@@ -14,7 +14,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
@@ -37,54 +38,52 @@ public class ProcedureCallC extends CallC implements IndexAffector, EvalsAffecto
         super(sc, node);
     }
     
-    private void classNewInstance(PythonClass klass, PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationRequestor requestor, ValueInfoContinuation continuation) {
+    private ContinuationRequestorCalledToken classNewInstance(PythonClass klass, PythonDynamicContext dc,
+            InfoKind infoKind, ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         Value value = new InstanceValue(klass, staticContext().instanceRegistrar());
         SingleTypeSet ts = TypeSetFactory.typeSetWith(new ClassType(klass));
         PythonMethod[] methods = ts.findMethodsByPrefix("__new__");
         if (methods.length > 0) {
             PythonMethod method = methods[0];
-            requestor.subgoal(new CallablesReturnTypeCont(infoKind, arguments(), dc,
+            return requestor.schedule(new CallablesReturnTypeCont(infoKind, arguments(), dc,
                     new Callable[] { method }, null, continuation));
         } else {
             ValueInfo result = createResult(ts, valueSetWith(value));
-            continuation.consume(result, requestor);
+            return continuation.consume(result, requestor);
         }
     }
     
-    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         final String name = node.getProcedureName();
         if (name != null) {
             PythonClass klass = staticContext().classLookup().findClass(name);
-            if (klass != null) {
-                classNewInstance(klass, dc, infoKind, requestor, continuation);
-                return;
-            }
+            if (klass != null)
+                return classNewInstance(klass, dc, infoKind, requestor, continuation);
         }
         
         Callable procedure = staticContext().procedureLookup().findProcedure(name);
         if (procedure != null)
-            requestor.subgoal(new CallablesReturnTypeCont(infoKind, arguments(), dc,
+            return requestor.schedule(new CallablesReturnTypeCont(infoKind, arguments(), dc,
                     new Callable[] { procedure }, null, continuation));
         else
-            continuation.consume(emptyValueInfo(), requestor);
+            return continuation.consume(emptyValueInfo(), requestor);
     }
     
     @Override
-    public void calculateEffectiveControlFlowGraph(
-            ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
+            ContinuationScheduler requestor,
             ControlFlowGraphRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
         if (node.getProcedureName().equalsIgnoreCase("eval")) {
             List<PythonConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
             for (ModuleDeclaration root : staticContext().extentionsOf(node))
                 constructs.add(new EvalRootC(staticContext(), root));
-            continuation
+            return continuation
                     .process(
                             new ControlFlowGraph<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>(
                                     constructs), requestor);
         } else {
-            super.calculateEffectiveControlFlowGraph(requestor, continuation);
+            return super.calculateEffectiveControlFlowGraph(requestor, continuation);
         }
     }
     

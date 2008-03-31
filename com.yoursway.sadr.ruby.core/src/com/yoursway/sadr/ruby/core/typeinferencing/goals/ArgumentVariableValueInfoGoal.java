@@ -12,7 +12,8 @@ import org.eclipse.dltk.ast.expressions.CallExpression;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
@@ -48,29 +49,28 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             this.continuation = continuation;
         }
         
-        public void consume(IValueInfo result, ContinuationRequestor requestor) {
+        public ContinuationRequestorCalledToken consume(IValueInfo result, ContinuationScheduler requestor) {
             final ValueInfoBuilder builder = new ValueInfoBuilder();
             builder.add(ValueInfo.from(result));
             
             ValueInfo valueInfo = variable.valueInfo();
             if (valueInfo != null && !valueInfo.isEmpty())
-                continueWith(builder, valueInfo, requestor);
+                return continueWith(builder, valueInfo, requestor);
             else {
-                requestor.subgoal(new ArgumentTypeByCallersCont(callable, new ValueInfoContinuation() {
-                    
-                    public void consume(IValueInfo result, ContinuationRequestor requestor) {
-                        continueWith(builder, result, requestor);
-                    }
-                    
-                }));
+                return requestor.schedule(new ArgumentTypeByCallersCont(callable,
+                        new ValueInfoContinuation() {
+                            public ContinuationRequestorCalledToken consume(IValueInfo result,
+                                    ContinuationScheduler requestor) {
+                                return continueWith(builder, result, requestor);
+                            }
+                        }));
             }
-            
         }
         
-        private void continueWith(ValueInfoBuilder builder, IValueInfo valueInfo,
-                ContinuationRequestor requestor) {
+        private ContinuationRequestorCalledToken continueWith(ValueInfoBuilder builder, IValueInfo valueInfo,
+                ContinuationScheduler requestor) {
             builder.add(ValueInfo.from(valueInfo));
-            continuation.consume(builder.build(), requestor);
+            return continuation.consume(builder.build(), requestor);
         }
     }
     
@@ -90,8 +90,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             requestor.subgoal(callersGoal);
         }
         
-        public void done(ContinuationRequestor requestor) {
-            requestor.subgoal(new NodeValuesCont(collectValueNodes(), callable, continuation));
+        public void done(ContinuationScheduler requestor) {
+            requestor.schedule(new NodeValuesCont(collectValueNodes(), callable, continuation));
         }
         
         private RubyConstruct[] collectValueNodes() {
@@ -127,14 +127,14 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
                 requestor.subgoal(goal);
         }
         
-        public void done(ContinuationRequestor requestor) {
+        public void done(ContinuationScheduler requestor) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             for (ValueInfoGoal goal : valueGoals)
                 builder.addResultOf(goal, thing());
             if (!builder.looksEmpty())
                 continuation.consume(builder.build(), requestor);
             else
-                requestor.subgoal(new DetermineArgumentTypeByCalledMethodsCont(callable, continuation));
+                requestor.schedule(new DetermineArgumentTypeByCalledMethodsCont(callable, continuation));
         }
     }
     
@@ -150,20 +150,20 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void provideSubgoals(SubgoalRequestor requestor) {
         }
         
-        public void done(ContinuationRequestor requestor) {
+        public void done(ContinuationScheduler requestor) {
             RubyConstruct construct = callable.construct();
             final CallsRequest request = new CallsRequest(variable, kind);
             construct.staticContext().propagationTracker().traverseEntirely(construct, request, requestor,
                     new SimpleContinuation() {
                         
-                        public void run(ContinuationRequestor requestor) {
+                        public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
                             CallInfo[] calls = request.calls();
                             
                             AbstractMultiMap<Wildcard, CallC> wildcardsToCalls = groupCallsByWildcard(calls);
                             ValueInfoBuilder builder = new ValueInfoBuilder();
                             for (Wildcard wildcard : wildcardsToCalls.keySet())
                                 builder.add(wildcard, calculateTypeSet(wildcardsToCalls.get(wildcard)));
-                            continuation.consume(builder.build(), requestor);
+                            return continuation.consume(builder.build(), requestor);
                         }
                         
                     });
@@ -213,11 +213,10 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         return kind;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         final Callable callable = variable.callable();
         final RubyConstruct construct = callable.construct();
-        //evaluateWithFlow(callable, construct, requestor);
-        evaluateWithoutFlow(callable, construct, requestor);
+        return evaluateWithoutFlow(callable, construct, requestor);
     }
     
     //    private void evaluateWithFlow(final Callable callable, final RubyConstruct construct,
@@ -235,28 +234,22 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     //        });
     //    }
     
-    private void evaluateWithoutFlow(final Callable callable, RubyConstruct construct,
-            ContinuationRequestor requestor) {
-        //        RubyConstruct c = construct.asAnotherMyself();
-        //        PropagationTracker tracker = construct.scope().propagationTracker();
-        //        VariableRequest request = new VariableRequest(variable, kind);
-        //        tracker.traverseEntirely(c, request, requestor, new DelayedAssignmentsContinuation(request, kind,
-        //                new ArgumentTypeByCallersInitiator(callable, this)));
+    private ContinuationRequestorCalledToken evaluateWithoutFlow(final Callable callable,
+            RubyConstruct construct, ContinuationScheduler requestor) {
         
         if (callable instanceof RubyMethod) {
             if (variable.index() == 0) {
                 // TODO: need a dynamic context here 
                 ValueInfo selfType = construct.staticContext().selfType();
                 if (selfType != null)
-                    consume(selfType, requestor);
+                    return consume(selfType, requestor);
                 else
-                    consume(ValueInfo.emptyValueInfo(), requestor);
-                return;
+                    return consume(ValueInfo.emptyValueInfo(), requestor);
             }
         }
         
         VariableRequest request = new VariableRequest(variable, kind);
-        construct.staticContext().propagationTracker().traverseEntirely(
+        return construct.staticContext().propagationTracker().traverseEntirely(
                 construct,
                 request,
                 requestor,

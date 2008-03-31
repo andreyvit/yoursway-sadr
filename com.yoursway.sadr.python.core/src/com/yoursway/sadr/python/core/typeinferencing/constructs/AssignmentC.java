@@ -8,7 +8,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexAffector;
@@ -28,9 +29,9 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Vari
         Assert.isLegal(node.getRight() != null, "node.getRight() should be != null");
     }
     
-    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
-        continuation.consume(emptyValueInfo(), requestor);
+    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
+        return continuation.consume(emptyValueInfo(), requestor);
     }
     
     public PythonConstruct lhs() {

@@ -2,6 +2,7 @@ package com.yoursway.sadr.engine;
 
 public interface IterationContinuation<T> {
     
-    void iteration(T value, ContinuationRequestor requestor, SimpleContinuation continuation);
+    ContinuationRequestorCalledToken iteration(T value, ContinuationScheduler requestor,
+            SimpleContinuation continuation);
     
 }

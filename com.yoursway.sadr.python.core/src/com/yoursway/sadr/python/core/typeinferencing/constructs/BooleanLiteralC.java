@@ -3,7 +3,8 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import org.eclipse.dltk.ast.references.VariableReference;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
@@ -16,15 +17,15 @@ public class BooleanLiteralC extends PythonConstructImpl<VariableReference> {
         super(sc, node);
     }
     
-    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         String repr = node.getName();
         if (repr == null || !(repr.equals(BooleanValue.TRUE) || repr.equals(BooleanValue.FALSE)))
             throw new NullPointerException();
         ValueInfoBuilder builder = new ValueInfoBuilder();
         PythonSimpleType t = staticContext().builtins().boolType();
         builder.add(new SimpleType(t), new BooleanValue(repr.equals(BooleanValue.TRUE)));
-        continuation.consume(builder.build(), requestor);
+        return continuation.consume(builder.build(), requestor);
     }
     
 }

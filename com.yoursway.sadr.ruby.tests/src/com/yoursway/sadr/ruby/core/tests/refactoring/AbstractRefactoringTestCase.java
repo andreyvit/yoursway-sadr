@@ -8,7 +8,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.dltk.core.ISourceModule;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.refactoring.MethodRenameRefactoring;
 import com.yoursway.sadr.ruby.core.rewriting.RewritingSession;
@@ -43,8 +44,8 @@ public abstract class AbstractRefactoringTestCase extends AbstractTestCase {
             MethodRenameRefactoring refactoring = new MethodRenameRefactoring(session, callable, newName,
                     new SimpleContinuation() {
                         
-                        public void run(ContinuationRequestor requestor) {
-                            requestor.done();
+                        public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                            return requestor.done();
                         }
                         
                     });

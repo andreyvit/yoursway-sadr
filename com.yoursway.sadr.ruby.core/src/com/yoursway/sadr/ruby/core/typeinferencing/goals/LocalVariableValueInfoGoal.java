@@ -1,6 +1,7 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
@@ -21,32 +22,32 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
         this.kind = kind;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
-        evaluateWithFlow(requestor);
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
+        return evaluateWithFlow(requestor);
     }
     
-    private void evaluateWithFlow(ContinuationRequestor requestor) {
+    private ContinuationRequestorCalledToken evaluateWithFlow(ContinuationScheduler requestor) {
         Scope scope = variable.scope();
         BackwardVariableRequest request = new BackwardVariableRequest(variable, kind);
         SimpleContinuation withoutFlowContinuation = new SimpleContinuation() {
             
-            public void run(ContinuationRequestor requestor) {
-                evaluateWithoutFlow(requestor);
+            public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                return evaluateWithoutFlow(requestor);
             }
             
         };
-        scope.propagationTracker().traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
+        return scope.propagationTracker().traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
                 request,
                 requestor,
                 new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
                         new TryAnotherThingContinuation(withoutFlowContinuation, this)));
     }
     
-    private void evaluateWithoutFlow(ContinuationRequestor requestor) {
+    private ContinuationRequestorCalledToken evaluateWithoutFlow(ContinuationScheduler requestor) {
         Scope scope = variable.scope();
         RubyConstruct construct = scope.createConstruct();
         final VariableRequest request = new VariableRequest(variable, kind);
-        scope.propagationTracker().traverseEntirely(construct, request, requestor,
+        return scope.propagationTracker().traverseEntirely(construct, request, requestor,
                 new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind, this));
     }
     

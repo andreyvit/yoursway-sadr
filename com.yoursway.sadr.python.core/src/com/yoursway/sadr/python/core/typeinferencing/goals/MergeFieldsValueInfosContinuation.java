@@ -9,7 +9,7 @@ import java.util.Collection;
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
@@ -35,7 +35,7 @@ public final class MergeFieldsValueInfosContinuation implements Continuation {
             requestor.subgoal(goal);
     }
     
-    public void done(ContinuationRequestor requestor) {
+    public void done(ContinuationScheduler requestor) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (ValueInfoGoal goal : goals)
             builder.addResultOf(goal, null);

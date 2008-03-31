@@ -7,7 +7,8 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.core.constructs.VisitorRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
@@ -41,10 +42,10 @@ public class VariableRequest implements
         return assigned.toArray(new AssignmentInfo[assigned.size()]);
     }
     
-    public void enter(RubyConstruct construct, ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken enter(RubyConstruct construct, ContinuationScheduler requestor,
             VisitorRequestor<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> continuation) {
         accept(construct);
-        continuation.consume(this, requestor);
+        return continuation.consume(this, requestor);
     }
     
     public void leave() {
@@ -62,5 +63,4 @@ public class VariableRequest implements
     private void add(AssignmentInfo info) {
         assigned.add(info);
     }
-    
 }

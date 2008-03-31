@@ -6,6 +6,11 @@ import java.util.Map;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.IdentityArrayListHashMultiMap;
 
+/**
+ * Continuations evaluator. Just invoke new
+ * AnalysisEngine().execute(yourSimpleContinuation) and it will provide
+ * scheduler for this continuation and all tasks scheduled by it.
+ */
 public class AnalysisEngine {
     
     private static final int MAX_ITERATIONS = 1000;
@@ -113,7 +118,7 @@ public class AnalysisEngine {
         
     }
     
-    abstract class Q extends Query implements ContinuationRequestor {
+    abstract class Q extends Query implements ContinuationScheduler {
         
         protected final Goal goal;
         
@@ -193,7 +198,7 @@ public class AnalysisEngine {
             }
         }
         
-        public DumbReturnValue subgoal(Continuation cont) {
+        public ContinuationRequestorCalledToken schedule(Continuation cont) {
             QQQ qqq = new QQQ(this, cont);
             SubqueryCreator creator = new SubqueryCreator(this, qqq);
             cont.provideSubgoals(creator);
@@ -201,13 +206,14 @@ public class AnalysisEngine {
             return DumbReturnValue.instance();
         }
         
-        public void done() {
+        public ContinuationRequestorCalledToken done() {
             if (isContinuationCreated())
                 throw new IllegalStateException(
                         "ContinuationRequestor.done() called after creating a continuation");
             if (childrenCountOrState != 0)
                 throw new AssertionError("ContinuationRequestor.done() called when childrenCount > 0");
             childrenCountOrState = DONE_CALLED;
+            return DumbReturnValue.instance();
         }
         
         @Override
@@ -277,16 +283,16 @@ public class AnalysisEngine {
         @Override
         protected void pleaseEvaluate() {
             ContextRelation contextRelation = contextRelationsCache.get(goal);
-            ContinuationRequestor requestor = this;
+            ContinuationScheduler requestor = this;
             evaluateWithRequestorAndContextRelation(contextRelation, requestor);
         }
         
         private void evaluateWithRequestorAndContextRelation(final ContextRelation contextRelation,
-                ContinuationRequestor requestor) {
+                ContinuationScheduler requestor) {
             if (contextRelation != null) {
                 contextRelation.createSecondaryContext(goal, requestor, new ContextRequestor() {
                     
-                    public void execute(GoalContext context, ContinuationRequestor requestor) {
+                    public void execute(GoalContext context, ContinuationScheduler requestor) {
                         Result result = contextSensitiveCache.get(context);
                         if (result != null) {
                             goal.copyAnswerFrom(result);
@@ -302,8 +308,8 @@ public class AnalysisEngine {
             }
         }
         
-        private void evaluateWithRequestor(ContinuationRequestor rq) {
-            goal.evaluate(rq);
+        private ContinuationRequestorCalledToken evaluateWithRequestor(ContinuationScheduler rq) {
+            return goal.evaluate(rq);
         }
         
         @Override
@@ -333,12 +339,19 @@ public class AnalysisEngine {
         
     }
     
+    /**
+     * FIXME: remove this НАХРЕН
+     * 
+     * @author mag
+     * 
+     */
     final class ContinuationQuery extends Q {
         
         private final SimpleContinuation continuation;
         
         public ContinuationQuery(SimpleContinuation continuation) {
-            super(new DummyGoal());
+            //super(new DummyGoal());
+            super((Goal) null);
             this.continuation = continuation;
         }
         
@@ -489,5 +502,4 @@ public class AnalysisEngine {
         queue.enqueue(new ContinuationQuery(continuation));
         executeQueue();
     }
-    
 }

@@ -11,7 +11,8 @@ import org.eclipse.dltk.compiler.problem.IProblemReporter;
 import org.eclipse.dltk.ruby.internal.parser.JRubySourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
@@ -34,12 +35,13 @@ public class RubyEvalResolver {
         this.engine = engine;
     }
     
-    public void process(final CodeGatherer codeGatherer, final Context context, RubyConstruct root) {
+    public ContinuationRequestorCalledToken process(final CodeGatherer codeGatherer, final Context context,
+            RubyConstruct root) {
         final EvalRequest request = new EvalRequest();
-        root.staticContext().propagationTracker().traverseStatically(root, request, null,
+        return root.staticContext().propagationTracker().traverseStatically(root, request, null,
                 new SimpleContinuation() {
                     
-                    public void run(ContinuationRequestor requestor) {
+                    public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
                         for (EvalInfo info : request.evalArgs()) {
                             RubyConstruct arg = info.getArgument();
                             ValueInfoGoal goal = new ExpressionValueInfoGoal(arg, new EmptyDynamicContext(),
@@ -71,7 +73,7 @@ public class RubyEvalResolver {
                                         .node());
                             }
                         }
-                        
+                        return requestor.done();
                     }
                     
                 });

@@ -8,7 +8,8 @@ import java.util.Collection;
 import org.eclipse.dltk.ast.references.VariableReference;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
@@ -27,25 +28,25 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
         super(sc, node);
     }
     
-    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            final ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
         String name = node.getName();
         PythonMetaClass mc = PythonUtils.resolveStaticClassReference(staticContext().classLookup(), node);
         if (mc != null) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             //            RubySimpleType t = staticContext().builtins().intType();
             builder.add(new MetaClassType(mc), new MetaClassValue(mc));
-            continuation.consume(builder.build(), requestor);
+            return continuation.consume(builder.build(), requestor);
         } else {
             PythonVariable variable = dc.variableLookup().findVariable(name);
             if (variable == null)
                 variable = staticContext().variableLookup().lookupVariable(name);
             if (variable == null) {
-                continuation.consume(emptyValueInfo(), requestor);
+                return continuation.consume(emptyValueInfo(), requestor);
             } else {
                 final ValueInfoGoal varGoal = Goals.createVariableTypeGoal(variable, infoKind, dc,
                         staticContext());
-                requestor.subgoal(new SingleSubgoalContinuation(varGoal, continuation));
+                return requestor.schedule(new SingleSubgoalContinuation(varGoal, continuation));
             }
         }
     }

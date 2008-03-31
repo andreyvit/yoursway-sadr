@@ -7,7 +7,8 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.propagation.ConstructBoundGoal;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
@@ -37,8 +38,8 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
         this.kind = kind;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
-        construct.evaluateValue(dc, kind, requestor, this);
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
+        return construct.evaluateValue(dc, kind, requestor, this);
     }
     
     @Override
@@ -89,7 +90,7 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
         return construct;
     }
     
-    public boolean backwardPropagation(final Goal goal, ContinuationRequestor requestor,
+    public boolean backwardPropagation(final Goal goal, ContinuationScheduler requestor,
             final ValueInfoContinuation continuation) {
         if (construct instanceof CallC && goal instanceof ArgumentVariableValueInfoGoal) {
             CallC callC = (CallC) construct;
@@ -101,7 +102,7 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
                 continuation.consume(ValueInfo.emptyValueInfo(), requestor);
             else {
                 final RubyConstruct arg = arguments.get(index);
-                requestor.subgoal(new Continuation() {
+                requestor.schedule(new Continuation() {
                     
                     ValueInfoGoal argGoal = new ExpressionValueInfoGoal(arg, dc, argg.infoKind());
                     
@@ -109,7 +110,7 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
                         requestor.subgoal(argGoal);
                     }
                     
-                    public void done(ContinuationRequestor requestor) {
+                    public void done(ContinuationScheduler requestor) {
                         continuation.consume(argGoal.result(goal), requestor);
                     }
                     
