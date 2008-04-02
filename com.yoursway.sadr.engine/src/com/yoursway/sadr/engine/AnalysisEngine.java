@@ -80,8 +80,8 @@ public class AnalysisEngine {
         private static final long serialVersionUID = 1L;
         
         public GoalContinuationContractViolation(String methodName, Goal goal) {
-            super(String.format("%s did not create a continuation or call done, goal %s", methodName, goal
-                    .toString()));
+            super(String.format("%s did not create a continuation or call done, goal %s", methodName, String
+                    .valueOf(goal)));
         }
         
     }
@@ -203,6 +203,11 @@ public class AnalysisEngine {
             SubqueryCreator creator = new SubqueryCreator(this, qqq);
             cont.provideSubgoals(creator);
             creator.done();
+            return DumbReturnValue.instance();
+        }
+        
+        public ContinuationRequestorCalledToken schedule(SimpleContinuation cont) {
+            queue.enqueue(new ContinuationQuery(cont));
             return DumbReturnValue.instance();
         }
         
@@ -365,7 +370,7 @@ public class AnalysisEngine {
         }
         
         @Override
-        protected void pleaseEvaluate() {
+        public void evaluate() {
             continuation.run(this);
         }
         
@@ -376,6 +381,11 @@ public class AnalysisEngine {
         
         @Override
         protected void storeIntoCache() {
+        }
+        
+        @Override
+        protected void pleaseEvaluate() {
+            throw new UnsupportedOperationException();
         }
         
     }
@@ -477,7 +487,7 @@ public class AnalysisEngine {
         executeQueue();
     }
     
-    private void executeQueue() {
+    public void executeQueue() {
         Query current;
         while ((current = queue.poll()) != null) {
             current.evaluate();

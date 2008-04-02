@@ -4,8 +4,9 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
@@ -26,7 +27,7 @@ public final class DelayedAssignmentsContinuation implements SimpleContinuation 
     }
     
     public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
-        return requestor.schedule(new AssignmentsContinuation(null, request.assigned(), dc, infoKind,
-                continuation));
+        return requestor.schedule((Continuation) new AssignmentsContinuation(null, request.assigned(), dc,
+                infoKind, continuation));
     }
 }

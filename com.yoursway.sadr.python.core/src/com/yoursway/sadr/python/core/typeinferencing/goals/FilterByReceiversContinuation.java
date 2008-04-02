@@ -47,7 +47,7 @@ public class FilterByReceiversContinuation implements Continuation {
         List<AssignmentInfo> thisFieldAssignments = newArrayList();
         for (int i = 0; i < goals.length; i++)
             checkCandidateReceiver(thisFieldAssignments, assignments[i], goals[i].result(null));
-        requestor.schedule(new AssignmentsContinuation(null, thisFieldAssignments
+        requestor.schedule((Continuation) new AssignmentsContinuation(null, thisFieldAssignments
                 .toArray(new AssignmentInfo[thisFieldAssignments.size()]), new EmptyDynamicContext(),
                 infoKind, continuation));
     }

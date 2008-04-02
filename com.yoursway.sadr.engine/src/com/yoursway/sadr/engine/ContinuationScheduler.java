@@ -7,6 +7,8 @@ public interface ContinuationScheduler {
     
     ContinuationRequestorCalledToken schedule(Continuation cont);
     
+    ContinuationRequestorCalledToken schedule(SimpleContinuation cont);
+    
     ContinuationRequestorCalledToken done();
     
     Query currentQuery();

@@ -87,6 +87,10 @@ public class PropagationTrackerImpl<C extends IConstruct<C, SC, DC, N>, SC exten
                         return requestor.done();
                     }
                     
+                    public ContinuationRequestorCalledToken schedule(SimpleContinuation cont) {
+                        return requestor.schedule(cont);
+                    }
+                    
                 }, continuation2))
                     return requestor.done();
             }
