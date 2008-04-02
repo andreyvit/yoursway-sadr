@@ -15,8 +15,11 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.ruby.internal.parser.JRubySourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
+import com.yoursway.sadr.engine.CallDoneContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Continuations;
+import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.runtime.contributions.FileContributionsManager;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
@@ -30,19 +33,16 @@ public class WholeProjectRuntime {
     private final class CodeGathererImpl implements CodeGatherer {
         private final RubyRuntimeModelCreator creator;
         private final RubyEvalResolver evalResolver;
-        private final AnalysisEngine analysisEngine;
         
-        private CodeGathererImpl(RubyRuntimeModelCreator creator, RubyEvalResolver evalResolver,
-                AnalysisEngine analysisEngine) {
+        private CodeGathererImpl(RubyRuntimeModelCreator creator, RubyEvalResolver evalResolver) {
             this.creator = creator;
             this.evalResolver = evalResolver;
-            this.analysisEngine = analysisEngine;
         }
         
-        public void add(final RubyConstruct root, ASTNode fakeParent) {
+        public ContinuationRequestorCalledToken add(final RubyConstruct root, ASTNode fakeParent,
+                ContinuationScheduler scheduler) {
             final FileScope fileScope = root.staticContext().nearestScope().fileScope();
-            
-            analysisEngine.execute(new SimpleContinuation() {
+            return scheduler.schedule(new SimpleContinuation() {
                 public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
                     return creator.process(contributionsManager.createContext(fileScope), root, requestor,
                             new SimpleContinuation() {
@@ -54,7 +54,7 @@ public class WholeProjectRuntime {
                                                     
                                                     return evalResolver.process(CodeGathererImpl.this,
                                                             contributionsManager.createContext(fileScope),
-                                                            root);
+                                                            root, requestor);
                                                 }
                                             }
 
@@ -82,32 +82,47 @@ public class WholeProjectRuntime {
     
     private RootScope rootScope;
     
-    private void init(Collection<ISourceModule> modules) {
+    private void init(final Collection<ISourceModule> modules) {
         engine = new AnalysisEngine();
         asts.clear();
-        ISourceParser parser = createSourceParser();
+        final ISourceParser parser = createSourceParser();
         runtimeModel = new RubyRuntimeModel();
         contributionsManager = new FileContributionsManager(runtimeModel);
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
         final RubyRuntimeModelCreator creator = new RubyRuntimeModelCreator();
         final RubyEvalResolver evalResolver = new RubyEvalResolver(engine);
-        final CodeGatherer codeGatherer = new CodeGathererImpl(creator, evalResolver, null);
+        final CodeGatherer codeGatherer = new CodeGathererImpl(creator, evalResolver);
         try {
-            for (ISourceModule m : modules) {
-                ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
-                        .getSourceAsCharArray(), null);
-                RubyFile module = new RubyFile(runtimeModel, m.getElementName());
-                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
-                asts.put(m, rootNode);
-                scopes.put(m, fileScope);
-                codeGatherer.add(new DtlFileC(fileScope, rootNode), null);
-            }
-        } catch (ModelException e) {
+            SimpleContinuation doEverything = new SimpleContinuation() {
+                
+                public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                    return Continuations.iterate(modules, new IterationContinuation<ISourceModule>() {
+                        
+                        public ContinuationRequestorCalledToken iteration(ISourceModule m,
+                                ContinuationScheduler requestor, SimpleContinuation continuation) {
+                            try {
+                                ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
+                                        .getSourceAsCharArray(), null);
+                                RubyFile module = new RubyFile(runtimeModel, m.getElementName());
+                                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
+                                asts.put(m, rootNode);
+                                scopes.put(m, fileScope);
+                                return codeGatherer.add(new DtlFileC(fileScope, rootNode), null, requestor);
+                            } catch (ModelException e) {
+                                throw new ModelExceptionRuntimeWrapper(e);
+                            }
+                        }
+                        
+                    }, requestor, new CallDoneContinuation());
+                }
+                
+            };
+            engine.execute(doEverything);
+        } catch (ModelExceptionRuntimeWrapper e) {
             e.printStackTrace();
         }
     }
     
-    @SuppressWarnings("restriction")
     private ISourceParser createSourceParser() {
         return new JRubySourceParser();
     }

@@ -11,9 +11,12 @@ import org.eclipse.dltk.compiler.problem.IProblemReporter;
 import org.eclipse.dltk.ruby.internal.parser.JRubySourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
+import com.yoursway.sadr.engine.CallDoneContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
@@ -36,44 +39,58 @@ public class RubyEvalResolver {
     }
     
     public ContinuationRequestorCalledToken process(final CodeGatherer codeGatherer, final Context context,
-            RubyConstruct root) {
+            RubyConstruct root, ContinuationScheduler scheduler) {
         final EvalRequest request = new EvalRequest();
-        return root.staticContext().propagationTracker().traverseStatically(root, request, null,
+        return root.staticContext().propagationTracker().traverseStatically(root, request, scheduler,
                 new SimpleContinuation() {
                     
                     public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
-                        for (EvalInfo info : request.evalArgs()) {
-                            RubyConstruct arg = info.getArgument();
-                            ValueInfoGoal goal = new ExpressionValueInfoGoal(arg, new EmptyDynamicContext(),
-                                    InfoKind.VALUE);
-                            engine.evaluate(goal);
-                            ValueSet valueSet = goal.roughResult().getValueSet();
-                            Collection<String> values = new ArrayList<String>();
-                            for (Value value : valueSet.containedValues())
-                                if (value instanceof StringValue) {
-                                    StringValue sv = (StringValue) value;
-                                    String string = sv.coherseToString();
-                                    values.add(string);
-                                }
-                            for (String value : values) {
-                                JRubySourceParser parser = new JRubySourceParser();
-                                ModuleDeclaration rootNode = parser.parse(null, value.toCharArray(),
-                                        new IProblemReporter() {
-                                            
-                                            public void clearMarkers() {
+                        return Continuations.iterate(request.evalArgs(),
+                                new IterationContinuation<EvalInfo>() {
+                                    
+                                    public ContinuationRequestorCalledToken iteration(final EvalInfo info,
+                                            ContinuationScheduler requestor, SimpleContinuation continuation) {
+                                        final RubyConstruct arg = info.getArgument();
+                                        ValueInfoGoal goal = new ExpressionValueInfoGoal(arg,
+                                                new EmptyDynamicContext(), InfoKind.VALUE);
+                                        engine.evaluate(goal);
+                                        ValueSet valueSet = goal.roughResult().getValueSet();
+                                        Collection<String> values = new ArrayList<String>();
+                                        for (Value value : valueSet.containedValues())
+                                            if (value instanceof StringValue) {
+                                                StringValue sv = (StringValue) value;
+                                                String string = sv.coherseToString();
+                                                values.add(string);
                                             }
-                                            
-                                            public IMarker reportProblem(IProblem problem)
-                                                    throws CoreException {
-                                                throw new RuntimeException("OMFG! " + problem.getMessage());
-                                            }
-                                            
-                                        });
-                                codeGatherer.add(new EvalRootC(arg.staticContext(), rootNode), info.getEval()
-                                        .node());
-                            }
-                        }
-                        return requestor.done();
+                                        return Continuations.iterate(values,
+                                                new IterationContinuation<String>() {
+                                                    
+                                                    public ContinuationRequestorCalledToken iteration(
+                                                            String value, ContinuationScheduler requestor,
+                                                            SimpleContinuation continuation) {
+                                                        JRubySourceParser parser = new JRubySourceParser();
+                                                        ModuleDeclaration rootNode = parser.parse(null, value
+                                                                .toCharArray(), new IProblemReporter() {
+                                                            
+                                                            public void clearMarkers() {
+                                                            }
+                                                            
+                                                            public IMarker reportProblem(IProblem problem)
+                                                                    throws CoreException {
+                                                                throw new RuntimeException("OMFG! "
+                                                                        + problem.getMessage());
+                                                            }
+                                                            
+                                                        });
+                                                        return codeGatherer.add(new EvalRootC(arg
+                                                                .staticContext(), rootNode), info.getEval()
+                                                                .node(), requestor);
+                                                    }
+                                                    
+                                                }, requestor, new CallDoneContinuation());
+                                    }
+                                    
+                                }, requestor, new CallDoneContinuation());
                     }
                     
                 });

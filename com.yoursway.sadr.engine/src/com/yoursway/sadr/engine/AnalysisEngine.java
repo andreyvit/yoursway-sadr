@@ -3,6 +3,8 @@ package com.yoursway.sadr.engine;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.IdentityArrayListHashMultiMap;
 
@@ -154,10 +156,12 @@ public class AnalysisEngine {
         
         @Override
         public void evaluate() {
-            stats.startingEvaluation(goal);
+            if (goal != null)
+                stats.startingEvaluation(goal);
             pleaseEvaluate();
             maybeDone(); // TODO wrap in finally
-            stats.finishedEvaluation(goal);
+            if (goal != null)
+                stats.finishedEvaluation(goal);
         }
         
         protected void maybeDone() {
@@ -169,14 +173,17 @@ public class AnalysisEngine {
         }
         
         public void handleFinished() {
-            goal.done();
-            storeIntoCache();
-            finished(goal, (parent == null ? null : parent.goal()));
-            signalFinishedToParent();
-            for (QQ qq : sameGoals.get(goal)) {
-                qq.goal().copyAnswerFrom(goal);
-                qq.handleFinished();
+            if (goal != null) {
+                goal.done();
+                storeIntoCache();
+                finished(goal, (parent == null ? null : parent.goal()));
             }
+            signalFinishedToParent();
+            if (goal != null)
+                for (QQ qq : sameGoals.get(goal)) {
+                    qq.goal().copyAnswerFrom(goal);
+                    qq.handleFinished();
+                }
         }
         
         protected void signalFinishedToParent() {
@@ -283,6 +290,7 @@ public class AnalysisEngine {
         
         public QQ(Goal goal) {
             super(goal);
+            Assert.isNotNull(goal);
         }
         
         @Override
@@ -329,6 +337,8 @@ public class AnalysisEngine {
         
         public QQQ(Q continuationOf, Continuation continuation) {
             super(continuationOf);
+            Assert.isNotNull(continuation);
+            //            Assert.isNotNull(goal);
             this.continuation = continuation;
         }
         
@@ -355,7 +365,7 @@ public class AnalysisEngine {
         private final SimpleContinuation continuation;
         
         public ContinuationQuery(SimpleContinuation continuation) {
-            //super(new DummyGoal());
+            //            super(new DummyGoal());
             super((Goal) null);
             this.continuation = continuation;
         }
