@@ -38,6 +38,15 @@ c1 = Foo.f() ## value c1 => Foo""", """
 a = foo.q(0) ## value a => 0""", """
 a = Foo.q(0) ## value a => 0""" ]
 
+PROPERTY_TEST="""
+class C(object):
+    @property
+    def attr(self):
+        return 0
+x = C().attr ## value x => 0
+y = C.attr ## expr y => property
+"""
+
 def make_tests(suite_name):
     builder = TestBuilder(suite_name)
     ind = 0
@@ -48,6 +57,7 @@ def make_tests(suite_name):
     for test in TESTS:
         builder.addTest("classMethodBuiltinDecorators"+str(ind), CLASS_METHOD_DECORATOR_TESTS + test)
         ind += 1
+    builder.addTest("propertyTest", PROPERTY_TEST)
 
 if __name__ == '__main__':
     make_tests("DecoratorsTests")

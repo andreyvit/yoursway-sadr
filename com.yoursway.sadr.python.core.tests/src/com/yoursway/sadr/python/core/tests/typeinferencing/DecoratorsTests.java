@@ -39,4 +39,9 @@ public final class DecoratorsTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
 
+    @Test
+    public void propertyTest() throws Exception {
+        runTest();
+    }
+
 }
