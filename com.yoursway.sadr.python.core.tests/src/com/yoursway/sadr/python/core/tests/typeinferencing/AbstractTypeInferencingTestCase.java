@@ -113,6 +113,8 @@ public abstract class AbstractTypeInferencingTestCase {
         StringBuilder expected = new StringBuilder();
         StringBuilder actual = new StringBuilder();
         
+        System.out.println("Running test " + basePath);
+        
         for (ISourceModule sourceModule : projectRuntime.getSourceModules()) {
             String headline = "==== " + sourceModule.getElementName() + " ====\n";
             expected.append(headline);

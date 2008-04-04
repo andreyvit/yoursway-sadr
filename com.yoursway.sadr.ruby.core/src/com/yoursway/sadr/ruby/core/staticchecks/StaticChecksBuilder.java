@@ -86,4 +86,9 @@ public class StaticChecksBuilder implements IScriptBuilder {
         return Collections.EMPTY_LIST;
     }
     
+    public int estimateElementsToBuild(List elements) {
+        // FIXME Auto-generated method stub
+        return 0;
+    }
+    
 }
