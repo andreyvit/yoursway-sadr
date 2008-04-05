@@ -15,7 +15,6 @@ public class Continuations {
         if (iterator.hasNext()) {
             T value = iterator.next();
             final Iterator<T> iterator2 = iterator;
-            System.out.println(value);
             SimpleContinuation cont = new SimpleContinuation() {
                 
                 public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
