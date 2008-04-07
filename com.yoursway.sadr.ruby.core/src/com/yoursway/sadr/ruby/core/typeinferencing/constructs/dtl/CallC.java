@@ -29,7 +29,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 
-public abstract class CallC extends DtlConstruct<CallExpression> {
+public abstract class CallC extends RubyConstructImpl<CallExpression> {
     
     CallC(RubyStaticContext sc, CallExpression node) {
         super(sc, node);

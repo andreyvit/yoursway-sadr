@@ -9,7 +9,7 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 
-public class ArrayAccessC extends DtlConstruct<RubyArrayAccessExpression> {
+public class ArrayAccessC extends RubyConstructImpl<RubyArrayAccessExpression> {
     
     ArrayAccessC(RubyStaticContext sc, RubyArrayAccessExpression node) {
         super(sc, node);

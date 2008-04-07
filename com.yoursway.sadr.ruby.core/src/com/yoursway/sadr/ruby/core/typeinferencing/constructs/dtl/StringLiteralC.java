@@ -13,7 +13,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.StringValue;
 
-public class StringLiteralC extends DtlConstruct<StringLiteral> {
+public class StringLiteralC extends RubyConstructImpl<StringLiteral> {
     
     StringLiteralC(RubyStaticContext sc, StringLiteral node) {
         super(sc, node);

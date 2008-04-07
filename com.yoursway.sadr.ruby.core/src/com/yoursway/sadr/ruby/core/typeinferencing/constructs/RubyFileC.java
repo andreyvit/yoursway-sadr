@@ -6,9 +6,9 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.DtlConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.RubyConstructImpl;
 
-public class RubyFileC extends DtlConstruct<ModuleDeclaration> {
+public class RubyFileC extends RubyConstructImpl<ModuleDeclaration> {
     
     public RubyFileC(RubyStaticContext sc, ModuleDeclaration node) {
         super(sc, node);

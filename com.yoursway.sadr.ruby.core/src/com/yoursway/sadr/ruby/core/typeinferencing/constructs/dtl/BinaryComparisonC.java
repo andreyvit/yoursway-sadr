@@ -24,7 +24,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.IntegerValue;
 
-public class BinaryComparisonC extends DtlConstruct<CallExpression> {
+public class BinaryComparisonC extends RubyConstructImpl<CallExpression> {
     
     private final Comparison comparison;
     
