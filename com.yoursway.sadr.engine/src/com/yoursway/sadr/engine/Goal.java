@@ -2,7 +2,7 @@ package com.yoursway.sadr.engine;
 
 public interface Goal extends ContextSensitiveThing {
     
-    void evaluate(ContinuationRequestor requestor);
+    ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor);
     
     void done();
     

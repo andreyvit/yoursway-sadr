@@ -12,7 +12,8 @@ import org.eclipse.dltk.ast.expressions.CallExpression;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
@@ -29,30 +30,30 @@ public class ProcedureCallC extends CallC implements EvalsAffector {
         super(sc, node);
     }
     
-    public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(RubyDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         final String name = node.getName();
         Callable procedure = staticContext().procedureLookup().findProcedure(name);
         if (procedure != null)
-            requestor.subgoal(new CallablesReturnTypeCont(infoKind, arguments(), dc,
+            return requestor.schedule(new CallablesReturnTypeCont(infoKind, arguments(), dc,
                     new Callable[] { procedure }, null, continuation));
         else
-            continuation.consume(emptyValueInfo(), requestor);
+            return continuation.consume(emptyValueInfo(), requestor);
     }
     
     @Override
-    public void calculateEffectiveControlFlowGraph(
-            ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
+            ContinuationScheduler requestor,
             ControlFlowGraphRequestor<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> continuation) {
         if (node.getName().equalsIgnoreCase("eval")) {
             List<RubyConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
             for (ModuleDeclaration root : staticContext().extentionsOf(node))
                 constructs.add(new EvalRootC(staticContext(), root));
-            continuation.process(
+            return continuation.process(
                     new ControlFlowGraph<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode>(
                             constructs), requestor);
         } else {
-            super.calculateEffectiveControlFlowGraph(requestor, continuation);
+            return super.calculateEffectiveControlFlowGraph(requestor, continuation);
         }
     }
     

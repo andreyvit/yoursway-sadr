@@ -13,7 +13,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
@@ -49,18 +50,19 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             this.continuation = continuation;
         }
         
-        public void consume(IValueInfo result, ContinuationRequestor requestor) {
+        public ContinuationRequestorCalledToken consume(IValueInfo result, ContinuationScheduler requestor) {
             final ValueInfoBuilder builder = new ValueInfoBuilder();
             builder.add(ValueInfo.from(result));
             
             ValueInfo valueInfo = variable.valueInfo();
             if (valueInfo != null && !valueInfo.isEmpty())
-                continueWith(builder, valueInfo, requestor);
+                return continueWith(builder, valueInfo, requestor);
             else {
-                requestor.subgoal(new ArgumentTypeByCallersCont(callable, new ValueInfoContinuation() {
+                return requestor.schedule(new ArgumentTypeByCallersCont(callable, new ValueInfoContinuation() {
                     
-                    public void consume(IValueInfo result, ContinuationRequestor requestor) {
-                        continueWith(builder, result, requestor);
+                    public ContinuationRequestorCalledToken consume(IValueInfo result,
+                            ContinuationScheduler requestor) {
+                        return continueWith(builder, result, requestor);
                     }
                     
                 }));
@@ -68,10 +70,10 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             
         }
         
-        private void continueWith(ValueInfoBuilder builder, IValueInfo valueInfo,
-                ContinuationRequestor requestor) {
+        private ContinuationRequestorCalledToken continueWith(ValueInfoBuilder builder, IValueInfo valueInfo,
+                ContinuationScheduler requestor) {
             builder.add(ValueInfo.from(valueInfo));
-            continuation.consume(builder.build(), requestor);
+            return continuation.consume(builder.build(), requestor);
         }
     }
     
@@ -91,8 +93,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             requestor.subgoal(callersGoal);
         }
         
-        public void done(ContinuationRequestor requestor) {
-            requestor.subgoal(new NodeValuesCont(collectValueNodes(), callable, continuation));
+        public void done(ContinuationScheduler requestor) {
+            requestor.schedule(new NodeValuesCont(collectValueNodes(), callable, continuation));
         }
         
         private PythonConstruct[] collectValueNodes() {
@@ -129,14 +131,14 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
                 requestor.subgoal(goal);
         }
         
-        public void done(ContinuationRequestor requestor) {
+        public void done(ContinuationScheduler requestor) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             for (ValueInfoGoal goal : valueGoals)
                 builder.addResultOf(goal, thing());
             if (!builder.looksEmpty())
                 continuation.consume(builder.build(), requestor);
             else
-                requestor.subgoal(new DetermineArgumentTypeByCalledMethodsCont(callable, continuation));
+                requestor.schedule(new DetermineArgumentTypeByCalledMethodsCont(callable, continuation));
         }
     }
     
@@ -152,20 +154,20 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void provideSubgoals(SubgoalRequestor requestor) {
         }
         
-        public void done(ContinuationRequestor requestor) {
+        public void done(ContinuationScheduler requestor) {
             PythonConstruct construct = callable.construct();
             final CallsRequest request = new CallsRequest(variable, kind);
             construct.staticContext().propagationTracker().traverseEntirely(construct, request, requestor,
                     new SimpleContinuation() {
                         
-                        public void run(ContinuationRequestor requestor) {
+                        public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
                             CallInfo[] calls = request.calls();
                             
                             AbstractMultiMap<Wildcard, CallC> wildcardsToCalls = groupCallsByWildcard(calls);
                             ValueInfoBuilder builder = new ValueInfoBuilder();
                             for (Wildcard wildcard : wildcardsToCalls.keySet())
                                 builder.add(wildcard, calculateTypeSet(wildcardsToCalls.get(wildcard)));
-                            continuation.consume(builder.build(), requestor);
+                            return continuation.consume(builder.build(), requestor);
                             
                         }
                         
@@ -216,11 +218,11 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         return kind;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         final Callable callable = variable.callable();
         final PythonConstruct construct = callable.construct();
         //evaluateWithFlow(callable, construct, requestor);
-        evaluateWithoutFlow(callable, construct, requestor);
+        return evaluateWithoutFlow(callable, construct, requestor);
     }
     
     //    private void evaluateWithFlow(final Callable callable, final Construct<Scope, ASTNode> construct,
@@ -238,22 +240,21 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     //        });
     //    }
     
-    private void evaluateWithoutFlow(final Callable callable, PythonConstruct construct,
-            ContinuationRequestor requestor) {
+    private ContinuationRequestorCalledToken evaluateWithoutFlow(final Callable callable,
+            PythonConstruct construct, ContinuationScheduler requestor) {
         if (callable instanceof PythonMethod) {
             if (variable.index() == 0) {
                 // TODO: need a dynamic context here 
                 ValueInfo selfType = construct.staticContext().selfType();
                 if (selfType != null)
-                    consume(selfType, requestor);
+                    return consume(selfType, requestor);
                 else
-                    consume(emptyValueInfo(), requestor);
-                return;
+                    return consume(emptyValueInfo(), requestor);
             }
         }
         
         VariableRequest request = new VariableRequest(variable, kind);
-        construct.staticContext().propagationTracker().traverseEntirely(
+        return construct.staticContext().propagationTracker().traverseEntirely(
                 construct,
                 request,
                 requestor,

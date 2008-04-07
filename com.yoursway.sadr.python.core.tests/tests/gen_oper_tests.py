@@ -1,6 +1,4 @@
 from test_gen import TestBuilder
-
-JUNIT_TESTS_PATH = "src/com/yoursway/sadr/python/core/tests/typeinferencing/"
 value_klass = """
 class Q(object):pass
 """
@@ -73,7 +71,7 @@ TEST_ASS = "x = Foo()\n x %s Foo() ## expr x => Q"
 TEST_UNOP = "x = %sFoo() ## expr x => Q"
 
 def gen_tests(suite_name, operators, test_str):
-    builder = TestBuilder("../" + JUNIT_TESTS_PATH, suite_name)
+    builder = TestBuilder(suite_name)
     for oper, symname in operators.items():
         script_content = value_klass + klass % oper + test_str % symname
         builder.addTest(oper, script_content)

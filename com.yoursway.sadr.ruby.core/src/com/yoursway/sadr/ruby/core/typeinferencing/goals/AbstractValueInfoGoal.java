@@ -6,7 +6,8 @@ import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.AbstractGoal;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.Result;
 
@@ -66,9 +67,9 @@ public abstract class AbstractValueInfoGoal extends AbstractGoal implements Valu
     
     protected abstract String describeParameters();
     
-    public void consume(IValueInfo result, ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken consume(IValueInfo result, ContinuationScheduler requestor) {
         setResult(ValueInfo.from(result));
-        requestor.done();
+        return requestor.done();
     }
     
 }

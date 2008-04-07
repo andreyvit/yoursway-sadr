@@ -12,7 +12,8 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
@@ -27,17 +28,17 @@ public class IfC extends PythonConstructImpl<IfStatement> {
         super(sc, node);
     }
     
-    public void evaluateValue(PythonDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
-        continuation.consume(emptyValueInfo(), requestor);
+    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
+        return continuation.consume(emptyValueInfo(), requestor);
     }
     
     @Override
-    public void calculateEffectiveControlFlowGraph(
-            ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
+            ContinuationScheduler requestor,
             final ControlFlowGraphRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
         final PythonConstruct condition = wrap(innerContext(), node.getCondition());
-        requestor.subgoal(new Continuation() {
+        return requestor.schedule(new Continuation() {
             
             ValueInfoGoal conditionGoal = new ExpressionValueInfoGoal(condition, new EmptyDynamicContext(),
                     InfoKind.VALUE);
@@ -46,7 +47,7 @@ public class IfC extends PythonConstructImpl<IfStatement> {
                 requestor.subgoal(conditionGoal);
             }
             
-            public void done(ContinuationRequestor requestor) {
+            public void done(ContinuationScheduler requestor) {
                 ValueSet valueSet = conditionGoal.result(null).getValueSet();
                 boolean visitThen = false, visitElse = false;
                 for (Value value : valueSet.containedValues()) {

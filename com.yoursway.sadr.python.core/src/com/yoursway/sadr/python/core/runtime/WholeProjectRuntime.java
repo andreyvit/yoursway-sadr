@@ -3,7 +3,6 @@ package com.yoursway.sadr.python.core.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +15,11 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
-import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
-import com.yoursway.sadr.engine.DumbReturnValue;
-import com.yoursway.sadr.engine.Query;
+import com.yoursway.sadr.engine.CallDoneContinuation;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Continuations;
+import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.contributions.FileContributionsManager;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
@@ -32,46 +32,31 @@ public class WholeProjectRuntime {
     
     private final class CodeGathererImpl implements CodeGatherer {
         private final PythonRuntimeModelCreator creator;
-        private final LinkedList<Runnable> postProcessingQueue;
         
         private final PythonEvalResolver evalResolver;
         
-        private CodeGathererImpl(PythonRuntimeModelCreator creator, LinkedList<Runnable> postProcessingQueue,
-                PythonEvalResolver evalResolver) {
+        private CodeGathererImpl(PythonRuntimeModelCreator creator, PythonEvalResolver evalResolver) {
             this.creator = creator;
-            this.postProcessingQueue = postProcessingQueue;
             this.evalResolver = evalResolver;
         }
         
-        public void add(final PythonConstruct root, ASTNode fakeParent) {
+        public ContinuationRequestorCalledToken add(final PythonConstruct root, ASTNode fakeParent,
+                ContinuationScheduler scheduler) {
             final FileScope fileScope = root.staticContext().nearestScope().fileScope();
-            ContinuationRequestor tenderRequestor = new ContinuationRequestor() {
-                
-                public Query currentQuery() {
-                    throw new UnsupportedOperationException();
-                }
-                
-                public void done() {
-                    throw new UnsupportedOperationException();
-                }
-                
-                public DumbReturnValue subgoal(Continuation cont) {
-                    throw new UnsupportedOperationException();
-                }
-                
-            };
-            creator.process(contributionsManager.createContext(fileScope), root, tenderRequestor,
+            return creator.process(contributionsManager.createContext(fileScope), root, scheduler,
                     new SimpleContinuation() {
                         
-                        public void run(ContinuationRequestor requestor) {
-                            contributionsManager.addToIndex(root, requestor, new SimpleContinuation() {
+                        public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                            return contributionsManager.addToIndex(root, requestor, new SimpleContinuation() {
                                 
-                                public void run(ContinuationRequestor requestor) {
-                                    postProcessingQueue.add(new Runnable() {
+                                public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                                    return requestor.schedule(new SimpleContinuation() {
                                         
-                                        public void run() {
-                                            evalResolver.process(CodeGathererImpl.this, contributionsManager
-                                                    .createContext(fileScope), root);
+                                        public ContinuationRequestorCalledToken run(
+                                                ContinuationScheduler requestor) {
+                                            return evalResolver.process(CodeGathererImpl.this,
+                                                    contributionsManager.createContext(fileScope), root,
+                                                    requestor);
                                         }
                                         
                                     });
@@ -82,7 +67,6 @@ public class WholeProjectRuntime {
                         
                     });
         }
-        
     }
     
     protected PythonRuntimeModel runtimeModel;
@@ -100,32 +84,45 @@ public class WholeProjectRuntime {
     
     private RootScope rootScope;
     
-    private void init(Collection<ISourceModule> modules) {
+    private void init(final Collection<ISourceModule> modules) {
         engine = new AnalysisEngine();
         asts.clear();
-        ISourceParser parser = createSourceParser();
+        final ISourceParser parser = createSourceParser();
         runtimeModel = new PythonRuntimeModel();
         contributionsManager = new FileContributionsManager(runtimeModel);
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
         final PythonRuntimeModelCreator creator = new PythonRuntimeModelCreator();
         final PythonEvalResolver evalResolver = new PythonEvalResolver(engine);
-        final LinkedList<Runnable> postProcessingQueue = new LinkedList<Runnable>();
-        final CodeGatherer codeGatherer = new CodeGathererImpl(creator, postProcessingQueue, evalResolver);
+        final CodeGatherer codeGatherer = new CodeGathererImpl(creator, evalResolver);
         try {
-            for (ISourceModule m : modules) {
-                ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
-                        .getSourceAsCharArray(), null);
-                PythonModule module = new PythonModule(runtimeModel, m.getElementName());
-                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
-                asts.put(m, rootNode);
-                scopes.put(m, fileScope);
-                codeGatherer.add(new PythonFileC(fileScope, rootNode), null);
-            }
-            while (!postProcessingQueue.isEmpty()) {
-                Runnable item = postProcessingQueue.remove();
-                item.run();
-            }
-        } catch (ModelException e) {
+            SimpleContinuation doEverything = new SimpleContinuation() {
+                
+                public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                    return Continuations.iterate(modules, new IterationContinuation<ISourceModule>() {
+                        
+                        public ContinuationRequestorCalledToken iteration(ISourceModule m,
+                                ContinuationScheduler requestor, SimpleContinuation continuation) {
+                            try {
+                                ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
+                                        .getSourceAsCharArray(), null);
+                                PythonModule module = new PythonModule(runtimeModel, m.getElementName());
+                                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
+                                asts.put(m, rootNode);
+                                scopes.put(m, fileScope);
+                                codeGatherer.add(new PythonFileC(fileScope, rootNode), null, requestor);
+                                //FIXME: Add sequencer
+                                return requestor.schedule(continuation);
+                            } catch (ModelException e) {
+                                throw new ModelExceptionRuntimeWrapper(e); // TODO
+                            }
+                        }
+                        
+                    }, requestor, new CallDoneContinuation());
+                }
+                
+            };
+            engine.execute(doEverything);
+        } catch (ModelExceptionRuntimeWrapper e) {
             e.printStackTrace();
         }
     }

@@ -1,6 +1,9 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 
 public class ForCounterVariableValueInfoGoal extends AbstractValueInfoGoal {
@@ -33,9 +36,9 @@ public class ForCounterVariableValueInfoGoal extends AbstractValueInfoGoal {
         return 0;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
+        throw new NotImplementedException();
         // TODO Auto-generated method stub
-        
     }
     //    
     //    private final class ForCounterContinuation implements ValueInfoContinuation {

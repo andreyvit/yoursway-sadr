@@ -1,9 +1,10 @@
 package com.yoursway.sadr.core;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 
 public interface ValueInfoContinuation {
     
-    void consume(IValueInfo result, ContinuationRequestor requestor);
+    ContinuationRequestorCalledToken consume(IValueInfo result, ContinuationScheduler requestor);
     
 }

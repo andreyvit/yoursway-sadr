@@ -7,7 +7,8 @@ import org.eclipse.dltk.ast.expressions.CallExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
@@ -32,11 +33,11 @@ public class BinaryComparisonC extends DtlConstruct<CallExpression> {
         this.comparison = comparison;
     }
     
-    public void evaluateValue(final RubyDynamicContext dc, final InfoKind infoKind,
-            ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(final RubyDynamicContext dc,
+            final InfoKind infoKind, ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
         final RubyConstruct leftArg = wrap(innerContext(), node.getReceiver());
         final RubyConstruct rightArg = wrap(innerContext(), RubyUtils.argumentsOf(node)[0]);
-        requestor.subgoal(new Continuation() {
+        return requestor.schedule(new Continuation() {
             
             private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal(leftArg, dc, infoKind);
             
@@ -47,7 +48,7 @@ public class BinaryComparisonC extends DtlConstruct<CallExpression> {
                 requestor.subgoal(rightGoal);
             }
             
-            public void done(ContinuationRequestor requestor) {
+            public void done(ContinuationScheduler requestor) {
                 BinaryCoercion coercion = new BinaryCoercion(staticContext().classLookup());
                 ValueInfo leftInfo = leftGoal.result(null);
                 ValueInfo rightInfo = rightGoal.result(null);

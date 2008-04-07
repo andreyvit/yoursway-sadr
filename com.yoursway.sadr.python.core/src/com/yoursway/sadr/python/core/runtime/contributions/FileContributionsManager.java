@@ -9,7 +9,8 @@ import java.util.Map;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.core.ISourceModule;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
@@ -55,10 +56,10 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
         return result;
     }
     
-    public void addToIndex(PythonConstruct root, ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken addToIndex(PythonConstruct root, ContinuationScheduler requestor,
             SimpleContinuation continuation) {
         FileScope file = root.staticContext().nearestScope().fileScope();
-        lookup(file).addToIndex(root, requestor, continuation);
+        return lookup(file).addToIndex(root, requestor, continuation);
     }
     
     class ContextImpl implements Context {
@@ -105,9 +106,9 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
             index = new Index(scope);
         }
         
-        public void addToIndex(PythonConstruct root, ContinuationRequestor requestor,
-                SimpleContinuation continuation) {
-            index.add(root, requestor, continuation);
+        public ContinuationRequestorCalledToken addToIndex(PythonConstruct root,
+                ContinuationScheduler requestor, SimpleContinuation continuation) {
+            return index.add(root, requestor, continuation);
         }
         
         public Index index() {
@@ -152,9 +153,10 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
             this.scope = scope;
         }
         
-        public void add(PythonConstruct root, ContinuationRequestor requestor, SimpleContinuation continuation) {
+        public ContinuationRequestorCalledToken add(PythonConstruct root, ContinuationScheduler requestor,
+                SimpleContinuation continuation) {
             IndexRequest request = new IndexRequest(methodsCalls, procedureCalls, assignments);
-            root.staticContext().propagationTracker().traverseStatically(root, request, requestor,
+            return root.staticContext().propagationTracker().traverseStatically(root, request, requestor,
                     continuation);
         }
         

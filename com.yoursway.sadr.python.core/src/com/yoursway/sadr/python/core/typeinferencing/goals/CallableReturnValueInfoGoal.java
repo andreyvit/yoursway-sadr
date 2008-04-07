@@ -2,7 +2,8 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import java.util.Arrays;
 
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
@@ -33,37 +34,36 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
         this.arguments = args;
     }
     
-    public void evaluate(ContinuationRequestor requestor) {
+    public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
         if (callable.isBuiltin()) {
             if (callable instanceof PythonBuiltinMethod) {
                 PythonBuiltinMethod method = (PythonBuiltinMethod) callable;
-                consume(method.evaluateBuiltin(receiver, arguments), requestor);
+                return consume(method.evaluateBuiltin(receiver, arguments), requestor);
             } else {
                 PythonBuiltinProcedure method = (PythonBuiltinProcedure) callable;
-                consume(method.evaluateBuiltin(arguments), requestor);
+                return consume(method.evaluateBuiltin(arguments), requestor);
             }
-            return;
         }
         PythonConstruct construct = callable.construct();
-        if (construct != null) {
-            PythonStaticContext staticScope = ((MethodDeclarationC) construct).methodScope();
-            final PythonDynamicContext dc;
-            if (staticScope instanceof MethodScope)
-                dc = new DynamicMethodScope((MethodScope) staticScope, receiver, arguments);
-            else
-                dc = new DynamicProcedureScope((ProcedureScope) staticScope, arguments);
-            
-            final ReturnsRequest request = new ReturnsRequest();
-            construct.staticContext().propagationTracker().traverseEntirely(construct, request, requestor,
-                    new SimpleContinuation() {
-                        
-                        public void run(ContinuationRequestor requestor) {
-                            requestor.subgoal(new MergeConstructsValueInfosContinuation(thing(), request
-                                    .returns(), dc, kind, CallableReturnValueInfoGoal.this));
-                        }
-                        
-                    });
-        }
+        if (construct == null)
+            throw new AssertionError("Callable must either be a built-in or have a construct");
+        PythonStaticContext staticScope = ((MethodDeclarationC) construct).methodScope();
+        final PythonDynamicContext dc;
+        if (staticScope instanceof MethodScope)
+            dc = new DynamicMethodScope((MethodScope) staticScope, receiver, arguments);
+        else
+            dc = new DynamicProcedureScope((ProcedureScope) staticScope, arguments);
+        
+        final ReturnsRequest request = new ReturnsRequest();
+        return construct.staticContext().propagationTracker().traverseEntirely(construct, request, requestor,
+                new SimpleContinuation() {
+                    
+                    public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
+                        return requestor.schedule(new MergeConstructsValueInfosContinuation(thing(), request
+                                .returns(), dc, kind, CallableReturnValueInfoGoal.this));
+                    }
+                    
+                });
     }
     
     @Override

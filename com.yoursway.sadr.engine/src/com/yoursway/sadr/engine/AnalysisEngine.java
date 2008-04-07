@@ -3,9 +3,16 @@ package com.yoursway.sadr.engine;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.IdentityArrayListHashMultiMap;
 
+/**
+ * Continuations evaluator. Just invoke new
+ * AnalysisEngine().execute(yourSimpleContinuation) and it will provide
+ * scheduler for this continuation and all tasks scheduled by it.
+ */
 public class AnalysisEngine {
     
     private static final int MAX_ITERATIONS = 1000;
@@ -75,8 +82,8 @@ public class AnalysisEngine {
         private static final long serialVersionUID = 1L;
         
         public GoalContinuationContractViolation(String methodName, Goal goal) {
-            super(String.format("%s did not create a continuation or call done, goal %s", methodName, goal
-                    .toString()));
+            super(String.format("%s did not create a continuation or call done, goal %s", methodName, String
+                    .valueOf(goal)));
         }
         
     }
@@ -113,7 +120,7 @@ public class AnalysisEngine {
         
     }
     
-    abstract class Q extends Query implements ContinuationRequestor {
+    abstract class Q extends Query implements ContinuationScheduler {
         
         protected final Goal goal;
         
@@ -149,10 +156,12 @@ public class AnalysisEngine {
         
         @Override
         public void evaluate() {
-            stats.startingEvaluation(goal);
+            if (goal != null)
+                stats.startingEvaluation(goal);
             pleaseEvaluate();
             maybeDone(); // TODO wrap in finally
-            stats.finishedEvaluation(goal);
+            if (goal != null)
+                stats.finishedEvaluation(goal);
         }
         
         protected void maybeDone() {
@@ -164,14 +173,17 @@ public class AnalysisEngine {
         }
         
         public void handleFinished() {
-            goal.done();
-            storeIntoCache();
-            finished(goal, (parent == null ? null : parent.goal()));
-            signalFinishedToParent();
-            for (QQ qq : sameGoals.get(goal)) {
-                qq.goal().copyAnswerFrom(goal);
-                qq.handleFinished();
+            if (goal != null) {
+                goal.done();
+                storeIntoCache();
+                finished(goal, (parent == null ? null : parent.goal()));
             }
+            signalFinishedToParent();
+            if (goal != null)
+                for (QQ qq : sameGoals.get(goal)) {
+                    qq.goal().copyAnswerFrom(goal);
+                    qq.handleFinished();
+                }
         }
         
         protected void signalFinishedToParent() {
@@ -193,7 +205,7 @@ public class AnalysisEngine {
             }
         }
         
-        public DumbReturnValue subgoal(Continuation cont) {
+        public ContinuationRequestorCalledToken schedule(Continuation cont) {
             QQQ qqq = new QQQ(this, cont);
             SubqueryCreator creator = new SubqueryCreator(this, qqq);
             cont.provideSubgoals(creator);
@@ -201,13 +213,19 @@ public class AnalysisEngine {
             return DumbReturnValue.instance();
         }
         
-        public void done() {
+        public ContinuationRequestorCalledToken schedule(SimpleContinuation cont) {
+            queue.enqueue(new ContinuationQuery(cont));
+            return DumbReturnValue.instance();
+        }
+        
+        public ContinuationRequestorCalledToken done() {
             if (isContinuationCreated())
                 throw new IllegalStateException(
                         "ContinuationRequestor.done() called after creating a continuation");
             if (childrenCountOrState != 0)
                 throw new AssertionError("ContinuationRequestor.done() called when childrenCount > 0");
             childrenCountOrState = DONE_CALLED;
+            return DumbReturnValue.instance();
         }
         
         @Override
@@ -272,21 +290,22 @@ public class AnalysisEngine {
         
         public QQ(Goal goal) {
             super(goal);
+            Assert.isNotNull(goal);
         }
         
         @Override
         protected void pleaseEvaluate() {
             ContextRelation contextRelation = contextRelationsCache.get(goal);
-            ContinuationRequestor requestor = this;
+            ContinuationScheduler requestor = this;
             evaluateWithRequestorAndContextRelation(contextRelation, requestor);
         }
         
         private void evaluateWithRequestorAndContextRelation(final ContextRelation contextRelation,
-                ContinuationRequestor requestor) {
+                ContinuationScheduler requestor) {
             if (contextRelation != null) {
                 contextRelation.createSecondaryContext(goal, requestor, new ContextRequestor() {
                     
-                    public void execute(GoalContext context, ContinuationRequestor requestor) {
+                    public void execute(GoalContext context, ContinuationScheduler requestor) {
                         Result result = contextSensitiveCache.get(context);
                         if (result != null) {
                             goal.copyAnswerFrom(result);
@@ -302,8 +321,8 @@ public class AnalysisEngine {
             }
         }
         
-        private void evaluateWithRequestor(ContinuationRequestor rq) {
-            goal.evaluate(rq);
+        private ContinuationRequestorCalledToken evaluateWithRequestor(ContinuationScheduler rq) {
+            return goal.evaluate(rq);
         }
         
         @Override
@@ -318,6 +337,8 @@ public class AnalysisEngine {
         
         public QQQ(Q continuationOf, Continuation continuation) {
             super(continuationOf);
+            Assert.isNotNull(continuation);
+            //            Assert.isNotNull(goal);
             this.continuation = continuation;
         }
         
@@ -333,12 +354,19 @@ public class AnalysisEngine {
         
     }
     
+    /**
+     * FIXME: remove this НАХРЕН
+     * 
+     * @author mag
+     * 
+     */
     final class ContinuationQuery extends Q {
         
         private final SimpleContinuation continuation;
         
         public ContinuationQuery(SimpleContinuation continuation) {
-            super(new DummyGoal());
+            //            super(new DummyGoal());
+            super((Goal) null);
             this.continuation = continuation;
         }
         
@@ -352,8 +380,12 @@ public class AnalysisEngine {
         }
         
         @Override
-        protected void pleaseEvaluate() {
-            continuation.run(this);
+        public void evaluate() {
+            ContinuationRequestorCalledToken run = continuation.run(this);
+            if (run == null) {
+                throw new AssertionError("Run should be not null for continuation "
+                        + continuation.getClass().getSimpleName());
+            }
         }
         
         @Override
@@ -363,6 +395,11 @@ public class AnalysisEngine {
         
         @Override
         protected void storeIntoCache() {
+        }
+        
+        @Override
+        protected void pleaseEvaluate() {
+            throw new UnsupportedOperationException();
         }
         
     }
@@ -464,7 +501,7 @@ public class AnalysisEngine {
         executeQueue();
     }
     
-    private void executeQueue() {
+    public void executeQueue() {
         Query current;
         while ((current = queue.poll()) != null) {
             current.evaluate();
@@ -489,5 +526,4 @@ public class AnalysisEngine {
         queue.enqueue(new ContinuationQuery(continuation));
         executeQueue();
     }
-    
 }

@@ -5,7 +5,7 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
@@ -39,7 +39,7 @@ public final class AssignmentsContinuation extends AbstractContinuation {
             requestor.subgoal(goal);
     }
     
-    public final void done(ContinuationRequestor requestor) {
+    public final void done(ContinuationScheduler requestor) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (int i = 0; i < assignments.length; i++) {
             ValueInfoGoal goal = goals[i];

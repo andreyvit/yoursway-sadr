@@ -10,7 +10,8 @@ import org.eclipse.dltk.ruby.ast.RubyAssignment;
 import org.eclipse.dltk.ruby.ast.RubyColonExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
@@ -32,9 +33,9 @@ public class AssignmentC extends DtlConstruct<RubyAssignment> implements Variabl
         super(sc, node);
     }
     
-    public void evaluateValue(RubyDynamicContext dc, InfoKind infoKind, ContinuationRequestor requestor,
-            ValueInfoContinuation continuation) {
-        continuation.consume(emptyValueInfo(), requestor);
+    public ContinuationRequestorCalledToken evaluateValue(RubyDynamicContext dc, InfoKind infoKind,
+            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
+        return continuation.consume(emptyValueInfo(), requestor);
     }
     
     public RubyConstruct lhs() {

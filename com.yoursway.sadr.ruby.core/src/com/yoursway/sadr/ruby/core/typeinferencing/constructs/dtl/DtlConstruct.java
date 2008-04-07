@@ -31,7 +31,8 @@ import com.google.common.base.Predicate;
 import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
@@ -150,11 +151,11 @@ public abstract class DtlConstruct<N extends ASTNode> extends
         return node == this.node;
     }
     
-    public void calculateEffectiveControlFlowGraph(
-            ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
+            ContinuationScheduler requestor,
             ControlFlowGraphRequestor<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> continuation) {
         List<RubyConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
-        continuation.process(
+        return continuation.process(
                 new ControlFlowGraph<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode>(
                         constructs), requestor);
     }

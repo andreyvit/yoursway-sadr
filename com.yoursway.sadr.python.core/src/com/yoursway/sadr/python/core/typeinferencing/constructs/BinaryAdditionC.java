@@ -4,7 +4,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
@@ -24,11 +25,11 @@ public class BinaryAdditionC extends BinaryC {
         super(sc, node);
     }
     
-    public void evaluateValue(final PythonDynamicContext dc, final InfoKind infoKind,
-            ContinuationRequestor requestor, final ValueInfoContinuation continuation) {
+    public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,
+            final InfoKind infoKind, ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
         final PythonConstruct leftArg = wrap(innerContext(), node.getLeft());
         final PythonConstruct rightArg = wrap(innerContext(), node.getRight());
-        requestor.subgoal(new Continuation() {
+        return requestor.schedule(new Continuation() {
             
             private final ValueInfoGoal leftGoal = new ExpressionValueInfoGoal(leftArg, dc, infoKind);
             
@@ -39,7 +40,7 @@ public class BinaryAdditionC extends BinaryC {
                 requestor.subgoal(rightGoal);
             }
             
-            public void done(ContinuationRequestor requestor) {
+            public void done(ContinuationScheduler requestor) {
                 final StandardTypes builtins = staticContext().builtins();
                 BinaryCoercion coercion = new BinaryCoercion(staticContext().classLookup());
                 ValueInfo leftInfo = leftGoal.result(null);

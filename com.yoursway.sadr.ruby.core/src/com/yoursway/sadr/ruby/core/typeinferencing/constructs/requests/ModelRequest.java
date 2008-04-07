@@ -4,7 +4,8 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.core.constructs.VisitorRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestor;
+import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
@@ -22,11 +23,11 @@ public class ModelRequest implements Request<RubyConstruct, RubyStaticContext, R
         return context;
     }
     
-    public void enter(RubyConstruct construct, ContinuationRequestor requestor,
+    public ContinuationRequestorCalledToken enter(RubyConstruct construct, ContinuationScheduler requestor,
             VisitorRequestor<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> continuation) {
         if (construct instanceof ModelAffector)
             ((ModelAffector) construct).actOnModel(this);
-        continuation.consume(this, requestor);
+        return continuation.consume(this, requestor);
     }
     
     public void leave() {
