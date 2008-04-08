@@ -18,7 +18,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelAffe
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ClassScope;
 
-public class ClassDeclarationC extends DtlConstruct<RubyClassDeclaration> implements ModelAffector {
+public class ClassDeclarationC extends RubyConstructImpl<RubyClassDeclaration> implements ModelAffector {
     
     private final ClassScope innerContext;
     

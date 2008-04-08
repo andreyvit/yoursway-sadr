@@ -34,19 +34,20 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ReturnC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
-public abstract class DtlConstruct<N extends ASTNode> extends
+public abstract class RubyConstructImpl<N extends ASTNode> extends
         AbstractConstruct<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> implements
-        RubyConstruct { //> rename to RubyConstructImpl
-
+        RubyConstruct {
+    
     protected final N node;
     
-    public DtlConstruct(RubyStaticContext sc, N node) {
+    public RubyConstructImpl(RubyStaticContext sc, N node) {
         super(sc);
         this.node = node;
     }
@@ -95,12 +96,13 @@ public abstract class DtlConstruct<N extends ASTNode> extends
             return wrapBinaryExpression(sc, (RubyBinaryExpression) node);
         if (node instanceof RubyClassDeclaration)
             return new ClassDeclarationC(sc, (RubyClassDeclaration) node);
+        if (node instanceof RubyReturnStatement)
+            return new ReturnC(sc, (RubyReturnStatement) node);
         //        if (node instanceof RubyArrayAccessExpression)
         //            return new ArrayAccessC(sc, (ArrayAccess) node);
-        if (node instanceof ASTListNode || node instanceof RubyReturnStatement
-                || node instanceof RubyCallArgument || node instanceof RubyForStatement2
-                || node instanceof Block || node instanceof RubyMethodArgument
-                || node instanceof RubyDotExpression)
+        if (node instanceof ASTListNode || node instanceof RubyCallArgument
+                || node instanceof RubyForStatement2 || node instanceof Block
+                || node instanceof RubyMethodArgument || node instanceof RubyDotExpression)
             return new UnhandledC(sc, node);
         
         if (node == null)
@@ -140,7 +142,7 @@ public abstract class DtlConstruct<N extends ASTNode> extends
         // TODO check offset here
         List<RubyConstruct> enclosedConstructs = enclosedConstructs();
         for (RubyConstruct c : enclosedConstructs) {
-            RubyConstruct sc = ((DtlConstruct<?>) c).innerSubsonstructFor(node);
+            RubyConstruct sc = ((RubyConstructImpl<?>) c).innerSubsonstructFor(node);
             if (sc != null)
                 return sc;
         }
@@ -181,7 +183,7 @@ public abstract class DtlConstruct<N extends ASTNode> extends
         
     };
     
-    public Collection<ThingAccessInfo> accessInfos() {
+    public Collection<AccessInfo> accessInfos() {
         return null;
     }
     

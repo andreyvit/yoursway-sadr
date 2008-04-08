@@ -23,7 +23,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.IntegerValue;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.StringValue;
 
-public class BinaryAdditionC extends DtlConstruct<CallExpression> {
+public class BinaryAdditionC extends RubyConstructImpl<CallExpression> {
     
     BinaryAdditionC(RubyStaticContext sc, CallExpression node) {
         super(sc, node);

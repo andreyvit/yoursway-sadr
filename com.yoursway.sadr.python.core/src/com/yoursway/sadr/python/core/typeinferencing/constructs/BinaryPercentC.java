@@ -4,8 +4,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
@@ -49,11 +49,15 @@ public class BinaryPercentC extends BinaryC {
                 
                 for (Value left : leftInfo.containedValues()) {
                     ValueTraits lt = left.traits();
-                    String fmt = lt.coherseToString();
-                    for (Value right : rightInfo.containedValues()) {
-                        ValueTraits rt = right.traits();
-                        String arg = rt.coherseToString();
-                        builder.add(new StringValue(String.format(fmt, arg)));
+                    if (lt.cohersibleToString()) {
+                        String fmt = lt.coherseToString();
+                        for (Value right : rightInfo.containedValues()) {
+                            ValueTraits rt = right.traits();
+                            String arg = rt.coherseToString();
+                            builder.add(new StringValue(String.format(fmt, arg)));
+                        }
+                    } else {
+                        //FIXME: add __mod__ and __rmod__ handling
                     }
                 }
                 continuation.consume(builder.build(), requestor);

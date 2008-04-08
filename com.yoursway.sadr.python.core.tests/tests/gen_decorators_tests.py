@@ -32,7 +32,7 @@ class Foo():
         return arg
 """
 TESTS = ["""
-foo = Foo()""", """"
+foo = Foo()""", """
 c = foo.f() ## value c => Foo""", """
 c1 = Foo.f() ## value c1 => Foo""", """
 a = foo.q(0) ## value a => 0""", """

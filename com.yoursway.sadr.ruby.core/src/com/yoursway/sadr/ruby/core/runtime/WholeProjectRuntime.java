@@ -107,7 +107,9 @@ public class WholeProjectRuntime {
                                 FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
                                 asts.put(m, rootNode);
                                 scopes.put(m, fileScope);
-                                return codeGatherer.add(new DtlFileC(fileScope, rootNode), null, requestor);
+                                codeGatherer.add(new DtlFileC(fileScope, rootNode), null, requestor);
+                                //FIXME: Add sequencer
+                                return requestor.schedule(continuation);
                             } catch (ModelException e) {
                                 throw new ModelExceptionRuntimeWrapper(e);
                             }

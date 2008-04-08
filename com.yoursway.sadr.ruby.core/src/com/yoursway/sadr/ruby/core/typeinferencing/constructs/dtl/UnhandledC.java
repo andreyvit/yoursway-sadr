@@ -11,7 +11,7 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 
-public class UnhandledC extends DtlConstruct<ASTNode> {
+public class UnhandledC extends RubyConstructImpl<ASTNode> {
     
     UnhandledC(RubyStaticContext sc, ASTNode node) {
         super(sc, node);

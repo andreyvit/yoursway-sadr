@@ -13,7 +13,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.NilValue;
 
-public class NilLiteralC extends DtlConstruct<NilLiteral> {
+public class NilLiteralC extends RubyConstructImpl<NilLiteral> {
     
     NilLiteralC(RubyStaticContext sc, NilLiteral node) {
         super(sc, node);

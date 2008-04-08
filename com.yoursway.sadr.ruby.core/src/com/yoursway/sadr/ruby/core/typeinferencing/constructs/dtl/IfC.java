@@ -26,7 +26,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.values.Value;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.ValueTraits;
 import com.yoursway.sadr.ruby.core.typeinferencing.valuesets.ValueSet;
 
-public class IfC extends DtlConstruct<RubyIfStatement> {
+public class IfC extends RubyConstructImpl<RubyIfStatement> {
     
     IfC(RubyStaticContext sc, RubyIfStatement node) {
         super(sc, node);

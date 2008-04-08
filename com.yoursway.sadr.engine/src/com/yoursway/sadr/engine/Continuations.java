@@ -9,15 +9,16 @@ public class Continuations {
         return iterate(iterable.iterator(), visitor, requestor, continuation);
     }
     
-    public static <T> ContinuationRequestorCalledToken iterate(final Iterator<T> iterator,
+    public static <T> ContinuationRequestorCalledToken iterate(Iterator<T> iterator,
             final IterationContinuation<T> visitor, ContinuationScheduler requestor,
             final SimpleContinuation continuation) {
         if (iterator.hasNext()) {
             T value = iterator.next();
+            final Iterator<T> iterator2 = iterator;
             SimpleContinuation cont = new SimpleContinuation() {
                 
                 public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
-                    return iterate(iterator, visitor, requestor, continuation);
+                    return iterate(iterator2, visitor, requestor, continuation);
                 }
                 
             };

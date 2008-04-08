@@ -381,7 +381,11 @@ public class AnalysisEngine {
         
         @Override
         public void evaluate() {
-            continuation.run(this);
+            ContinuationRequestorCalledToken run = continuation.run(this);
+            if (run == null) {
+                throw new AssertionError("Run should be not null for continuation "
+                        + continuation.getClass().getSimpleName());
+            }
         }
         
         @Override

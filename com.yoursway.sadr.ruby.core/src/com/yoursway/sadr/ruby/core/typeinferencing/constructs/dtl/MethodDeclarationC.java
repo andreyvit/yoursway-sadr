@@ -20,7 +20,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.scopes.LocalScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.MethodScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ProcedureScope;
 
-public class MethodDeclarationC extends DtlConstruct<MethodDeclaration> implements ModelAffector {
+public class MethodDeclarationC extends RubyConstructImpl<MethodDeclaration> implements ModelAffector {
     
     private LocalScope innerScope;
     
