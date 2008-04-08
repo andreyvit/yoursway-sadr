@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.engine.util.Lists.filter;
 
@@ -33,11 +33,6 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ReturnC;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 

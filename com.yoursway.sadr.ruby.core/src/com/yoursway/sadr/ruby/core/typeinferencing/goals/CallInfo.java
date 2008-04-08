@@ -1,6 +1,6 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
 
 public class CallInfo {

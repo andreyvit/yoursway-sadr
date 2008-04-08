@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.ruby.core.runtime.RubyUtils.childrenOf;
 
@@ -20,9 +20,6 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallableReturnValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;

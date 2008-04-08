@@ -1,30 +1,35 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
-import org.eclipse.dltk.ast.expressions.NilLiteral;
+import org.eclipse.dltk.ast.expressions.StringLiteral;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.RubySimpleType;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.SimpleType;
-import com.yoursway.sadr.ruby.core.typeinferencing.values.NilValue;
+import com.yoursway.sadr.ruby.core.typeinferencing.values.StringValue;
 
-public class NilLiteralC extends RubyConstructImpl<NilLiteral> {
+public class StringLiteralC extends RubyConstructImpl<StringLiteral> {
     
-    NilLiteralC(RubyStaticContext sc, NilLiteral node) {
+    StringLiteralC(RubyStaticContext sc, StringLiteral node) {
         super(sc, node);
     }
     
     public ContinuationRequestorCalledToken evaluateValue(RubyDynamicContext dc, InfoKind infoKind,
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
-        RubySimpleType t = staticContext().builtins().nilType();
-        builder.add(new SimpleType(t), new NilValue());
+        RubySimpleType t = staticContext().builtins().stringType();
+        builder.add(new SimpleType(t), new StringValue(stringValue()));
         return continuation.consume(builder.build(), requestor);
+    }
+    
+    private String stringValue() {
+        String v = node.getValue();
+        v = v.replaceAll("\\n", "\n");
+        v = v.replaceAll("<CR>", "\n");
+        return v;
     }
     
 }

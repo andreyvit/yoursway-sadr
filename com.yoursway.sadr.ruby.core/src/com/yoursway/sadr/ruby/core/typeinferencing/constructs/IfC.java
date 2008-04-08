@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
@@ -16,10 +16,6 @@ import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.Value;

@@ -20,8 +20,8 @@ import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.SearchService;
 

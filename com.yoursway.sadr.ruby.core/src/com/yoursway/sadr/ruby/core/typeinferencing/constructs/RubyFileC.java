@@ -6,7 +6,6 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.RubyConstructImpl;
 
 public class RubyFileC extends RubyConstructImpl<ModuleDeclaration> {
     

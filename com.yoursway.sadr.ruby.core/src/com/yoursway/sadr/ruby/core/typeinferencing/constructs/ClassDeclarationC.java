@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
@@ -12,8 +12,6 @@ import com.yoursway.sadr.ruby.core.runtime.RubyClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyClassDefinition;
 import com.yoursway.sadr.ruby.core.runtime.RubySourceClassDefinition;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ClassScope;

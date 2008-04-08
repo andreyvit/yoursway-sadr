@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
@@ -16,8 +16,6 @@ import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
