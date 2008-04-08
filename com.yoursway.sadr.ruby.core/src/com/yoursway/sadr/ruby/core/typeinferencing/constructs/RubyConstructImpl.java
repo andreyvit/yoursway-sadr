@@ -14,6 +14,7 @@ import org.eclipse.dltk.ast.expressions.NilLiteral;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.SimpleReference;
+import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.ruby.ast.RubyAssignment;
 import org.eclipse.dltk.ruby.ast.RubyBinaryExpression;
@@ -21,11 +22,13 @@ import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 import org.eclipse.dltk.ruby.ast.RubyDotExpression;
 import org.eclipse.dltk.ruby.ast.RubyForStatement2;
+import org.eclipse.dltk.ruby.ast.RubyHashPairExpression;
 import org.eclipse.dltk.ruby.ast.RubyIfStatement;
 import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
 import org.eclipse.dltk.ruby.ast.RubyReturnStatement;
 import org.eclipse.dltk.ruby.ast.RubySelfReference;
 import org.eclipse.dltk.ruby.ast.RubySuperExpression;
+import org.eclipse.dltk.ruby.ast.RubyVariableKind;
 
 import com.google.common.base.Predicate;
 import com.yoursway.sadr.core.constructs.AbstractConstruct;
@@ -77,8 +80,13 @@ public abstract class RubyConstructImpl<N extends ASTNode> extends
             return new SelfC(sc, (RubySelfReference) node);
         if (node instanceof RubySuperExpression)
             return new SuperC(sc, (RubySuperExpression) node);
-        if (node instanceof SimpleReference)
+        if (node instanceof VariableReference
+                && ((VariableReference) node).getVariableKind() == RubyVariableKind.INSTANCE) {
+            return new FieldAccessC(sc, (VariableReference) node);
+        }
+        if (node instanceof SimpleReference) {
             return new SymbolC(sc, (SimpleReference) node);
+        }
         if (node instanceof CallExpression)
             return wrapCall(sc, (CallExpression) node);
         if (node instanceof RubyAssignment)
@@ -97,12 +105,13 @@ public abstract class RubyConstructImpl<N extends ASTNode> extends
         //            return new ArrayAccessC(sc, (ArrayAccess) node);
         if (node instanceof ASTListNode || node instanceof RubyCallArgument
                 || node instanceof RubyForStatement2 || node instanceof Block
-                || node instanceof RubyMethodArgument || node instanceof RubyDotExpression)
+                || node instanceof RubyMethodArgument || node instanceof RubyDotExpression
+                || node instanceof RubyHashPairExpression)
             return new UnhandledC(sc, node);
         
         if (node == null)
             return new EmptyConstruct(sc);
-        throw new RuntimeException("No construct found for node " + node.getClass());
+        throw new RuntimeException("No construct found for node " + node.getClass().getSimpleName());
     }
     
     private RubyConstruct wrapCall(RubyStaticContext sc, CallExpression node) {
