@@ -49,7 +49,7 @@ public class MethodCallC extends CallC implements IndexAffector {
     }
     
     public void actOnIndex(IndexRequest request) {
-        //! request.addMethodCall(node.getMethodName(), this);
+        request.addMethodCall(node.getName(), this);
     }
     
 }

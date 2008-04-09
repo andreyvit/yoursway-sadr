@@ -19,9 +19,10 @@ import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.EvalRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.EvalsAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
 
-public class ProcedureCallC extends CallC implements EvalsAffector {
+public class ProcedureCallC extends CallC implements EvalsAffector, IndexAffector {
     
     ProcedureCallC(RubyStaticContext sc, CallExpression node) {
         super(sc, node);

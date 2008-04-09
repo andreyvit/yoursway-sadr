@@ -186,7 +186,7 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
         }
         
         public void findProcedureCalls(String name, CallsRequestor requestor) {
-            for (CallC call : methodsCalls.get(name.toLowerCase()))
+            for (CallC call : procedureCalls.get(name.toLowerCase()))
                 //? toLowerCase???
                 requestor.call(call);
         }

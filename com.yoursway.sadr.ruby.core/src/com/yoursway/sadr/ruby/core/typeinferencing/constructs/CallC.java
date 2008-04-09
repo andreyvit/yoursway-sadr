@@ -3,6 +3,7 @@ package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 import static com.yoursway.sadr.ruby.core.runtime.RubyUtils.childrenOf;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.CallExpression;
+import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -20,13 +22,17 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.CallsAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.CallsRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.CallableReturnValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 
-public abstract class CallC extends RubyConstructImpl<CallExpression> {
+public abstract class CallC extends RubyConstructImpl<CallExpression> implements CallsAffector {
     
     CallC(RubyStaticContext sc, CallExpression node) {
         super(sc, node);
@@ -39,7 +45,8 @@ public abstract class CallC extends RubyConstructImpl<CallExpression> {
         return Lists.transform(childrenOf(node.getArgs()), new Function<ASTNode, RubyConstruct>() {
             
             public RubyConstruct apply(ASTNode from) {
-                return wrap(innerContext(), from);
+                RubyCallArgument arg = (RubyCallArgument) from;
+                return wrap(innerContext(), arg.getValue());
             }
             
         });
@@ -112,6 +119,16 @@ public abstract class CallC extends RubyConstructImpl<CallExpression> {
             });
         }
         
+    }
+    
+    public void actOnCalls(CallsRequest request) {
+        RubyConstruct receiver = receiver();
+        if (receiver != null) {
+            Collection<AccessInfo> accessInfos = receiver.accessInfos();
+            for (AccessInfo access : accessInfos)
+                if (request.variable().name().equals(access.variableName()))
+                    request.add(new CallInfo(access.wildcard(), this));
+        }
     }
     
     public RubyConstruct receiver() {
