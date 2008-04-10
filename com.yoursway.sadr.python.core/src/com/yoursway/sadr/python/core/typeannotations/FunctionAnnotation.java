@@ -12,7 +12,7 @@ public class FunctionAnnotation implements Annotation {
         this.returnType = returnTypeName;
     }
     
-    public Set<TypeAnnotation> getReturnType() {
+    public Set<TypeAnnotation> getReturnTypeSet() {
         return returnType;
     }
     

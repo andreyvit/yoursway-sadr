@@ -33,9 +33,9 @@ public class AnnotationParserTests {
         FunctionAnnotation fa = (FunctionAnnotation) a;
         assertTrue(fa.getArgumentsTypes().size() == 0);
         
-        assertEquals(fa.getReturnType().size(), 2);
-        assertTrue(fa.getReturnType().contains(new TypeAnnotation("ReturnType", null)));
-        assertTrue(fa.getReturnType().contains(new TypeAnnotation("AltReturnType", "Module")));
+        assertEquals(fa.getReturnTypeSet().size(), 2);
+        assertTrue(fa.getReturnTypeSet().contains(new TypeAnnotation("ReturnType", null)));
+        assertTrue(fa.getReturnTypeSet().contains(new TypeAnnotation("AltReturnType", "Module")));
     }
     
     @Test
@@ -56,7 +56,7 @@ public class AnnotationParserTests {
         assertTrue(argTypeSets.get(1).contains(new TypeAnnotation("Type3", "module")));
         assertEquals(argTypeSets.get(2).iterator().next().getName(), "Type4");
         
-        assertTrue("ReturnType".equals(fa.getReturnType().iterator().next().getName()));
+        assertTrue("ReturnType".equals(fa.getReturnTypeSet().iterator().next().getName()));
     }
     
     @Test
@@ -77,6 +77,6 @@ public class AnnotationParserTests {
         assertEquals(argTypeSets.get(1).iterator().next().getName(), "*");
         assertEquals(argTypeSets.get(2).iterator().next().getName(), "**");
         
-        assertTrue("ReturnType".equals(fa.getReturnType().iterator().next().getName()));
+        assertTrue("ReturnType".equals(fa.getReturnTypeSet().iterator().next().getName()));
     }
 }
