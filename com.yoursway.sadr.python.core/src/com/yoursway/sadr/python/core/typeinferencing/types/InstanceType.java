@@ -6,11 +6,11 @@ import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
-public class ClassType extends AbstractType {
+public class InstanceType extends AbstractType {
     
     private final PythonClass klass;
     
-    public ClassType(PythonClass klass) {
+    public InstanceType(PythonClass klass) {
         this.klass = klass;
     }
     
@@ -51,7 +51,7 @@ public class ClassType extends AbstractType {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final ClassType other = (ClassType) obj;
+        final InstanceType other = (InstanceType) obj;
         if (klass == null) {
             if (other.klass != null)
                 return false;

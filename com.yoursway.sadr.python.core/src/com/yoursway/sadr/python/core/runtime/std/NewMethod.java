@@ -11,7 +11,7 @@ import com.yoursway.sadr.python.core.runtime.PythonBuiltinMethod;
 import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
+import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.internal.SingleTypeSet;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
@@ -36,7 +36,7 @@ public final class NewMethod extends PythonBuiltinMethod {
         //                builder.add(new ClassType(((MetaClassType) type).runtimeMetaClass().instanceClass()));
         //        return builder.build();
         Value value = new InstanceValue(klass.instanceClass(), model.instanceRegistrar());
-        SingleTypeSet ts = TypeSetFactory.typeSetWith(new ClassType(klass.instanceClass()));
+        SingleTypeSet ts = TypeSetFactory.typeSetWith(new InstanceType(klass.instanceClass()));
         return createResult(ts, valueSetWith(value));
     }
 }

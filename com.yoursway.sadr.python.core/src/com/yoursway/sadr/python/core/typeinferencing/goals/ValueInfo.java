@@ -13,7 +13,7 @@ import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
-import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
+import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
 import com.yoursway.sadr.python.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.python.core.typeinferencing.types.Type;
 import com.yoursway.sadr.python.core.typeinferencing.types.UnknownType;
@@ -86,8 +86,8 @@ public class ValueInfo implements IValueInfo {
     public ValueInfo getSuper() {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (Type type : typeSet.containedTypes()) {
-            if (type instanceof ClassType || type instanceof MetaClassType) {
-                PythonBasicClass klass = (type instanceof ClassType ? ((ClassType) type).runtimeClass()
+            if (type instanceof InstanceType || type instanceof MetaClassType) {
+                PythonBasicClass klass = (type instanceof InstanceType ? ((InstanceType) type).runtimeClass()
                         : ((MetaClassType) type).runtimeMetaClass());
                 PythonBasicClass sup = (klass).superclassOfTheSameKind();
                 if (sup != null)
@@ -152,6 +152,10 @@ public class ValueInfo implements IValueInfo {
     
     public Collection<Value> containedValues() {
         return valueSet.containedValues();
+    }
+    
+    public Collection<Type> containedTypes() {
+        return typeSet.containedTypes();
     }
     
     public static ValueInfo from(IValueInfo result) {
