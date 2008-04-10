@@ -4,7 +4,7 @@ public class TypeAnnotation implements Annotation {
     private final String typeName;
     private final String moduleName;
     
-    TypeAnnotation(String typeName, String moduleName) {
+    public TypeAnnotation(String typeName, String moduleName) {
         if (typeName == null)
             throw new IllegalArgumentException();
         this.typeName = typeName;
@@ -28,8 +28,10 @@ public class TypeAnnotation implements Annotation {
     public boolean equals(Object obj) {
         if (obj instanceof TypeAnnotation) {
             TypeAnnotation ta = (TypeAnnotation) obj;
-            return ta.typeName.equals(this.typeName) && ta.moduleName.equals(this.moduleName);
-        } else
-            return false;
+            return ta.typeName.equals(this.typeName)
+                    && (!(this.moduleName != null && ta.moduleName != null) || ta.moduleName
+                            .equals(this.moduleName));
+        }
+        return false;
     }
 }

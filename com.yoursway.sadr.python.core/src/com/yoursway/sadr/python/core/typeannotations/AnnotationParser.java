@@ -38,7 +38,7 @@ public class AnnotationParser {
         List<Set<TypeAnnotation>> args = parseArguments(source.substring(argBegin, argEnd));
         if (arrowEnd + 1 >= source.length())
             throw new AnnotationParsingException();
-        TypeAnnotation returnType = parseType(source.substring(arrowEnd + 1, source.length()));
+        Set<TypeAnnotation> returnType = parseTypeSet(source.substring(arrowEnd + 1, source.length()));
         return new FunctionAnnotation(args, returnType);
     }
     

@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.Set;
 
 public class FunctionAnnotation implements Annotation {
-    private final TypeAnnotation returnType;
+    private final Set<TypeAnnotation> returnType;
     private final List<Set<TypeAnnotation>> argumentsTypes;
     
-    FunctionAnnotation(List<Set<TypeAnnotation>> argumentsTypes, TypeAnnotation returnTypeName) {
+    FunctionAnnotation(List<Set<TypeAnnotation>> argumentsTypes, Set<TypeAnnotation> returnTypeName) {
         this.argumentsTypes = argumentsTypes;
         this.returnType = returnTypeName;
     }
     
-    public TypeAnnotation getReturnType() {
+    public Set<TypeAnnotation> getReturnType() {
         return returnType;
     }
     
