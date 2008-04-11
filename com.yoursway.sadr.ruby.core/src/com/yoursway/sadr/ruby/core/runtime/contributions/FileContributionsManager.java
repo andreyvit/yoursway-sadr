@@ -175,19 +175,17 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
         }
         
         public void findAssignments(String name, AssignmentsRequestor requestor) {
-            for (AssignmentInfo info : assignments.get(name.toLowerCase()))
+            for (AssignmentInfo info : assignments.get(name))
                 requestor.assignment(info, scope);
         }
         
         public void findMethodCalls(String name, CallsRequestor requestor) {
-            for (CallC call : methodsCalls.get(name.toLowerCase()))
-                //? toLowerCase???
+            for (CallC call : methodsCalls.get(name))
                 requestor.call(call);
         }
         
         public void findProcedureCalls(String name, CallsRequestor requestor) {
-            for (CallC call : procedureCalls.get(name.toLowerCase()))
-                //? toLowerCase???
+            for (CallC call : procedureCalls.get(name))
                 requestor.call(call);
         }
     }
