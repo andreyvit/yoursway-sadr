@@ -6,7 +6,6 @@ package com.yoursway.sadr.succeeder.utils;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGoalResultAcceptor;
 import com.yoursway.sadr.succeeder.IGoalScheduler;
-import com.yoursway.sadr.succeeder.SimpleSubtasksListener;
 
 /**
  * Simple implementation of IGoal:
