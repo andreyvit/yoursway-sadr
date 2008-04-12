@@ -34,7 +34,7 @@ public abstract class SimpleGoal<ResultT, SubgoalsResultT> implements
 	private SimpleSubtasksListener<SubgoalsResultT> subtasksListener = new SimpleSubtasksListener<SubgoalsResultT>(
 			this);
 
-	public final void isCancelled() {
+	public final void isCanceled() {
 	}
 
 	public final void postRun() {

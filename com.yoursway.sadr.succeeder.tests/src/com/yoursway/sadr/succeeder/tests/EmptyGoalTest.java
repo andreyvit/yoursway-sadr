@@ -16,7 +16,7 @@ public class EmptyGoalTest extends TestCase {
 	class EmptyGoal implements IGoal<String> {
 		private IGoalResultAcceptor<String> resultAcceptor;
 
-		public void isCancelled() {
+		public void isCanceled() {
 			assertTrue("isCancelled must not be called", false);
 		}
 

@@ -17,7 +17,7 @@ public class SimpleGoalTest extends TestCase {
 	private final class IGoalImplementation implements IGoal<Integer> {
 		private IGoalResultAcceptor<Integer> resultAcceptor;
 
-		public void isCancelled() {}
+		public void isCanceled() {}
 
 		public void postRun() { resultAcceptor.resultProduced(42); }
 

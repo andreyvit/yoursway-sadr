@@ -81,5 +81,5 @@ public interface IGoal<ResultT> {
 	 * 
 	 * Cannot produce results. Cannot schedule subtasks.
 	 */
-	void isCancelled();
+	void isCanceled();
 }
