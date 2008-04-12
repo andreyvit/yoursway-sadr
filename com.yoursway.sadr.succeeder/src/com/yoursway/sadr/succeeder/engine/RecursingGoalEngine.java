@@ -13,17 +13,26 @@ import com.yoursway.sadr.succeeder.IGoalStateListener;
  * meaningful task canceling (while being conformant goal engine though).
  * 
  * Key point of the type-safe implementation of GoalEngine is paring of IGoal
- * and IGoalStateListener - IGoal<T>, IGoalStateListener<T> and handler should be created at the same time, and handler should expose generic interface to the world, while being 
+ * and IGoalStateListener - IGoal<T>, IGoalStateListener<T> and handler should
+ * be created at the same time, and handler should expose generic interface to
+ * the world, while still being correctly typed inside.
  */
 public class RecursingGoalEngine<ResultT> {
 
 	public static final IGoalStateListener<String> NULL_ACCEPTOR = new IGoalStateListener<String>() {
-		public void canceled(IGoal<String> goal) {}
-		public void finished(IGoal<String> goal) {}
-		public void resultProduced(IGoal<String> goal, String t) {}
-		public void started(IGoal<String> goal) {}
+		public void canceled(IGoal<String> goal) {
+		}
+
+		public void finished(IGoal<String> goal) {
+		}
+
+		public void resultProduced(IGoal<String> goal, String t) {
+		}
+
+		public void started(IGoal<String> goal) {
+		}
 	};
-	
+
 	private IGoal<ResultT> goal;
 	private IGoalStateListener<ResultT> resultListener;
 
