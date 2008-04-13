@@ -21,7 +21,7 @@ public class EmptyGoalTest extends TestCase {
 		}
 
 		public void postRun() {
-			assertTrue("postRun must be called before preRun", wasInPreRun);
+			assertTrue("postRun must be called after preRun", wasInPreRun);
 			assertFalse("postRun must not be called twice", wasInPostRun);
 			wasInPostRun = true;
 			
@@ -29,8 +29,8 @@ public class EmptyGoalTest extends TestCase {
 		}
 
 		public void preRun() {
-			assertFalse("postRun must not be called before preRun", wasInPostRun);
 			assertFalse("preRun must not be called twice", wasInPreRun);
+			assertFalse("preRun must be called before postRun", wasInPostRun);
 			wasInPreRun = true;
 		}
 
