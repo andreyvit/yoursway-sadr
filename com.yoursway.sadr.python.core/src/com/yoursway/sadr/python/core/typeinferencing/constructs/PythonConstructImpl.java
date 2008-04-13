@@ -89,7 +89,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> extends
         if (node instanceof NumericLiteral)
             return new IntegerLiteralC(sc, (NumericLiteral) node);
         if (node instanceof BigNumericLiteral)
-            return new BigIntegerLiteralC(sc, (NumericLiteral) node);
+            return new BigIntegerLiteralC(sc, (BigNumericLiteral) node);
         if (node instanceof VariableReference)
             return wrapVariableReference(sc, (VariableReference) node);
         if (node instanceof PythonCallExpression) {

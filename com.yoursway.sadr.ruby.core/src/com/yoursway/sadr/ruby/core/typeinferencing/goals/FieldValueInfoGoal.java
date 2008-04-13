@@ -101,7 +101,7 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     public Goal cloneGoal() {
-        return new FieldValueInfoGoal(field, kind);
+        return new FieldValueInfoGoal(field, kind, searchService);
     }
     
 }

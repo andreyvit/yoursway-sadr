@@ -29,17 +29,18 @@ public class BinaryPercentC extends BinaryC {
             
             private final ValueInfoGoal rightGoal = new ExpressionValueInfoGoal(rightArg, dc, infoKind);
             
+            private BinaryOperationHandler binaryPercentHandler;
+            
             public void provideSubgoals(SubgoalRequestor requestor) {
-                BinaryOperationHandler binaryPercentHandler = typeAnalysisProvider.getBinaryPercentHandler(
-                        leftGoal, rightGoal);
-                
-                binaryPercentHandler.setContext(BinaryPercentC.this, leftInfo, rightInfo);
-                
-                requestor.subgoal(binaryPercentHandler);
+                typeAnalysisProvider = new PythonTypeAnalysis();
+                binaryPercentHandler = typeAnalysisProvider.getBinaryPercentHandler();
+                binaryPercentHandler.setContext(BinaryPercentC.this, leftGoal, rightGoal);
+                binaryPercentHandler.provideSubgoals(requestor);
             }
             
-            public void done(ContinuationScheduler scheduler) {
-                
+            public void done(ContinuationScheduler requestor) {
+                binaryPercentHandler.done(requestor);
+                continuation.consume(binaryPercentHandler.result(), requestor);
             }
         });
     }

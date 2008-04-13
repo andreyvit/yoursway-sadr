@@ -26,14 +26,12 @@ import com.yoursway.sadr.python.core.typeinferencing.types.Type;
 public class PythonTypeAnalysis implements AnalysisProvider {
     
     private final class BinaryOperationHandlerImplementation implements BinaryOperationHandler {
-        private final ValueInfo types = null;
+        private ValueInfo types = null;
         private final List<ValueInfoGoal> goals = new ArrayList<ValueInfoGoal>();
-        private final ValueInfoGoal leftGoal;
-        private final ValueInfoGoal rightGoal;
+        private ValueInfoGoal leftGoal;
+        private ValueInfoGoal rightGoal;
         
-        public BinaryOperationHandlerImplementation(ValueInfoGoal leftGoal, ValueInfoGoal rightGoal) {
-            this.leftGoal = leftGoal;
-            this.rightGoal = rightGoal;
+        public BinaryOperationHandlerImplementation() {
         }
         
         public void setContext(PythonConstructImpl<BinaryExpression> context, final ValueInfo leftInfo,
@@ -88,22 +86,26 @@ public class PythonTypeAnalysis implements AnalysisProvider {
         }
         
         public void done(ContinuationScheduler requestor) {
-            ValueInfo leftInfo = leftGoal.result(null);
-            ValueInfo rightInfo = rightGoal.result(null);
+            ValueInfoBuilder vib = new ValueInfoBuilder();
+            for (ValueInfoGoal g : goals)
+                vib.addResultOf(g, null);
+            types = vib.build();
             
-            /*
-             * ValueInfoBuilder vib = new ValueInfoBuilder(); for (ValueInfoGoal
-             * g : goals) vib.addResultOf(g, null); types = vib.build();
-             */
         }
         
         public ValueInfo result() {
             assert !types.isEmpty() : "Trying to call result() on non-executed goal";
             return types;
         }
+        
+        public void setContext(PythonConstructImpl<BinaryExpression> context, ValueInfoGoal leftGoal,
+                ValueInfoGoal rightGoal) {
+            this.leftGoal = leftGoal;
+            this.rightGoal = rightGoal;
+        }
     }
     
-    public BinaryOperationHandler getBinaryPercentHandler(ValueInfoGoal leftGoal, ValueInfoGoal rightGoal) {
-        return new BinaryOperationHandlerImplementation(leftGoal, rightGoal);
+    public BinaryOperationHandler getBinaryPercentHandler() {
+        return new BinaryOperationHandlerImplementation();
     }
 }
