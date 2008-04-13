@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
+import java.math.BigInteger;
+
 public class IntegerValue extends LiteralValue implements ValueTraits {
     
     private final long value;
@@ -25,18 +27,22 @@ public class IntegerValue extends LiteralValue implements ValueTraits {
         return this;
     }
     
+    @Override
     public String coherseToString() {
         return Long.toString(value);
     }
     
+    @Override
     public boolean cohersibleToString() {
         return true;
     }
     
+    @Override
     public long integerValue() {
         return value;
     }
     
+    @Override
     public boolean isInteger() {
         return true;
     }
@@ -63,12 +69,24 @@ public class IntegerValue extends LiteralValue implements ValueTraits {
         return true;
     }
     
+    @Override
     public boolean coherseToBoolean() {
         return (value != 0);
     }
     
+    @Override
     public boolean cohersibleToBoolean() {
         return true;
+    }
+    
+    @Override
+    public boolean isLong() {
+        return true;
+    }
+    
+    @Override
+    public BigInteger longValue() {
+        return BigInteger.valueOf(value);
     }
     
 }

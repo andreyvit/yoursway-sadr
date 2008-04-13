@@ -24,45 +24,6 @@ import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 
 public class ValueInfo implements IValueInfo {
     
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((typeSet == null) ? 0 : typeSet.hashCode());
-        result = prime * result + ((valueSet == null) ? 0 : valueSet.hashCode());
-        return result;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final ValueInfo other = (ValueInfo) obj;
-        if (typeSet == null) {
-            if (other.typeSet != null)
-                return false;
-        } else if (!typeSet.equals(other.typeSet))
-            return false;
-        if (valueSet == null) {
-            if (other.valueSet != null)
-                return false;
-        } else if (!valueSet.equals(other.valueSet))
-            return false;
-        return true;
-    }
-    
-    public static ValueInfo emptyValueInfo() {
-        return new ValueInfo(emptyTypeSet(), emptyValueSet());
-    }
-    
-    public static ValueInfo createResult(TypeSet typeSet, ValueSet valueSet) {
-        return new ValueInfo(typeSet, valueSet);
-    }
-    
     private final TypeSet typeSet;
     private final ValueSet valueSet;
     
@@ -81,6 +42,14 @@ public class ValueInfo implements IValueInfo {
     
     public void findMethod(String name, MethodRequestor requestor) {
         typeSet.findMethod(name, requestor);
+    }
+    
+    public static ValueInfo emptyValueInfo() {
+        return new ValueInfo(emptyTypeSet(), emptyValueSet());
+    }
+    
+    public static ValueInfo createResult(TypeSet typeSet, ValueSet valueSet) {
+        return new ValueInfo(typeSet, valueSet);
     }
     
     public ValueInfo getSuper() {
@@ -171,4 +140,36 @@ public class ValueInfo implements IValueInfo {
         }
         return list;
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((typeSet == null) ? 0 : typeSet.hashCode());
+        result = prime * result + ((valueSet == null) ? 0 : valueSet.hashCode());
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final ValueInfo other = (ValueInfo) obj;
+        if (typeSet == null) {
+            if (other.typeSet != null)
+                return false;
+        } else if (!typeSet.equals(other.typeSet))
+            return false;
+        if (valueSet == null) {
+            if (other.valueSet != null)
+                return false;
+        } else if (!valueSet.equals(other.valueSet))
+            return false;
+        return true;
+    }
+    
 }

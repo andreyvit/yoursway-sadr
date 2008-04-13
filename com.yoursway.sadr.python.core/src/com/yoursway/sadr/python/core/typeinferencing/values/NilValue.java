@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
+import java.math.BigInteger;
+
 public class NilValue extends LiteralValue implements ValueTraits {
     
     public NilValue() {
@@ -18,28 +20,44 @@ public class NilValue extends LiteralValue implements ValueTraits {
         return this;
     }
     
+    @Override
     public String coherseToString() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public boolean cohersibleToString() {
         return false;
     }
     
+    @Override
     public long integerValue() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public boolean isInteger() {
         return false;
     }
     
+    @Override
     public boolean coherseToBoolean() {
         return false;
     }
     
+    @Override
     public boolean cohersibleToBoolean() {
         return true;
+    }
+    
+    @Override
+    public boolean isLong() {
+        return false;
+    }
+    
+    @Override
+    public BigInteger longValue() {
+        return null;
     }
     
 }

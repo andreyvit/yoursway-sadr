@@ -44,28 +44,33 @@ public class InstanceValue extends AbstractValue implements ValueTraits {
         return this;
     }
     
+    @Override
     public String coherseToString() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public boolean cohersibleToString() {
         return false;
     }
     
+    @Override
     public long integerValue() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public boolean isInteger() {
         return false;
     }
     
+    @Override
     public boolean coherseToBoolean() {
         throw new UnsupportedOperationException();
     }
     
+    @Override
     public boolean cohersibleToBoolean() {
         return false;
     }
-    
 }

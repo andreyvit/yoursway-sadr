@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
+import java.math.BigInteger;
+
 public class BooleanValue extends LiteralValue implements ValueTraits {
     
     private final boolean value;
@@ -10,28 +12,43 @@ public class BooleanValue extends LiteralValue implements ValueTraits {
         this.value = value;
     }
     
-    public boolean coherseToBoolean() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    public String coherseToString() {
-        return value ? TRUE : FALSE;
-    }
-    
+    @Override
     public boolean cohersibleToBoolean() {
         return true;
     }
     
+    @Override
+    public boolean coherseToBoolean() {
+        return this.value;
+    }
+    
+    @Override
     public boolean cohersibleToString() {
         return true;
     }
     
+    @Override
+    public String coherseToString() {
+        return value ? TRUE : FALSE;
+    }
+    
+    @Override
     public long integerValue() {
         return value ? 1 : 0;
     }
     
+    @Override
     public boolean isInteger() {
+        return false;
+    }
+    
+    @Override
+    public BigInteger longValue() {
+        return BigInteger.valueOf(value ? 1 : 0);
+    }
+    
+    @Override
+    public boolean isLong() {
         return false;
     }
     

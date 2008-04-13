@@ -16,6 +16,7 @@ public class StandardTypesImpl implements StandardTypes {
     private final PythonSimpleType stringType;
     private final PythonSimpleType nilType;
     private final PythonSimpleType boolType;
+    private final PythonSimpleType longType;
     
     public StandardTypesImpl(PythonRuntimeModel model) {
         objectClass = model.lookupClass("object");
@@ -25,6 +26,7 @@ public class StandardTypesImpl implements StandardTypes {
         stringType = new PythonSimpleType(model, "str");
         nilType = new PythonSimpleType(model, "None");
         boolType = new PythonSimpleType(model, "bool");
+        longType = new PythonSimpleType(model, "long");
         
         //        new PythonBuiltinMethod(objectClass.metaClass(), "subclass", new PythonCallableArgument(
         //                "subclass_name", PythonCallableArgument.Usage.REQUIRED), new PythonCallableArgument(
@@ -169,6 +171,10 @@ public class StandardTypesImpl implements StandardTypes {
     
     public PythonSimpleType boolType() {
         return boolType;
+    }
+    
+    public PythonSimpleType longType() {
+        return longType;
     }
     
 }

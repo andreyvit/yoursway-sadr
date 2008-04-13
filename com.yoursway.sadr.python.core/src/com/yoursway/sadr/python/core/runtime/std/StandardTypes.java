@@ -15,4 +15,6 @@ public interface StandardTypes {
     
     PythonSimpleType boolType();
     
+    PythonSimpleType longType();
+    
 }

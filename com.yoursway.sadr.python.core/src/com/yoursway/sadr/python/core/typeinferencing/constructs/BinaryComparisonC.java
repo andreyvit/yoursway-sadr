@@ -7,8 +7,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercion;
@@ -89,7 +89,7 @@ public class BinaryComparisonC extends BinaryC {
     
     private static Map<String, Comparison> createMap() {
         Map<String, Comparison> result = new HashMap<String, Comparison>();
-        result.put("=", Comparison.EQUALS);
+        result.put("==", Comparison.EQUALS);
         result.put("<>", Comparison.NOT_EQUALS);
         result.put("!=", Comparison.NOT_EQUALS);
         result.put("<", Comparison.LESS);

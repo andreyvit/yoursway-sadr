@@ -21,20 +21,14 @@ public class StringValue extends LiteralValue implements ValueTraits {
         return this;
     }
     
+    @Override
     public String coherseToString() {
         return value;
     }
     
+    @Override
     public boolean cohersibleToString() {
         return true;
-    }
-    
-    public long integerValue() {
-        throw new UnsupportedOperationException();
-    }
-    
-    public boolean isInteger() {
-        return false;
     }
     
     @Override
@@ -61,13 +55,4 @@ public class StringValue extends LiteralValue implements ValueTraits {
             return false;
         return true;
     }
-    
-    public boolean coherseToBoolean() {
-        throw new UnsupportedOperationException();
-    }
-    
-    public boolean cohersibleToBoolean() {
-        return false;
-    }
-    
 }

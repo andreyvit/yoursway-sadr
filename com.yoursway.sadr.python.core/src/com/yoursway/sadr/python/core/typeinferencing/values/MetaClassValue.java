@@ -10,11 +10,6 @@ public class MetaClassValue extends AbstractValue implements ValueTraits {
         this.metaClass = metaClass;
     }
     
-    @Override
-    public String toString() {
-        return describe();
-    }
-    
     public String describe() {
         return metaClass.toString();
     }
@@ -22,29 +17,4 @@ public class MetaClassValue extends AbstractValue implements ValueTraits {
     public ValueTraits traits() {
         return this;
     }
-    
-    public String coherseToString() {
-        throw new UnsupportedOperationException();
-    }
-    
-    public boolean cohersibleToString() {
-        return false;
-    }
-    
-    public long integerValue() {
-        throw new UnsupportedOperationException();
-    }
-    
-    public boolean isInteger() {
-        return false;
-    }
-    
-    public boolean coherseToBoolean() {
-        throw new UnsupportedOperationException();
-    }
-    
-    public boolean cohersibleToBoolean() {
-        return false;
-    }
-    
 }
