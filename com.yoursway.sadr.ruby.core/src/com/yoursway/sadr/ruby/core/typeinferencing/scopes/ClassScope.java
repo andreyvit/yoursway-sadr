@@ -9,7 +9,7 @@ import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 import com.yoursway.sadr.ruby.core.runtime.RubyClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.ClassDeclarationC;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.ClassDeclarationC;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.MetaClassValue;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.Value;

@@ -12,7 +12,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 
 public class BackwardVariableRequest implements
         BackwardRequest<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode>,
@@ -40,12 +40,12 @@ public class BackwardVariableRequest implements
     }
     
     public void accept(AssignmentInfo info) {
-        if (matches(info.threesome()))
+        if (matches(info.accessInfo()))
             add(info);
     }
     
-    private boolean matches(ThingAccessInfo threesome) {
-        return variable.name().equals(threesome.variableName());
+    private boolean matches(AccessInfo access) {
+        return variable.name().equals(access.variableName());
     }
     
     private void add(AssignmentInfo info) {

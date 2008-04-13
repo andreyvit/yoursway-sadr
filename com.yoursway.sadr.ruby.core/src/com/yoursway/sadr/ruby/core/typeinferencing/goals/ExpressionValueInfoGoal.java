@@ -12,10 +12,10 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.DtlArgumentVariable;
 
 public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements ValueInfoGoal,

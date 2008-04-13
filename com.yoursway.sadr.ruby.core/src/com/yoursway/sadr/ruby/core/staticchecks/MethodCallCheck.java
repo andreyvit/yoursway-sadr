@@ -94,7 +94,7 @@ public class MethodCallCheck extends OneModuleRuntimeBasedCheck {
             }
             errorMessage = NLS.bind("Global procedure named \"{0}\" does not exist.", name);
         } else {
-            RubyConstruct callC = currentFileScope.createConstruct().subconstructFor(call);
+            RubyConstruct callC = currentFileScope.createConstruct().subconstructFor(receiver);
             ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(callC, new EmptyDynamicContext(),
                     InfoKind.TYPE);
             runtime.getEngine().evaluate(goal);

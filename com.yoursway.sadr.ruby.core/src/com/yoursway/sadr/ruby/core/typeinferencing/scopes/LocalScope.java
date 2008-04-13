@@ -3,8 +3,8 @@ package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.DtlFileC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.DtlFileC;
 import com.yoursway.sadr.ruby.core.typeinferencing.services.VariableLookup;
 
 public abstract class LocalScope extends ChildScope implements VariableLookup {

@@ -22,10 +22,11 @@ public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
+        
         PythonSimpleType t = staticContext().builtins().longType();
         BigInteger v = node.getLongValue();
         builder.add(new SimpleType(t), new LongValue(v));
+        
         return continuation.consume(builder.build(), requestor);
     }
-    
 }

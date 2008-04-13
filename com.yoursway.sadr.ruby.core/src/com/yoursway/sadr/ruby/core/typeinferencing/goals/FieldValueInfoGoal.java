@@ -18,15 +18,18 @@ import com.yoursway.sadr.ruby.core.runtime.RubySourceMethod;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
+import com.yoursway.sadr.ruby.core.typeinferencing.services.SearchService;
 
 public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     
     private final RubyField field;
     private final InfoKind kind;
+    private final SearchService searchService;
     
-    public FieldValueInfoGoal(RubyField field, InfoKind kind) {
+    public FieldValueInfoGoal(RubyField field, InfoKind kind, SearchService searchService) {
         this.field = field;
         this.kind = kind;
+        this.searchService = searchService;
     }
     
     public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
@@ -98,7 +101,7 @@ public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     public Goal cloneGoal() {
-        return new FieldValueInfoGoal(field, kind);
+        return new FieldValueInfoGoal(field, kind, searchService);
     }
     
 }

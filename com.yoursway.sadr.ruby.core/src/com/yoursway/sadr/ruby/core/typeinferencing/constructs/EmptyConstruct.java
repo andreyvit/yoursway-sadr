@@ -15,7 +15,7 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 
 public class EmptyConstruct extends
         AbstractConstruct<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> implements
@@ -69,7 +69,7 @@ public class EmptyConstruct extends
         // return null;
     }
     
-    public Collection<ThingAccessInfo> accessInfos() {
+    public Collection<AccessInfo> accessInfos() {
         throw new NotImplementedException();
         // return null;
     }

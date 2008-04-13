@@ -22,11 +22,10 @@ import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyClass;
-import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
@@ -237,16 +236,16 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     private ContinuationRequestorCalledToken evaluateWithoutFlow(final Callable callable,
             RubyConstruct construct, ContinuationScheduler requestor) {
         
-        if (callable instanceof RubyMethod) {
-            if (variable.index() == 0) {
-                // TODO: need a dynamic context here 
-                ValueInfo selfType = construct.staticContext().selfType();
-                if (selfType != null)
-                    return consume(selfType, requestor);
-                else
-                    return consume(ValueInfo.emptyValueInfo(), requestor);
-            }
-        }
+        //        if (callable instanceof RubyMethod) {
+        //            if (variable.index() == 0) {
+        //                // TODO: need a dynamic context here 
+        //                ValueInfo selfType = construct.staticContext().selfType();
+        //                if (selfType != null)
+        //                    return consume(selfType, requestor);
+        //                else
+        //                    return consume(ValueInfo.emptyValueInfo(), requestor);
+        //            }
+        //        }
         
         VariableRequest request = new VariableRequest(variable, kind);
         return construct.staticContext().propagationTracker().traverseEntirely(

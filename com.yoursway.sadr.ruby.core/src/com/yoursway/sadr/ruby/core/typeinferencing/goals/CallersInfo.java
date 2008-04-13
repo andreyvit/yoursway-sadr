@@ -1,7 +1,7 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.goals;
 
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.CallC;
 
 public class CallersInfo implements Result {
     

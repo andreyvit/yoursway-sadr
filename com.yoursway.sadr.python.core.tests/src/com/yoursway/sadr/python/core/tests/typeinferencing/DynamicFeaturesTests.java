@@ -34,4 +34,7 @@ public final class DynamicFeaturesTests extends AbstractTypeInferencingTestCase 
         runTest();
     }
     
+    @Test
+    public void instanceAttributeByCalculation() throws Exception {
+    }
 }

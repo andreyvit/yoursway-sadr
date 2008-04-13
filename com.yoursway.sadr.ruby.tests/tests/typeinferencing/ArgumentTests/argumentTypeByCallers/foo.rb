@@ -5,19 +5,19 @@ end
 
 class Bar
 
-def boz(x)
+def myMethod(x)
 	putx x ## expr x => Foo
 end
 
 end
 
-def gboz(y)
+def myProc(y)
 	puts y ## expr y => Foo
 end
 
 def ggg()
 	m = Bar.new
-	m.boz(Foo.new)
-	gboz(Foo.new)
+	m.myMethod(Foo.new)
+	myProc(Foo.new)
 end
 

@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dltk.ast.ASTNode;
+
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.HidingMethodRequestor;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodRequestor;
 
@@ -77,6 +79,20 @@ public abstract class RubyBasicClass {
             if (namesToMethods.containsKey(method))
                 return true;
         return false;
+    }
+    
+    public RubyField lookupField(String name) {
+        RubyField field = findField(name);
+        if (field == null)
+            field = new RubyField(this, name) {
+                
+                @Override
+                public ASTNode[] getNodesForSelection() {
+                    return null;
+                }
+                
+            };
+        return field;
     }
     
 }

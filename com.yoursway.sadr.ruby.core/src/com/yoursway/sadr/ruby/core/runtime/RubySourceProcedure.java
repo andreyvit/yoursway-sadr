@@ -13,8 +13,8 @@ import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
 import com.yoursway.sadr.ruby.core.runtime.RubyArgument.Usage;
 import com.yoursway.sadr.ruby.core.runtime.contributions.Context;
 import com.yoursway.sadr.ruby.core.runtime.contributions.NodeBoundItem;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.MethodDeclarationC;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.LocalScope;
 
 public class RubySourceProcedure extends RubyProcedure implements NodeBoundItem, LocalVariableContainer {

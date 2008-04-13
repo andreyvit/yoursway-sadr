@@ -26,7 +26,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalsAf
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
+import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.internal.SingleTypeSet;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
@@ -41,7 +41,7 @@ public class ProcedureCallC extends CallC implements IndexAffector, EvalsAffecto
     private ContinuationRequestorCalledToken classNewInstance(PythonClass klass, PythonDynamicContext dc,
             InfoKind infoKind, ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         Value value = new InstanceValue(klass, staticContext().instanceRegistrar());
-        SingleTypeSet ts = TypeSetFactory.typeSetWith(new ClassType(klass));
+        SingleTypeSet ts = TypeSetFactory.typeSetWith(new InstanceType(klass));
         PythonMethod[] methods = ts.findMethodsByPrefix("__new__");
         if (methods.length > 0) {
             PythonMethod method = methods[0];

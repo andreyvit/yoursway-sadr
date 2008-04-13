@@ -6,14 +6,14 @@ import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.Wildcard;
 public class AssignmentInfo {
     
     private final RubyConstruct rhs;
-    private final ThingAccessInfo access;
+    private final AccessInfo access;
     
-    public AssignmentInfo(ThingAccessInfo access, RubyConstruct rhs) {
+    public AssignmentInfo(AccessInfo access, RubyConstruct rhs) {
         this.access = access; //? lvalue
         this.rhs = rhs;
     }
     
-    public ThingAccessInfo threesome() {
+    public AccessInfo accessInfo() {
         return access;
     }
     
