@@ -17,7 +17,7 @@ import com.yoursway.sadr.succeeder.IGoalStateListener;
  * be created at the same time, and handler should expose generic interface to
  * the world, while still being correctly typed inside.
  */
-public class RecursingGoalEngine<ResultT> {
+public class RecursingGoalEngine {
 
 	public static final IGoalStateListener<String> NULL_ACCEPTOR = new IGoalStateListener<String>() {
 		public void canceled(IGoal<String> goal) {
@@ -32,43 +32,50 @@ public class RecursingGoalEngine<ResultT> {
 		public void started(IGoal<String> goal) {
 		}
 	};
-
-	private IGoal<ResultT> goal;
-	private IGoalStateListener<ResultT> resultListener;
-
-	public RecursingGoalEngine(IGoal<ResultT> goal,
-			IGoalStateListener<ResultT> resultListener) {
-		this.goal = goal;
-		this.resultListener = resultListener;
+	
+	public <T> void run(IGoal<T> goal, IGoalStateListener<T> resultListener) {
+		new SingleGoalEngine<T>(goal, resultListener).run();
 	}
-
-	public void run() {
-		final List<RecursingGoalEngine<?>> engines = new LinkedList<RecursingGoalEngine<?>>();
-
-		IGoalScheduler scheduler = new IGoalScheduler() {
-			public <T> void cancel(IGoal<T> goal) {
-			}
-
-			public <T> void schedule(IGoal<T> goal,
-					IGoalStateListener<T> listener) {
-				engines.add(new RecursingGoalEngine<T>(goal, listener));
-			}
-		};
-
-		IGoalResultAcceptor<ResultT> acceptor = new IGoalResultAcceptor<ResultT>() {
-			public void resultProduced(ResultT result) {
-				resultListener.resultProduced(goal, result);
-			}
-		};
-
-		goal.setGoalContext(scheduler, acceptor);
-		resultListener.started(goal);
-		goal.preRun();
-
-		for (RecursingGoalEngine<?> i : engines)
-			i.run();
-
-		goal.postRun();
-		resultListener.finished(goal);
+	
+	private class SingleGoalEngine<ResultT> {
+		public SingleGoalEngine(IGoal<ResultT> goal,
+				IGoalStateListener<ResultT> resultListener) {
+			this.goal = goal;
+			this.resultListener = resultListener;
+		}
+		
+		private IGoal<ResultT> goal;
+		private IGoalStateListener<ResultT> resultListener;
+		
+		
+		public void run() {
+			final List<SingleGoalEngine<?>> engines = new LinkedList<SingleGoalEngine<?>>();
+			
+			IGoalScheduler scheduler = new IGoalScheduler() {
+				public <T> void cancel(IGoal<T> goal) {
+				}
+				
+				public <T> void schedule(IGoal<T> goal,
+						IGoalStateListener<T> listener) {
+					engines.add(new SingleGoalEngine<T>(goal, listener));
+				}
+			};
+			
+			IGoalResultAcceptor<ResultT> acceptor = new IGoalResultAcceptor<ResultT>() {
+				public void resultProduced(ResultT result) {
+					resultListener.resultProduced(goal, result);
+				}
+			};
+			
+			goal.setGoalContext(scheduler, acceptor);
+			resultListener.started(goal);
+			goal.preRun();
+			
+			for (SingleGoalEngine<?> i : engines)
+				i.run();
+			
+			goal.postRun();
+			resultListener.finished(goal);
+		}
 	}
 }

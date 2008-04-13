@@ -51,7 +51,7 @@ public class EmptyGoalTest extends TestCase {
 		final boolean[] resultProducedIsCalled = { false }; 
 		final boolean[] finishedIsCalled = { false };
 
-		RecursingGoalEngine<String> rge = new RecursingGoalEngine<String>(myGoal, new IGoalStateListener<String>() {
+		new RecursingGoalEngine().run(myGoal, new IGoalStateListener<String>() {
 
 			public void canceled(IGoal<String> goal) {
 				assertTrue("canceled must not be called", false);
@@ -81,7 +81,5 @@ public class EmptyGoalTest extends TestCase {
 				finishedIsCalled[0] = true;
 			}
 		});
-		
-		rge.run();
 	}
 }
