@@ -21,7 +21,7 @@ public class EmptyGoalTest extends TestCase {
 		}
 
 		public void postRun() {
-			assertTrue("postRun must be called before preRun", wasInPreRun);
+			assertTrue("postRun must be called after preRun", wasInPreRun);
 			assertFalse("postRun must not be called twice", wasInPostRun);
 			wasInPostRun = true;
 			
@@ -29,8 +29,8 @@ public class EmptyGoalTest extends TestCase {
 		}
 
 		public void preRun() {
-			assertFalse("postRun must not be called before preRun", wasInPostRun);
 			assertFalse("preRun must not be called twice", wasInPreRun);
+			assertFalse("preRun must be called before postRun", wasInPostRun);
 			wasInPreRun = true;
 		}
 
@@ -51,7 +51,7 @@ public class EmptyGoalTest extends TestCase {
 		final boolean[] resultProducedIsCalled = { false }; 
 		final boolean[] finishedIsCalled = { false };
 
-		RecursingGoalEngine<String> rge = new RecursingGoalEngine<String>(myGoal, new IGoalStateListener<String>() {
+		new RecursingGoalEngine().run(myGoal, new IGoalStateListener<String>() {
 
 			public void canceled(IGoal<String> goal) {
 				assertTrue("canceled must not be called", false);
@@ -81,7 +81,5 @@ public class EmptyGoalTest extends TestCase {
 				finishedIsCalled[0] = true;
 			}
 		});
-		
-		rge.run();
 	}
 }

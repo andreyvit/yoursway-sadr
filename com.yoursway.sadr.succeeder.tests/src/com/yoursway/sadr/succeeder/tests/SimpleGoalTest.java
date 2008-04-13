@@ -48,7 +48,6 @@ public class SimpleGoalTest extends TestCase {
 			}
 		};
 		
-		RecursingGoalEngine<String> engine = new RecursingGoalEngine<String>(runnerGoal, RecursingGoalEngine.NULL_ACCEPTOR);
-		engine.run();
+		new RecursingGoalEngine().run(runnerGoal, RecursingGoalEngine.NULL_ACCEPTOR);
 	}
 }
