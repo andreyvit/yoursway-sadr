@@ -15,8 +15,8 @@ import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.ruby.core.runtime.RubyRuntimeModel;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.FileScope;
@@ -175,19 +175,17 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
         }
         
         public void findAssignments(String name, AssignmentsRequestor requestor) {
-            for (AssignmentInfo info : assignments.get(name.toLowerCase()))
+            for (AssignmentInfo info : assignments.get(name))
                 requestor.assignment(info, scope);
         }
         
         public void findMethodCalls(String name, CallsRequestor requestor) {
-            for (CallC call : methodsCalls.get(name.toLowerCase()))
-                //? toLowerCase???
+            for (CallC call : methodsCalls.get(name))
                 requestor.call(call);
         }
         
         public void findProcedureCalls(String name, CallsRequestor requestor) {
-            for (CallC call : methodsCalls.get(name.toLowerCase()))
-                //? toLowerCase???
+            for (CallC call : procedureCalls.get(name))
                 requestor.call(call);
         }
     }

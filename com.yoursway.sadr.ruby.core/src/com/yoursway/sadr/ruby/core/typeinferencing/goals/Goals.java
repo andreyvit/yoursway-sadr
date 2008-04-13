@@ -16,7 +16,7 @@ public class Goals {
         if (variable instanceof RubyLocalVariable)
             return new LocalVariableValueInfoGoal((RubyLocalVariable) variable, kind);
         if (variable instanceof RubyField)
-            return new FieldValueInfoGoal((RubyField) variable, kind);
+            return new FieldValueInfoGoal((RubyField) variable, kind, null);
         if (variable instanceof DtlArgumentVariable)
             return new ArgumentVariableValueInfoGoal((DtlArgumentVariable) variable, kind, megapack);
         if (variable instanceof RubyGlobalVariable)
@@ -24,7 +24,7 @@ public class Goals {
                     .searchService());
         //        if (variable instanceof ForCounterVariable)
         //            return new ForCounterVariableValueInfoGoal((ForCounterVariable) variable, kind);
-        throw new IllegalArgumentException("Unsupported variable type");
+        throw new IllegalArgumentException("Unsupported variable type " + variable.getClass().getSimpleName());
     }
     
 }

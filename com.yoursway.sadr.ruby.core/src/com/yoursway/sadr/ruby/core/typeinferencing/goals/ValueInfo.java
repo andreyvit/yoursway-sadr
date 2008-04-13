@@ -10,6 +10,7 @@ import java.util.Collection;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
+import com.yoursway.sadr.ruby.core.runtime.RubyField;
 import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.MethodRequestor;
@@ -168,6 +169,16 @@ public class ValueInfo implements Result, IValueInfo {
         if (result.isEmpty())
             return emptyValueInfo();
         throw new IllegalArgumentException("Illegal input ValueInfo: " + result);
+    }
+    
+    public Collection<RubyField> lookupField(String name) {
+        Collection<RubyField> list = new ArrayList<RubyField>();
+        for (Type type : typeSet.containedTypes()) {
+            RubyBasicClass klass = RubyUtils.unwrapType(type);
+            if (klass != null)
+                list.add(klass.lookupField(name));
+        }
+        return list;
     }
     
 }

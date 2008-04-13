@@ -3,6 +3,7 @@ package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
 import com.yoursway.sadr.ruby.core.runtime.RubyArgument;
+import com.yoursway.sadr.ruby.core.runtime.RubyLocalVariable;
 import com.yoursway.sadr.ruby.core.runtime.RubyProcedure;
 import com.yoursway.sadr.ruby.core.runtime.RubySourceProcedure;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
@@ -50,6 +51,14 @@ public class ProcedureScope extends LocalScope {
             if (var.name().equalsIgnoreCase(name))
                 return var;
         return procedure.findLocalVariable(name);
+    }
+    
+    @Override
+    public RubyVariable lookupVariable(String name) {
+        RubyVariable variable = findVariable(name);
+        if (variable == null)
+            variable = new RubyLocalVariable(procedure, null, procedure.scope(), name);
+        return variable;
     }
     
     public ValueInfo selfType() {

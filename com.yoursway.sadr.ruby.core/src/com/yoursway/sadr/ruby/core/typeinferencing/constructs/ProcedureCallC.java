@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.engine.util.Lists.filter;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
@@ -17,14 +17,12 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.EvalRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.EvalsAffector;
+import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
 
-public class ProcedureCallC extends CallC implements EvalsAffector {
+public class ProcedureCallC extends CallC implements EvalsAffector, IndexAffector {
     
     ProcedureCallC(RubyStaticContext sc, CallExpression node) {
         super(sc, node);

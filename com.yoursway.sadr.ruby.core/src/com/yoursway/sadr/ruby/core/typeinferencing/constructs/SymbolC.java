@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
@@ -16,17 +16,15 @@ import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.ruby.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.MetaClassValue;
 
-public class SymbolC extends DtlConstruct<SimpleReference> {
+public class SymbolC extends RubyConstructImpl<SimpleReference> {
     
     SymbolC(RubyStaticContext sc, SimpleReference node) {
         super(sc, node);
@@ -43,6 +41,8 @@ public class SymbolC extends DtlConstruct<SimpleReference> {
             return continuation.consume(builder.build(), requestor);
         } else {
             RubyVariable variable = dc.variableLookup().findVariable(name);
+            if (variable == null)
+                variable = staticContext().variableLookup().lookupVariable(name);
             if (variable == null) {
                 return continuation.consume(emptyValueInfo(), requestor);
             } else {
@@ -64,8 +64,8 @@ public class SymbolC extends DtlConstruct<SimpleReference> {
     }
     
     @Override
-    public Collection<ThingAccessInfo> accessInfos() {
-        return newArrayList(new ThingAccessInfo(null, node.getName(), StarWildcard.INSTANCE));
+    public Collection<AccessInfo> accessInfos() {
+        return newArrayList(new AccessInfo(null, node.getName(), StarWildcard.INSTANCE));
     }
     
 }

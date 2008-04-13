@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
@@ -11,9 +11,6 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.requestors.methods.CollectingMethodRequestor;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
@@ -52,7 +49,7 @@ public class MethodCallC extends CallC implements IndexAffector {
     }
     
     public void actOnIndex(IndexRequest request) {
-        //! request.addMethodCall(node.getMethodName(), this);
+        request.addMethodCall(node.getName(), this);
     }
     
 }

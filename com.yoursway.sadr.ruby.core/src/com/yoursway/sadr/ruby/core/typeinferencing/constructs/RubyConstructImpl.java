@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.engine.util.Lists.filter;
 
@@ -14,6 +14,7 @@ import org.eclipse.dltk.ast.expressions.NilLiteral;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.SimpleReference;
+import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.ruby.ast.RubyAssignment;
 import org.eclipse.dltk.ruby.ast.RubyBinaryExpression;
@@ -21,11 +22,13 @@ import org.eclipse.dltk.ruby.ast.RubyCallArgument;
 import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
 import org.eclipse.dltk.ruby.ast.RubyDotExpression;
 import org.eclipse.dltk.ruby.ast.RubyForStatement2;
+import org.eclipse.dltk.ruby.ast.RubyHashPairExpression;
 import org.eclipse.dltk.ruby.ast.RubyIfStatement;
 import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
 import org.eclipse.dltk.ruby.ast.RubyReturnStatement;
 import org.eclipse.dltk.ruby.ast.RubySelfReference;
 import org.eclipse.dltk.ruby.ast.RubySuperExpression;
+import org.eclipse.dltk.ruby.ast.RubyVariableKind;
 
 import com.google.common.base.Predicate;
 import com.yoursway.sadr.core.constructs.AbstractConstruct;
@@ -33,20 +36,16 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
-public abstract class DtlConstruct<N extends ASTNode> extends
+public abstract class RubyConstructImpl<N extends ASTNode> extends
         AbstractConstruct<RubyConstruct, RubyStaticContext, RubyDynamicContext, ASTNode> implements
-        RubyConstruct { //> rename to RubyConstructImpl
-
+        RubyConstruct {
+    
     protected final N node;
     
-    public DtlConstruct(RubyStaticContext sc, N node) {
+    public RubyConstructImpl(RubyStaticContext sc, N node) {
         super(sc);
         this.node = node;
     }
@@ -81,8 +80,13 @@ public abstract class DtlConstruct<N extends ASTNode> extends
             return new SelfC(sc, (RubySelfReference) node);
         if (node instanceof RubySuperExpression)
             return new SuperC(sc, (RubySuperExpression) node);
-        if (node instanceof SimpleReference)
+        if (node instanceof VariableReference
+                && ((VariableReference) node).getVariableKind() == RubyVariableKind.INSTANCE) {
+            return new FieldAccessC(sc, (VariableReference) node);
+        }
+        if (node instanceof SimpleReference) {
             return new SymbolC(sc, (SimpleReference) node);
+        }
         if (node instanceof CallExpression)
             return wrapCall(sc, (CallExpression) node);
         if (node instanceof RubyAssignment)
@@ -95,17 +99,19 @@ public abstract class DtlConstruct<N extends ASTNode> extends
             return wrapBinaryExpression(sc, (RubyBinaryExpression) node);
         if (node instanceof RubyClassDeclaration)
             return new ClassDeclarationC(sc, (RubyClassDeclaration) node);
+        if (node instanceof RubyReturnStatement)
+            return new ReturnC(sc, (RubyReturnStatement) node);
         //        if (node instanceof RubyArrayAccessExpression)
         //            return new ArrayAccessC(sc, (ArrayAccess) node);
-        if (node instanceof ASTListNode || node instanceof RubyReturnStatement
-                || node instanceof RubyCallArgument || node instanceof RubyForStatement2
-                || node instanceof Block || node instanceof RubyMethodArgument
-                || node instanceof RubyDotExpression)
+        if (node instanceof ASTListNode || node instanceof RubyCallArgument
+                || node instanceof RubyForStatement2 || node instanceof Block
+                || node instanceof RubyMethodArgument || node instanceof RubyDotExpression
+                || node instanceof RubyHashPairExpression)
             return new UnhandledC(sc, node);
         
         if (node == null)
             return new EmptyConstruct(sc);
-        throw new RuntimeException("No construct found for node " + node.getClass());
+        throw new RuntimeException("No construct found for node " + node.getClass().getSimpleName());
     }
     
     private RubyConstruct wrapCall(RubyStaticContext sc, CallExpression node) {
@@ -140,7 +146,7 @@ public abstract class DtlConstruct<N extends ASTNode> extends
         // TODO check offset here
         List<RubyConstruct> enclosedConstructs = enclosedConstructs();
         for (RubyConstruct c : enclosedConstructs) {
-            RubyConstruct sc = ((DtlConstruct<?>) c).innerSubsonstructFor(node);
+            RubyConstruct sc = ((RubyConstructImpl<?>) c).innerSubsonstructFor(node);
             if (sc != null)
                 return sc;
         }
@@ -181,7 +187,7 @@ public abstract class DtlConstruct<N extends ASTNode> extends
         
     };
     
-    public Collection<ThingAccessInfo> accessInfos() {
+    public Collection<AccessInfo> accessInfos() {
         return null;
     }
     

@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
 
@@ -13,9 +13,6 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexRequest;
@@ -24,9 +21,9 @@ import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequ
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.ThingAccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 
-public class AssignmentC extends DtlConstruct<RubyAssignment> implements VariableAffector, IndexAffector,
+public class AssignmentC extends RubyConstructImpl<RubyAssignment> implements VariableAffector, IndexAffector,
         ModelAffector {
     
     AssignmentC(RubyStaticContext sc, RubyAssignment node) {
@@ -57,8 +54,8 @@ public class AssignmentC extends DtlConstruct<RubyAssignment> implements Variabl
     private void provideAssignmentInfo(AssignmentInfoRequestor request) {
         RubyConstruct lhs = lhs();
         RubyConstruct rhs = rhs();
-        Collection<ThingAccessInfo> accessInfos = lhs.accessInfos();
-        for (ThingAccessInfo access : accessInfos)
+        Collection<AccessInfo> accessInfos = lhs.accessInfos();
+        for (AccessInfo access : accessInfos)
             request.accept(new AssignmentInfo(access, rhs));
     }
     
@@ -74,8 +71,8 @@ public class AssignmentC extends DtlConstruct<RubyAssignment> implements Variabl
     
     public void actOnModel(ModelRequest request) {
         RubyConstruct lhs = lhs();
-        Collection<ThingAccessInfo> accessInfos = lhs.accessInfos();
-        for (ThingAccessInfo access : accessInfos)
+        Collection<AccessInfo> accessInfos = lhs.accessInfos();
+        for (AccessInfo access : accessInfos)
             if (access.receiver() == null) {
                 String name = access.variableName();
                 staticContext().variableLookup().lookupVariable(name);

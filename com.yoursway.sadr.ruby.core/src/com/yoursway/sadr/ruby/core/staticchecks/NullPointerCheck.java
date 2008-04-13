@@ -23,7 +23,7 @@ public class NullPointerCheck extends OneModuleRuntimeBasedCheck {
             return;
         
         if (receiver != null) {
-            RubyConstruct callC = currentFileScope.createConstruct().subconstructFor(call);
+            RubyConstruct callC = currentFileScope.createConstruct().subconstructFor(receiver);
             ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(callC, new EmptyDynamicContext(),
                     InfoKind.NULLABILITY);
             runtime.getEngine().evaluate(goal);

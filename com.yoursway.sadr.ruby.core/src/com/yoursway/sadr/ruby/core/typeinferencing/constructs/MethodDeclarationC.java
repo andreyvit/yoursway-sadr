@@ -1,4 +1,4 @@
-package com.yoursway.sadr.ruby.core.typeinferencing.constructs.dtl;
+package com.yoursway.sadr.ruby.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
@@ -11,8 +11,6 @@ import com.yoursway.sadr.ruby.core.runtime.RubyMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubyProcedure;
 import com.yoursway.sadr.ruby.core.runtime.RubySourceMethod;
 import com.yoursway.sadr.ruby.core.runtime.RubySourceProcedure;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyStaticContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfo;
@@ -20,7 +18,7 @@ import com.yoursway.sadr.ruby.core.typeinferencing.scopes.LocalScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.MethodScope;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.ProcedureScope;
 
-public class MethodDeclarationC extends DtlConstruct<MethodDeclaration> implements ModelAffector {
+public class MethodDeclarationC extends RubyConstructImpl<MethodDeclaration> implements ModelAffector {
     
     private LocalScope innerScope;
     
