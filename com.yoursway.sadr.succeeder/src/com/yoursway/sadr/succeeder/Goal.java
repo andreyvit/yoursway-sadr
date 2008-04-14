@@ -18,16 +18,20 @@ package com.yoursway.sadr.succeeder;
  */
 public abstract class Goal implements IGoal {
 
-	private IGoalScheduler scheduler;
+	private IScheduler scheduler;
 
-	protected IGoalScheduler getScheduler() {
+	protected IScheduler getScheduler() {
 		return scheduler;
 	}
 
 	public final void isCanceled() {
 	}
 
-	public final void setScheduler(IGoalScheduler scheduler) {
+	public final void setScheduler(IScheduler scheduler) {
 		this.scheduler = scheduler;
+	}
+
+	public DumbReturnValue flush() {
+		return null;
 	}
 }

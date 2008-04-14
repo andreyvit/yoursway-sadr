@@ -57,7 +57,7 @@ public interface IGoal {
 	 *            Acceptor, accepting result(s) of goal. Can schedule subtasks
 	 *            when called.
 	 */
-	void setScheduler(IGoalScheduler scheduler);
+	void setScheduler(IScheduler scheduler);
 
 	/**
 	 * Called first when task is run. Should schedule subtasks if needed - if
