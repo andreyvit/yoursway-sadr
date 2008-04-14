@@ -9,8 +9,8 @@ import org.junit.Test;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGoalResultAcceptor;
 import com.yoursway.sadr.succeeder.IGoalScheduler;
+import com.yoursway.sadr.succeeder.SimpleGoal;
 import com.yoursway.sadr.succeeder.engine.RecursingGoalEngine;
-import com.yoursway.sadr.succeeder.utils.SimpleGoal;
 
 public class SimpleGoalTest extends TestCase {
 	
