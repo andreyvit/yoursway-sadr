@@ -33,7 +33,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.Variabl
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
+import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSet;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory;
@@ -181,12 +181,12 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             if (!klasses.isEmpty()) {
                 TypeSetBuilder subbuilder = new TypeSetBuilder();
                 for (PythonClass klass : klasses)
-                    subbuilder.add(new ClassType(klass));
+                    subbuilder.add(new InstanceType(klass));
                 TypeSet typeset = subbuilder.build();
                 if (!typeset.isEmpty())
                     return typeset;
             }
-            return TypeSetFactory.typeSetWith(new ClassType(classLookup.standardTypes().objectClass()));
+            return TypeSetFactory.typeSetWith(new InstanceType(classLookup.standardTypes().objectClass()));
         }
         
         private AbstractMultiMap<Wildcard, CallC> groupCallsByWildcard(CallInfo[] calls) {

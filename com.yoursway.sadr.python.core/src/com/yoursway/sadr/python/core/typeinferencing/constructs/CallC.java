@@ -98,7 +98,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> im
                         int pos = 0;
                         for (ValueInfoGoal g : list)
                             args[pos++] = g.result(null);
-                        retGoals[i] = new CallableReturnValueInfoGoal(callables[i], infoKind, receiver, args);
+                        retGoals[i] = new CallableReturnValueInfoGoal(receiver, callables[i], args, infoKind);
                     }
                 }
                 

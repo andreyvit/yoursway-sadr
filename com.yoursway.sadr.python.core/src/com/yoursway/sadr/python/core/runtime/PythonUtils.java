@@ -22,7 +22,7 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.AbstractType;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
-import com.yoursway.sadr.python.core.typeinferencing.types.ClassType;
+import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
 import com.yoursway.sadr.python.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.python.core.typeinferencing.types.StubType;
 import com.yoursway.sadr.python.core.typeinferencing.types.Type;
@@ -178,13 +178,13 @@ public class PythonUtils {
     //    }
     
     public static AbstractType createType(PythonBasicClass klass) {
-        return klass instanceof PythonClass ? new ClassType((PythonClass) klass) : new MetaClassType(
+        return klass instanceof PythonClass ? new InstanceType((PythonClass) klass) : new MetaClassType(
                 (PythonMetaClass) klass);
     }
     
     public static PythonBasicClass unwrapType(Type type) {
-        if (type instanceof ClassType)
-            return ((ClassType) type).runtimeClass();
+        if (type instanceof InstanceType)
+            return ((InstanceType) type).runtimeClass();
         if (type instanceof MetaClassType)
             return ((MetaClassType) type).runtimeMetaClass();
         return null;

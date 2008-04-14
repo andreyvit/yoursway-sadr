@@ -22,35 +22,36 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.ProcedureScope;
 
 public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
     
-    private final Callable callable;
-    private final ValueInfo receiver;
+    private final ValueInfo callee;
+    private final Callable calledMethod;
     private final ValueInfo[] arguments;
     private final InfoKind kind;
     
-    public CallableReturnValueInfoGoal(Callable callable, InfoKind kind, ValueInfo receiver, ValueInfo[] args) {
-        this.callable = callable;
-        this.kind = kind;
-        this.receiver = receiver;
+    public CallableReturnValueInfoGoal(ValueInfo callee, Callable calledMethod, ValueInfo[] args,
+            InfoKind kind) {
+        this.callee = callee;
+        this.calledMethod = calledMethod;
         this.arguments = args;
+        this.kind = kind;
     }
     
     public ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor) {
-        if (callable.isBuiltin()) {
-            if (callable instanceof PythonBuiltinMethod) {
-                PythonBuiltinMethod method = (PythonBuiltinMethod) callable;
-                return consume(method.evaluateBuiltin(receiver, arguments), requestor);
+        if (calledMethod.isBuiltin()) {
+            if (calledMethod instanceof PythonBuiltinMethod) {
+                PythonBuiltinMethod method = (PythonBuiltinMethod) calledMethod;
+                return consume(method.evaluateBuiltin(callee, arguments), requestor);
             } else {
-                PythonBuiltinProcedure method = (PythonBuiltinProcedure) callable;
+                PythonBuiltinProcedure method = (PythonBuiltinProcedure) calledMethod;
                 return consume(method.evaluateBuiltin(arguments), requestor);
             }
         }
-        PythonConstruct construct = callable.construct();
+        PythonConstruct construct = calledMethod.construct();
         if (construct == null)
             throw new AssertionError("Callable must either be a built-in or have a construct");
         PythonStaticContext staticScope = ((MethodDeclarationC) construct).methodScope();
         final PythonDynamicContext dc;
         if (staticScope instanceof MethodScope)
-            dc = new DynamicMethodScope((MethodScope) staticScope, receiver, arguments);
+            dc = new DynamicMethodScope((MethodScope) staticScope, callee, arguments);
         else
             dc = new DynamicProcedureScope((ProcedureScope) staticScope, arguments);
         
@@ -68,7 +69,7 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
     
     @Override
     public String describeParameters() {
-        return "" + callable;
+        return "" + calledMethod;
     }
     
     @Override
@@ -76,9 +77,9 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
         final int prime = 31;
         int result = 1;
         result = prime * result + Arrays.hashCode(arguments);
-        result = prime * result + ((callable == null) ? 0 : callable.hashCode());
+        result = prime * result + ((calledMethod == null) ? 0 : calledMethod.hashCode());
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
-        result = prime * result + ((receiver == null) ? 0 : receiver.hashCode());
+        result = prime * result + ((callee == null) ? 0 : callee.hashCode());
         return result;
     }
     
@@ -93,20 +94,20 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
         final CallableReturnValueInfoGoal other = (CallableReturnValueInfoGoal) obj;
         if (!Arrays.equals(arguments, other.arguments))
             return false;
-        if (callable == null) {
-            if (other.callable != null)
+        if (calledMethod == null) {
+            if (other.calledMethod != null)
                 return false;
-        } else if (!callable.equals(other.callable))
+        } else if (!calledMethod.equals(other.calledMethod))
             return false;
         if (kind == null) {
             if (other.kind != null)
                 return false;
         } else if (!kind.equals(other.kind))
             return false;
-        if (receiver == null) {
-            if (other.receiver != null)
+        if (callee == null) {
+            if (other.callee != null)
                 return false;
-        } else if (!receiver.equals(other.receiver))
+        } else if (!callee.equals(other.callee))
             return false;
         return true;
     }
@@ -116,7 +117,7 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     public Goal cloneGoal() {
-        return new CallableReturnValueInfoGoal(callable, kind, receiver, arguments);
+        return new CallableReturnValueInfoGoal(callee, calledMethod, arguments, kind);
     }
     
     @Override
