@@ -10,6 +10,4 @@ Require-Bundle: org.eclipse.ui,
  org.junit4
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: com.yoursway.sadr.succeeder,
- com.yoursway.sadr.succeeder.engine,
- com.yoursway.sadr.succeeder.utils
+Export-Package: com.yoursway.sadr.succeeder
