@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SADR Building Blocks Foundation
+Bundle-SymbolicName: com.yoursway.sadr.blocks.foundation
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: YourSway
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: com.google.collections;bundle-version="1.0.0",
+ com.yoursway.sadr.core;bundle-version="1.0.0",
+ com.yoursway.sadr.engine;bundle-version="1.0.0"
+Export-Package: com.yoursway.sadr.blocks.foundation,
+ com.yoursway.sadr.blocks.foundation.types,
+ com.yoursway.sadr.blocks.foundation.typesets,
+ com.yoursway.sadr.blocks.foundation.typesets.internal,
+ com.yoursway.sadr.blocks.foundation.valueinfo,
+ com.yoursway.sadr.blocks.foundation.values,
+ com.yoursway.sadr.blocks.foundation.wildcards,
+ com.yoursway.sadr.python.core.typeinferencing.valuesets,
+ com.yoursway.sadr.python.core.typeinferencing.valuesets.internal,
+ com.yoursway.utils.facelets

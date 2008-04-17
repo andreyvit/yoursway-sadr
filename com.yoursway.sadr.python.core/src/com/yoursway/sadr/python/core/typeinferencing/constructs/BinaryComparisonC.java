@@ -5,7 +5,11 @@ import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
+import com.yoursway.sadr.blocks.integer_literals.RuntimeModelWithIntegerTypes;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -15,10 +19,7 @@ import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercion;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercionRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
 
 public class BinaryComparisonC extends BinaryC {
     
@@ -46,11 +47,13 @@ public class BinaryComparisonC extends BinaryC {
             
             public void done(ContinuationScheduler requestor) {
                 BinaryCoercion coercion = new BinaryCoercion(staticContext().classLookup());
+                RuntimeModelWithIntegerTypes modelWithIntegerTypes = staticContext().schema().integerTypesSupport
+                        .facelet(staticContext().runtimeModel());
                 ValueInfo leftInfo = leftGoal.result(null);
                 ValueInfo rightInfo = rightGoal.result(null);
                 
                 final ValueInfoBuilder builder = new ValueInfoBuilder();
-                builder.add(new SimpleType(staticContext().builtins().intType()));
+                builder.add(new SimpleTypeItem(modelWithIntegerTypes.intType()));
                 coercion.coerce(leftInfo, rightInfo, new BinaryCoercionRequestor() {
                     
                     public void intType() {

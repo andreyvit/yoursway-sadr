@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Goal;
 

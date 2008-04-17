@@ -125,7 +125,7 @@ public class MethodCallersGoal extends AbstractGoal {
         private CallC[] collectSuitableCallers(PythonMethod method) {
             List<CallC> realCallers = new ArrayList<CallC>();
             for (int i = 0; i < constructs.length; i++)
-                for (PythonBasicClass klass : goals[i].result(thing()).possibleClasses())
+                for (PythonBasicClass klass : ValueInfoUtils.possibleClasses(goals[i].result(thing())))
                     if (method.canBeCalledFrom(klass))
                         realCallers.add(constructs[i]);
             return realCallers.toArray(createArray(realCallers.size()));

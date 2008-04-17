@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import java.util.Arrays;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;

@@ -1,12 +1,14 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
+import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 
 import java.util.Collection;
 
 import org.eclipse.dltk.ast.references.VariableReference;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.foundation.wildcards.StarWildcard;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -16,9 +18,7 @@ import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.python.core.typeinferencing.values.MetaClassValue;
 

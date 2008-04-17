@@ -1,6 +1,9 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
-public class StringValue extends LiteralValue implements ValueTraits {
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
+
+public class StringValue extends AbstractValue implements ValueTraits {
     
     private final String value;
     

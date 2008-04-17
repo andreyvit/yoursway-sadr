@@ -3,6 +3,8 @@ package com.yoursway.sadr.python.core.typeinferencing.values;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;

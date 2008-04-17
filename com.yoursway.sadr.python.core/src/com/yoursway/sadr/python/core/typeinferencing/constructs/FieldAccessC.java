@@ -9,19 +9,20 @@ import java.util.List;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.google.common.base.Function;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.wildcards.StarWildcard;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.PythonField;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MergeFieldsValueInfosContinuation;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.StarWildcard;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 
 public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpression> {
     
@@ -56,7 +57,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
             
             public void done(ContinuationScheduler requestor) {
                 ValueInfo receiverInfo = receiverGoal.result(null);
-                Collection<PythonField> fields = receiverInfo.lookupField(name());
+                Collection<PythonField> fields = ValueInfoUtils.lookupField(receiverInfo, name());
                 requestor.schedule(new MergeFieldsValueInfosContinuation(fields, infoKind, continuation,
                         staticContext().searchService()));
             }

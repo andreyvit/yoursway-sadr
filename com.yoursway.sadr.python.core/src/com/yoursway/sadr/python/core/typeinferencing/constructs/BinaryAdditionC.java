@@ -2,7 +2,12 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
+import com.yoursway.sadr.blocks.integer_literals.RuntimeModelWithIntegerTypes;
+import com.yoursway.sadr.blocks.simple_types.SimpleType;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -13,10 +18,7 @@ import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercion;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercionRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 
 public class BinaryAdditionC extends BinaryC {
@@ -42,6 +44,10 @@ public class BinaryAdditionC extends BinaryC {
             
             public void done(ContinuationScheduler requestor) {
                 final StandardTypes builtins = staticContext().builtins();
+                RuntimeModelWithIntegerTypes modelWithIntegerTypes = staticContext().schema().integerTypesSupport
+                        .facelet(staticContext().runtimeModel());
+                final SimpleType intType = modelWithIntegerTypes.intType();
+                
                 BinaryCoercion coercion = new BinaryCoercion(staticContext().classLookup());
                 ValueInfo leftInfo = leftGoal.result(null);
                 ValueInfo rightInfo = rightGoal.result(null);
@@ -50,7 +56,7 @@ public class BinaryAdditionC extends BinaryC {
                 coercion.coerce(leftInfo, rightInfo, new BinaryCoercionRequestor() {
                     
                     public void intType() {
-                        builder.add(new SimpleType(builtins.intType()));
+                        builder.add(new SimpleTypeItem(intType));
                     }
                     
                     public void ints(long a, long b) {
@@ -58,7 +64,7 @@ public class BinaryAdditionC extends BinaryC {
                     }
                     
                     public void stringType() {
-                        builder.add(new SimpleType(builtins.stringType()));
+                        builder.add(new SimpleTypeItem(builtins.stringType()));
                     }
                     
                     public void strings(String a, String b) {

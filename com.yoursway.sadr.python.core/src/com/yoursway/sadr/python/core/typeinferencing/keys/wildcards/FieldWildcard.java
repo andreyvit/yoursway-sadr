@@ -1,5 +1,9 @@
 package com.yoursway.sadr.python.core.typeinferencing.keys.wildcards;
 
+import com.yoursway.sadr.blocks.foundation.types.Type;
+import com.yoursway.sadr.blocks.foundation.wildcards.AbstractWildcard;
+import com.yoursway.sadr.blocks.foundation.wildcards.Wildcard;
+
 public class FieldWildcard extends AbstractWildcard {
     
     private final String name;
@@ -21,6 +25,11 @@ public class FieldWildcard extends AbstractWildcard {
     
     public Wildcard receiver() {
         return receiver;
+    }
+    
+    public Type replaceWildcard(Type replacement) {
+        // TODO handle the field (?)
+        return receiver.replaceWildcard(replacement);
     }
     
 }

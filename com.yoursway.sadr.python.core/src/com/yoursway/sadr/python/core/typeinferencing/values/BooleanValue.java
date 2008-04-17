@@ -2,7 +2,10 @@ package com.yoursway.sadr.python.core.typeinferencing.values;
 
 import java.math.BigInteger;
 
-public class BooleanValue extends LiteralValue implements ValueTraits {
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
+
+public class BooleanValue extends AbstractValue implements ValueTraits {
     
     private final boolean value;
     public static final String TRUE = "True";

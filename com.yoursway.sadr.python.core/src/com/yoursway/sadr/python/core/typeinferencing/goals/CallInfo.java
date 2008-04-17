@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import com.yoursway.sadr.blocks.foundation.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 
 public class CallInfo {
     

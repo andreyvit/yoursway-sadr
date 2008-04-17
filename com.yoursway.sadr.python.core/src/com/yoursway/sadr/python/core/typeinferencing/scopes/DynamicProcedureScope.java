@@ -1,12 +1,12 @@
 package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
-import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
+import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
 public class DynamicProcedureScope extends ChildScope implements VariableLookup {

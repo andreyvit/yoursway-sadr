@@ -1,9 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.types;
 
-import java.util.Collection;
-
-import com.yoursway.sadr.python.core.runtime.PythonMethod;
-import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
+import com.yoursway.sadr.blocks.foundation.types.AbstractType;
+import com.yoursway.sadr.blocks.foundation.types.Type;
 
 public class ArrayType extends AbstractType {
     
@@ -24,12 +22,6 @@ public class ArrayType extends AbstractType {
     
     public String describe() {
         return component.describe() + "[]";
-    }
-    
-    public void findMethod(String name, MethodRequestor requestor) {
-    }
-    
-    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
     }
     
     @Override

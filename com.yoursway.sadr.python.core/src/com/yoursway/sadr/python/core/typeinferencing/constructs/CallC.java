@@ -14,6 +14,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
@@ -27,9 +29,8 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.CallInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.CallableReturnValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> implements CallsAffector {
     
@@ -110,7 +111,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> im
                 public void done(ContinuationScheduler requestor) {
                     ValueInfoBuilder builder = new ValueInfoBuilder();
                     for (ValueInfoGoal goal : retGoals)
-                        builder.addResultOf(goal, null);
+                        ValueInfoUtils.addResultOf(builder, goal, null);
                     continuation.consume(builder.build(), requestor);
                 }
                 

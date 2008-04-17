@@ -2,14 +2,16 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.blocks.foundation.RuntimeModel;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.core.propagation.PropagationTracker;
 import com.yoursway.sadr.core.propagation.PropagationTrackerImpl;
+import com.yoursway.sadr.python.core.runtime.PythonAnalysisSchema;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
@@ -89,6 +91,14 @@ public class RootScope extends AbstractScope {
     
     public PythonConstruct parentConstruct() {
         return null;
+    }
+    
+    public RuntimeModel runtimeModel() {
+        return model;
+    }
+    
+    public PythonAnalysisSchema schema() {
+        return model.schema();
     }
     
 }

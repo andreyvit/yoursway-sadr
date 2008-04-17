@@ -1,11 +1,10 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import com.yoursway.sadr.blocks.simple_types.PythonSimpleType;
-import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
+import com.yoursway.sadr.blocks.foundation.types.Type;
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
+import com.yoursway.sadr.blocks.simple_types.SimpleType;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
-import com.yoursway.sadr.python.core.typeinferencing.types.Type;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSet;
 
 public class TypeAnalyzer {
     
@@ -14,13 +13,14 @@ public class TypeAnalyzer {
     private boolean isString;
     
     public TypeAnalyzer(TypeSet typeSet, ClassLookup lookup) {
-        StandardTypes standard = lookup.standardTypes();
+        SimpleType intType = lookup.runtimeModelWithIntegerTypes().intType();
+        SimpleType stringType = lookup.standardTypes().stringType();
         for (Type type : typeSet.containedTypes())
-            if (type instanceof SimpleType) {
-                PythonSimpleType simpleType = ((SimpleType) type).dtlSimpleType();
-                if (simpleType == standard.intType())
+            if (type instanceof SimpleTypeItem) {
+                SimpleType simpleType = ((SimpleTypeItem) type).simpleType();
+                if (simpleType == intType)
                     isInt = true;
-                else if (simpleType == standard.stringType())
+                else if (simpleType == stringType)
                     isString = true;
             }
     }

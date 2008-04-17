@@ -1,20 +1,16 @@
 package com.yoursway.sadr.python.core.runtime.std;
 
-import com.yoursway.sadr.blocks.simple_types.PythonSimpleType;
+import com.yoursway.sadr.blocks.simple_types.SimpleType;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 
 public interface StandardTypes {
     
     PythonClass objectClass();
     
-    PythonSimpleType intType();
+    SimpleType stringType();
     
-    PythonSimpleType stringType();
+    SimpleType nilType();
     
-    PythonSimpleType nilType();
-    
-    PythonSimpleType boolType();
-    
-    PythonSimpleType longType();
+    SimpleType boolType();
     
 }

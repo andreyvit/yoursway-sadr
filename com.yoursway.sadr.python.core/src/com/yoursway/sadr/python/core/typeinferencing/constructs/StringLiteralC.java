@@ -2,13 +2,13 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 
-import com.yoursway.sadr.blocks.simple_types.PythonSimpleType;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.simple_types.SimpleType;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 
 public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
@@ -20,8 +20,8 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
-        PythonSimpleType t = staticContext().builtins().stringType();
-        builder.add(new SimpleType(t), new StringValue(stringValue()));
+        SimpleType t = staticContext().builtins().stringType();
+        builder.add(new SimpleTypeItem(t), new StringValue(stringValue()));
         return continuation.consume(builder.build(), requestor);
     }
     

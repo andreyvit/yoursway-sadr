@@ -2,13 +2,13 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.ast.references.VariableReference;
 
-import com.yoursway.sadr.blocks.simple_types.PythonSimpleType;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.simple_types.SimpleType;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 
 public class BooleanLiteralC extends PythonConstructImpl<VariableReference> {
@@ -23,8 +23,8 @@ public class BooleanLiteralC extends PythonConstructImpl<VariableReference> {
         if (repr == null || !(repr.equals(BooleanValue.TRUE) || repr.equals(BooleanValue.FALSE)))
             throw new NullPointerException();
         ValueInfoBuilder builder = new ValueInfoBuilder();
-        PythonSimpleType t = staticContext().builtins().boolType();
-        builder.add(new SimpleType(t), new BooleanValue(repr.equals(BooleanValue.TRUE)));
+        SimpleType t = staticContext().builtins().boolType();
+        builder.add(new SimpleTypeItem(t), new BooleanValue(repr.equals(BooleanValue.TRUE)));
         return continuation.consume(builder.build(), requestor);
     }
     

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.common.collect.Lists;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
@@ -38,7 +39,7 @@ public final class MergeFieldsValueInfosContinuation implements Continuation {
     public void done(ContinuationScheduler requestor) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (ValueInfoGoal goal : goals)
-            builder.addResultOf(goal, null);
+            ValueInfoUtils.addResultOf(builder, goal, null);
         continuation.consume(builder.build(), requestor);
     }
     

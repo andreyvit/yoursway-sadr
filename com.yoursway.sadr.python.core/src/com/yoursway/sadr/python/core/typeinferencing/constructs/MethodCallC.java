@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
+import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
@@ -15,6 +15,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexAf
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 
 public class MethodCallC extends CallC implements IndexAffector {
     
@@ -36,7 +37,7 @@ public class MethodCallC extends CallC implements IndexAffector {
             
             public void done(ContinuationScheduler requestor) {
                 CollectingMethodRequestor rq = new CollectingMethodRequestor();
-                recvGoal.result(null).findMethod(name, rq);
+                ValueInfoUtils.findMethod(recvGoal.result(null), name, rq);
                 if (rq.anythingFound())
                     requestor.schedule(new CallablesReturnTypeCont(infoKind, arguments(), dc, rq.asArray(),
                             recvGoal.result(null), continuation));

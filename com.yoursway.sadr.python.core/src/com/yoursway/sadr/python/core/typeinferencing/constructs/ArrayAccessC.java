@@ -18,6 +18,7 @@ import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 
 public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpression> {
     
@@ -46,7 +47,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
             }
             
             public void done(ContinuationScheduler requestor) {
-                continuation.consume(nameGoal.result(null).unwrapArray(), requestor);
+                continuation.consume(ValueInfoUtils.unwrapArray(nameGoal.result(null)), requestor);
             }
             
         });

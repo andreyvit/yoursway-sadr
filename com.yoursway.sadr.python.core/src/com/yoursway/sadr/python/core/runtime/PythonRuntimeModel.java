@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.yoursway.sadr.blocks.foundation.RuntimeModel;
+import com.yoursway.sadr.blocks.integer_literals.IntegerTypesSupport;
+import com.yoursway.sadr.blocks.integer_literals.RuntimeModelWithIntegerTypes;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypesImpl;
@@ -27,7 +29,7 @@ import com.yoursway.utils.facelets.GemstoneDefinition;
 import com.yoursway.utils.facelets.GemstoneImpl;
 
 public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements ClassLookup, VariableLookup,
-        ProcedureLookup {
+        ProcedureLookup, RuntimeModel {
     
     private final Collection<PythonClass> klasses = new ArrayList<PythonClass>();
     
@@ -43,12 +45,16 @@ public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements Cl
     
     private final Map<String, PythonClass[]> methodToClasses = new HashMap<String, PythonClass[]>();
     
-    private final StandardTypes standardTypes = new StandardTypesImpl(this);
+    private final StandardTypes standardTypes;
     
     private final InstanceRegistrar instanceRegistrar = new InstanceRegistrarImpl();
     
-    public PythonRuntimeModel(GemstoneDefinition<RuntimeModel> definition) {
+    private final PythonAnalysisSchema schema;
+    
+    public PythonRuntimeModel(PythonAnalysisSchema schema, GemstoneDefinition<RuntimeModel> definition) {
         super(definition);
+        this.schema = schema;
+        standardTypes = new StandardTypesImpl(this, schema);
     }
     
     public PythonClass lookupClass(String name) {
@@ -155,6 +161,18 @@ public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements Cl
     public void addModule(PythonModule module) {
         modules.add(module);
         namesToModules.put(module.name(), module);
+    }
+    
+    public IntegerTypesSupport integerTypesSupport() {
+        return schema.integerTypesSupport;
+    }
+    
+    public RuntimeModelWithIntegerTypes runtimeModelWithIntegerTypes() {
+        return schema.integerTypesSupport.facelet(this);
+    }
+    
+    public PythonAnalysisSchema schema() {
+        return schema;
     }
     
 }
