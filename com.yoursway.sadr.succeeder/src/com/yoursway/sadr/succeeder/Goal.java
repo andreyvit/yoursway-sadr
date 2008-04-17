@@ -1,27 +1,28 @@
-/**
- * 
- */
 package com.yoursway.sadr.succeeder;
 
+import java.util.Collection;
+
 /**
- * Simple implementation of IGoal:
- * <ul>
- * <li>all subgoals return values of the same type</li>
- * <li>goal awaits finishing of all subgoals</li>
- * </ul>
- * <p>
- * To use this implementation, just inherit this class and implement
- * <code>preRun</code> and <code>subtasksFinished</code> methods.
- * <p>
- * <code>resultAcceptor</code> and <code>scheduler</code> variables are
- * available and may be used to return values and schedule tasks.
- */
+ * 
+ * */
 public abstract class Goal implements IGoal {
 
 	private IScheduler scheduler;
 
-	protected IScheduler getScheduler() {
-		return scheduler;
+	protected void schedule(IGoal goal) {
+		scheduler.schedule(goal);
+	}
+
+	protected void schedule(IGoal goal, ISchedulingStrategy strategy) {
+		scheduler.schedule(goal, strategy);
+	}
+
+	protected void schedule(Collection<IGoal> goals, ISchedulingStrategy strategy) {
+		scheduler.schedule(goals, strategy);
+	}
+	
+	protected <T extends IGrade<T>> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
+		return scheduler.checkpoint(acceptor, grade);
 	}
 
 	public final void isCanceled() {
@@ -31,7 +32,4 @@ public abstract class Goal implements IGoal {
 		this.scheduler = scheduler;
 	}
 
-	public DumbReturnValue flush() {
-		return null;
-	}
 }

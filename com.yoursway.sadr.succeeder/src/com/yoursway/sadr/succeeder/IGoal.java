@@ -1,6 +1,5 @@
 package com.yoursway.sadr.succeeder;
 
-
 /**
  * A goal that yields a result of type ResultT and may schedule subgoals.
  * <p>
@@ -44,6 +43,9 @@ package com.yoursway.sadr.succeeder;
  * <p>
  * Simply saying, every subgoal is fully finished before <code>postRun</code>
  * of parent is called, but subgoals may run in any order and even concurrently.
+ * 
+ * Goal can produce multiple results sequentially. Each next result must have
+ * higher grade than a previous.
  */
 public interface IGoal {
 	/**
@@ -67,8 +69,8 @@ public interface IGoal {
 	 * Can produce results. Can schedule subtasks.
 	 */
 	void preRun();
-	
-	DumbReturnValue flush();
+
+	CheckpointToken flush();
 
 	/**
 	 * Called when parent decided to cancel this task.

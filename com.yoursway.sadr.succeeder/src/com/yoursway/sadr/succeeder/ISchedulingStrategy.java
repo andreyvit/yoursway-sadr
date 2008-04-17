@@ -1,10 +1,14 @@
 package com.yoursway.sadr.succeeder;
 
 /**
- * The bigger is priority the earlier it will run. 
- */
+ * Goals scheduling strategy. Defines the way {@link IScheduler}
+ * executes goals.  
+ * */
 public interface ISchedulingStrategy {
 
+	/**
+	 * @return priority of the specified goal.
+	 * */
 	int getPriority(IGoal goal);
 
 }

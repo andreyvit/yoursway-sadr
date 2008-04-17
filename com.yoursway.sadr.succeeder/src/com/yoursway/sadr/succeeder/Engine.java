@@ -17,11 +17,11 @@ public class Engine implements IScheduler {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends IGrade<T>> DumbReturnValue checkpoint(IAcceptor acceptor, IGrade<T> grade) {
+	public <T extends IGrade<T>> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
 		T previousGrade = (T) acceptors.get(acceptor);
 		assert previousGrade == null || previousGrade.compareTo((T) grade) < 0;
 		acceptors.put(acceptor, grade);
-		return new DumbReturnValue();
+		return CheckpointToken.instance();
 	}
 
 	public void schedule(IGoal goal) {
@@ -40,8 +40,6 @@ public class Engine implements IScheduler {
 	}
 
 	public void run() {
-		if (queue.isEmpty())
-			return;
 		while (!queue.isEmpty()) {
 			passGoals();
 			passCheckpoints();
@@ -61,8 +59,9 @@ public class Engine implements IScheduler {
 			if (peek.priority != currentPriority) break;
 			generation.add(queue.poll());
 		}
-		for (PrioritizedGoal goal : generation) {
-			goal.goal.preRun();
+		for (PrioritizedGoal pGoal : generation) {
+			pGoal.goal.setScheduler(this);
+			pGoal.goal.preRun();
 		}
 	}
 
