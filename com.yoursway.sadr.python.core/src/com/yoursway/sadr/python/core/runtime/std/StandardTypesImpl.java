@@ -1,11 +1,11 @@
 package com.yoursway.sadr.python.core.runtime.std;
 
+import com.yoursway.sadr.blocks.simple_types.PythonSimpleType;
 import com.yoursway.sadr.python.core.runtime.PythonBuiltinClassDefinition;
 import com.yoursway.sadr.python.core.runtime.PythonBuiltinProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
 
 public class StandardTypesImpl implements StandardTypes {
     

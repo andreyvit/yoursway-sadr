@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
+import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -16,7 +17,6 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
-import com.yoursway.sadr.python.core.typeinferencing.values.IntegerValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 
 public class BinaryAdditionC extends BinaryC {

@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
+import com.yoursway.sadr.blocks.simple_types.PythonSimpleType;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;

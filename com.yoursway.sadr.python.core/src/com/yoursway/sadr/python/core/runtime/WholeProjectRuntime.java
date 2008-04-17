@@ -14,6 +14,10 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
+import com.yoursway.sadr.blocks.foundation.AnalysisSchemaBuilderImpl;
+import com.yoursway.sadr.blocks.integer_literals.IntegerTypesBuildingBlock;
+import com.yoursway.sadr.blocks.integer_literals.IntegerTypesConfig;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypesBuildingBlock;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.CallDoneContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -88,7 +92,12 @@ public class WholeProjectRuntime {
         engine = new AnalysisEngine();
         asts.clear();
         final ISourceParser parser = createSourceParser();
-        runtimeModel = new PythonRuntimeModel();
+        
+        AnalysisSchemaBuilderImpl builder = new AnalysisSchemaBuilderImpl();
+        builder.addBuildingBlock(new SimpleTypesBuildingBlock());
+        builder.addBuildingBlock(new IntegerTypesBuildingBlock(new IntegerTypesConfig("int", "long")));
+        runtimeModel = new PythonRuntimeModel(builder.runtimeModelDef());
+        
         contributionsManager = new FileContributionsManager(runtimeModel);
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
         final PythonRuntimeModelCreator creator = new PythonRuntimeModelCreator();

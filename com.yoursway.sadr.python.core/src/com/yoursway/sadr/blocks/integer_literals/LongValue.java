@@ -1,6 +1,9 @@
-package com.yoursway.sadr.python.core.typeinferencing.values;
+package com.yoursway.sadr.blocks.integer_literals;
 
 import java.math.BigInteger;
+
+import com.yoursway.sadr.python.core.typeinferencing.values.LiteralValue;
+import com.yoursway.sadr.python.core.typeinferencing.values.ValueTraits;
 
 public class LongValue extends LiteralValue implements ValueTraits {
     

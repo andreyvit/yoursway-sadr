@@ -2,14 +2,14 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 
+import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
+import com.yoursway.sadr.blocks.simple_types.PythonSimpleType;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
-import com.yoursway.sadr.python.core.typeinferencing.values.IntegerValue;
 
 public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     
