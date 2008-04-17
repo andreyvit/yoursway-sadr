@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
+import com.yoursway.sadr.blocks.foundation.types.Type;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
@@ -12,12 +16,10 @@ import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.typeinferencing.goals.CallableReturnValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
-import com.yoursway.sadr.python.core.typeinferencing.types.Type;
+import com.yoursway.sadr.python.core.typeinferencing.types.TypeUtils;
 
 /**
  * Encapsulates all functionality specific for type analysis on Python
@@ -45,9 +47,9 @@ public class PythonTypeAnalysis implements AnalysisProvider {
                 final boolean[] modFound = new boolean[] { false };
                 
                 if (left.equals(builtins.stringType()))
-                    builder.add(new SimpleType(builtins.stringType()));
+                    builder.add(new SimpleTypeItem(builtins.stringType()));
                 else if (left instanceof InstanceType) {
-                    ((InstanceType) left).findMethod("__mod__", new MethodRequestor() {
+                    TypeUtils.findMethod(left, "__mod__", new MethodRequestor() {
                         public void accept(PythonMethod method) {
                             ValueInfo leftArgInfo = new ValueInfoBuilder().add(left).build();
                             modFound[0] = true;
@@ -65,7 +67,7 @@ public class PythonTypeAnalysis implements AnalysisProvider {
             if (!leftNonHandledTypes.isEmpty()) {
                 for (final Type right : rightInfo.containedTypes()) {
                     if (right instanceof InstanceType) {
-                        right.findMethod("__rmod__", new MethodRequestor() {
+                        TypeUtils.findMethod(right, "__rmod__", new MethodRequestor() {
                             public void accept(PythonMethod method) {
                                 ValueInfo rightArgInfo = new ValueInfoBuilder().add(right).build();
                                 ValueInfoGoal g = new CallableReturnValueInfoGoal(rightArgInfo, method,
@@ -88,7 +90,7 @@ public class PythonTypeAnalysis implements AnalysisProvider {
         public void done(ContinuationScheduler requestor) {
             ValueInfoBuilder vib = new ValueInfoBuilder();
             for (ValueInfoGoal g : goals)
-                vib.addResultOf(g, null);
+                ValueInfoUtils.addResultOf(vib, g, null);
             types = vib.build();
             
         }

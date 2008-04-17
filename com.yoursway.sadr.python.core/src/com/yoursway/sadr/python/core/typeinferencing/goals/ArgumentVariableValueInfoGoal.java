@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
-import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
-import static com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory.emptyTypeSet;
+import static com.yoursway.sadr.blocks.foundation.typesets.TypeSetFactory.emptyTypeSet;
+import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,12 @@ import java.util.Set;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSetBuilder;
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSetFactory;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.foundation.wildcards.Wildcard;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
@@ -30,13 +36,9 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSet;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetBuilder;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory;
 
 public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
@@ -134,7 +136,7 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         public void done(ContinuationScheduler requestor) {
             ValueInfoBuilder builder = new ValueInfoBuilder();
             for (ValueInfoGoal goal : valueGoals)
-                builder.addResultOf(goal, thing());
+                ValueInfoUtils.addResultOf(builder, goal, thing());
             if (!builder.looksEmpty())
                 continuation.consume(builder.build(), requestor);
             else

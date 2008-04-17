@@ -10,6 +10,7 @@ import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.compiler.problem.IProblemReporter;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
+import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.CallDoneContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -27,7 +28,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalReq
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
-import com.yoursway.sadr.python.core.typeinferencing.values.Value;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 
 public class PythonEvalResolver {

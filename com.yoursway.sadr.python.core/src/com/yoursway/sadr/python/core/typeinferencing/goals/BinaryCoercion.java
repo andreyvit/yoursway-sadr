@@ -1,8 +1,9 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.python.core.typeinferencing.values.Value;
-import com.yoursway.sadr.python.core.typeinferencing.values.ValueTraits;
 
 public class BinaryCoercion {
     

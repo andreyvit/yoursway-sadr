@@ -3,6 +3,7 @@
  */
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Continuation;
@@ -36,7 +37,7 @@ public final class MergeConstructsValueInfosContinuation implements Continuation
     public void done(ContinuationScheduler requestor) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         for (ValueInfoGoal goal : goals)
-            builder.addResultOf(goal, thing);
+            ValueInfoUtils.addResultOf(builder, goal, thing);
         continuation.consume(builder.build(), requestor);
     }
     

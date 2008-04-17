@@ -2,10 +2,10 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 
 public class DtlArgumentVariable extends PythonVariable {
     

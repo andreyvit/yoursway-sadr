@@ -3,19 +3,19 @@
  */
 package com.yoursway.sadr.python.core.runtime.std;
 
-import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.createResult;
+import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.createResult;
 import static com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSetFactory.valueSetWith;
 
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSetFactory;
+import com.yoursway.sadr.blocks.foundation.typesets.internal.SingleTypeSet;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonBuiltinMethod;
 import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetFactory;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.internal.SingleTypeSet;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
-import com.yoursway.sadr.python.core.typeinferencing.values.Value;
 
 public final class NewMethod extends PythonBuiltinMethod {
     

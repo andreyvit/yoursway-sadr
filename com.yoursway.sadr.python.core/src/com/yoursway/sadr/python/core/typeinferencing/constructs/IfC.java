@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
+import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 
+import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
@@ -18,8 +20,6 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.values.Value;
-import com.yoursway.sadr.python.core.typeinferencing.values.ValueTraits;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 
 public class IfC extends PythonConstructImpl<IfStatement> {

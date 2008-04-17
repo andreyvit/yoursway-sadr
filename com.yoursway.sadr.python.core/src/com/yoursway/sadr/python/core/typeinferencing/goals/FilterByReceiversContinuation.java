@@ -4,6 +4,8 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.types.Type;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
@@ -15,7 +17,6 @@ import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.types.Type;
 
 public class FilterByReceiversContinuation implements Continuation {
     

@@ -4,14 +4,15 @@ import java.math.BigInteger;
 
 import org.eclipse.dltk.ast.expressions.BigNumericLiteral;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.integer_literals.LongValue;
+import com.yoursway.sadr.blocks.integer_literals.RuntimeModelWithIntegerTypes;
+import com.yoursway.sadr.blocks.simple_types.SimpleType;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
-import com.yoursway.sadr.python.core.typeinferencing.values.LongValue;
 
 public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
     
@@ -23,9 +24,11 @@ public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         ValueInfoBuilder builder = new ValueInfoBuilder();
         
-        PythonSimpleType t = staticContext().builtins().longType();
+        RuntimeModelWithIntegerTypes modelWithIntegerTypes = staticContext().schema().integerTypesSupport
+                .facelet(staticContext().runtimeModel());
+        SimpleType t = modelWithIntegerTypes.longType();
         BigInteger v = node.getLongValue();
-        builder.add(new SimpleType(t), new LongValue(v));
+        builder.add(new SimpleTypeItem(t), new LongValue(v));
         
         return continuation.consume(builder.build(), requestor);
     }

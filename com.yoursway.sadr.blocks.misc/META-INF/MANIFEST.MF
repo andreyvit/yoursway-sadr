@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SADR Building Blocks (Misc)
+Bundle-SymbolicName: com.yoursway.sadr.blocks.misc
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: YourSway
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: com.yoursway.sadr.blocks.foundation;bundle-version="1.0.0",
+ com.google.collections;bundle-version="1.0.0",
+ com.yoursway.sadr.core;bundle-version="1.0.0",
+ com.yoursway.sadr.engine;bundle-version="1.0.0"
+Export-Package: com.yoursway.sadr.blocks.integer_literals,
+ com.yoursway.sadr.blocks.simple_types

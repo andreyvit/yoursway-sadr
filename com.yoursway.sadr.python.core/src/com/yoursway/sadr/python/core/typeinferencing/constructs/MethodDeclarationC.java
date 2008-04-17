@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import static com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo.emptyValueInfo;
+import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 

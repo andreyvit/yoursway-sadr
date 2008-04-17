@@ -8,7 +8,6 @@ import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.ruby.core.runtime.RubyLocalVariable;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
-import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.BackwardVariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
@@ -27,8 +26,6 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
     }
     
     private ContinuationRequestorCalledToken evaluateWithFlow(ContinuationScheduler requestor) {
-        Scope scope = variable.scope();
-        BackwardVariableRequest request = new BackwardVariableRequest(variable, kind);
         SimpleContinuation withoutFlowContinuation = new SimpleContinuation() {
             
             public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
@@ -36,11 +33,14 @@ public class LocalVariableValueInfoGoal extends AbstractValueInfoGoal {
             }
             
         };
-        return scope.propagationTracker().traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
-                request,
-                requestor,
-                new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
-                        new TryAnotherThingContinuation(withoutFlowContinuation, this)));
+        return withoutFlowContinuation.run(requestor);
+        //        Scope scope = variable.scope();
+        //        BackwardVariableRequest request = new BackwardVariableRequest(variable, kind);
+        //        return scope.propagationTracker().traverseBackwardByControlFlowFromLastConstructBoundGoalConstruct(
+        //                request,
+        //                requestor,
+        //                new DelayedAssignmentsContinuation(request, new EmptyDynamicContext(), kind,
+        //                        new TryAnotherThingContinuation(withoutFlowContinuation, this)));
     }
     
     private ContinuationRequestorCalledToken evaluateWithoutFlow(ContinuationScheduler requestor) {

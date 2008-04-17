@@ -2,16 +2,16 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
+import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.types.SimpleType;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
-import com.yoursway.sadr.python.core.typeinferencing.values.Value;
-import com.yoursway.sadr.python.core.typeinferencing.values.ValueTraits;
 
 public class PythonValueAnalysis implements AnalysisProvider {
     
@@ -28,7 +28,7 @@ public class PythonValueAnalysis implements AnalysisProvider {
                 rightInfo = rightGoal.result(null);
                 final StandardTypes builtins = context.staticContext().builtins();
                 final ValueInfoBuilder builder = new ValueInfoBuilder();
-                builder.add(new SimpleType(builtins.stringType()));
+                builder.add(new SimpleTypeItem(builtins.stringType()));
                 
                 for (Value left : leftInfo.containedValues()) {
                     ValueTraits lt = left.traits();

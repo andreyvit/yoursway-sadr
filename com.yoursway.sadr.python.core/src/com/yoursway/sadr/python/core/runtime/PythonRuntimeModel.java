@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.yoursway.sadr.blocks.foundation.RuntimeModel;
+import com.yoursway.sadr.blocks.integer_literals.IntegerTypesSupport;
+import com.yoursway.sadr.blocks.integer_literals.RuntimeModelWithIntegerTypes;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypesImpl;
@@ -22,8 +25,11 @@ import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
+import com.yoursway.utils.facelets.GemstoneDefinition;
+import com.yoursway.utils.facelets.GemstoneImpl;
 
-public class PythonRuntimeModel implements ClassLookup, VariableLookup, ProcedureLookup {
+public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements ClassLookup, VariableLookup,
+        ProcedureLookup, RuntimeModel {
     
     private final Collection<PythonClass> klasses = new ArrayList<PythonClass>();
     
@@ -37,18 +43,18 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     
     private final Map<String, PythonProcedure> namesToProcedures = new HashMap<String, PythonProcedure>();
     
-    private final Collection<PythonSimpleType> simpleTypes = new ArrayList<PythonSimpleType>();
-    
-    private final Map<String, PythonSimpleType> namesToSimpleTypes = new HashMap<String, PythonSimpleType>();
-    
     private final Map<String, PythonClass[]> methodToClasses = new HashMap<String, PythonClass[]>();
     
-    private final StandardTypes standardTypes = new StandardTypesImpl(this);
+    private final StandardTypes standardTypes;
     
     private final InstanceRegistrar instanceRegistrar = new InstanceRegistrarImpl();
     
-    public PythonRuntimeModel() {
-        System.out.println();
+    private final PythonAnalysisSchema schema;
+    
+    public PythonRuntimeModel(PythonAnalysisSchema schema, GemstoneDefinition<RuntimeModel> definition) {
+        super(definition);
+        this.schema = schema;
+        standardTypes = new StandardTypesImpl(this, schema);
     }
     
     public PythonClass lookupClass(String name) {
@@ -78,11 +84,6 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
             if (procedure.matches(prefix))
                 result.add(procedure);
         return result.toArray(new PythonProcedure[result.size()]);
-    }
-    
-    public void addSimpleType(PythonSimpleType simpleType) {
-        simpleTypes.add(simpleType);
-        namesToSimpleTypes.put(simpleType.name(), simpleType);
     }
     
     public StandardTypes standardTypes() {
@@ -160,6 +161,18 @@ public class PythonRuntimeModel implements ClassLookup, VariableLookup, Procedur
     public void addModule(PythonModule module) {
         modules.add(module);
         namesToModules.put(module.name(), module);
+    }
+    
+    public IntegerTypesSupport integerTypesSupport() {
+        return schema.integerTypesSupport;
+    }
+    
+    public RuntimeModelWithIntegerTypes runtimeModelWithIntegerTypes() {
+        return schema.integerTypesSupport.facelet(this);
+    }
+    
+    public PythonAnalysisSchema schema() {
+        return schema;
     }
     
 }

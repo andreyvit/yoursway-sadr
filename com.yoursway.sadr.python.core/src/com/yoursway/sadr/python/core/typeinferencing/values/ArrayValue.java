@@ -3,6 +3,8 @@ package com.yoursway.sadr.python.core.typeinferencing.values;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 

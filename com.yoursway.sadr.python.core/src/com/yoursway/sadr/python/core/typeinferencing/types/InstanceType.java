@@ -1,10 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.types;
 
-import java.util.Collection;
-
+import com.yoursway.sadr.blocks.foundation.types.AbstractType;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
-import com.yoursway.sadr.python.core.runtime.PythonMethod;
-import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 
 public class InstanceType extends AbstractType {
     
@@ -21,14 +18,6 @@ public class InstanceType extends AbstractType {
     @Override
     public String toString() {
         return klass.toString();
-    }
-    
-    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
-        klass.findMethodsByPrefix(prefix, methods);
-    }
-    
-    public void findMethod(String name, MethodRequestor requestor) {
-        klass.findMethod(name, requestor);
     }
     
     public String describe() {

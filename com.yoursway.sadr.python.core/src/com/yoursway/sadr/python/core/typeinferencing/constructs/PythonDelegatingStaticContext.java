@@ -5,10 +5,12 @@ import java.util.Collection;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
+import com.yoursway.sadr.blocks.foundation.RuntimeModel;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.core.propagation.PropagationTracker;
+import com.yoursway.sadr.python.core.runtime.PythonAnalysisSchema;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
@@ -84,6 +86,14 @@ public class PythonDelegatingStaticContext implements PythonStaticContext {
     
     public Scope nearestScope() {
         return delegateTo.nearestScope();
+    }
+    
+    public RuntimeModel runtimeModel() {
+        return delegateTo.runtimeModel();
+    }
+    
+    public PythonAnalysisSchema schema() {
+        return delegateTo.schema();
     }
     
 }

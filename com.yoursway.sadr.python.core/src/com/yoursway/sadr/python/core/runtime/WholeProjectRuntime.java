@@ -88,7 +88,10 @@ public class WholeProjectRuntime {
         engine = new AnalysisEngine();
         asts.clear();
         final ISourceParser parser = createSourceParser();
-        runtimeModel = new PythonRuntimeModel();
+        
+        PythonAnalysisSchema schema = new PythonAnalysisSchema();
+        runtimeModel = schema.newRuntimeModel();
+        
         contributionsManager = new FileContributionsManager(runtimeModel);
         rootScope = new RootScope(runtimeModel, contributionsManager, contributionsManager);
         final PythonRuntimeModelCreator creator = new PythonRuntimeModelCreator();

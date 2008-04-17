@@ -21,6 +21,7 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.parser.ast.expressions.CallHolder;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.ASTUtils;
@@ -33,7 +34,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicCont
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
 
@@ -204,7 +205,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
                 InfoKind.TYPE);
         engine.evaluate(goal);
         ValueInfo types = goal.roughResult();
-        for (PythonMethod method : types.findMethodsByPrefix(prefix))
+        for (PythonMethod method : ValueInfoUtils.findMethodsByPrefix(types, prefix))
             reportMethod(method, 4242);
     }
     

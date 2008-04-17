@@ -1,32 +1,29 @@
 package com.yoursway.sadr.python.core.runtime.std;
 
+import com.yoursway.sadr.blocks.simple_types.SimpleType;
+import com.yoursway.sadr.python.core.runtime.PythonAnalysisSchema;
 import com.yoursway.sadr.python.core.runtime.PythonBuiltinClassDefinition;
 import com.yoursway.sadr.python.core.runtime.PythonBuiltinProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.runtime.PythonSimpleType;
 
 public class StandardTypesImpl implements StandardTypes {
     
     // ELLIPSIS -> OPTIONAL
     
     private final PythonClass objectClass;
-    private final PythonSimpleType intType;
-    private final PythonSimpleType stringType;
-    private final PythonSimpleType nilType;
-    private final PythonSimpleType boolType;
-    private final PythonSimpleType longType;
+    private final SimpleType stringType;
+    private final SimpleType nilType;
+    private final SimpleType boolType;
     
-    public StandardTypesImpl(PythonRuntimeModel model) {
+    public StandardTypesImpl(PythonRuntimeModel model, PythonAnalysisSchema schema) {
         objectClass = model.lookupClass("object");
         new PythonBuiltinClassDefinition(objectClass, null);
         
-        intType = new PythonSimpleType(model, "int");
-        stringType = new PythonSimpleType(model, "str");
-        nilType = new PythonSimpleType(model, "None");
-        boolType = new PythonSimpleType(model, "bool");
-        longType = new PythonSimpleType(model, "long");
+        stringType = schema.simpleTypesSupport.newSimpleType(model, "str");
+        nilType = schema.simpleTypesSupport.newSimpleType(model, "None");
+        boolType = schema.simpleTypesSupport.newSimpleType(model, "bool");
         
         //        new PythonBuiltinMethod(objectClass.metaClass(), "subclass", new PythonCallableArgument(
         //                "subclass_name", PythonCallableArgument.Usage.REQUIRED), new PythonCallableArgument(
@@ -157,24 +154,16 @@ public class StandardTypesImpl implements StandardTypes {
         return objectClass;
     }
     
-    public PythonSimpleType intType() {
-        return intType;
-    }
-    
-    public PythonSimpleType stringType() {
+    public SimpleType stringType() {
         return stringType;
     }
     
-    public PythonSimpleType nilType() {
+    public SimpleType nilType() {
         return nilType;
     }
     
-    public PythonSimpleType boolType() {
+    public SimpleType boolType() {
         return boolType;
-    }
-    
-    public PythonSimpleType longType() {
-        return longType;
     }
     
 }

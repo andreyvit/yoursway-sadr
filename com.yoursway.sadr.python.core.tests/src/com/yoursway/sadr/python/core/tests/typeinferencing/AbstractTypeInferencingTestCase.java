@@ -42,6 +42,7 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
@@ -58,8 +59,8 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 
 public abstract class AbstractTypeInferencingTestCase {
@@ -428,10 +429,10 @@ public abstract class AbstractTypeInferencingTestCase {
             engine.evaluate(goal);
             ValueInfo result = goal.roughResult();
             AnyMethodRequestor requestor = new AnyMethodRequestor();
-            result.findMethod(methodName, requestor);
+            ValueInfoUtils.findMethod(result, methodName, requestor);
             
             MethodNamesRequestor namesRequestor = new MethodNamesRequestor();
-            result.findMethodsByPrefix("", namesRequestor);
+            ValueInfoUtils.findMethodsByPrefix(result, "", namesRequestor);
             
             String prefix = expression + "." + methodName + "() : ";
             expected.append(prefix).append("yes").append('\n');

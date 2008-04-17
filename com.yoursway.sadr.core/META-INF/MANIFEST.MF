@@ -14,3 +14,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.sadr.core,
  com.yoursway.sadr.core.constructs,
  com.yoursway.sadr.core.propagation
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

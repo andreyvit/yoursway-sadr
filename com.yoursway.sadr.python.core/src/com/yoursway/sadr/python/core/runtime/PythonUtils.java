@@ -18,16 +18,16 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
+import com.yoursway.sadr.blocks.foundation.types.AbstractType;
+import com.yoursway.sadr.blocks.foundation.types.Type;
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSetBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
-import com.yoursway.sadr.python.core.typeinferencing.types.AbstractType;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
 import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
 import com.yoursway.sadr.python.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.python.core.typeinferencing.types.StubType;
-import com.yoursway.sadr.python.core.typeinferencing.types.Type;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSet;
-import com.yoursway.sadr.python.core.typeinferencing.typesets.TypeSetBuilder;
 
 public class PythonUtils {
     

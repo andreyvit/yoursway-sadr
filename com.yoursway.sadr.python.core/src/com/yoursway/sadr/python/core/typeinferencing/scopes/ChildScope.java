@@ -3,7 +3,9 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.blocks.foundation.RuntimeModel;
 import com.yoursway.sadr.core.propagation.PropagationTracker;
+import com.yoursway.sadr.python.core.runtime.PythonAnalysisSchema;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
@@ -82,6 +84,14 @@ public abstract class ChildScope extends AbstractScope {
     
     public PythonConstruct parentConstruct() {
         return parent.parentConstruct();
+    }
+    
+    public RuntimeModel runtimeModel() {
+        return parent.runtimeModel();
+    }
+    
+    public PythonAnalysisSchema schema() {
+        return parent.schema();
     }
     
 }

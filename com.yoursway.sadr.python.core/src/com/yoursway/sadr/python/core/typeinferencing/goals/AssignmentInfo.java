@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
+import com.yoursway.sadr.blocks.foundation.wildcards.Wildcard;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.Wildcard;
 
 /**
  * Example. The following Python call:
