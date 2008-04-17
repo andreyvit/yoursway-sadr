@@ -19,7 +19,9 @@ public class Engine implements IScheduler {
 	@SuppressWarnings("unchecked")
 	public <T extends IGrade<T>> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
 		T previousGrade = (T) acceptors.get(acceptor);
-		assert previousGrade == null || previousGrade.compareTo((T) grade) < 0;
+		if(previousGrade == null || previousGrade.compareTo((T) grade) < 0){
+			throw new IllegalArgumentException("Grade should increase for "+acceptor.getClass().getSimpleName());
+		}
 		acceptors.put(acceptor, grade);
 		return CheckpointToken.instance();
 	}

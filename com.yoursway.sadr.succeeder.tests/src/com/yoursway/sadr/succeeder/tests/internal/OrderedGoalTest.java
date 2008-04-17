@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
+import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.Goal;
 import com.yoursway.sadr.succeeder.IAcceptor;
@@ -78,6 +79,10 @@ public class OrderedGoalTest extends TestCase {
 
 		public void preRun() {
 			resultAcceptor.resultProduced(42);
+		}
+
+		public CheckpointToken flush() {
+			return checkpoint(resultAcceptor, Grade.DONE);
 		}
 
 	}

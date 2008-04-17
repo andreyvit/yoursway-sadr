@@ -8,7 +8,11 @@ import java.util.Collection;
 public abstract class Goal implements IGoal {
 
 	private IScheduler scheduler;
-
+	
+	protected IScheduler scheduler() {
+		return scheduler;
+	}
+	
 	protected void schedule(IGoal goal) {
 		scheduler.schedule(goal);
 	}
@@ -31,5 +35,4 @@ public abstract class Goal implements IGoal {
 	public final void setScheduler(IScheduler scheduler) {
 		this.scheduler = scheduler;
 	}
-
 }

@@ -5,8 +5,10 @@ package com.yoursway.sadr.succeeder.tests.internal;
 
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 class InstanceNumerator {
-	private static Map<Class<?>, Integer> instances;
+	private static Map<Class<?>, Integer> instances = Maps.newHashMap();
 
 	static int generateNumber(Class<?> klass) {
 		int value = 0;
