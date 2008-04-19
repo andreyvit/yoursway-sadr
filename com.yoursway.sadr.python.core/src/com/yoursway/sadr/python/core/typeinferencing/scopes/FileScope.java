@@ -15,6 +15,7 @@ import com.yoursway.sadr.python.core.runtime.PythonModule;
 import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
 
 public class FileScope extends LocalScope implements NodeLookup {
@@ -25,15 +26,23 @@ public class FileScope extends LocalScope implements NodeLookup {
     
     private final PythonModule module;
     
-    public FileScope(RootScope parent, PythonModule module, ISourceModule file, ModuleDeclaration node) {
-        super(parent, node);
+    private final PythonFileC construct;
+    
+    public FileScope(RootScope parent, PythonModule module, ISourceModule file, PythonFileC construct) {
+        super(parent, construct.node());
         this.module = module;
         this.file = file;
+        this.construct = construct;
     }
     
     @Override
     public ModuleDeclaration node() {
         return (ModuleDeclaration) super.node();
+    }
+    
+    @Override
+    public PythonFileC createConstruct() {
+        return construct;
     }
     
     public PythonModule module() {
