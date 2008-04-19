@@ -22,8 +22,8 @@ import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.contributions.FileContributionsManager;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.RootPythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.RootScope;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
@@ -40,9 +40,9 @@ public class WholeProjectRuntime {
             this.evalResolver = evalResolver;
         }
         
-        public ContinuationRequestorCalledToken add(final PythonConstruct root, ASTNode fakeParent,
+        public ContinuationRequestorCalledToken add(final RootPythonConstruct root, ASTNode fakeParent,
                 ContinuationScheduler scheduler) {
-            final FileScope fileScope = root.staticContext().nearestScope().fileScope();
+            final FileScope fileScope = root.innerStaticContext().nearestScope().fileScope();
             return creator.process(contributionsManager.createContext(fileScope), root, scheduler,
                     new SimpleContinuation() {
                         

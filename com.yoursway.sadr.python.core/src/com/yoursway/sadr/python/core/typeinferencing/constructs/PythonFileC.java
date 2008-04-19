@@ -11,7 +11,7 @@ import com.yoursway.sadr.python.core.runtime.PythonModule;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.RootScope;
 
-public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> {
+public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implements RootPythonConstruct {
     
     private final FileScope innerScope;
     
@@ -29,6 +29,10 @@ public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> {
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         throw new UnsupportedOperationException();
+    }
+    
+    public PythonStaticContext innerStaticContext() {
+        return innerContext();
     }
     
 }
