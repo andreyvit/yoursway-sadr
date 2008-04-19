@@ -24,7 +24,6 @@ public class BackPropagationTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
     
-
     @Test
     public void multipleContexts() throws Exception {
         runTest();
@@ -35,7 +34,7 @@ public class BackPropagationTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
     
-    @Test
+    @Test(timeout = 2000)
     public void cyclicCalls() throws Exception {
         runTest();
     }
