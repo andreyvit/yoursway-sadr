@@ -6,12 +6,11 @@ import java.util.List;
 import com.yoursway.sadr.engine.AbstractGoal;
 import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
@@ -112,9 +111,8 @@ public class MethodCallersGoal extends AbstractGoal {
                         InfoKind.TYPE);
         }
         
-        public void provideSubgoals(SubgoalRequestor requestor) {
-            for (Goal goal : goals)
-                requestor.subgoal(goal);
+        public Goal[] provideSubgoals() {
+            return goals;
         }
         
         public void done(ContinuationScheduler requestor) {

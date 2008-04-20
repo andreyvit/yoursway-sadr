@@ -9,11 +9,10 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.core.propagation.ConstructBoundGoal;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
@@ -108,8 +107,8 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
                     
                     ValueInfoGoal argGoal = new ExpressionValueInfoGoal(arg, dc, argg.infoKind());
                     
-                    public void provideSubgoals(SubgoalRequestor requestor) {
-                        requestor.subgoal(argGoal);
+                    public Goal[] provideSubgoals() {
+                        return new Goal[] { argGoal };
                     }
                     
                     public void done(ContinuationScheduler requestor) {

@@ -20,7 +20,6 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.CallsAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.CallsRequest;
@@ -77,11 +76,12 @@ public abstract class CallC extends RubyConstructImpl<CallExpression> implements
             //            }
         }
         
-        public void provideSubgoals(SubgoalRequestor requestor) {
+        public Goal[] provideSubgoals() {
+            ArrayList<Goal> allGoals = new ArrayList<Goal>();
             for (List<ValueInfoGoal> l : argGoals.values()) {
-                for (Goal g : l)
-                    requestor.subgoal(g);
+                allGoals.addAll(l);
             }
+            return allGoals.toArray(new Goal[] {});
         }
         
         public void done(ContinuationScheduler requestor) {
@@ -104,9 +104,8 @@ public abstract class CallC extends RubyConstructImpl<CallExpression> implements
                     }
                 }
                 
-                public void provideSubgoals(SubgoalRequestor requestor) {
-                    for (Goal goal : retGoals)
-                        requestor.subgoal(goal);
+                public Goal[] provideSubgoals() {
+                    return retGoals;
                 }
                 
                 public void done(ContinuationScheduler requestor) {

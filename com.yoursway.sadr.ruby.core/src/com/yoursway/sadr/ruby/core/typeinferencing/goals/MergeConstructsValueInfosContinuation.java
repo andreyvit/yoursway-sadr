@@ -9,7 +9,6 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 
@@ -28,9 +27,8 @@ public final class MergeConstructsValueInfosContinuation implements Continuation
             goals[i] = new ExpressionValueInfoGoal(constructs[i], dc, kind);
     }
     
-    public void provideSubgoals(SubgoalRequestor requestor) {
-        for (Goal goal : goals)
-            requestor.subgoal(goal);
+    public Goal[] provideSubgoals() {
+        return goals;
     }
     
     public void done(ContinuationScheduler requestor) {

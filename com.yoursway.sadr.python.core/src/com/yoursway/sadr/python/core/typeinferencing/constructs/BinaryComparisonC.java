@@ -14,8 +14,8 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercion;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercionRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
@@ -40,9 +40,8 @@ public class BinaryComparisonC extends BinaryC {
             
             private final ValueInfoGoal rightGoal = new ExpressionValueInfoGoal(rightArg, dc, infoKind);
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                requestor.subgoal(leftGoal);
-                requestor.subgoal(rightGoal);
+            public Goal[] provideSubgoals() {
+                return new Goal[] { leftGoal, rightGoal };
             }
             
             public void done(ContinuationScheduler requestor) {

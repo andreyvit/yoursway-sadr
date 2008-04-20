@@ -17,7 +17,6 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
@@ -85,8 +84,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             callersGoal = new MethodCallersGoal(callable, megapack.searchService());
         }
         
-        public void provideSubgoals(SubgoalRequestor requestor) {
-            requestor.subgoal(callersGoal);
+        public Goal[] provideSubgoals() {
+            return new Goal[] { callersGoal };
         }
         
         public void done(ContinuationScheduler requestor) {
@@ -121,9 +120,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
                 valueGoals[i] = new ExpressionValueInfoGoal(cs[i], new EmptyDynamicContext(), kind);
         }
         
-        public void provideSubgoals(SubgoalRequestor requestor) {
-            for (Goal goal : valueGoals)
-                requestor.subgoal(goal);
+        public Goal[] provideSubgoals() {
+            return valueGoals;
         }
         
         public void done(ContinuationScheduler requestor) {
@@ -146,7 +144,8 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
             this.continuation = continuation;
         }
         
-        public void provideSubgoals(SubgoalRequestor requestor) {
+        public Goal[] provideSubgoals() {
+            return new Goal[] {};
         }
         
         public void done(ContinuationScheduler requestor) {

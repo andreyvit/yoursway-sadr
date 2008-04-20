@@ -52,7 +52,7 @@
 //                ValueInfoGoal startGoal = new ExpressionValueInfoGoal(scope, leftBound, InfoKind.VALUE);
 //                ValueInfoGoal endGoal = new ExpressionValueInfoGoal(scope, rightBound, InfoKind.VALUE);
 //                
-//                public void provideSubgoals(SubgoalRequestor requestor) {
+//                public Goal[] provideSubgoals() {
 //                    requestor.subgoal(startGoal);
 //                    requestor.subgoal(endGoal);
 //                }

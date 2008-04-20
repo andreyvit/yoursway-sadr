@@ -74,7 +74,7 @@ public class ForCounterVariableValueInfoGoal extends AbstractValueInfoGoal {
     //                ValueInfoGoal endGoal = new ExpressionValueInfoGoal(toC, new EmptyDynamicContext(),
     //                        InfoKind.VALUE);
     //                
-    //                public void provideSubgoals(SubgoalRequestor requestor) {
+    //                public Goal[] provideSubgoals() {
     //                    requestor.subgoal(startGoal);
     //                    requestor.subgoal(endGoal);
     //                }

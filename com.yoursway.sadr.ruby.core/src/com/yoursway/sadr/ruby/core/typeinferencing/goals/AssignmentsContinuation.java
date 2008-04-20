@@ -8,7 +8,6 @@ import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
 
@@ -34,9 +33,8 @@ public final class AssignmentsContinuation extends AbstractContinuation {
         }
     }
     
-    public final void provideSubgoals(SubgoalRequestor requestor) {
-        for (Goal goal : goals)
-            requestor.subgoal(goal);
+    public final Goal[] provideSubgoals() {
+        return goals;
     }
     
     public final void done(ContinuationScheduler requestor) {

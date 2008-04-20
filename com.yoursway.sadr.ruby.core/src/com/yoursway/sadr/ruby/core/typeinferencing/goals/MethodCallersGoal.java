@@ -15,7 +15,6 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.ast.visitor.RubyAstVisitor;
 import com.yoursway.sadr.ruby.core.runtime.Callable;
 import com.yoursway.sadr.ruby.core.runtime.RubyBasicClass;
@@ -119,9 +118,8 @@ public class MethodCallersGoal extends AbstractGoal {
                         InfoKind.TYPE);
         }
         
-        public void provideSubgoals(SubgoalRequestor requestor) {
-            for (Goal goal : goals)
-                requestor.subgoal(goal);
+        public Goal[] provideSubgoals() {
+            return goals;
         }
         
         public void done(ContinuationScheduler requestor) {

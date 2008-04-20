@@ -15,8 +15,8 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.PythonField;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MergeFieldsValueInfosContinuation;
@@ -51,8 +51,8 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
             
             private final ValueInfoGoal receiverGoal = new ExpressionValueInfoGoal(receiver(), dc, infoKind);
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                requestor.subgoal(receiverGoal);
+            public Goal[] provideSubgoals() {
+                return new Goal[] { receiverGoal };
             }
             
             public void done(ContinuationScheduler requestor) {

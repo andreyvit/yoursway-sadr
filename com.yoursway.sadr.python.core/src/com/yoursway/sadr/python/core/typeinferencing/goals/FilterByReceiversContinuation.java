@@ -11,7 +11,6 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
@@ -39,9 +38,8 @@ public class FilterByReceiversContinuation implements Continuation {
         }
     }
     
-    public void provideSubgoals(SubgoalRequestor requestor) {
-        for (Goal goal : goals)
-            requestor.subgoal(goal);
+    public Goal[] provideSubgoals() {
+        return goals;
     }
     
     public void done(ContinuationScheduler requestor) {

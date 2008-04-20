@@ -11,10 +11,10 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpressio
 import com.google.common.base.Function;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
@@ -42,8 +42,8 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
             private final ValueInfoGoal nameGoal = new ExpressionValueInfoGoal(subconstructFor(array), dc,
                     infoKind);
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                requestor.subgoal(nameGoal);
+            public Goal[] provideSubgoals() {
+                return new Goal[] { nameGoal };
             }
             
             public void done(ContinuationScheduler requestor) {

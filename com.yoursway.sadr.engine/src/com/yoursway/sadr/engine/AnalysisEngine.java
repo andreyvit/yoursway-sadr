@@ -208,7 +208,10 @@ public class AnalysisEngine {
         public ContinuationRequestorCalledToken schedule(Continuation cont) {
             QQQ qqq = new QQQ(this, cont);
             SubqueryCreator creator = new SubqueryCreator(this, qqq);
-            cont.provideSubgoals(creator);
+            Goal[] provideSubgoals = cont.provideSubgoals();
+            for (Goal goal : provideSubgoals) {
+                creator.subgoal(goal);
+            }
             creator.done();
             return DumbReturnValue.instance();
         }

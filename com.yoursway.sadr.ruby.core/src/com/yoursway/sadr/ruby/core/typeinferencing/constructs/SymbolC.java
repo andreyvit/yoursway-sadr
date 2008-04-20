@@ -11,13 +11,13 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.RubyMetaClass;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.RubyVariable;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoBuilder;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.keys.wildcards.StarWildcard;
@@ -50,8 +50,8 @@ public class SymbolC extends RubyConstructImpl<SimpleReference> {
                         staticContext());
                 return requestor.schedule(new Continuation() {
                     
-                    public void provideSubgoals(SubgoalRequestor requestor) {
-                        requestor.subgoal(varGoal);
+                    public Goal[] provideSubgoals() {
+                        return new Goal[] { varGoal };
                     }
                     
                     public void done(ContinuationScheduler requestor) {

@@ -10,7 +10,6 @@ import com.yoursway.sadr.engine.ContextSensitiveThing;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 
@@ -36,9 +35,8 @@ public final class AssignmentsContinuation extends AbstractContinuation {
         }
     }
     
-    public final void provideSubgoals(SubgoalRequestor requestor) {
-        for (Goal goal : goals)
-            requestor.subgoal(goal);
+    public Goal[] provideSubgoals() {
+        return goals;
     }
     
     public final void done(ContinuationScheduler requestor) {

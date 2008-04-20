@@ -6,8 +6,8 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 
@@ -31,11 +31,11 @@ public class BinaryPercentC extends BinaryC {
             
             private BinaryOperationHandler binaryPercentHandler;
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
+            public Goal[] provideSubgoals() {
                 typeAnalysisProvider = new PythonTypeAnalysis();
                 binaryPercentHandler = typeAnalysisProvider.getBinaryPercentHandler();
                 binaryPercentHandler.setContext(BinaryPercentC.this, leftGoal, rightGoal);
-                binaryPercentHandler.provideSubgoals(requestor);
+                return binaryPercentHandler.provideSubgoals();
             }
             
             public void done(ContinuationScheduler requestor) {

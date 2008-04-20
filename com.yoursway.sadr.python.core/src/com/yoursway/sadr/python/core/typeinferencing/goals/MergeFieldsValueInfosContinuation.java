@@ -13,7 +13,6 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.PythonField;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 
@@ -31,9 +30,8 @@ public final class MergeFieldsValueInfosContinuation implements Continuation {
             goals[i] = new FieldValueInfoGoal(flist.get(i), kind, searchService);
     }
     
-    public void provideSubgoals(SubgoalRequestor requestor) {
-        for (Goal goal : goals)
-            requestor.subgoal(goal);
+    public Goal[] provideSubgoals() {
+        return goals;
     }
     
     public void done(ContinuationScheduler requestor) {
