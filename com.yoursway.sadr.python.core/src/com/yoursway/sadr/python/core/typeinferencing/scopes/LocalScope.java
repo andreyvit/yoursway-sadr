@@ -22,7 +22,7 @@ public abstract class LocalScope extends ChildScope implements VariableLookup {
     
     public PythonConstruct createConstruct() {
         FileScope fileScope = fileScope();
-        PythonFileC fileC = new PythonFileC(fileScope, fileScope.node());
+        PythonFileC fileC = fileScope.createConstruct();
         return fileC.subconstructFor(node);
     }
     

@@ -6,7 +6,6 @@ import java.util.HashSet;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.Modifiers;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.codeassist.IAssistParser;
@@ -35,7 +34,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
 
 public class PythonCompletionEngine extends ScriptCompletionEngine {
@@ -56,9 +54,9 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
     
     private AnalysisEngine engine;
     
-    private FileScope fileScope;
-    
     private WholeProjectRuntime wholeProjectRuntime;
+    
+    private PythonFileC fileC;
     
     public PythonCompletionEngine() {
         
@@ -116,14 +114,13 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
             
             if (wordStarting != null)
                 wholeProjectRuntime = new WholeProjectRuntime(modelModule.getScriptProject());
-            ModuleDeclaration moduleDeclaration = wholeProjectRuntime.getASTFor(modelModule);
+            fileC = wholeProjectRuntime.getConstructFor(modelModule);
             runtimeModel = wholeProjectRuntime.getModel();
-            fileScope = wholeProjectRuntime.getScopeFor(modelModule);
             engine = wholeProjectRuntime.getEngine();
             
             boolean enableKeywordCompletion = true;
             
-            ASTNode minimalNode = ASTUtils.findMinimalNode(moduleDeclaration, position, position);
+            ASTNode minimalNode = ASTUtils.findMinimalNode(fileC.node(), position, position);
             if (minimalNode != null) {
                 if (minimalNode instanceof VariableReference) {
                     completeCallWithoutReceiver((VariableReference) minimalNode, position);
@@ -171,7 +168,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         for (PythonProcedure procedure : runtimeModel.findProceduresMatching(prefix))
             reportProcedure(procedure, 4242);
         // self methods
-        PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+        PythonConstruct construct = fileC.subconstructFor(node);
         if (construct.staticContext() instanceof MethodScope) {
             MethodScope methodScope = (MethodScope) construct.staticContext();
             PythonBasicClass klass = methodScope.getMethod().klass();
@@ -200,7 +197,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
             return;
         String prefix = ((VariableReference) name).getName().substring(0, position - name.sourceStart());
         
-        PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(receiver);
+        PythonConstruct construct = fileC.subconstructFor(receiver);
         ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(),
                 InfoKind.TYPE);
         engine.evaluate(goal);

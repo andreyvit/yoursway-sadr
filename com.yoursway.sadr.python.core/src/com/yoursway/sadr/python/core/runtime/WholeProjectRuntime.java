@@ -22,8 +22,8 @@ import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.contributions.FileContributionsManager;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.RootPythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.RootScope;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
@@ -40,9 +40,9 @@ public class WholeProjectRuntime {
             this.evalResolver = evalResolver;
         }
         
-        public ContinuationRequestorCalledToken add(final PythonConstruct root, ASTNode fakeParent,
+        public ContinuationRequestorCalledToken add(final RootPythonConstruct root, ASTNode fakeParent,
                 ContinuationScheduler scheduler) {
-            final FileScope fileScope = root.staticContext().nearestScope().fileScope();
+            final FileScope fileScope = root.innerStaticContext().nearestScope().fileScope();
             return creator.process(contributionsManager.createContext(fileScope), root, scheduler,
                     new SimpleContinuation() {
                         
@@ -73,8 +73,7 @@ public class WholeProjectRuntime {
     
     protected AnalysisEngine engine;
     
-    protected HashMap<ISourceModule, ModuleDeclaration> asts = new HashMap<ISourceModule, ModuleDeclaration>();
-    protected HashMap<ISourceModule, FileScope> scopes = new HashMap<ISourceModule, FileScope>();
+    protected HashMap<ISourceModule, PythonFileC> constructs = new HashMap<ISourceModule, PythonFileC>();
     
     private final Map<ASTNode, ModuleDeclaration> evalsToContents = new HashMap<ASTNode, ModuleDeclaration>();
     
@@ -86,7 +85,6 @@ public class WholeProjectRuntime {
     
     private void init(final Collection<ISourceModule> modules) {
         engine = new AnalysisEngine();
-        asts.clear();
         final ISourceParser parser = createSourceParser();
         
         PythonAnalysisSchema schema = new PythonAnalysisSchema();
@@ -109,10 +107,9 @@ public class WholeProjectRuntime {
                                 ModuleDeclaration rootNode = parser.parse(m.getElementName().toCharArray(), m
                                         .getSourceAsCharArray(), null);
                                 PythonModule module = new PythonModule(runtimeModel, m.getElementName());
-                                FileScope fileScope = new FileScope(rootScope, module, m, rootNode);
-                                asts.put(m, rootNode);
-                                scopes.put(m, fileScope);
-                                codeGatherer.add(new PythonFileC(fileScope, rootNode), null, requestor);
+                                PythonFileC fileC = new PythonFileC(rootScope, m, module, rootNode);
+                                constructs.put(m, fileC);
+                                codeGatherer.add(fileC, null, requestor);
                                 //FIXME: Add sequencer
                                 return requestor.schedule(continuation);
                             } catch (ModelException e) {
@@ -158,12 +155,8 @@ public class WholeProjectRuntime {
         init(modules);
     }
     
-    public ModuleDeclaration getASTFor(ISourceModule m) {
-        return asts.get(m);
-    }
-    
-    public FileScope getScopeFor(ISourceModule module) {
-        return scopes.get(module);
+    public PythonFileC getConstructFor(ISourceModule m) {
+        return constructs.get(m);
     }
     
     public PythonRuntimeModel getModel() {

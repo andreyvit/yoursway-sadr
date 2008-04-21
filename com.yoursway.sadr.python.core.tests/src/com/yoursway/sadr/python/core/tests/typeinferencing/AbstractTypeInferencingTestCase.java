@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
@@ -61,7 +60,6 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGo
 import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 
 public abstract class AbstractTypeInferencingTestCase {
     
@@ -158,10 +156,9 @@ public abstract class AbstractTypeInferencingTestCase {
         if (assertions.size() == 0)
             return;
         
-        ModuleDeclaration rootNode = projectRuntime.getASTFor(sourceModule);
-        FileScope scope = projectRuntime.getScopeFor(sourceModule);
+        PythonFileC fileC = projectRuntime.getConstructFor(sourceModule);
         for (IAssertion assertion : assertions)
-            assertion.check(scope, rootNode, sourceModule, engine, expected, actual);
+            assertion.check(fileC, sourceModule, engine, expected, actual);
     }
     
     private IAssertion parseAssertion(StringTokenizer tok, String test, String line, String originalLine,
@@ -302,10 +299,10 @@ public abstract class AbstractTypeInferencingTestCase {
     
     public interface IAssertion {
         
-        void check(FileScope scope, ModuleDeclaration rootNode, ISourceModule cu, AnalysisEngine engine,
-                StringBuilder expected, StringBuilder actual) throws Exception;
+        void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception;
         
-        ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode);
+        ValueInfoGoal createGoal(PythonFileC fileC);
         
     }
     
@@ -323,9 +320,9 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = correctClassRef;
         }
         
-        public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
-                AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
-            ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
+        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception {
+            ExpressionValueInfoGoal goal = createGoal(fileC);
             engine.evaluate(goal);
             ValueInfo result = goal.roughResult();
             String[] possibleTypes = result.describePossibleTypes();
@@ -336,10 +333,10 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(types).append('\n');
         }
         
-        public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
-            ASTNode node = ASTUtils.findNodeAt(rootNode, namePos);
+        public ExpressionValueInfoGoal createGoal(PythonFileC fileC) {
+            ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
-            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+            PythonConstruct construct = fileC.subconstructFor(node);
             return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.TYPE);
         }
         
@@ -353,14 +350,14 @@ public abstract class AbstractTypeInferencingTestCase {
             this.namePos = namePos;
         }
         
-        public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
-                AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
+        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception {
             throw new UnsupportedOperationException();
         }
         
-        public ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
-            ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
-            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+        public ValueInfoGoal createGoal(PythonFileC fileC) {
+            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
+            PythonConstruct construct = fileC.subconstructFor(node);
             if (!(node instanceof SimpleReference))
                 throw new IllegalArgumentException();
             PythonVariable variable = construct.staticContext().variableLookup().lookupVariable(
@@ -385,9 +382,9 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = ClassRecorrectClassReff;
         }
         
-        public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
-                AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
-            ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
+        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception {
+            ExpressionValueInfoGoal goal = createGoal(fileC);
             engine.evaluate(goal);
             ValueInfo result = goal.roughResult();
             String[] possibleValues = result.describePossibleValues();
@@ -400,10 +397,10 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(values).append('\n');
         }
         
-        public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
-            ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
+        public ExpressionValueInfoGoal createGoal(PythonFileC fileC) {
+            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
-            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+            PythonConstruct construct = fileC.subconstructFor(node);
             return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
         }
         
@@ -423,9 +420,9 @@ public abstract class AbstractTypeInferencingTestCase {
             this.methodName = methodName;
         }
         
-        public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
-                AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
-            ExpressionValueInfoGoal goal = createGoal(fileScope, rootNode);
+        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception {
+            ExpressionValueInfoGoal goal = createGoal(fileC);
             engine.evaluate(goal);
             ValueInfo result = goal.roughResult();
             AnyMethodRequestor requestor = new AnyMethodRequestor();
@@ -441,10 +438,10 @@ public abstract class AbstractTypeInferencingTestCase {
                     .append('\n');
         }
         
-        public ExpressionValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
-            ASTNode node = ASTUtils.findMinimalNode(rootNode, namePos, namePos);
+        public ExpressionValueInfoGoal createGoal(PythonFileC fileC) {
+            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
-            PythonConstruct construct = new PythonFileC(fileScope, fileScope.node()).subconstructFor(node);
+            PythonConstruct construct = fileC.subconstructFor(node);
             return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
         }
         
@@ -460,9 +457,9 @@ public abstract class AbstractTypeInferencingTestCase {
             this.shouldBeCached = shouldBeCached;
         }
         
-        public void check(FileScope fileScope, ModuleDeclaration rootNode, ISourceModule cu,
-                AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws Exception {
-            ValueInfoGoal goal = assertion.createGoal(fileScope, rootNode);
+        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception {
+            ValueInfoGoal goal = assertion.createGoal(fileC);
             boolean isCached = engine.isCached(goal);
             
             String prefix = goal.toString() + " : ";
@@ -475,7 +472,7 @@ public abstract class AbstractTypeInferencingTestCase {
             return cached ? "CACHED" : "NOT CACHED";
         }
         
-        public ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode) {
+        public ValueInfoGoal createGoal(PythonFileC fileC) {
             return null;
         }
         
