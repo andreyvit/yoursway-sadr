@@ -11,6 +11,7 @@ public class Engine implements IScheduler {
 	private Map<IAcceptor, IGrade<?>> acceptors = new HashMap<IAcceptor, IGrade<?>>();
 	private PriorityQueue<PrioritizedGoal> queue = new PriorityQueue<PrioritizedGoal>();
 	private final ISchedulingStrategy defaultStrategy;
+	private final Map<IGoal, ISchedulingStrategy> goalToStrategy = new HashMap<IGoal, ISchedulingStrategy>();
 
 	public Engine(ISchedulingStrategy strategy) {
 		this.defaultStrategy = strategy;
@@ -32,6 +33,7 @@ public class Engine implements IScheduler {
 
 	public void schedule(IGoal goal, ISchedulingStrategy strategy) {
 		int priority = strategy.getPriority(goal);
+		goalToStrategy.put(goal, strategy);
 		queue.add(new PrioritizedGoal(goal, priority));
 	}
 
@@ -49,11 +51,10 @@ public class Engine implements IScheduler {
 	}
 
 	/**
+	 * Precondition: !queue.isEmpty()
 	 * FIXME: change queue into HashMap
 	 */
 	private void passGoals() {
-		if (queue.isEmpty())
-			return;
 		LinkedList<PrioritizedGoal> generation = new LinkedList<PrioritizedGoal>();
 		int currentPriority = queue.peek().priority;
 		while (!queue.isEmpty()) {
@@ -62,8 +63,14 @@ public class Engine implements IScheduler {
 			generation.add(queue.poll());
 		}
 		for (PrioritizedGoal pGoal : generation) {
-			pGoal.goal.setScheduler(this);
-			pGoal.goal.preRun();
+			IGoal goal = pGoal.goal;
+			goal.setScheduler(this);
+			goal.preRun();
+			ISchedulingStrategy strategy = goalToStrategy.remove(goal);
+			if (strategy.prune(goal)) {
+				goal.flush();
+			}
+			
 		}
 	}
 

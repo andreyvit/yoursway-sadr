@@ -42,6 +42,10 @@ public class OrderedGoalTest extends TestCase {
 		public int getPriority(IGoal goal) {
 			return 0;
 		}
+
+		public boolean prune(IGoal goal) {
+			return false;
+		}
 	}
 
 	class Acceptor implements IAcceptor {

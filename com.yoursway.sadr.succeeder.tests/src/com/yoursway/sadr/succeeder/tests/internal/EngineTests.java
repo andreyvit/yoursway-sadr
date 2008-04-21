@@ -39,6 +39,10 @@ public class EngineTests {
 		public int getPriority(IGoal goal) {
 			return 0;
 		}
+
+		public boolean prune(IGoal goal) {
+			return false;
+		}
 	}
 	
 	private static class AssertingAcceptor implements IAcceptor {
