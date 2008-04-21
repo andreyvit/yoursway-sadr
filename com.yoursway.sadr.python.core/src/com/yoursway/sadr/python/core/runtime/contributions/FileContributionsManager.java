@@ -9,14 +9,15 @@ import java.util.Map;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.core.ISourceModule;
 
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.RootPythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
@@ -56,9 +57,9 @@ public class FileContributionsManager implements OuteriorNodeLookup, SearchServi
         return result;
     }
     
-    public ContinuationRequestorCalledToken addToIndex(PythonConstruct root, ContinuationScheduler requestor,
-            SimpleContinuation continuation) {
-        FileScope file = root.staticContext().nearestScope().fileScope();
+    public ContinuationRequestorCalledToken addToIndex(RootPythonConstruct root,
+            ContinuationScheduler requestor, SimpleContinuation continuation) {
+        FileScope file = root.innerStaticContext().nearestScope().fileScope();
         return lookup(file).addToIndex(root, requestor, continuation);
     }
     

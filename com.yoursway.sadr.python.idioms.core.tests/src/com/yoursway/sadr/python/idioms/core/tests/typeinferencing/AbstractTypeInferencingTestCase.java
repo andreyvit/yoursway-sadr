@@ -156,10 +156,9 @@ public abstract class AbstractTypeInferencingTestCase {
 		if (assertions.size() == 0)
 			return;
 
-		ModuleDeclaration rootNode = projectRuntime.getASTFor(sourceModule);
-		FileScope scope = projectRuntime.getScopeFor(sourceModule);
+		PythonFileC fileC = projectRuntime.getConstructFor(sourceModule);
 		for (IAssertion assertion : assertions)
-			assertion.check(scope, rootNode, sourceModule, engine, expected,
+			assertion.check(fileC, sourceModule, engine, expected,
 					actual);
 	}
 
@@ -296,11 +295,11 @@ public abstract class AbstractTypeInferencingTestCase {
 
 	public interface IAssertion {
 
-		void check(FileScope scope, ModuleDeclaration rootNode,
+		void check(PythonFileC fileC,
 				ISourceModule cu, AnalysisEngine engine,
 				StringBuilder expected, StringBuilder actual) throws Exception;
 
-		ValueInfoGoal createGoal(FileScope fileScope, ModuleDeclaration rootNode);
+		ValueInfoGoal createGoal(PythonFileC fileC);
 
 	}
 
@@ -316,14 +315,13 @@ public abstract class AbstractTypeInferencingTestCase {
 			this.should = should;
 		}
 
-		public void check(FileScope fileScope, ModuleDeclaration rootNode,
+		public void check(PythonFileC fileC,
 				ISourceModule cu, AnalysisEngine engine,
 				StringBuilder expected, StringBuilder actual) throws Exception {
 			System.out.println();
-			ASTNode node = ASTUtils.findNodeAt(rootNode, lineOffset);
+			ASTNode node = ASTUtils.findNodeAt(fileC.node(), lineOffset);
 			 assertNotNull(node);
-			PythonConstruct construct = new PythonFileC(fileScope,
-					 fileScope.node()).subconstructFor(node);
+			PythonConstruct construct = fileC.subconstructFor(node);
 			while(construct.node() instanceof VariableReference)
 				construct = construct.parent();
 			assertNotNull(construct);
@@ -353,8 +351,7 @@ public abstract class AbstractTypeInferencingTestCase {
 			// actual.append(prefix).append(types).append('\n');
 		}
 
-		public ExpressionValueInfoGoal createGoal(FileScope fileScope,
-				ModuleDeclaration rootNode) {
+		public ExpressionValueInfoGoal createGoal(PythonFileC fileC) {
 			// ASTNode node = ASTUtils.findNodeAt(rootNode, namePos);
 			// assertNotNull(node);
 			// PythonConstruct construct = new PythonFileC(fileScope,
