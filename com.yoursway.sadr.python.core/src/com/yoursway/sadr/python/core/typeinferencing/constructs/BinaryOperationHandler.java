@@ -5,7 +5,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.SubgoalRequestor;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 
 /**
@@ -20,5 +20,5 @@ public interface BinaryOperationHandler extends Continuation {
     
     public abstract void done(ContinuationScheduler requestor);
     
-    public abstract void provideSubgoals(SubgoalRequestor requestor);
+    public abstract Goal[] provideSubgoals();
 }

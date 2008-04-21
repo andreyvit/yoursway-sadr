@@ -11,7 +11,6 @@ import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyConstruct;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.RubyDynamicContext;
@@ -106,8 +105,8 @@ public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements Va
                     
                     ValueInfoGoal argGoal = new ExpressionValueInfoGoal(arg, dc, argg.infoKind());
                     
-                    public void provideSubgoals(SubgoalRequestor requestor) {
-                        requestor.subgoal(argGoal);
+                    public Goal[] provideSubgoals() {
+                        return new Goal[] { argGoal };
                     }
                     
                     public void done(ContinuationScheduler requestor) {

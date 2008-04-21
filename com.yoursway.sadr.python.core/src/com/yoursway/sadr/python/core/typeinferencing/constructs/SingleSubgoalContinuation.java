@@ -6,7 +6,7 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.SubgoalRequestor;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 
 public final class SingleSubgoalContinuation implements Continuation {
@@ -18,8 +18,8 @@ public final class SingleSubgoalContinuation implements Continuation {
         this.continuation = continuation;
     }
     
-    public void provideSubgoals(SubgoalRequestor requestor) {
-        requestor.subgoal(varGoal);
+    public Goal[] provideSubgoals() {
+        return new Goal[] { varGoal };
     }
     
     public void done(ContinuationScheduler requestor) {

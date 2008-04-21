@@ -6,10 +6,10 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.CollectingMethodRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
@@ -31,8 +31,8 @@ public class MethodCallC extends CallC implements IndexAffector {
             
             final ValueInfoGoal recvGoal = new ExpressionValueInfoGoal(receiver, dc, infoKind);
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                requestor.subgoal(recvGoal);
+            public Goal[] provideSubgoals() {
+                return new Goal[] { recvGoal };
             }
             
             public void done(ContinuationScheduler requestor) {

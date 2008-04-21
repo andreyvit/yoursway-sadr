@@ -14,8 +14,8 @@ import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.ruby.core.typeinferencing.values.Value;
@@ -43,8 +43,8 @@ public class IfC extends RubyConstructImpl<RubyIfStatement> {
             ValueInfoGoal conditionGoal = new ExpressionValueInfoGoal(condition, new EmptyDynamicContext(),
                     InfoKind.VALUE);
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                requestor.subgoal(conditionGoal);
+            public Goal[] provideSubgoals() {
+                return new Goal[] { conditionGoal };
             }
             
             public void done(ContinuationScheduler requestor) {

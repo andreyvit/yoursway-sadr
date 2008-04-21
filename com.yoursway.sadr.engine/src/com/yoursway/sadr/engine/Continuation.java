@@ -1,5 +1,6 @@
 package com.yoursway.sadr.engine;
 
+
 /**
  * Unit of execution. Every Continuation is designed to be run under scheduler
  * (ContinuationScheduler). Created Continuation is scheduled to run by calling
@@ -16,7 +17,7 @@ package com.yoursway.sadr.engine;
  */
 public interface Continuation {
     
-    void provideSubgoals(SubgoalRequestor requestor);
+    Goal[] provideSubgoals();
     
     void done(ContinuationScheduler requestor);
 }

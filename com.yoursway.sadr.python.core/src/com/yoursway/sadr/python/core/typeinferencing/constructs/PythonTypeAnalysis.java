@@ -10,8 +10,8 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
@@ -82,9 +82,8 @@ public class PythonTypeAnalysis implements AnalysisProvider {
             }
         }
         
-        public void provideSubgoals(SubgoalRequestor requestor) {
-            requestor.subgoal(leftGoal);
-            requestor.subgoal(rightGoal);
+        public Goal[] provideSubgoals() {
+            return new Goal[] { leftGoal, rightGoal };
         }
         
         public void done(ContinuationScheduler requestor) {

@@ -49,9 +49,8 @@ public class ContextRelation {
                         newGoals.add(eachGoal.cloneGoal());
             }
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                for (Goal goal : newGoals)
-                    requestor.subgoal(goal);
+            public Goal[] provideSubgoals() {
+                return newGoals.toArray(new Goal[] {});
             }
             
             public void done(ContinuationScheduler requestor) {

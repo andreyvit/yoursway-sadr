@@ -8,7 +8,7 @@ import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.SubgoalRequestor;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
@@ -57,9 +57,8 @@ public class PythonValueAnalysis implements AnalysisProvider {
             public void done(ContinuationScheduler requestor) {
             }
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                // TODO Auto-generated method stub
-                
+            public Goal[] provideSubgoals() {
+                return new Goal[] {};
             }
         };
     }

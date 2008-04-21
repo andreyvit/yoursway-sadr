@@ -10,8 +10,8 @@ import org.eclipse.dltk.ruby.ast.RubyAssignment;
 import org.eclipse.dltk.ruby.ast.RubyColonExpression;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.IndexAffector;
@@ -20,8 +20,8 @@ import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelAffe
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.ModelRequest;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableAffector;
 import com.yoursway.sadr.ruby.core.typeinferencing.constructs.requests.VariableRequest;
-import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
+import com.yoursway.sadr.ruby.core.typeinferencing.goals.AssignmentInfo;
 
 public class AssignmentC extends RubyConstructImpl<RubyAssignment> implements VariableAffector, IndexAffector,
         ModelAffector {

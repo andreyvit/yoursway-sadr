@@ -6,8 +6,8 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
+import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.engine.SubgoalRequestor;
 import com.yoursway.sadr.ruby.core.runtime.RubyUtils;
 import com.yoursway.sadr.ruby.core.runtime.std.StandardTypes;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.BinaryCoercion;
@@ -36,9 +36,8 @@ public class BinaryAdditionC extends RubyConstructImpl<CallExpression> {
             
             private final ValueInfoGoal rightGoal = new ExpressionValueInfoGoal(rightArg, dc, infoKind);
             
-            public void provideSubgoals(SubgoalRequestor requestor) {
-                requestor.subgoal(leftGoal);
-                requestor.subgoal(rightGoal);
+            public Goal[] provideSubgoals() {
+                return new Goal[] { leftGoal, rightGoal };
             }
             
             public void done(ContinuationScheduler requestor) {
