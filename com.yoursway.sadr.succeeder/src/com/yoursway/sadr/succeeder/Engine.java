@@ -2,14 +2,16 @@ package com.yoursway.sadr.succeeder;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.TreeMap;
 
 public class Engine implements IScheduler {
 
 	private Map<IAcceptor, IGrade<?>> acceptors = new HashMap<IAcceptor, IGrade<?>>();
-	private PriorityQueue<PrioritizedGoal> queue = new PriorityQueue<PrioritizedGoal>();
+	private TreeMap<Integer, LinkedList<IGoal>> queue = new TreeMap<Integer, LinkedList<IGoal>>();
+	private HashSet<IGoal> allPlannedGoals = new HashSet<IGoal>(); 
 	private final ISchedulingStrategy defaultStrategy;
 
 	public Engine(ISchedulingStrategy strategy) {
@@ -32,7 +34,20 @@ public class Engine implements IScheduler {
 
 	public void schedule(IGoal goal, ISchedulingStrategy strategy) {
 		int priority = strategy.getPriority(goal);
-		queue.add(new PrioritizedGoal(goal, priority));
+		LinkedList<IGoal> thisPriority = lookupByPriority(priority);
+		thisPriority.add(goal);
+		boolean added = allPlannedGoals.add(goal);
+		if(!added)
+			throw new IllegalArgumentException("Trying adding goal twice: "+goal.toString());
+	}
+
+	private LinkedList<IGoal> lookupByPriority(int priority) {
+		LinkedList<IGoal> linkedList = queue.get(priority);
+		if(linkedList == null){
+			linkedList = new LinkedList<IGoal>();
+			queue.put(priority, linkedList);
+		}
+		return linkedList;
 	}
 
 	public void schedule(Collection<IGoal> goals, ISchedulingStrategy strategy) {
@@ -48,22 +63,16 @@ public class Engine implements IScheduler {
 		}
 	}
 
-	/**
-	 * FIXME: change queue into HashMap
-	 */
 	private void passGoals() {
 		if (queue.isEmpty())
 			return;
-		LinkedList<PrioritizedGoal> generation = new LinkedList<PrioritizedGoal>();
-		int currentPriority = queue.peek().priority;
-		while (!queue.isEmpty()) {
-			PrioritizedGoal peek = queue.peek();
-			if (peek.priority != currentPriority) break;
-			generation.add(queue.poll());
-		}
-		for (PrioritizedGoal pGoal : generation) {
-			pGoal.goal.setScheduler(this);
-			pGoal.goal.preRun();
+		Integer highest = queue.keySet().iterator().next();
+		LinkedList<IGoal> list = lookupByPriority(highest);
+		queue.remove(highest);
+		for (IGoal goal : list) {
+			goal.setScheduler(this);
+			goal.preRun();
+			allPlannedGoals.remove(goal);
 		}
 	}
 
@@ -75,19 +84,4 @@ public class Engine implements IScheduler {
 			acceptor.checkpoint(grade);
 		}
 	}
-
-	private class PrioritizedGoal implements Comparable<PrioritizedGoal> {
-		IGoal goal;
-		Integer priority;
-
-		public PrioritizedGoal(IGoal goal, Integer priority) {
-			this.goal = goal;
-			this.priority = priority;
-		}
-
-		public int compareTo(PrioritizedGoal o) {
-			return priority.compareTo(o.priority);
-		}
-	}
-
 }
