@@ -29,9 +29,6 @@ public abstract class Goal implements IGoal {
 		return scheduler.checkpoint(acceptor, grade);
 	}
 
-	public final void isCanceled() {
-	}
-
 	public final void setScheduler(IScheduler scheduler) {
 		this.scheduler = scheduler;
 	}

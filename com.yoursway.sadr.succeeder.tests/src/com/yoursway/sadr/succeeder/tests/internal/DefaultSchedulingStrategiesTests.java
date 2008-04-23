@@ -46,7 +46,7 @@ public class DefaultSchedulingStrategiesTests {
 				catch (InterruptedException e) { e.printStackTrace(); }
 				schedule(new Goal(){
 					public CheckpointToken flush() {
-						return checkpoint(acceptor, Grade.DONE);
+						return checkpoint(acceptor, Grade.INTERMEDIATE);
 					}
 					public void preRun() {
 							acceptor.setResult(0);
