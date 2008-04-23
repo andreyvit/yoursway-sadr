@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python_v2.model;
 
 import java.util.Map;
+import java.util.Set;
 
 public class PythonObject implements RuntimeObject {
     
@@ -8,7 +9,12 @@ public class PythonObject implements RuntimeObject {
     private PythonClass type;
     
     protected RuntimeObject lookupInSuperclasses(String name) {
-        return type.lookupInSuperclasses(name);
+        for (PythonClass cls : type.getSuperClasses()) {
+            RuntimeObject object = cls.getDict().get(name);
+            if (object != null)
+                return object;
+        }
+        return null;
     }
     
     protected Map<String, RuntimeObject> getDict() {
@@ -41,6 +47,10 @@ public class PythonObject implements RuntimeObject {
     
     public void setType(PythonClass type) {
         this.type = type;
+    }
+    
+    public Set<String> getAttributeNames() {
+        return attributes.keySet();
     }
     
 }

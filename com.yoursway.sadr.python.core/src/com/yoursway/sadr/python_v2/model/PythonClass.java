@@ -30,11 +30,12 @@ public class PythonClass extends PythonObject implements RuntimeObject {
     
     @Override
     protected RuntimeObject lookupInSuperclasses(String name) {
-        for (PythonClass cls : supers) {
+        for (PythonClass cls : this.supers) {
             RuntimeObject object = cls.getDict().get(name);
             if (object != null)
                 return object;
         }
         return null;
     }
+    
 }

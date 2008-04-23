@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python_v2.model;
 
+import java.util.Set;
+
 public interface LexicalScope {
     /**
      * Looks a name up in the lexical scope according to name resolution rules.
@@ -15,4 +17,15 @@ public interface LexicalScope {
      * Adds <code>object</code> with <code>name</code> to the scope.
      */
     void setName(String name, RuntimeObject object);
+    
+    /**
+     * @return all names that can be looked up.
+     */
+    Set<String> getNames();
+    
+    /**
+     * @return enclosing lexical scope or <code>null</code> for the outermost
+     *         scope.
+     */
+    LexicalScope enclosingScope();
 }

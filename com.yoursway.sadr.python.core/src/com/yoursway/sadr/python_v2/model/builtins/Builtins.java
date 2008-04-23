@@ -15,6 +15,7 @@ public class Builtins extends LexicalScopeImpl implements LexicalScope {
     
     //---------Singletone infrastructure---------
     public Builtins() {
+        super(null);
         init(this);
     }
     
