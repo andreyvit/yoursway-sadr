@@ -60,7 +60,7 @@ public class DefaultSchedulingStrategiesTests {
 	@Test
 	public void testTimeLimitPruning() {
 		Engine engeine = new Engine(new TimeLimitBasedSchedulingStrategy(500));
-		engeine.schedule(new SleepingGoal());
+		engeine.schedule(null, new SleepingGoal());
 		engeine.run();
 	}
 }

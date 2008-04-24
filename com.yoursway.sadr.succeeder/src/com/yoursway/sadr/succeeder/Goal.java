@@ -14,15 +14,15 @@ public abstract class Goal implements IGoal {
 	}
 	
 	protected void schedule(IGoal goal) {
-		scheduler.schedule(goal);
+		scheduler.schedule(this, goal);
 	}
 
 	protected void schedule(IGoal goal, ISchedulingStrategy strategy) {
-		scheduler.schedule(goal, strategy);
+		scheduler.schedule(this, goal, strategy);
 	}
 
 	protected void schedule(Collection<IGoal> goals, ISchedulingStrategy strategy) {
-		scheduler.schedule(goals, strategy);
+		scheduler.schedule(this, goals, strategy);
 	}
 	
 	protected <T extends IGrade<T>> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {

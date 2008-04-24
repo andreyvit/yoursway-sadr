@@ -95,8 +95,8 @@ public class OrderedGoalTest extends TestCase {
 	public void testOrderedGoal() {
 		Engine engine = new Engine(new DefaultStrategy());
 		Acceptor acceptor = new Acceptor();
-		engine.schedule(new GoalImpl(acceptor));
-		engine.schedule(new GoalImpl(acceptor));
+		engine.schedule(null, new GoalImpl(acceptor));
+		engine.schedule(null, new GoalImpl(acceptor));
 		engine.run();
 	}
 }
