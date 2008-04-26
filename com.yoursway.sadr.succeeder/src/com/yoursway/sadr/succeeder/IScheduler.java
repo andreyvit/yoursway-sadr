@@ -16,11 +16,11 @@ import java.util.Collection;
  */
 public interface IScheduler {
 
-	void schedule(IGoal goal);
+	void schedule(IGoal goal, IGoal subgoal);
 
-	void schedule(IGoal goal, ISchedulingStrategy strategy);
+	void schedule(IGoal goal, IGoal subgoal, ISchedulingStrategy strategy);
 
-	void schedule(Collection<IGoal> goals, ISchedulingStrategy strategy);
+	void schedule(IGoal goal, Collection<IGoal> subgoals, ISchedulingStrategy strategy);
 
 	<T extends IGrade<T>> CheckpointToken checkpoint(IAcceptor acceptor,
 			IGrade<T> grade);

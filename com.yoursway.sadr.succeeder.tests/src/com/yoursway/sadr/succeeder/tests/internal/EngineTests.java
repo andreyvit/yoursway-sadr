@@ -39,6 +39,10 @@ public class EngineTests {
 		public int getPriority(IGoal goal) {
 			return 0;
 		}
+
+		public boolean prune(IGoal goal) {
+			return false;
+		}
 	}
 	
 	private static class AssertingAcceptor implements IAcceptor {
@@ -57,7 +61,7 @@ public class EngineTests {
 	@Test
 	public void singleGoal() {
 		Engine scheduler = new Engine(new DefaultStrategy());
-		scheduler.schedule(new Goal(){
+		scheduler.schedule(null, new Goal(){
 			private int result = 0;
 			private IAcceptor acceptor;
 
@@ -108,7 +112,7 @@ public class EngineTests {
 	@Test
 	public void sequentialGoals() {
 		Engine scheduler = new Engine(new DefaultStrategy());
-		scheduler.schedule(new SequentialGoal(0));
+		scheduler.schedule(null, new SequentialGoal(0));
 		scheduler.run();
 	}
 	

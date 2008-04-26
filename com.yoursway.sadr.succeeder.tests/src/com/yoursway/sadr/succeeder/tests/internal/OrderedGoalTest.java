@@ -42,6 +42,10 @@ public class OrderedGoalTest extends TestCase {
 		public int getPriority(IGoal goal) {
 			return 0;
 		}
+
+		public boolean prune(IGoal goal) {
+			return false;
+		}
 	}
 
 	class Acceptor implements IAcceptor {
@@ -91,8 +95,8 @@ public class OrderedGoalTest extends TestCase {
 	public void testOrderedGoal() {
 		Engine engine = new Engine(new DefaultStrategy());
 		Acceptor acceptor = new Acceptor();
-		engine.schedule(new GoalImpl(acceptor));
-		engine.schedule(new GoalImpl(acceptor));
+		engine.schedule(null, new GoalImpl(acceptor));
+		engine.schedule(null, new GoalImpl(acceptor));
 		engine.run();
 	}
 }
