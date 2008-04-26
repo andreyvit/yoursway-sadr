@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 
+/**
+ * Represents a class type object. Supports class attributes name resolution.
+ */
 public class PythonClass extends PythonObject implements RuntimeObject {
     
     private List<PythonClass> supers;
