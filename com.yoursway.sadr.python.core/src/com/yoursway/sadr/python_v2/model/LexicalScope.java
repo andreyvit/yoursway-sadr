@@ -15,7 +15,10 @@ public interface LexicalScope {
     
     /**
      * Adds <code>object</code> with <code>name</code> to the scope.
+     * 
+     * @deprecated not in interface for the scopes are immutable for users!
      */
+    @Deprecated
     void setName(String name, RuntimeObject object);
     
     /**

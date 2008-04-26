@@ -11,7 +11,7 @@ public interface RuntimeObject {
     void setAttribute(String name, RuntimeObject object);
     
     /**
-     * @return objects' names (instance attributes and methods).
+     * @return objects' names (instance attributes).
      */
     Set<String> getAttributeNames();
 }
