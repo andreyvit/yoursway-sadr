@@ -1,13 +1,18 @@
 package com.yoursway.sadr.python_v2.model;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
 public class LexicalScopeImpl implements LexicalScope {
     
     private final Map<String, RuntimeObject> namesToObjects = new HashMap<String, RuntimeObject>();
     private final LexicalScope enclosingScope;
+    private final List<PythonConstruct> constructs = new LinkedList<PythonConstruct>();
     
     /**
      * @param enclosingScope
@@ -22,6 +27,9 @@ public class LexicalScopeImpl implements LexicalScope {
         return namesToObjects.get(name);
     }
     
+    /**
+     * Adds <code>object</code> with <code>name</code> to the scope.
+     */
     public void setName(String name, RuntimeObject object) {
         namesToObjects.put(name, object);
     }
@@ -34,4 +42,7 @@ public class LexicalScopeImpl implements LexicalScope {
         return namesToObjects.keySet();
     }
     
+    public void addConstruct(PythonConstruct construct) {
+        constructs.add(construct);
+    }
 }

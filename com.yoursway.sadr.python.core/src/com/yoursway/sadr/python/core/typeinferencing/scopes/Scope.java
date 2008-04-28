@@ -1,16 +1,14 @@
 package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
-import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
+import java.util.List;
 
-public interface Scope extends PythonStaticContext, PythonDynamicContext {
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+
+public interface Scope {
+    List<PythonConstruct> getEnclosedconstructs();
     
-    NodeLookup nodeLookup();
-    
-    FileScope fileScope();
-    
-    PythonConstruct createConstruct();
-    
+    /**
+     * @return parent scope
+     */
+    Scope scope();
 }

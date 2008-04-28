@@ -10,6 +10,10 @@ import java.util.Set;
  * be taken into account to deny names that are declared after that 'current'
  * statement. This should be in the area of responsibility of analysis but needs
  * some support of lexical scopes.
+ * 
+ * Lexical scopes should be implemented as dictionaries (hence are allowed to be
+ * dynamically changed) but must take hierarchical structure into account for
+ * name resolution.
  */
 public interface LexicalScope {
     /**
@@ -23,14 +27,6 @@ public interface LexicalScope {
     RuntimeObject lookup(String name);
     
     /**
-     * Adds <code>object</code> with <code>name</code> to the scope.
-     * 
-     * @deprecated not in interface for the scopes are immutable for users!
-     */
-    @Deprecated
-    void setName(String name, RuntimeObject object);
-    
-    /**
      * @return all names that can be looked up.
      */
     Set<String> getNames();
@@ -40,4 +36,5 @@ public interface LexicalScope {
      *         scope.
      */
     LexicalScope enclosingScope();
+    
 }

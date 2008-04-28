@@ -11,7 +11,6 @@ import org.eclipse.dltk.compiler.problem.IProblemReporter;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.CallDoneContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
@@ -29,6 +28,7 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGo
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
+import com.yoursway.sadr.succeeder.Engine;
 
 public class PythonEvalResolver {
     
@@ -87,9 +87,9 @@ public class PythonEvalResolver {
         }
     }
     
-    private final AnalysisEngine engine;
+    private final Engine engine;
     
-    public PythonEvalResolver(AnalysisEngine engine) {
+    public PythonEvalResolver(Engine engine) {
         this.engine = engine;
     }
     

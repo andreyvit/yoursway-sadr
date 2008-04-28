@@ -19,6 +19,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReferenceInterface;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructFactory;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 
 /**
@@ -39,17 +41,16 @@ public class ModuleModelBuilder extends ASTVisitor {
         return model;
     }
     
-    @Override
-    public boolean visit(ASTNode s) throws Exception {
-        // TODO Auto-generated method stub
-        return super.visit(s);
-    }
-    
     private void createAttribute(String name, RuntimeObject object) {
         if (!classes.isEmpty())
             classes.peek().setAttribute(name, object);
         else
             scopes.peek().setName(name, object);
+    }
+    
+    private void createConstruct(ASTNode node) {
+        PythonConstruct construct = PythonConstructFactory.wrapConstruct(node); //TODO construct wrapper
+        scopes.peek().addConstruct(construct);
     }
     
     private void onVisitLambdaAssignnment(String name, PythonLambdaExpression lambdaExpression) {
@@ -101,6 +102,7 @@ public class ModuleModelBuilder extends ASTVisitor {
     
     @Override
     public boolean visit(Expression expression) throws Exception {
+        createConstruct(expression); //TODO construct wrapper
         if (expression instanceof Assignment) {
             Assignment assignment = (Assignment) expression;
             Statement left = assignment.getLeft();
@@ -117,6 +119,7 @@ public class ModuleModelBuilder extends ASTVisitor {
     
     @Override
     public boolean visit(MethodDeclaration s) throws Exception {
+        createConstruct(s); //TODO construct wrapper
         FunctionObject function = new FunctionObject(scopes.peek(), s);
         createAttribute(s.getName(), function);
         scopes.push((LexicalScopeImpl) function.getScope());
@@ -130,13 +133,8 @@ public class ModuleModelBuilder extends ASTVisitor {
     }
     
     @Override
-    public boolean visit(Statement s) throws Exception {
-        // TODO Auto-generated method stub
-        return super.visit(s);
-    }
-    
-    @Override
     public boolean visit(TypeDeclaration s) throws Exception {
+        PythonConstructFactory.wrapConstruct(s); //TODO construct wrapper
         if (!(s instanceof PythonClassDeclaration))
             throw new RuntimeException("PythonClassDeclaration expected.");
         List<ASTNode> superclassAstNodes = ((PythonClassDeclaration) s).getSupers();
@@ -148,7 +146,7 @@ public class ModuleModelBuilder extends ASTVisitor {
         }
         PythonClass cls = new PythonClass(supers);
         classes.push(cls);
-        return super.visit(s);
+        return true;
     }
     
     @Override
@@ -159,8 +157,8 @@ public class ModuleModelBuilder extends ASTVisitor {
     
     @Override
     public boolean visitGeneral(ASTNode node) throws Exception {
-        // TODO add statement to current scope
-        return super.visitGeneral(node);
+        createConstruct(node); //TODO construct wrapper
+        return false;
     }
     
 }

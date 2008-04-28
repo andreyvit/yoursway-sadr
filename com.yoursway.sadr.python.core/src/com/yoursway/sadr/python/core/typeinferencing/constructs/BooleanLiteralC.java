@@ -9,11 +9,12 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 
 public class BooleanLiteralC extends PythonConstructImpl<VariableReference> {
     
-    public BooleanLiteralC(PythonStaticContext sc, VariableReference node) {
+    public BooleanLiteralC(Scope sc, VariableReference node) {
         super(sc, node);
     }
     
