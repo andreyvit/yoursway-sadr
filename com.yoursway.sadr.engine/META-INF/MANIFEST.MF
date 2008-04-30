@@ -9,5 +9,6 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.collections;bundle-version="1.0.0"
 Eclipse-LazyStart: true
 Export-Package: com.yoursway.sadr.engine,
- com.yoursway.sadr.engine.util
+ com.yoursway.sadr.engine.util,
+ com.yoursway.sadr.succeeder
 Bundle-ActivationPolicy: lazy

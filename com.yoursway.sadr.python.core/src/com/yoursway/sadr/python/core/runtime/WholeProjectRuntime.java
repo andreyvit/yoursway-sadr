@@ -14,7 +14,6 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
-import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.CallDoneContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
@@ -27,6 +26,8 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.RootPythonConstr
 import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.RootScope;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
+import com.yoursway.sadr.succeeder.Engine;
+import com.yoursway.sadr.succeeder.TimeLimitBasedSchedulingStrategy;
 
 public class WholeProjectRuntime {
     
@@ -71,7 +72,7 @@ public class WholeProjectRuntime {
     
     protected PythonRuntimeModel runtimeModel;
     
-    protected AnalysisEngine engine;
+    protected Engine engine;
     
     protected HashMap<ISourceModule, PythonFileC> constructs = new HashMap<ISourceModule, PythonFileC>();
     
@@ -84,7 +85,7 @@ public class WholeProjectRuntime {
     private RootScope rootScope;
     
     private void init(final Collection<ISourceModule> modules) {
-        engine = new AnalysisEngine();
+        engine = new Engine(new TimeLimitBasedSchedulingStrategy(10));
         final ISourceParser parser = createSourceParser();
         
         PythonAnalysisSchema schema = new PythonAnalysisSchema();
@@ -163,7 +164,7 @@ public class WholeProjectRuntime {
         return runtimeModel;
     }
     
-    public AnalysisEngine getEngine() {
+    public Engine getEngine() {
         return engine;
     }
     

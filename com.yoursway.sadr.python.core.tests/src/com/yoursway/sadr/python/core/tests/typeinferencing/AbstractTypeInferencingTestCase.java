@@ -42,7 +42,6 @@ import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
-import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
@@ -53,13 +52,20 @@ import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodNamesReque
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
+import com.yoursway.sadr.python_v2.goals.ResolveName;
+import com.yoursway.sadr.python_v2.goals.ResolvedNameAcceptor;
+import com.yoursway.sadr.succeeder.Engine;
+import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class AbstractTypeInferencingTestCase {
     
@@ -107,7 +113,7 @@ public abstract class AbstractTypeInferencingTestCase {
         IScriptProject scriptProject = DLTKCore.create(testProject);
         WholeProjectRuntime projectRuntime = new WholeProjectRuntime(scriptProject);
         
-        AnalysisEngine engine = projectRuntime.getEngine();
+        Engine engine = projectRuntime.getEngine();
         
         StringBuilder expected = new StringBuilder();
         StringBuilder actual = new StringBuilder();
@@ -124,9 +130,8 @@ public abstract class AbstractTypeInferencingTestCase {
         Assert.assertEquals(expected.toString(), actual.toString());
     }
     
-    private void checkFile(ISourceModule sourceModule, WholeProjectRuntime projectRuntime,
-            AnalysisEngine engine, StringBuilder expected, StringBuilder actual) throws ModelException,
-            Exception {
+    private void checkFile(ISourceModule sourceModule, WholeProjectRuntime projectRuntime, Engine engine,
+            StringBuilder expected, StringBuilder actual) throws ModelException, Exception {
         Collection<IAssertion> assertions = new ArrayList<IAssertion>();
         
         String content = sourceModule.getSource();
@@ -185,6 +190,11 @@ public abstract class AbstractTypeInferencingTestCase {
             int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
             String methodName = tok.nextToken();
             assertion = new HasMethodAssertion(expr, namePos, methodName);
+        } else if ("find-var".equals(test)) {
+            String expr = tok.nextToken();
+            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
+            int lineNumber = Integer.valueOf(tok.nextToken()).intValue();
+            assertion = new FindVariableAssertion(lineNumber, namePos);
         } else {
             throw new IllegalArgumentException("Unknown assertion: " + test);
         }
@@ -299,7 +309,7 @@ public abstract class AbstractTypeInferencingTestCase {
     
     public interface IAssertion {
         
-        void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+        void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception;
         
         ValueInfoGoal createGoal(PythonFileC fileC);
@@ -320,7 +330,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = correctClassRef;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileC);
             engine.evaluate(goal);
@@ -350,7 +360,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.namePos = namePos;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             throw new UnsupportedOperationException();
         }
@@ -382,7 +392,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = ClassRecorrectClassReff;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileC);
             engine.evaluate(goal);
@@ -420,7 +430,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.methodName = methodName;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileC);
             engine.evaluate(goal);
@@ -457,7 +467,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.shouldBeCached = shouldBeCached;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, AnalysisEngine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             ValueInfoGoal goal = assertion.createGoal(fileC);
             boolean isCached = engine.isCached(goal);
@@ -476,6 +486,85 @@ public abstract class AbstractTypeInferencingTestCase {
             return null;
         }
         
+    }
+    
+    private static int getLine(ISourceModule module, ASTNode node) {
+        String source;
+        try {
+            source = module.getSource();
+        } catch (ModelException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        String[] lines = source.split("\n");
+        int line = 0;
+        int chars = 0;
+        for (String string : lines) {
+            line++;
+            chars += string.length() + 1;
+            if (chars >= node.sourceEnd())
+                return line;
+        }
+        return 0; // not found
+    }
+    
+    class FindVariableAssertion implements IAssertion {
+        
+        private final class ResolvedNameAcceptorImpl implements ResolvedNameAcceptor {
+            AssignmentC resultAssignmentC;
+            
+            public void setResult(AssignmentC assignmentC) {
+                resultAssignmentC = assignmentC;
+            }
+            
+            public AssignmentC getResultAssignmentC() {
+                return resultAssignmentC;
+            }
+            
+            public void checkpoint(IGrade<?> grade) {
+            }
+        }
+        
+        private final int line;
+        private final int namePos;
+        
+        public FindVariableAssertion(int line, int namePos) {
+            this.line = line;
+            this.namePos = namePos;
+        }
+        
+        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception {
+            ResolvedNameAcceptorImpl acceptor = new ResolvedNameAcceptorImpl();
+            
+            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
+            assertNotNull(node);
+            
+            PythonConstruct construct = fileC.subconstructFor(node);
+            IGoal goal;
+            int actualLine = -2;
+            String prefix = "";
+            if (construct instanceof VariableReferenceC) {
+                goal = new ResolveName((VariableReferenceC) construct, acceptor);
+                
+                engine.schedule(goal);
+                engine.run();
+                
+                AssignmentC resultAssignmentC = acceptor.getResultAssignmentC();
+                if (resultAssignmentC != null) {
+                    actualLine = getLine(cu, resultAssignmentC.node());
+                }
+                
+                prefix = goal.toString() + " : ";
+            }
+            expected.append(prefix).append(String.valueOf(line)).append('\n');
+            actual.append(prefix).append(String.valueOf(actualLine)).append('\n');
+            
+        }
+        
+        public ValueInfoGoal createGoal(PythonFileC fileC) {
+            return null;
+        }
     }
     
 }

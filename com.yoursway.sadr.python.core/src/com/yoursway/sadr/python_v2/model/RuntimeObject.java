@@ -2,6 +2,10 @@ package com.yoursway.sadr.python_v2.model;
 
 import java.util.Set;
 
+/**
+ * Represents a runtime object. Supports instance attributes name resolution.
+ */
+
 public interface RuntimeObject {
     
     RuntimeObject getType();
@@ -11,7 +15,7 @@ public interface RuntimeObject {
     void setAttribute(String name, RuntimeObject object);
     
     /**
-     * @return objects' names (instance attributes and methods).
+     * @return objects' names (instance attributes).
      */
     Set<String> getAttributeNames();
 }

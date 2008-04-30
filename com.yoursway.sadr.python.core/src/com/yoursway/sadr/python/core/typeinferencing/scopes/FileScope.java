@@ -18,7 +18,7 @@ import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
 
-public class FileScope extends LocalScope implements NodeLookup {
+public class FileScope extends Scope implements NodeLookup {
     
     private final ISourceModule file;
     

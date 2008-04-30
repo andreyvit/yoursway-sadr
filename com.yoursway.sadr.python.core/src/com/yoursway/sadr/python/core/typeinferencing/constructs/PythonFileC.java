@@ -1,5 +1,8 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
+import java.util.List;
+
+import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.core.ISourceModule;
 
@@ -8,22 +11,17 @@ import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonModule;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.RootScope;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implements RootPythonConstruct {
+public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implements Scope {
     
-    private final FileScope innerScope;
-    
-    public PythonFileC(PythonStaticContext sc, ISourceModule module, PythonModule module2,
-            ModuleDeclaration node) {
+    public PythonFileC(Scope sc, ISourceModule module, PythonModule module2, ModuleDeclaration node) {
         super(sc, node);
-        innerScope = new FileScope((RootScope) sc, module2, module, this);
     }
     
     @Override
-    protected PythonStaticContext innerContext() {
-        return innerScope;
+    protected PythonConstruct wrap(ASTNode node) {
+        return PythonConstructFactory.wrapConstruct(node, this);
     }
     
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
@@ -31,8 +29,12 @@ public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implemen
         throw new UnsupportedOperationException();
     }
     
-    public PythonStaticContext innerStaticContext() {
-        return innerContext();
+    public List<PythonConstruct> getEnclosedconstructs() {
+        return node.getChilds();
+    }
+    
+    public PythonConstruct parentConstruct() {
+        return (PythonConstruct) scope();
     }
     
 }
