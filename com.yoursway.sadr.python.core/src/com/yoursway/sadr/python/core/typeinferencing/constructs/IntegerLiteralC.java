@@ -6,10 +6,11 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     
-    IntegerLiteralC(PythonStaticContext sc, NumericLiteral node) {
+    IntegerLiteralC(Scope sc, NumericLiteral node) {
         super(sc, node);
     }
     

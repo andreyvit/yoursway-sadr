@@ -10,12 +10,13 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class BinaryPercentC extends BinaryC {
     
     protected AnalysisProvider typeAnalysisProvider;
     
-    BinaryPercentC(PythonStaticContext sc, BinaryExpression node) {
+    BinaryPercentC(Scope sc, BinaryExpression node) {
         super(sc, node);
     }
     

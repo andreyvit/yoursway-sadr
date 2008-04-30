@@ -9,11 +9,12 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 
 public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     
-    StringLiteralC(PythonStaticContext sc, StringLiteral node) {
+    StringLiteralC(Scope sc, StringLiteral node) {
         super(sc, node);
     }
     

@@ -11,7 +11,7 @@ import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
@@ -26,7 +26,7 @@ public class RootScope extends AbstractScope {
     private final OuteriorNodeLookup outeriorNodeLookup;
     private final SearchService searchService;
     
-    private final PropagationTracker<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> propagationTracker;
+    private final PropagationTracker<PythonConstruct, Scope, PythonDynamicContext, ASTNode> propagationTracker;
     
     public RootScope(PythonRuntimeModel model, OuteriorNodeLookup outeriorNodeLookup,
             SearchService searchService) {
@@ -77,7 +77,7 @@ public class RootScope extends AbstractScope {
         throw new UnsupportedOperationException();
     }
     
-    public PropagationTracker<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> propagationTracker() {
+    public PropagationTracker<PythonConstruct, Scope, PythonDynamicContext, ASTNode> propagationTracker() {
         return propagationTracker;
     }
     

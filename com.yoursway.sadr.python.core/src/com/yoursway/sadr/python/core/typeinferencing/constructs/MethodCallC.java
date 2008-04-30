@@ -16,10 +16,11 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRe
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class MethodCallC extends CallC implements IndexAffector {
     
-    MethodCallC(PythonStaticContext sc, PythonCallExpression node) {
+    MethodCallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
     }
     

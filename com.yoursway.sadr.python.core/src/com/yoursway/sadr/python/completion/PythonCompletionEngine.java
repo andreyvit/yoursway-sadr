@@ -28,7 +28,7 @@ import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.PythonProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.runtime.WholeProjectRuntime;
+import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
@@ -54,7 +54,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
     
     private AnalysisEngine engine;
     
-    private WholeProjectRuntime wholeProjectRuntime;
+    private ProjectRuntime projectRuntime;
     
     private PythonFileC fileC;
     
@@ -113,10 +113,10 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
             String wordStarting = getWordStarting(content, position, 20);
             
             if (wordStarting != null)
-                wholeProjectRuntime = new WholeProjectRuntime(modelModule.getScriptProject());
-            fileC = wholeProjectRuntime.getConstructFor(modelModule);
-            runtimeModel = wholeProjectRuntime.getModel();
-            engine = wholeProjectRuntime.getEngine();
+                projectRuntime = new ProjectRuntime(modelModule.getScriptProject());
+            fileC = projectRuntime.getConstructFor(modelModule);
+            runtimeModel = projectRuntime.getModel();
+            engine = projectRuntime.getEngine();
             
             boolean enableKeywordCompletion = true;
             

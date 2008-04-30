@@ -1,10 +1,11 @@
-package com.yoursway.sadr.python_v2.model;
+package com.yoursway.sadr.python_v2.model.builtins;
 
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
-import com.yoursway.sadr.python_v2.model.builtins.Builtins;
+import com.yoursway.sadr.python_v2.model.LexicalScope;
+import com.yoursway.sadr.python_v2.model.LexicalScopeImpl;
 
 public class FunctionObject extends PythonObject {
     

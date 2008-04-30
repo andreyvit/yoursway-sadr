@@ -12,10 +12,10 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 
 public class EvalRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
+        Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode> {
     
     public static class EvalInfo {
         
@@ -49,7 +49,7 @@ public class EvalRequest implements
     }
     
     public ContinuationRequestorCalledToken enter(PythonConstruct construct, ContinuationScheduler requestor,
-            VisitorRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
+            VisitorRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
         accept(construct);
         return continuation.consume(this, requestor);
     }

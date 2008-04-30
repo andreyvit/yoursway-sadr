@@ -30,10 +30,11 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGo
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> implements CallsAffector {
     
-    CallC(PythonStaticContext sc, PythonCallExpression node) {
+    CallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
     }
     

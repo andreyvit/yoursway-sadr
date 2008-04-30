@@ -5,15 +5,16 @@ import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValue
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsRequest;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ReturnC extends PythonConstructImpl<ReturnStatement> implements ReturnsAffector {
     
-    ReturnC(PythonStaticContext sc, ReturnStatement node) {
+    ReturnC(Scope sc, ReturnStatement node) {
         super(sc, node);
     }
     

@@ -23,6 +23,7 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.MergeFieldsValueInfos
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpression> {
     
@@ -41,7 +42,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
         
     };
     
-    FieldAccessC(PythonStaticContext sc, PythonVariableAccessExpression node) {
+    FieldAccessC(Scope sc, PythonVariableAccessExpression node) {
         super(sc, node);
     }
     

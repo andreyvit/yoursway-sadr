@@ -1,24 +1,24 @@
-package com.yoursway.sadr.python_v2.model;
+package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yoursway.sadr.python_v2.model.builtins.Builtins;
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 /**
  * Represents a class type object. Supports class attributes name resolution.
  */
-public class PythonClass extends PythonObject implements RuntimeObject {
+public class PythonClassImpl extends PythonObject implements PythonClass {
     
     private List<PythonClass> supers;
     
-    public PythonClass() {
+    public PythonClassImpl() {
         super(Builtins.TYPE);
         supers = new ArrayList<PythonClass>(1);
         supers.add(Builtins.OBJECT);
     }
     
-    public PythonClass(List<PythonClass> supers) {
+    public PythonClassImpl(List<PythonClass> supers) {
         super(Builtins.TYPE);
         this.supers = supers;
     }

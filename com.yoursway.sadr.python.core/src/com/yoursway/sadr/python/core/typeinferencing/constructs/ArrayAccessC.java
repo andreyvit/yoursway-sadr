@@ -19,6 +19,7 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGo
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpression> {
     
@@ -30,7 +31,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
         
     };
     
-    ArrayAccessC(PythonStaticContext sc, PythonArrayAccessExpression node) {
+    ArrayAccessC(Scope sc, PythonArrayAccessExpression node) {
         super(sc, node);
     }
     

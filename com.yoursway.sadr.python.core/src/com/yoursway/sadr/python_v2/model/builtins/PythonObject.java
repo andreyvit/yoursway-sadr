@@ -1,11 +1,13 @@
-package com.yoursway.sadr.python_v2.model;
+package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.Map;
 import java.util.Set;
 
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
+
 public class PythonObject implements RuntimeObject {
     
-    private Map<String, RuntimeObject> attributes;
+    Map<String, RuntimeObject> attributes;
     private PythonClass type;
     
     protected RuntimeObject lookupInSuperclasses(String name) {
@@ -17,12 +19,12 @@ public class PythonObject implements RuntimeObject {
         return null;
     }
     
-    protected Map<String, RuntimeObject> getDict() {
+    public Map<String, RuntimeObject> getDict() {
         return attributes;
     }
     
     public PythonObject(PythonClass type) {
-        assert type != null;
+        //assert type != null;
         this.type = type;
     }
     

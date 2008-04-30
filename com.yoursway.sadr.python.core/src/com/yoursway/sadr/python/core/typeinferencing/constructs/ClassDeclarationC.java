@@ -4,9 +4,11 @@ import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValue
 
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
+import sun.reflect.generics.scope.ClassScope;
+
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonClassDefinition;
@@ -14,13 +16,13 @@ import com.yoursway.sadr.python.core.runtime.PythonSourceClassDefinition;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelRequest;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.ClassScope;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaration> implements ModelAffector {
     
     private final ClassScope innerContext;
     
-    ClassDeclarationC(PythonStaticContext sc, PythonClassDeclaration node) {
+    ClassDeclarationC(Scope sc, PythonClassDeclaration node) {
         super(sc, node);
         String name = node.getName();
         innerContext = lookupScope(staticContext().classLookup().lookupClass(name));
@@ -32,7 +34,7 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
             if (definition instanceof PythonSourceClassDefinition) {
                 PythonSourceClassDefinition def = (PythonSourceClassDefinition) definition;
                 if (node == def.node()) {
-                    scope = def.scope();
+                    scope = def.parentScope();
                 }
             }
         if (scope == null)
@@ -46,7 +48,7 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
     }
     
     @Override
-    protected PythonStaticContext innerContext() {
+    protected Scope innerContext() {
         return innerContext;
     }
     

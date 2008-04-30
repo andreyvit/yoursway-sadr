@@ -57,7 +57,7 @@ public class ProcedureScope extends LocalScope {
     public PythonVariable lookupVariable(String name) {
         PythonVariable variable = findVariable(name);
         if (variable == null)
-            variable = new PythonScopedVariable(procedure, null, procedure.scope(), name);
+            variable = new PythonScopedVariable(procedure, null, procedure.parentScope(), name);
         return variable;
     }
     

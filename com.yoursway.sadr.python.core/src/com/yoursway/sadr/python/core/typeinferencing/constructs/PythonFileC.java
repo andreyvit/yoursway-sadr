@@ -4,18 +4,16 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.core.ISourceModule;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.runtime.PythonModule;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implements Scope {
     
-    public PythonFileC(Scope sc, ISourceModule module, PythonModule module2, ModuleDeclaration node) {
+    public PythonFileC(Scope sc, ModuleDeclaration node) {
         super(sc, node);
     }
     
@@ -30,11 +28,11 @@ public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implemen
     }
     
     public List<PythonConstruct> getEnclosedconstructs() {
-        return node.getChilds();
+        return PythonConstructFactory.wrap(this, node.getStatements());
     }
     
     public PythonConstruct parentConstruct() {
-        return (PythonConstruct) scope();
+        return (PythonConstruct) parentScope();
     }
     
 }

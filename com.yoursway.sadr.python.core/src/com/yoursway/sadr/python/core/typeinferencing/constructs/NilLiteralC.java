@@ -9,6 +9,7 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.NilValue;
 
 /**
@@ -17,7 +18,7 @@ import com.yoursway.sadr.python.core.typeinferencing.values.NilValue;
 @Deprecated
 public class NilLiteralC extends PythonConstructImpl<SimpleReference> {
     
-    NilLiteralC(PythonStaticContext sc, SimpleReference node) {
+    NilLiteralC(Scope sc, SimpleReference node) {
         super(sc, node);
     }
     

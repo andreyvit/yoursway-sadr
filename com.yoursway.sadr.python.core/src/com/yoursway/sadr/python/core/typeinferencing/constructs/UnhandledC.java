@@ -5,13 +5,14 @@ import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValue
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class UnhandledC extends PythonConstructImpl<ASTNode> {
     
-    UnhandledC(PythonStaticContext sc, ASTNode node) {
+    UnhandledC(Scope sc, ASTNode node) {
         super(sc, node);
     }
     

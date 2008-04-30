@@ -11,11 +11,11 @@ import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 
 public class IndexRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor {
+        Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor {
     
     private final AbstractMultiMap<String, CallC> procedureCalls;
     
@@ -47,7 +47,7 @@ public class IndexRequest implements
     }
     
     public ContinuationRequestorCalledToken enter(PythonConstruct construct, ContinuationScheduler requestor,
-            VisitorRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
+            VisitorRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
         accept(construct);
         return continuation.consume(this, requestor);
     }

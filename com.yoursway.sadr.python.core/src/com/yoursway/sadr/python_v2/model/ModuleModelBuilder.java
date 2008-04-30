@@ -22,6 +22,10 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructFactory;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
+import com.yoursway.sadr.python_v2.model.builtins.ClassStub;
+import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
+import com.yoursway.sadr.python_v2.model.builtins.ObjectStub;
+import com.yoursway.sadr.python_v2.model.builtins.PythonClassImpl;
 
 /**
  * Builds module constructs structure. Adds all traversed constructs to a new
@@ -31,7 +35,7 @@ public class ModuleModelBuilder extends ASTVisitor {
     
     private final LexicalScopeImpl model = new LexicalScopeImpl(Builtins.getBuiltinModule()); // module model being builded
     private final Stack<LexicalScopeImpl> scopes = new Stack<LexicalScopeImpl>(); // nested scopes stack
-    private final Stack<PythonClass> classes = new Stack<PythonClass>(); // nested classes stack
+    private final Stack<PythonClassImpl> classes = new Stack<PythonClassImpl>(); // nested classes stack
     
     public ModuleModelBuilder() {
         scopes.push(model);
@@ -138,13 +142,13 @@ public class ModuleModelBuilder extends ASTVisitor {
         if (!(s instanceof PythonClassDeclaration))
             throw new RuntimeException("PythonClassDeclaration expected.");
         List<ASTNode> superclassAstNodes = ((PythonClassDeclaration) s).getSupers();
-        List<PythonClass> supers = new ArrayList<PythonClass>(superclassAstNodes.size());
+        List<PythonClassImpl> supers = new ArrayList<PythonClassImpl>(superclassAstNodes.size());
         for (ASTNode astNode : superclassAstNodes) {
             if (!(astNode instanceof Statement))
                 throw new RuntimeException("Statement object expected.");
             supers.add(new ClassStub((Statement) astNode));
         }
-        PythonClass cls = new PythonClass(supers);
+        PythonClassImpl cls = new PythonClassImpl(supers);
         classes.push(cls);
         return true;
     }

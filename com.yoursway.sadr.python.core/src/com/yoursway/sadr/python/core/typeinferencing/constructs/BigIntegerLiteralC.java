@@ -13,10 +13,11 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
     
-    BigIntegerLiteralC(PythonStaticContext sc, BigNumericLiteral literal) {
+    BigIntegerLiteralC(Scope sc, BigNumericLiteral literal) {
         super(sc, literal);
     }
     

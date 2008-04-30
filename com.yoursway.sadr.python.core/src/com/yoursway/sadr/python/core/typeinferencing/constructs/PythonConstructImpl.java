@@ -13,8 +13,8 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
     
     protected final N node;
-    private Scope parentScope;
-    private List<PythonConstruct> enclosedConstructs;
+    private final Scope parentScope;
+    private final List<PythonConstruct> enclosedConstructs;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
@@ -25,10 +25,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         for (ASTNode child : children) {
             enclosedConstructs.add(wrap(child));
         }
-    }
-    
-    public PythonConstructImpl(PythonStaticContext sc, N node) {
-        this.node = node;
     }
     
     public PythonConstruct staticallyEnclosingConstruct() {
@@ -69,10 +65,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     //    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
     //            ContinuationScheduler requestor,
-    //            ControlFlowGraphRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
+    //            ControlFlowGraphRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
     //        List<PythonConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
     //        return continuation.process(
-    //                new ControlFlowGraph<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>(
+    //                new ControlFlowGraph<PythonConstruct, Scope, PythonDynamicContext, ASTNode>(
     //                        constructs), requestor);
     //    }
     
@@ -118,7 +114,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return true;
     }
     
-    public Scope scope() {
+    public Scope parentScope() {
         return parentScope;
     }
     

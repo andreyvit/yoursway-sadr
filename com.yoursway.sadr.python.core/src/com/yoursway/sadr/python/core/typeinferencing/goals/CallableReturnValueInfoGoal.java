@@ -14,7 +14,7 @@ import com.yoursway.sadr.python.core.runtime.PythonBuiltinProcedure;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicMethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicProcedureScope;
@@ -49,7 +49,7 @@ public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
         PythonConstruct construct = calledMethod.construct();
         if (construct == null)
             throw new AssertionError("Callable must either be a built-in or have a construct");
-        PythonStaticContext staticScope = ((MethodDeclarationC) construct).methodScope();
+        Scope staticScope = ((MethodDeclarationC) construct).methodScope();
         final PythonDynamicContext dc;
         if (staticScope instanceof MethodScope)
             dc = new DynamicMethodScope((MethodScope) staticScope, callee, arguments);
