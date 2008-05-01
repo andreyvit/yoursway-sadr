@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -18,4 +19,6 @@ public interface RuntimeObject {
      * @return objects' names (instance attributes).
      */
     Set<String> getAttributeNames();
+
+    public Map<String, RuntimeObject> getDict();
 }

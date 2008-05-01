@@ -20,11 +20,11 @@ import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 
-public class PythonDelegatingStaticContext implements PythonStaticContext {
+public class PythonDelegatingStaticContext implements Scope {
     
-    private final PythonStaticContext delegateTo;
+    private final Scope delegateTo;
     
-    public PythonDelegatingStaticContext(PythonStaticContext delegateTo) {
+    public PythonDelegatingStaticContext(Scope delegateTo) {
         this.delegateTo = delegateTo;
     }
     
@@ -56,7 +56,7 @@ public class PythonDelegatingStaticContext implements PythonStaticContext {
         return delegateTo.procedureLookup();
     }
     
-    public PropagationTracker<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> propagationTracker() {
+    public PropagationTracker<PythonConstruct, Scope, PythonDynamicContext, ASTNode> propagationTracker() {
         return delegateTo.propagationTracker();
     }
     

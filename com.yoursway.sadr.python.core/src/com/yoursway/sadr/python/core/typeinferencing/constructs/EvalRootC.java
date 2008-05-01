@@ -6,10 +6,11 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class EvalRootC extends PythonConstructImpl<ModuleDeclaration> implements RootPythonConstruct {
     
-    public EvalRootC(PythonStaticContext sc, ModuleDeclaration node) {
+    public EvalRootC(Scope sc, ModuleDeclaration node) {
         super(sc, node);
     }
     
@@ -18,7 +19,7 @@ public class EvalRootC extends PythonConstructImpl<ModuleDeclaration> implements
         throw new UnsupportedOperationException();
     }
     
-    public PythonStaticContext innerStaticContext() {
+    public Scope innerStaticContext() {
         return innerContext();
     }
     

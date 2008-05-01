@@ -44,7 +44,7 @@ import org.junit.After;
 
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.python.ASTUtils;
-import com.yoursway.sadr.python.core.runtime.WholeProjectRuntime;
+import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
@@ -109,7 +109,7 @@ public abstract class AbstractTypeInferencingTestCase {
 		createProject("test", file);
 
 		IScriptProject scriptProject = DLTKCore.create(testProject);
-		WholeProjectRuntime projectRuntime = new WholeProjectRuntime(
+		ProjectRuntime projectRuntime = new ProjectRuntime(
 				scriptProject);
 
 		AnalysisEngine engine = projectRuntime.getEngine();
@@ -129,7 +129,7 @@ public abstract class AbstractTypeInferencingTestCase {
 	}
 
 	private void checkFile(ISourceModule sourceModule,
-			WholeProjectRuntime projectRuntime, AnalysisEngine engine,
+			ProjectRuntime projectRuntime, AnalysisEngine engine,
 			StringBuilder expected, StringBuilder actual)
 			throws ModelException, Exception {
 		Collection<IAssertion> assertions = new ArrayList<IAssertion>();

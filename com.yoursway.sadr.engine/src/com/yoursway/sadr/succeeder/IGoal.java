@@ -62,20 +62,17 @@ public interface IGoal {
 	void setScheduler(IScheduler scheduler);
 
 	/**
-	 * Called first when task is run. Should schedule subtasks if needed - if
-	 * this method does not schedule subtasks, <code>postRun</code> will be
-	 * called immediately and task will be finished.
+	 * Called first when task is run.
 	 * 
 	 * Can produce results. Can schedule subtasks.
 	 */
 	void preRun();
 
-	CheckpointToken flush();
-
 	/**
-	 * Called when parent decided to cancel this task.
+	 * This method is called on the goal cancellation.
 	 * 
-	 * Cannot produce results. Cannot schedule subtasks.
+	 * @return a {@link CheckpointToken} to assure that
+	 *         {@link IAcceptor#checkpoint(IGrade)} has been called.
 	 */
-	void isCanceled();
+	CheckpointToken flush();
 }

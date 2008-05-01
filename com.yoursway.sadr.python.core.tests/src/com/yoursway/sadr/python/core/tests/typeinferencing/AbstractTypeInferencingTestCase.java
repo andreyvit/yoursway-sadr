@@ -45,8 +45,8 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
+import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
-import com.yoursway.sadr.python.core.runtime.WholeProjectRuntime;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.AnyMethodRequestor;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodNamesRequestor;
 import com.yoursway.sadr.python.core.tests.Activator;
@@ -111,7 +111,7 @@ public abstract class AbstractTypeInferencingTestCase {
         createProject("test", file);
         
         IScriptProject scriptProject = DLTKCore.create(testProject);
-        WholeProjectRuntime projectRuntime = new WholeProjectRuntime(scriptProject);
+        ProjectRuntime projectRuntime = new ProjectRuntime(scriptProject);
         
         Engine engine = projectRuntime.getEngine();
         
@@ -120,7 +120,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         System.out.println("Running test " + basePath);
         
-        for (ISourceModule sourceModule : projectRuntime.getSourceModules()) {
+        for (ISourceModule sourceModule : projectRuntime.getModules()) {
             String headline = "==== " + sourceModule.getElementName() + " ====\n";
             expected.append(headline);
             actual.append(headline);
@@ -130,7 +130,7 @@ public abstract class AbstractTypeInferencingTestCase {
         Assert.assertEquals(expected.toString(), actual.toString());
     }
     
-    private void checkFile(ISourceModule sourceModule, WholeProjectRuntime projectRuntime, Engine engine,
+    private void checkFile(ISourceModule sourceModule, ProjectRuntime projectRuntime, Engine engine,
             StringBuilder expected, StringBuilder actual) throws ModelException, Exception {
         Collection<IAssertion> assertions = new ArrayList<IAssertion>();
         
@@ -161,7 +161,7 @@ public abstract class AbstractTypeInferencingTestCase {
         if (assertions.size() == 0)
             return;
         
-        PythonFileC fileC = projectRuntime.getConstructFor(sourceModule);
+        PythonFileC fileC = projectRuntime.getModule(sourceModule.getElementName());
         for (IAssertion assertion : assertions)
             assertion.check(fileC, sourceModule, engine, expected, actual);
     }
@@ -333,7 +333,8 @@ public abstract class AbstractTypeInferencingTestCase {
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileC);
-            engine.evaluate(goal);
+            engine.schedule(goal);
+            engine.run();
             ValueInfo result = goal.roughResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
@@ -433,7 +434,7 @@ public abstract class AbstractTypeInferencingTestCase {
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             ExpressionValueInfoGoal goal = createGoal(fileC);
-            engine.evaluate(goal);
+            engine.run(goal);
             ValueInfo result = goal.roughResult();
             AnyMethodRequestor requestor = new AnyMethodRequestor();
             ValueInfoUtils.findMethod(result, methodName, requestor);
@@ -547,8 +548,7 @@ public abstract class AbstractTypeInferencingTestCase {
             if (construct instanceof VariableReferenceC) {
                 goal = new ResolveName((VariableReferenceC) construct, acceptor);
                 
-                engine.schedule(goal);
-                engine.run();
+                engine.run(goal);
                 
                 AssignmentC resultAssignmentC = acceptor.getResultAssignmentC();
                 if (resultAssignmentC != null) {

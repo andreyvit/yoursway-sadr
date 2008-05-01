@@ -9,10 +9,10 @@ import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 
 public class ModelRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
+        Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode> {
     
     private final Context context;
     
@@ -25,7 +25,7 @@ public class ModelRequest implements
     }
     
     public ContinuationRequestorCalledToken enter(PythonConstruct construct, ContinuationScheduler requestor,
-            VisitorRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
+            VisitorRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
         if (construct instanceof ModelAffector)
             ((ModelAffector) construct).actOnModel(this);
         return continuation.consume(this, requestor);

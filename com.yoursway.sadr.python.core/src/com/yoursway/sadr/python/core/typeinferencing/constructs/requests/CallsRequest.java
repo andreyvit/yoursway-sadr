@@ -13,11 +13,11 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.goals.CallInfo;
 
 public class CallsRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
+        Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode> {
     
     private final PythonVariable variable;
     
@@ -45,7 +45,7 @@ public class CallsRequest implements
     }
     
     public ContinuationRequestorCalledToken enter(PythonConstruct construct, ContinuationScheduler requestor,
-            VisitorRequestor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> continuation) {
+            VisitorRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
         accept(construct);
         return continuation.consume(this, requestor);
     }

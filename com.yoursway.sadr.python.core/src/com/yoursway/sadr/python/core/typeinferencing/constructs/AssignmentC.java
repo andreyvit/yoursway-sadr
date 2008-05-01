@@ -77,7 +77,7 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
     //        //                    && ((VariableReference) children.get(0)).getName().equals("self")
     //        //                    && children.get(1) instanceof VariableReference) {
     //        //                VariableReference fieldName = (VariableReference) children.get(1);
-    //        //                PythonClass klass = staticContext().currentClass();
+    //        //                PythonClassImpl klass = staticContext().currentClass();
     //        //                new PythonSourceField(request.context(), klass, fieldName.getName(), fieldName);
     //        //            }
     //        //        }

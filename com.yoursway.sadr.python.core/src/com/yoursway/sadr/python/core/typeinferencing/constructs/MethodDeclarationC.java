@@ -22,7 +22,7 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
         children = wrapEnclosedChildren(this);
         
         //        String name = node.getName();
-        //        PythonClass klass = staticContext().currentClass();
+        //        PythonClassImpl klass = staticContext().currentClass();
         //        if (klass != null) {
         //            PythonMethod method = klass.findMethod(name);
         //            if (method instanceof PythonSourceMethod)
@@ -48,7 +48,7 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
     }
     
     //    public void actOnModel(ModelRequest request) {
-    //        PythonClass klass = staticContext().currentClass();
+    //        PythonClassImpl klass = staticContext().currentClass();
     //        if (klass != null) {
     //            PythonSourceMethod method = new PythonSourceMethod(klass, request.context(), this);
     //            innerScope = new MethodScope(nearestScope(), method, node);

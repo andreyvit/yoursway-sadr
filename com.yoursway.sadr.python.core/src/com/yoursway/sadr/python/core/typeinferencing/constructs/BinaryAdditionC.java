@@ -19,11 +19,12 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercion;
 import com.yoursway.sadr.python.core.typeinferencing.goals.BinaryCoercionRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 
 public class BinaryAdditionC extends BinaryC {
     
-    BinaryAdditionC(PythonStaticContext sc, BinaryExpression node) {
+    BinaryAdditionC(Scope sc, BinaryExpression node) {
         super(sc, node);
     }
     

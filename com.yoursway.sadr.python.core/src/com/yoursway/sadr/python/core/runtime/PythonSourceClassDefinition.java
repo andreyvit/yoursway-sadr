@@ -33,7 +33,7 @@ public class PythonSourceClassDefinition extends PythonClassDefinition implement
         context.add(this);
     }
     
-    public ClassScope scope() {
+    public ClassScope parentScope() {
         return scope;
     }
     

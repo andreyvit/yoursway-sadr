@@ -32,7 +32,7 @@ import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
@@ -202,11 +202,11 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     
     private final DtlArgumentVariable variable;
     private final ClassLookup classLookup;
-    private final PythonStaticContext megapack;
+    private final Scope megapack;
     private final InfoKind kind;
     
     public ArgumentVariableValueInfoGoal(DtlArgumentVariable variable, InfoKind kind,
-            PythonStaticContext megapack) {
+            Scope megapack) {
         this.variable = variable;
         this.kind = kind;
         this.megapack = megapack;

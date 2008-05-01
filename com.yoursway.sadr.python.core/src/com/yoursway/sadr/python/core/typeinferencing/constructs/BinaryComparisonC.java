@@ -25,7 +25,7 @@ public class BinaryComparisonC extends BinaryC {
     
     private final Comparison comparison;
     
-    BinaryComparisonC(PythonStaticContext sc, BinaryExpression node, Comparison comparison) {
+    BinaryComparisonC(Scope sc, BinaryExpression node, Comparison comparison) {
         super(sc, node);
         this.comparison = comparison;
     }

@@ -61,7 +61,7 @@ public class PythonSourceProcedure extends PythonProcedure implements NodeBoundI
         return namesToLocalVariables.get(name.toLowerCase());
     }
     
-    public LocalScope scope() {
+    public LocalScope parentScope() {
         return construct.methodScope();
     }
     
