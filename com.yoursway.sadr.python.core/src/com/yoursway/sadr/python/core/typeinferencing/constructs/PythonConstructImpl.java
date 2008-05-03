@@ -14,16 +14,16 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     protected final N node;
     private final Scope parentScope;
-    private final List<PythonConstruct> enclosedConstructs;
+    private List<PythonConstruct> childContructs;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
         this.node = node;
         
         List<ASTNode> children = this.node.getChilds();
-        enclosedConstructs = new ArrayList<PythonConstruct>(children.size());
+        childContructs = new ArrayList<PythonConstruct>(children.size());
         for (ASTNode child : children) {
-            enclosedConstructs.add(wrap(child));
+            childContructs.add(wrap(child));
         }
     }
     
@@ -51,7 +51,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (isNode(node))
             return this;
         // TODO check offset here
-        for (PythonConstruct c : enclosedConstructs) {
+        for (PythonConstruct c : childContructs) {
             PythonConstruct sc = ((PythonConstructImpl<?>) c).innerSubsonstructFor(node);
             if (sc != null)
                 return sc;
@@ -66,7 +66,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     //    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
     //            ContinuationScheduler requestor,
     //            ControlFlowGraphRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
-    //        List<PythonConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
+    //        List<PythonConstruct> constructs = filter(childContructs(), NOT_METHOD);
     //        return continuation.process(
     //                new ControlFlowGraph<PythonConstruct, Scope, PythonDynamicContext, ASTNode>(
     //                        constructs), requestor);
@@ -118,4 +118,20 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return parentScope;
     }
     
+    public List<PythonConstruct> getChildContructs() {
+        return childContructs;
+    }
+    
+    protected void setChildConstructs(List<PythonConstruct> constructs) {
+        childContructs = constructs;
+    }
+    
+    public void traverse(PythonConstructVisitor visitor) {
+        if (visitor.visit(this)) {
+            for (PythonConstruct construct : childContructs) {
+                construct.traverse(visitor);
+            }
+            visitor.endVisit(this);
+        }
+    }
 }

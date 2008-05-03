@@ -22,6 +22,8 @@ public class Builtins extends LexicalScopeImpl {
     public static PythonClass OBJECT = createTypeType(); //TODO
     public static PythonClass FUNCTION = createTypeType(); //TODO
     public static PythonClass MODULE = createTypeType(); //TODO
+    public static IntType INT = IntType.instance();
+    public static StringType STRING = StringType.instance();
     
     private static void init(Builtins inst) {
         inst.setName("type", TYPE);
@@ -29,7 +31,7 @@ public class Builtins extends LexicalScopeImpl {
     }
     
     //---------Singleton infrastructure---------
-    public Builtins() {
+    private Builtins() {
         super(null);
         init(this);
     }

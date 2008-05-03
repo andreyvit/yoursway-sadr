@@ -3,8 +3,8 @@ package com.yoursway.sadr.python.core.runtime.contributions;
 import org.eclipse.dltk.core.ISourceModule;
 
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 
+//FIXME make real context or settle crocodiles here. 
 public interface Context {
     
     PythonRuntimeModel model();

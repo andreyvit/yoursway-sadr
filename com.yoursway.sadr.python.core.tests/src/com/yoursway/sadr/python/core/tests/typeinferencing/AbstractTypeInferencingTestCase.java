@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,8 +62,10 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGo
 import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveName;
 import com.yoursway.sadr.python_v2.goals.ResolvedNameAcceptor;
+import com.yoursway.sadr.python_v2.model.builtins.PythonClass;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
@@ -312,7 +315,7 @@ public abstract class AbstractTypeInferencingTestCase {
         void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception;
         
-        ValueInfoGoal createGoal(PythonFileC fileC);
+        IGoal createGoal(PythonFileC fileC);
         
     }
     
@@ -332,10 +335,11 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            ExpressionValueInfoGoal goal = createGoal(fileC);
-            engine.schedule(goal);
-            engine.run();
-            ValueInfo result = goal.roughResult();
+            ExpressionValueGoal goal = (ExpressionValueGoal) createGoal(fileC);
+            engine.run(goal);
+            Set<PythonClass> resultTypes = goal.getAcceptor().getResultTypes();
+            //TODO find class with the specified name and check if one of results 
+            //'grows' (in SSA sense) from that class.
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
             String types = Strings.join(possibleTypes, ",");
@@ -344,11 +348,11 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(types).append('\n');
         }
         
-        public ExpressionValueInfoGoal createGoal(PythonFileC fileC) {
+        public IGoal createGoal(PythonFileC fileC) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.TYPE);
+            return new ExpressionValueGoal(construct, null);
         }
         
     }

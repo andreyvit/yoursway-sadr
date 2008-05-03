@@ -8,4 +8,6 @@ public interface PythonConstruct {
     
     Collection<MumblaWumblaThreesome> mumblaWumbla();
     
+    void traverse(PythonConstructVisitor visitor);
+    
 }
