@@ -5,7 +5,7 @@ import org.eclipse.dltk.ast.statements.Statement;
 /**
  * Fake class that must be resolved (evaluated) into a actual class.
  */
-public class ClassStub extends PythonClassImpl {
+public class ClassStub extends PythonClassType {
     private final Statement statement;
     
     public ClassStub(Statement statement) {

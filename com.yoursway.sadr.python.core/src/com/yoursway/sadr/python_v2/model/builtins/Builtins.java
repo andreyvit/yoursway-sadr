@@ -8,11 +8,11 @@ import com.yoursway.sadr.python_v2.model.LexicalScopeImpl;
  */
 public class Builtins extends LexicalScopeImpl {
     
-    private static PythonClassImpl typeType = null;
+    private static PythonClassType typeType = null;
     
     private static PythonClass createTypeType() {
         if (null == typeType) {
-            typeType = new PythonClassImpl();
+            typeType = new PythonClassType();
             typeType.setType(typeType);
         }
         return typeType;

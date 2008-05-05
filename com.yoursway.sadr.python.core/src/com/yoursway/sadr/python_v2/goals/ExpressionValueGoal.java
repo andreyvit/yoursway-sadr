@@ -2,11 +2,9 @@ package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.IntegerLiteralC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.StringLiteralC;
-import com.yoursway.sadr.python_v2.model.builtins.IntType;
-import com.yoursway.sadr.python_v2.model.builtins.StringType;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructVisitor;
+import com.yoursway.sadr.python_v2.goals.visitors.ExpressionAnalyzer;
 import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -31,10 +29,8 @@ public class ExpressionValueGoal extends ContextSensitiveGoal {
     }
     
     public void preRun() {
-        if (expression instanceof IntegerLiteralC)
-            acceptor.addResult(IntType.newIntObject((IntegerLiteralC) expression), getContext());
-        else if (expression instanceof StringLiteralC)
-            acceptor.addResult(StringType.newStringObject((StringLiteralC) expression), getContext());
+        PythonConstructVisitor visitor = new ExpressionAnalyzer(acceptor, getContext());
+        expression.traverse(visitor);
         checkpoint(acceptor, Grade.DONE);
     }
     

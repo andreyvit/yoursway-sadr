@@ -25,7 +25,7 @@ import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.python_v2.model.builtins.ClassStub;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.ObjectStub;
-import com.yoursway.sadr.python_v2.model.builtins.PythonClassImpl;
+import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 
 /**
  * Builds module constructs structure. Adds all traversed constructs to a new
@@ -35,7 +35,7 @@ public class ModuleModelBuilder extends ASTVisitor {
     
     private final LexicalScopeImpl model = new LexicalScopeImpl(Builtins.getBuiltinModule()); // module model being builded
     private final Stack<LexicalScopeImpl> scopes = new Stack<LexicalScopeImpl>(); // nested scopes stack
-    private final Stack<PythonClassImpl> classes = new Stack<PythonClassImpl>(); // nested classes stack
+    private final Stack<PythonClassType> classes = new Stack<PythonClassType>(); // nested classes stack
     
     public ModuleModelBuilder() {
         scopes.push(model);
@@ -142,13 +142,13 @@ public class ModuleModelBuilder extends ASTVisitor {
         if (!(s instanceof PythonClassDeclaration))
             throw new RuntimeException("PythonClassDeclaration expected.");
         List<ASTNode> superclassAstNodes = ((PythonClassDeclaration) s).getSupers();
-        List<PythonClassImpl> supers = new ArrayList<PythonClassImpl>(superclassAstNodes.size());
+        List<PythonClassType> supers = new ArrayList<PythonClassType>(superclassAstNodes.size());
         for (ASTNode astNode : superclassAstNodes) {
             if (!(astNode instanceof Statement))
                 throw new RuntimeException("Statement object expected.");
             supers.add(new ClassStub((Statement) astNode));
         }
-        PythonClassImpl cls = new PythonClassImpl(supers);
+        PythonClassType cls = new PythonClassType(supers);
         classes.push(cls);
         return true;
     }

@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.core.tests.typeinferencing;
 
-import static com.yoursway.sadr.engine.util.Strings.join;
 import static com.yoursway.sadr.python.core.tests.TestingUtils.callerOutside;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -17,7 +16,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +32,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
@@ -43,29 +40,19 @@ import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
-import com.yoursway.sadr.python.core.runtime.PythonVariable;
-import com.yoursway.sadr.python.core.runtime.requestors.methods.AnyMethodRequestor;
-import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodNamesRequestor;
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.Goals;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveName;
 import com.yoursway.sadr.python_v2.goals.ResolvedNameAcceptor;
-import com.yoursway.sadr.python_v2.model.builtins.PythonClass;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
@@ -148,15 +135,9 @@ public abstract class AbstractTypeInferencingTestCase {
                 StringTokenizer tok = new StringTokenizer(line.substring(delimiterPos + 2));
                 String test = tok.nextToken();
                 IAssertion assertion;
-                if (test.equals("not-cached") || test.equals("cached")) {
-                    boolean shouldBeCached = test.equals("cached");
-                    test = tok.nextToken();
-                    IAssertion ass2 = parseAssertion(tok, test, line, originalLine, lineOffset, delimiterPos);
-                    assertion = new CachedAssertion(ass2, shouldBeCached);
-                } else {
-                    assertion = parseAssertion(tok, test, line, originalLine, lineOffset, delimiterPos);
-                }
-                assertions.add(assertion);
+                assertion = parseAssertion(tok, test, line, originalLine, lineOffset, delimiterPos);
+                if (assertion != null)
+                    assertions.add(assertion);
             }
             lineOffset += originalLine.length() + 1;
         }
@@ -171,8 +152,13 @@ public abstract class AbstractTypeInferencingTestCase {
     
     private IAssertion parseAssertion(StringTokenizer tok, String test, String line, String originalLine,
             int lineOffset, int delimiterPos) {
-        IAssertion assertion;
-        if ("expr".equals(test)) {
+        IAssertion assertion = null;
+        if (test.equals("not-cached") || test.equals("cached")) {
+            //            boolean shouldBeCached = test.equals("cached");
+            test = tok.nextToken();
+            //            IAssertion ass2 = parseAssertion(tok, test, line, originalLine, lineOffset, delimiterPos);
+            //            assertion = new CachedAssertion(ass2, shouldBeCached);
+        } else if ("expr".equals(test)) {
             String expr = tok.nextToken();
             int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
             needToken(tok, "=>");
@@ -184,15 +170,15 @@ public abstract class AbstractTypeInferencingTestCase {
             needToken(tok, "=>");
             String correctClassRef = tok.nextToken();
             assertion = new ExpressionValueAssertion(expr, namePos, correctClassRef);
-        } else if ("localvar-type".equals(test)) {
-            String expr = tok.nextToken();
-            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
-            assertion = new LocalVarTypeAssertion(expr, namePos);
+            //        } else if ("localvar-type".equals(test)) {
+            //            String expr = tok.nextToken();
+            //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
+            //            assertion = new LocalVarTypeAssertion(expr, namePos);
         } else if ("has-method".equals(test)) {
-            String expr = tok.nextToken();
-            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
-            String methodName = tok.nextToken();
-            assertion = new HasMethodAssertion(expr, namePos, methodName);
+            //            String expr = tok.nextToken();
+            //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
+            //            String methodName = tok.nextToken();
+            //            assertion = new HasMethodAssertion(expr, namePos, methodName);
         } else if ("find-var".equals(test)) {
             String expr = tok.nextToken();
             int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
@@ -337,9 +323,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 StringBuilder actual) throws Exception {
             ExpressionValueGoal goal = (ExpressionValueGoal) createGoal(fileC);
             engine.run(goal);
-            Set<PythonClass> resultTypes = goal.getAcceptor().getResultTypes();
-            //TODO find class with the specified name and check if one of results 
-            //'grows' (in SSA sense) from that class.
+            ValueInfo result = goal.getAcceptor().getResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
             String types = Strings.join(possibleTypes, ",");
@@ -352,36 +336,36 @@ public abstract class AbstractTypeInferencingTestCase {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueGoal(construct, null);
+            return new ExpressionValueGoal(construct, null);//FIXME?
         }
         
     }
     
-    class LocalVarTypeAssertion implements IAssertion {
-        
-        private final int namePos;
-        
-        public LocalVarTypeAssertion(String expression, int namePos) {
-            this.namePos = namePos;
-        }
-        
-        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
-                StringBuilder actual) throws Exception {
-            throw new UnsupportedOperationException();
-        }
-        
-        public ValueInfoGoal createGoal(PythonFileC fileC) {
-            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
-            PythonConstruct construct = fileC.subconstructFor(node);
-            if (!(node instanceof SimpleReference))
-                throw new IllegalArgumentException();
-            PythonVariable variable = construct.staticContext().variableLookup().lookupVariable(
-                    ((SimpleReference) node).getName());
-            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, new EmptyDynamicContext(), construct
-                    .staticContext());
-        }
-        
-    }
+    //    class LocalVarTypeAssertion implements IAssertion {
+    //        
+    //        private final int namePos;
+    //        
+    //        public LocalVarTypeAssertion(String expression, int namePos) {
+    //            this.namePos = namePos;
+    //        }
+    //        
+    //        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+    //                StringBuilder actual) throws Exception {
+    //            throw new UnsupportedOperationException();
+    //        }
+    //        
+    //        public ValueInfoGoal createGoal(PythonFileC fileC) {
+    //            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
+    //            PythonConstruct construct = fileC.subconstructFor(node);
+    //            if (!(node instanceof SimpleReference))
+    //                throw new IllegalArgumentException();
+    //            PythonVariable variable = construct.staticContext().variableLookup().lookupVariable(
+    //                    ((SimpleReference) node).getName());
+    //            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, new EmptyDynamicContext(), construct
+    //                    .staticContext());
+    //        }
+    //        
+    //    }
     
     class ExpressionValueAssertion implements IAssertion {
         
@@ -399,9 +383,9 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            ExpressionValueInfoGoal goal = createGoal(fileC);
-            engine.evaluate(goal);
-            ValueInfo result = goal.roughResult();
+            ExpressionValueGoal goal = (ExpressionValueGoal) createGoal(fileC);
+            engine.run(goal);
+            ValueInfo result = goal.getAcceptor().getResult();
             String[] possibleValues = result.describePossibleValues();
             Arrays.sort(possibleValues, Strings.getNaturalComparator());
             String values = Strings.join(possibleValues, ",");
@@ -412,86 +396,86 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(values).append('\n');
         }
         
-        public ExpressionValueInfoGoal createGoal(PythonFileC fileC) {
-            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
+        public IGoal createGoal(PythonFileC fileC) {
+            ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
+            return new ExpressionValueGoal(construct, null);//FIXME?
         }
-        
     }
     
-    class HasMethodAssertion implements IAssertion {
-        
-        private final String methodName;
-        
-        private final String expression;
-        
-        private final int namePos;
-        
-        public HasMethodAssertion(String expression, int namePos, String methodName) {
-            this.expression = expression;
-            this.namePos = namePos;
-            this.methodName = methodName;
-        }
-        
-        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
-                StringBuilder actual) throws Exception {
-            ExpressionValueInfoGoal goal = createGoal(fileC);
-            engine.run(goal);
-            ValueInfo result = goal.roughResult();
-            AnyMethodRequestor requestor = new AnyMethodRequestor();
-            ValueInfoUtils.findMethod(result, methodName, requestor);
-            
-            MethodNamesRequestor namesRequestor = new MethodNamesRequestor();
-            ValueInfoUtils.findMethodsByPrefix(result, "", namesRequestor);
-            
-            String prefix = expression + "." + methodName + "() : ";
-            expected.append(prefix).append("yes").append('\n');
-            actual.append(prefix).append(
-                    requestor.anythingFound() ? "yes" : "no, has: " + join(namesRequestor.asArray(), ", "))
-                    .append('\n');
-        }
-        
-        public ExpressionValueInfoGoal createGoal(PythonFileC fileC) {
-            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
-            assertNotNull(node);
-            PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
-        }
-        
-    }
+    //    class HasMethodAssertion implements IAssertion {
+    //        
+    //        private final String methodName;
+    //        
+    //        private final String expression;
+    //        
+    //        private final int namePos;
+    //        
+    //        public HasMethodAssertion(String expression, int namePos, String methodName) {
+    //            this.expression = expression;
+    //            this.namePos = namePos;
+    //            this.methodName = methodName;
+    //        }
+    //        
+    //        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+    //                StringBuilder actual) throws Exception {
+    //            ExpressionValueInfoGoal goal = createGoal(fileC);
+    //            engine.run(goal);
+    //            ValueInfo result = goal.roughResult();
+    //            AnyMethodRequestor requestor = new AnyMethodRequestor();
+    //            ValueInfoUtils.findMethod(result, methodName, requestor);
+    //            
+    //            MethodNamesRequestor namesRequestor = new MethodNamesRequestor();
+    //            ValueInfoUtils.findMethodsByPrefix(result, "", namesRequestor);
+    //            
+    //            String prefix = expression + "." + methodName + "() : ";
+    //            expected.append(prefix).append("yes").append('\n');
+    //            actual.append(prefix).append(
+    //                    requestor.anythingFound() ? "yes" : "no, has: " + join(namesRequestor.asArray(), ", "))
+    //                    .append('\n');
+    //        }
+    //        
+    //        public IGoal createGoal(PythonFileC fileC) {
+    //            //            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
+    //            //            assertNotNull(node);
+    //            //            PythonConstruct construct = fileC.subconstructFor(node);
+    //            return null;
+    //            //return new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(), InfoKind.VALUE);
+    //        }
+    //        
+    //    }
     
-    class CachedAssertion implements IAssertion {
-        
-        private final IAssertion assertion;
-        private final boolean shouldBeCached;
-        
-        public CachedAssertion(IAssertion assertion, boolean shouldBeCached) {
-            this.assertion = assertion;
-            this.shouldBeCached = shouldBeCached;
-        }
-        
-        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
-                StringBuilder actual) throws Exception {
-            ValueInfoGoal goal = assertion.createGoal(fileC);
-            boolean isCached = engine.isCached(goal);
-            
-            String prefix = goal.toString() + " : ";
-            expected.append(prefix).append(cachedString(shouldBeCached)).append('\n');
-            actual.append(prefix).append(cachedString(isCached)).append('\n');
-            
-        }
-        
-        private String cachedString(boolean cached) {
-            return cached ? "CACHED" : "NOT CACHED";
-        }
-        
-        public ValueInfoGoal createGoal(PythonFileC fileC) {
-            return null;
-        }
-        
-    }
+    //    class CachedAssertion implements IAssertion {
+    //        
+    //        private final IAssertion assertion;
+    //        private final boolean shouldBeCached;
+    //        
+    //        public CachedAssertion(IAssertion assertion, boolean shouldBeCached) {
+    //            this.assertion = assertion;
+    //            this.shouldBeCached = shouldBeCached;
+    //        }
+    //        
+    //        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+    //                StringBuilder actual) throws Exception {
+    //            ValueInfoGoal goal = assertion.createGoal(fileC);
+    //            boolean isCached = engine.isCached(goal);
+    //            
+    //            String prefix = goal.toString() + " : ";
+    //            expected.append(prefix).append(cachedString(shouldBeCached)).append('\n');
+    //            actual.append(prefix).append(cachedString(isCached)).append('\n');
+    //            
+    //        }
+    //        
+    //        private String cachedString(boolean cached) {
+    //            return cached ? "CACHED" : "NOT CACHED";
+    //        }
+    //        
+    //        public IGoal createGoal(PythonFileC fileC) {
+    //            return null;
+    //        }
+    //        
+    //    }
     
     private static int getLine(ISourceModule module, ASTNode node) {
         String source;
@@ -566,7 +550,7 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public ValueInfoGoal createGoal(PythonFileC fileC) {
+        public IGoal createGoal(PythonFileC fileC) {
             return null;
         }
     }

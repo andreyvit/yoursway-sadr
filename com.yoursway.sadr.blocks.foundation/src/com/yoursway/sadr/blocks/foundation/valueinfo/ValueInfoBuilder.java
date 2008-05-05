@@ -14,12 +14,12 @@ public class ValueInfoBuilder {
     
     private final MutableValueSet valueSetBuilder = new MutableValueSet();
     
-    public ValueInfoBuilder add(Type type) {
+    public ValueInfoBuilder addType(Type type) {
         typeSetBuilder.add(type);
         return this;
     }
     
-    public ValueInfoBuilder add(Value value) {
+    public ValueInfoBuilder addValue(Value value) {
         valueSetBuilder.add(value);
         return this;
     }
@@ -30,30 +30,30 @@ public class ValueInfoBuilder {
         return this;
     }
     
-    public ValueInfoBuilder add(ValueInfo result) {
+    public ValueInfoBuilder addValues(ValueInfo result) {
         typeSetBuilder.addAll(result.getTypeSet());
         valueSetBuilder.addAll(result.getValueSet());
         return this;
     }
     
-    public ValueInfoBuilder add(TypeSet typeSet) {
+    public ValueInfoBuilder addTypes(TypeSet typeSet) {
         typeSetBuilder.addAll(typeSet);
         return this;
     }
     
-    public ValueInfoBuilder add(ValueSet valueSet) {
+    public ValueInfoBuilder addValues(ValueSet valueSet) {
         valueSetBuilder.addAll(valueSet);
         return this;
     }
     
     public ValueInfoBuilder add(Wildcard wildcard, ValueInfo result) {
-        add(wildcard, unwrap(result));
-        add(result.getValueSet());
+        addTypes(wildcard, unwrap(result));
+        addValues(result.getValueSet());
         return this;
     }
     
-    public ValueInfoBuilder add(Wildcard wildcard, TypeSet typeSet) {
-        add(replaceWildcard(wildcard, typeSet));
+    public ValueInfoBuilder addTypes(Wildcard wildcard, TypeSet typeSet) {
+        addTypes(replaceWildcard(wildcard, typeSet));
         return this;
     }
     
@@ -67,14 +67,15 @@ public class ValueInfoBuilder {
         return typeSetBuilder.isEmpty();
     }
     
-    public boolean looksEmpty() {
-        if (typeSetBuilder.isEmpty())
-            return true;
-        String tts = typeSetBuilder.toString();
-        if (tts.equals("~(nil)") || tts.equals("~(, nil)"))
-            return true;
-        return false;
-    }
+//eew, ugly hack!
+//    public boolean looksEmpty() {
+//        if (typeSetBuilder.isEmpty())
+//            return true;
+//        String tts = typeSetBuilder.toString();
+//        if (tts.equals("~(nil)") || tts.equals("~(, nil)"))
+//            return true;
+//        return false;
+//    }
     
     private TypeSet unwrap(ValueInfo result) {
         return result.getTypeSet();
