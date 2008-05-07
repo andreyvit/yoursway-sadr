@@ -51,7 +51,8 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.ResolveName;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.ResolveNameGoal;
 import com.yoursway.sadr.python_v2.goals.ResolvedNameAcceptor;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -117,7 +118,7 @@ public abstract class AbstractTypeInferencingTestCase {
             checkFile(sourceModule, projectRuntime, engine, expected, actual);
         }
         
-        Assert.assertEquals(expected.toString(), actual.toString());
+        Assert.assertEquals("Items should match:", expected.toString(), actual.toString());
     }
     
     private void checkFile(ISourceModule sourceModule, ProjectRuntime projectRuntime, Engine engine,
@@ -300,9 +301,6 @@ public abstract class AbstractTypeInferencingTestCase {
         
         void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception;
-        
-        IGoal createGoal(PythonFileC fileC);
-        
     }
     
     class ExpressionTypeAssertion implements IAssertion {
@@ -321,9 +319,13 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            ExpressionValueGoal goal = (ExpressionValueGoal) createGoal(fileC);
-            engine.run(goal);
-            ValueInfo result = goal.getAcceptor().getResult();
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+                public void checkpoint(IGrade<?> grade) {
+                    //do nothing
+                }
+            };
+            engine.run(createGoal(fileC, acceptor));
+            ValueInfo result = acceptor.getResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
             String types = Strings.join(possibleTypes, ",");
@@ -332,11 +334,11 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(types).append('\n');
         }
         
-        public IGoal createGoal(PythonFileC fileC) {
+        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueGoal(construct, null);//FIXME?
+            return new ExpressionValueGoal(construct, null, acceptor);
         }
         
     }
@@ -383,24 +385,29 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            ExpressionValueGoal goal = (ExpressionValueGoal) createGoal(fileC);
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+                public void checkpoint(IGrade<?> grade) {
+                    //do nothing;
+                }
+            };
+            IGoal goal = createGoal(fileC, acceptor);
             engine.run(goal);
-            ValueInfo result = goal.getAcceptor().getResult();
+            ValueInfo result = acceptor.getResult();
             String[] possibleValues = result.describePossibleValues();
             Arrays.sort(possibleValues, Strings.getNaturalComparator());
             String values = Strings.join(possibleValues, ",");
             if (values.length() == 0)
-                values = "none";
+                values = "(none)";
             String prefix = expression + " : ";
             expected.append(prefix).append(correctClassRef).append('\n');
             actual.append(prefix).append(values).append('\n');
         }
         
-        public IGoal createGoal(PythonFileC fileC) {
+        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueGoal(construct, null);//FIXME?
+            return new ExpressionValueGoal(construct, null, acceptor);//FIXME?
         }
     }
     
@@ -497,23 +504,22 @@ public abstract class AbstractTypeInferencingTestCase {
         return 0; // not found
     }
     
-    class FindVariableAssertion implements IAssertion {
+    private final class ResolvedNameAcceptorImpl implements ResolvedNameAcceptor {
+        AssignmentC resultAssignmentC;
         
-        private final class ResolvedNameAcceptorImpl implements ResolvedNameAcceptor {
-            AssignmentC resultAssignmentC;
-            
-            public void addResult(AssignmentC assignmentC) {
-                resultAssignmentC = assignmentC;
-            }
-            
-            public AssignmentC getResultAssignmentC() {
-                return resultAssignmentC;
-            }
-            
-            public void checkpoint(IGrade<?> grade) {
-            }
+        public void addResult(AssignmentC assignmentC) {
+            resultAssignmentC = assignmentC;
         }
         
+        public AssignmentC getResultAssignmentC() {
+            return resultAssignmentC;
+        }
+        
+        public void checkpoint(IGrade<?> grade) {
+        }
+    }
+    
+    class FindVariableAssertion implements IAssertion {
         private final int line;
         private final int namePos;
         
@@ -526,16 +532,10 @@ public abstract class AbstractTypeInferencingTestCase {
                 StringBuilder actual) throws Exception {
             ResolvedNameAcceptorImpl acceptor = new ResolvedNameAcceptorImpl();
             
-            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
-            assertNotNull(node);
-            
-            PythonConstruct construct = fileC.subconstructFor(node);
-            IGoal goal;
+            IGoal goal = createGoal(fileC, acceptor);
             int actualLine = -2;
             String prefix = "";
-            if (construct instanceof VariableReferenceC) {
-                goal = new ResolveName((VariableReferenceC) construct, acceptor);
-                
+            if (goal != null) {
                 engine.run(goal);
                 
                 AssignmentC resultAssignmentC = acceptor.getResultAssignmentC();
@@ -550,8 +550,16 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public IGoal createGoal(PythonFileC fileC) {
-            return null;
+        public IGoal createGoal(PythonFileC fileC, ResolvedNameAcceptorImpl acceptor) {
+            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
+            assertNotNull(node);
+            PythonConstruct construct = fileC.subconstructFor(node);
+            if (construct instanceof VariableReferenceC) {
+                return new ResolveNameGoal((VariableReferenceC) construct, acceptor);
+            } else {
+                throw new IllegalStateException("Should be VariableReferenceC, but found "
+                        + construct.getClass().getSimpleName());
+            }
         }
     }
     
