@@ -39,7 +39,6 @@ public class ExpressionValueGoal extends ContextSensitiveGoal {
         } else if (expression instanceof StringLiteralC) {
             acceptor.addResult(StringType.newStringObject((StringLiteralC) expression), getContext());
         } else if (expression instanceof PythonVariableAccessExpression) {
-            //TODO for Bur
             IGoal goal = new ResolveReference((PythonVariableAccessExpression) expression, subgoalAcceptor);
             schedule(goal);
         } else if (expression instanceof BinaryC) {

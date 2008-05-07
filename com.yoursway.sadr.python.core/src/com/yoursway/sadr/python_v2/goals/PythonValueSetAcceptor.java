@@ -12,11 +12,10 @@ import com.yoursway.sadr.succeeder.IAcceptor;
 public abstract class PythonValueSetAcceptor implements IAcceptor {
     
     private final Map<Context, RuntimeObject> objectToContext = new HashMap<Context, RuntimeObject>();
-    private final ValueInfoBuilder results = new ValueInfoBuilder();
+    private final ValueInfoBuilder builder = new ValueInfoBuilder();
     
     public void addResult(RuntimeObject result, Context context) {
-        results.addValue(result);
-        results.addType(result.getType());
+        builder.add(result.getType(), result);
         objectToContext.put(context, result);
     }
     
@@ -25,7 +24,12 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
     }
     
     public ValueInfo getResult() {
-        return results.build();
+        return builder.build();
     }
     
+    public void setResult(ValueInfo result) {
+        if (!builder.isEmpty())
+            throw new IllegalStateException("You can use setResult only when acceptor is empty");
+        builder.add(result);
+    }
 }

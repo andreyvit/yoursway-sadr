@@ -65,6 +65,7 @@ public class ProjectRuntime {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+            throw new IllegalStateException("Python module parse failed. See error in log.");
         }
     }
     

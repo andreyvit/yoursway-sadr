@@ -1,7 +1,5 @@
 package com.yoursway.sadr.blocks.integer_literals;
 
-import java.math.BigInteger;
-
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 
@@ -31,26 +29,6 @@ public class IntegerValue extends AbstractValue implements ValueTraits {
     }
     
     @Override
-    public String coherseToString() {
-        return Long.toString(value);
-    }
-    
-    @Override
-    public boolean cohersibleToString() {
-        return true;
-    }
-    
-    @Override
-    public long integerValue() {
-        return value;
-    }
-    
-    @Override
-    public boolean isInteger() {
-        return true;
-    }
-    
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -71,25 +49,4 @@ public class IntegerValue extends AbstractValue implements ValueTraits {
             return false;
         return true;
     }
-    
-    @Override
-    public boolean coherseToBoolean() {
-        return (value != 0);
-    }
-    
-    @Override
-    public boolean cohersibleToBoolean() {
-        return true;
-    }
-    
-    @Override
-    public boolean isLong() {
-        return true;
-    }
-    
-    @Override
-    public BigInteger longValue() {
-        return BigInteger.valueOf(value);
-    }
-    
 }
