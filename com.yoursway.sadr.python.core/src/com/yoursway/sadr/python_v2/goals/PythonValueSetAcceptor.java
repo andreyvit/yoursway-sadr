@@ -27,4 +27,5 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
     public ValueInfo getResult() {
         return results.build();
     }
+    
 }

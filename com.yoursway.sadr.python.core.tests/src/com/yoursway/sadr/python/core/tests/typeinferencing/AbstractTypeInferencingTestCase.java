@@ -502,7 +502,7 @@ public abstract class AbstractTypeInferencingTestCase {
         private final class ResolvedNameAcceptorImpl implements ResolvedNameAcceptor {
             AssignmentC resultAssignmentC;
             
-            public void setResult(AssignmentC assignmentC) {
+            public void addResult(AssignmentC assignmentC) {
                 resultAssignmentC = assignmentC;
             }
             
