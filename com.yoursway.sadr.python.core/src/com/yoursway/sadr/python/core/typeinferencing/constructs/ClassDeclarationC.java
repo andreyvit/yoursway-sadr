@@ -4,14 +4,11 @@ import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValue
 
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
-import sun.reflect.generics.scope.ClassScope;
-
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
-import com.yoursway.sadr.python.core.runtime.PythonClassDefinition;
 import com.yoursway.sadr.python.core.runtime.PythonSourceClassDefinition;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ModelAffector;
@@ -20,36 +17,13 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaration> implements ModelAffector {
     
-    private final ClassScope innerContext;
-    
     ClassDeclarationC(Scope sc, PythonClassDeclaration node) {
         super(sc, node);
-        String name = node.getName();
-        innerContext = lookupScope(staticContext().classLookup().lookupClass(name));
-    }
-    
-    private ClassScope lookupScope(PythonClass klass) {
-        ClassScope scope = null;
-        for (PythonClassDefinition definition : klass.getDefinitions())
-            if (definition instanceof PythonSourceClassDefinition) {
-                PythonSourceClassDefinition def = (PythonSourceClassDefinition) definition;
-                if (node == def.node()) {
-                    scope = def.parentScope();
-                }
-            }
-        if (scope == null)
-            scope = new ClassScope(nearestScope(), this, klass);
-        return scope;
     }
     
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         return continuation.consume(emptyValueInfo(), requestor);
-    }
-    
-    @Override
-    protected Scope innerContext() {
-        return innerContext;
     }
     
     public void actOnModel(ModelRequest request) {

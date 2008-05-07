@@ -27,4 +27,8 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> implements Ret
         request.add(wrap(innerContext(), node.getExpression()));
     }
     
+    public PythonConstruct getReturnedConstruct() {
+        assert getChildContructs().size() == 1 : "Return statement contract violated.";
+        return getChildContructs().get(0);
+    }
 }

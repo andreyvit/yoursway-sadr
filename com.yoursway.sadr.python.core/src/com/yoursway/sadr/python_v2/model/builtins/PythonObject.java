@@ -3,9 +3,17 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
+
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.model.InstanceHistory;
+import com.yoursway.sadr.python_v2.model.InstanceHistoryImpl;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class PythonObject implements RuntimeObject {
+    
+    private final InstanceHistoryImpl history;
     
     Map<String, RuntimeObject> attributes;
     private PythonClass type;
@@ -26,6 +34,12 @@ public class PythonObject implements RuntimeObject {
     public PythonObject(PythonClass type) {
         //assert type != null;
         this.type = type;
+        history = new InstanceHistoryImpl(this, null);
+    }
+    
+    public PythonObject(PythonClass type, PythonConstruct declaration) {
+        this.type = type;
+        history = new InstanceHistoryImpl(this, declaration);
     }
     
     public RuntimeObject getAttribute(String name) {
@@ -37,6 +51,7 @@ public class PythonObject implements RuntimeObject {
         return attributes.get(name);
     }
     
+    //TODO refactor setAttribute() method
     public void setAttribute(String name, RuntimeObject object) {
         assert null != name && null != object;
         //TODO try __setattr__ execution
@@ -55,4 +70,20 @@ public class PythonObject implements RuntimeObject {
         return attributes.keySet();
     }
     
+    public InstanceHistory instanceHistory() {
+        return history;
+    }
+    
+    @Override
+    public String toString() {
+        return this.describe();
+    }
+    
+    public String describe() {
+        ASTNode node = instanceHistory().sourceDeclaration().node();
+        if (node instanceof PythonClassDeclaration) {
+            return ((PythonClassDeclaration) node).getName();
+        } else
+            return "(unknown object)";
+    }
 }

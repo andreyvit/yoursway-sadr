@@ -8,11 +8,11 @@ import com.yoursway.sadr.python_v2.model.LexicalScopeImpl;
  */
 public class Builtins extends LexicalScopeImpl {
     
-    private static PythonClassImpl typeType = null;
+    private static PythonClassType typeType = null;
     
     private static PythonClass createTypeType() {
         if (null == typeType) {
-            typeType = new PythonClassImpl();
+            typeType = new PythonClassType();
             typeType.setType(typeType);
         }
         return typeType;
@@ -22,6 +22,8 @@ public class Builtins extends LexicalScopeImpl {
     public static PythonClass OBJECT = createTypeType(); //TODO
     public static PythonClass FUNCTION = createTypeType(); //TODO
     public static PythonClass MODULE = createTypeType(); //TODO
+    public static IntType INT = IntType.instance();
+    public static StringType STRING = StringType.instance();
     
     private static void init(Builtins inst) {
         inst.setName("type", TYPE);
@@ -29,7 +31,7 @@ public class Builtins extends LexicalScopeImpl {
     }
     
     //---------Singleton infrastructure---------
-    public Builtins() {
+    private Builtins() {
         super(null);
         init(this);
     }
