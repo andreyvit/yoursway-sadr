@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests Plug-in
-Bundle-SymbolicName: com.yoursway.sadr.succeeder.tests
+Bundle-SymbolicName: com.yoursway.sadr.engine.tests
 Bundle-Version: 1.0.0
 Bundle-Activator: com.yoursway.sadr.succeeder.tests.internal.Activator
 Bundle-Vendor: YourSway
 Require-Bundle: org.eclipse.core.runtime,
- com.yoursway.sadr.succeeder,
  org.junit4,
- com.google.collections;bundle-version="1.0.0"
+ com.google.collections;bundle-version="1.0.0",
+ com.yoursway.sadr.engine
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

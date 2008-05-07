@@ -8,6 +8,15 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     
     BinaryC(Scope sc, BinaryExpression node) {
         super(sc, node);
+        assert node.getChilds().size() == 2;
+    }
+    
+    public PythonConstruct getLeft() {
+        return getChildContructs().get(0);
+    }
+    
+    public PythonConstruct getRight() {
+        return getChildContructs().get(1);
     }
     
 }

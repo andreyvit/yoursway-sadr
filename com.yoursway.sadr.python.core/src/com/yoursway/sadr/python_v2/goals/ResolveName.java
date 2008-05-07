@@ -31,7 +31,7 @@ public class ResolveName extends Goal {
             scope = scope.parentScope();
         }
         
-        acceptor.setResult(resultAssignmentC);
+        acceptor.addResult(resultAssignmentC);
         checkpoint(acceptor, Grade.DONE);
     }
     
