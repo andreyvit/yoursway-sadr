@@ -38,4 +38,10 @@ public class BinaryComparisonC extends BinaryC {
         return comparison;
     }
     
+    @Override
+    public String getOperationMethodName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
 }

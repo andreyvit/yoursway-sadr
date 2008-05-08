@@ -1,19 +1,19 @@
 package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructVisitor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ReturnC;
 import com.yoursway.sadr.succeeder.CheckpointToken;
 
 public class CallReturnValueGoal extends ContextSensitiveGoal {
     
-    private final CallC call;
+    private final MethodDeclarationC methodDecl;
     private final PythonValueSetAcceptor acceptor;
     
-    public CallReturnValueGoal(CallC call, Context context, PythonValueSetAcceptor acceptor) {
+    public CallReturnValueGoal(MethodDeclarationC methodDecl, Context context, PythonValueSetAcceptor acceptor) {
         super(context);
-        this.call = call;
+        this.methodDecl = methodDecl;
         this.acceptor = acceptor;
     }
     
@@ -25,7 +25,7 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
     }
     
     private void evaluateInContext(Context context) {
-        call.traverse(new PythonConstructVisitor() {
+        methodDecl.traverse(new PythonConstructVisitor() {
             @Override
             public boolean visit(ReturnC construct) {
                 ReturnC ret = construct;
