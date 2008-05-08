@@ -53,7 +53,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenc
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResolveNameGoal;
-import com.yoursway.sadr.python_v2.goals.ResolvedNameAcceptor;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
@@ -502,21 +501,6 @@ public abstract class AbstractTypeInferencingTestCase {
                 return line;
         }
         return 0; // not found
-    }
-    
-    private final class ResolvedNameAcceptorImpl implements ResolvedNameAcceptor {
-        AssignmentC resultAssignmentC;
-        
-        public void addResult(AssignmentC assignmentC) {
-            resultAssignmentC = assignmentC;
-        }
-        
-        public AssignmentC getResultAssignmentC() {
-            return resultAssignmentC;
-        }
-        
-        public void checkpoint(IGrade<?> grade) {
-        }
     }
     
     class FindVariableAssertion implements IAssertion {

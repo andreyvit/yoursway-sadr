@@ -24,7 +24,8 @@ public class IntType extends PythonClassType implements PythonClass {
         return new PythonObjectWithValue<IntegerLiteralC>(instance(), literal);
     }
     
+    @Override
     public String describe() {
-        return null;
+        return "int";
     }
 }
