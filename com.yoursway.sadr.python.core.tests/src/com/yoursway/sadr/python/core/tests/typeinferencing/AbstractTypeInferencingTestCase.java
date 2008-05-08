@@ -53,6 +53,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenc
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResolveNameGoal;
+import com.yoursway.sadr.python_v2.goals.ResolvedNameAcceptor;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
@@ -319,7 +320,7 @@ public abstract class AbstractTypeInferencingTestCase {
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
-                public void checkpoint(IGrade<?> grade) {
+                public <T> void checkpoint(IGrade<T> grade) {
                     //do nothing
                 }
             };
@@ -385,7 +386,7 @@ public abstract class AbstractTypeInferencingTestCase {
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
-                public void checkpoint(IGrade<?> grade) {
+                public <T> void checkpoint(IGrade<T> grade) {
                     //do nothing;
                 }
             };
@@ -534,7 +535,7 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public IGoal createGoal(PythonFileC fileC, ResolvedNameAcceptorImpl acceptor) {
+        public IGoal createGoal(PythonFileC fileC, ResolvedNameAcceptor acceptor) {
             ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
