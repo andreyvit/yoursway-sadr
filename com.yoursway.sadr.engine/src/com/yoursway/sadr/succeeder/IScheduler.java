@@ -8,13 +8,13 @@ import java.util.Collection;
  * being stopped.
  */
 public interface IScheduler {
-
-	void schedule(IGoal goal, IGoal subgoal);
-
-	void schedule(IGoal goal, IGoal subgoal, ISchedulingStrategy strategy);
-
-	void schedule(IGoal goal, Collection<IGoal> subgoals, ISchedulingStrategy strategy);
-
-	<T extends IGrade<T>> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade);
-
+    
+    void schedule(IGoal goal, IGoal subgoal);
+    
+    void schedule(IGoal goal, IGoal subgoal, ISchedulingStrategy strategy);
+    
+    void schedule(IGoal goal, Collection<IGoal> subgoals, ISchedulingStrategy strategy);
+    
+    <T> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade);
+    
 }

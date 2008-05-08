@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 public class Engine implements IScheduler {
     
-    private Map<IAcceptor, IGrade<? extends IGrade<?>>> acceptors = new HashMap<IAcceptor, IGrade<?>>();
+    private Map<IAcceptor, IGrade<?>> acceptors = new HashMap<IAcceptor, IGrade<?>>();
     private final TreeMap<Integer, LinkedList<IGoal>> queue = new TreeMap<Integer, LinkedList<IGoal>>();
     private final HashSet<IGoal> allPlannedGoals = new HashSet<IGoal>();
     private final ISchedulingStrategy defaultStrategy;
@@ -24,8 +24,8 @@ public class Engine implements IScheduler {
     }
     
     @SuppressWarnings("unchecked")
-    public <T extends IGrade<T>> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
-        T previousGrade = (T) acceptors.get(acceptor);
+    public <T> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
+        IGrade<T> previousGrade = (IGrade<T>) acceptors.get(acceptor);
         if (previousGrade != null && previousGrade.compareTo((T) grade) > 0) {
             throw new IllegalArgumentException("Grade should not decrease for "
                     + acceptor.getClass().getSimpleName());
