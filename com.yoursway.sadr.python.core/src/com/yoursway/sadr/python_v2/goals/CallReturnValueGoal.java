@@ -9,10 +9,12 @@ import com.yoursway.sadr.succeeder.CheckpointToken;
 public class CallReturnValueGoal extends ContextSensitiveGoal {
     
     private final CallC call;
+    private final PythonValueSetAcceptor acceptor;
     
-    public CallReturnValueGoal(CallC call, Context context) {
+    public CallReturnValueGoal(CallC call, Context context, PythonValueSetAcceptor acceptor) {
         super(context);
         this.call = call;
+        this.acceptor = acceptor;
     }
     
     public void preRun() {

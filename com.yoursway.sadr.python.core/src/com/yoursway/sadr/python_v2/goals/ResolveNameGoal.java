@@ -30,8 +30,9 @@ public class ResolveNameGoal extends Goal {
             resultAssignmentC = findInScope(scope);
             scope = scope.parentScope();
         }
-        
-        acceptor.addResult(resultAssignmentC);
+        if (resultAssignmentC != null) {
+            acceptor.addResult(resultAssignmentC);
+        }
         checkpoint(acceptor, Grade.DONE);
     }
     
