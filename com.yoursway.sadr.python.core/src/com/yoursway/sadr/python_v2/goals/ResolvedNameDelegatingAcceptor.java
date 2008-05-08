@@ -33,7 +33,7 @@ abstract class ResolvedNameDelegatingAcceptor implements ResolvedNameAcceptor {
     abstract protected void onAssignment(PythonConstruct subexpr);
     
     @SuppressWarnings("unchecked")
-    public void checkpoint(IGrade grade) {
+    public <T> void checkpoint(IGrade<T> grade) {
         //do nothing
     }
 }

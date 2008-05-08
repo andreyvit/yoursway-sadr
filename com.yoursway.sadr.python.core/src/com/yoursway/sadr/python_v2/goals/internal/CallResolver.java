@@ -2,8 +2,6 @@ package com.yoursway.sadr.python_v2.goals.internal;
 
 import java.util.List;
 
-import org.eclipse.dltk.ast.declarations.MethodDeclaration;
-
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
@@ -21,7 +19,10 @@ public final class CallResolver {
     public static IGoal callMethod(RuntimeObject receiver, String methodName, List<RuntimeObject> actualArgs,
             PythonValueSetAcceptor acceptor, Context context) {
         RuntimeObject callable = receiver.getAttribute(methodName);
-        assert callable instanceof FunctionObject : "temporary assumption";
+        if (!(callable instanceof FunctionObject)) {
+            throw new IllegalArgumentException("callable should be FunctionObject");
+            
+        }
         if (receiver.getDict().containsKey(methodName)) {
             return callFunction((FunctionObject) callable, actualArgs, acceptor, context);
         } else {
@@ -46,13 +47,12 @@ public final class CallResolver {
                 }
                 
             };
-        } else if (callable.getDecl() instanceof MethodDeclaration) {
+        } else if (callable.getDecl() instanceof MethodDeclarationC) {
             return new CallReturnValueGoal((MethodDeclarationC) callable.getDecl(), context, acceptor);
         } else if (callable.getDecl() instanceof PythonLambdaExpressionC) {
             return new ExpressionValueGoal(((PythonLambdaExpressionC) callable.getDict()).getExpression(),
                     context, acceptor);
         }
-        assert false : "should never reach this place";
-        return null;
+        throw new IllegalStateException("should never reach this place");
     }
 }

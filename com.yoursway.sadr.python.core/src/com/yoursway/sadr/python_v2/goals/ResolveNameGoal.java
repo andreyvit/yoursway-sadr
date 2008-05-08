@@ -5,7 +5,9 @@ import java.util.List;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.ProcedureCallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.succeeder.CheckpointToken;
@@ -13,11 +15,19 @@ import com.yoursway.sadr.succeeder.Goal;
 
 public class ResolveNameGoal extends Goal {
     
-    private final VariableReferenceC variableReference;
     private final ResolvedNameAcceptor acceptor;
+    private final PythonConstructImpl variableReference;
+    private final String name;
     
-    public ResolveNameGoal(VariableReferenceC variableReference, ResolvedNameAcceptor acceptor) {
-        this.variableReference = variableReference;
+    public ResolveNameGoal(VariableReferenceC var, ResolvedNameAcceptor acceptor) {
+        variableReference = var;
+        this.name = var.node().getName();
+        this.acceptor = acceptor;
+    }
+    
+    public ResolveNameGoal(ProcedureCallC var, ResolvedNameAcceptor acceptor) {
+        variableReference = var;
+        this.name = var.node().getProcedureName();
         this.acceptor = acceptor;
     }
     
@@ -39,7 +49,7 @@ public class ResolveNameGoal extends Goal {
     
     private PythonConstruct findInScope(Scope scope) {
         List<PythonConstruct> children = scope.getEnclosedconstructs();
-        AssignmentC resultAssignmentC = null;
+        PythonConstruct result = null;
         for (PythonConstruct construct : children) {
             if (variableReference == construct) {
                 break;
@@ -49,17 +59,19 @@ public class ResolveNameGoal extends Goal {
                 PythonConstruct lhs = assignmentC.lhs();
                 if (lhs instanceof VariableReferenceC) {
                     VariableReferenceC reference = (VariableReferenceC) lhs;
-                    if (reference.node().getName().equals(variableReference.node().getName())) {
-                        resultAssignmentC = assignmentC;
+                    if (reference.node().getName().equals(this.name)) {
+                        result = assignmentC;
                     }
                 }
             }
             if (construct instanceof MethodDeclarationC) {
                 MethodDeclarationC declarationC = (MethodDeclarationC) construct;
-                return declarationC;
+                if (declarationC.node().getName().equals(this.name)) {
+                    result = declarationC;
+                }
             }
         }
-        return resultAssignmentC;
+        return result;
     }
     
     @Override

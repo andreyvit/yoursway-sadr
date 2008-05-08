@@ -46,7 +46,6 @@ import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
@@ -523,9 +522,9 @@ public abstract class AbstractTypeInferencingTestCase {
             if (goal != null) {
                 engine.run(goal);
                 
-                AssignmentC resultAssignmentC = acceptor.getResultAssignmentC();
-                if (resultAssignmentC != null) {
-                    actualLine = getLine(cu, resultAssignmentC.node());
+                PythonConstruct result = acceptor.getResult();
+                if (result != null) {
+                    actualLine = getLine(cu, result.node());
                 }
                 
                 prefix = goal.toString() + " : ";

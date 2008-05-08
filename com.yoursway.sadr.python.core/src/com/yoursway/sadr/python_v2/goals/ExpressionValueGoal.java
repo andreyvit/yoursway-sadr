@@ -9,6 +9,7 @@ import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.BinaryC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.IntegerLiteralC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ProcedureCallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.StringLiteralC;
@@ -38,87 +39,104 @@ public class ExpressionValueGoal extends ContextSensitiveGoal {
         return null;
     }
     
-    PythonValueSetAcceptor createValueSetAcceptor() {
+    PythonValueSetAcceptor createAcceptor(final PythonValueSetAcceptor resultAcceptor) {
         return new PythonValueSetAcceptor() {
             public <T> void checkpoint(IGrade<T> grade) {
-                acceptor.setResult(getResult());
-                ExpressionValueGoal.this.checkpoint(acceptor, grade);
+                resultAcceptor.setResult(getResult());
+                ExpressionValueGoal.this.checkpoint(resultAcceptor, grade);
             }
         };
     }
     
     public void preRun() {
-        if (expression instanceof IntegerLiteralC) {
+        if (expression instanceof MethodDeclarationC) {
+            checkpoint(acceptor, Grade.DONE);
+        } else if (expression instanceof IntegerLiteralC) {
             acceptor.addResult(IntType.newIntObject((IntegerLiteralC) expression), getContext());
             checkpoint(acceptor, Grade.DONE);
         } else if (expression instanceof StringLiteralC) {
             acceptor.addResult(StringType.newStringObject((StringLiteralC) expression), getContext());
             checkpoint(acceptor, Grade.DONE);
         } else if (expression instanceof ProcedureCallC) {
-            ProcedureCallC callC = (ProcedureCallC) expression;
-            List<PythonConstruct> args = callC.getArgs();
-            final List<RuntimeObject> results = new ArrayList<RuntimeObject>(args.size());
-            final int collected[] = new int[] { args.size() };
-            for (final int i = 0; i < args.size(); i++) {
-                PythonConstruct arg = args.get(i);
-                results.set(i, null);
-                ExpressionValueGoal goal = new ExpressionValueGoal(arg, getContext(),
-                        new PythonValueSetAcceptor() {
-                            public <T> void checkpoint(IGrade<T> grade) {
-                                results.set(i, getResultByContext(getContext()));
-                                collected[0]++;
-                                if (collected[0] == 0) {
-                                    //join this 
-                                }
-                            }
-                        });
-                schedule(goal);
-            }
-            IGoal goal = new ResolveNameGoal((VariableReferenceC) expression,
-                    new ResolvedNameDelegatingAcceptor() {
-                        @Override
-                        protected void onMethodDeclaration(FunctionObject obj) {
-                            //join this
-                            //call function when joined
-                            return CallResolver.callFunction(obj, args, acceptor, getContext());
-                            
-                            acceptor.addResult(obj, ExpressionValueGoal.this.getContext());
-                            ExpressionValueGoal.this.checkpoint(acceptor, Grade.DONE);
-                        }
-                        
-                        @Override
-                        protected void onAssignment(PythonConstruct subexpr) {
-                            ExpressionValueGoal.this.schedule(new ExpressionValueGoal(subexpr,
-                                    ExpressionValueGoal.this.getContext(), createValueSetAcceptor()));
-                        }
-                        
-                    });
-            schedule(goal);
-            acceptor.addResult(StringType.newStringObject((StringLiteralC) expression), getContext());
-            checkpoint(acceptor, Grade.DONE);
+            scheduleProcedureCall();
         } else if (expression instanceof PythonVariableAccessExpression) {
-            IGoal goal = new ResolveReference((PythonVariableAccessExpression) expression,
-                    createValueSetAcceptor());
-            schedule(goal);
+            schedule(new ResolveReference((PythonVariableAccessExpression) expression, acceptor));
         } else if (expression instanceof VariableReferenceC) {
-            IGoal goal = new ResolveNameGoal((VariableReferenceC) expression,
-                    new ResolvedNameDelegatingAcceptor() {
-                        @Override
-                        protected void onMethodDeclaration(FunctionObject obj) {
-                            acceptor.addResult(obj, ExpressionValueGoal.this.getContext());
-                            ExpressionValueGoal.this.checkpoint(acceptor, Grade.DONE);
-                        }
-                        
-                        @Override
-                        protected void onAssignment(PythonConstruct subexpr) {
-                            ExpressionValueGoal.this.schedule(new ExpressionValueGoal(subexpr,
-                                    ExpressionValueGoal.this.getContext(), createValueSetAcceptor()));
-                        }
-                        
-                    });
-            schedule(goal);
+            scheduleVariableReferenceC();
         } else if (expression instanceof BinaryC) {
             schedule(new BinaryExpressionGoal((BinaryC) expression, getContext(), acceptor));
+        }
+    }
+    
+    private void scheduleVariableReferenceC() {
+        ResolveNameGoal resolveNameGoal = new ResolveNameGoal((VariableReferenceC) expression,
+                new ResolvedNameDelegatingAcceptor() {
+                    @Override
+                    protected void onMethodDeclaration(FunctionObject obj) {
+                        acceptor.addResult(obj, ExpressionValueGoal.this.getContext());
+                        ExpressionValueGoal.this.checkpoint(acceptor, Grade.DONE);
+                    }
+                    
+                    @Override
+                    protected void onAssignment(PythonConstruct subexpr) {
+                        ExpressionValueGoal.this.schedule(new ExpressionValueGoal(subexpr,
+                                ExpressionValueGoal.this.getContext(), acceptor));
+                    }
+                    
+                });
+        schedule(resolveNameGoal);
+    }
+    
+    private void scheduleProcedureCall() {
+        ProcedureCallC callC = (ProcedureCallC) expression;
+        List<PythonConstruct> args = callC.getArgs();
+        final List<RuntimeObject> results = new ArrayList<RuntimeObject>(args.size());
+        final FunctionObject[] function = new FunctionObject[] { null };
+        final Synchronizer syncronizer = new Synchronizer(args.size() + 1) {
+            @Override
+            public <T> void allDone(IGrade<T> grade) {
+                IGoal callFunction = CallResolver.callFunction(function[0], results, acceptor, getContext());
+                schedule(callFunction);
+            }
+        };
+        schedule(new ResolveNameGoal(callC, new ResolvedNameDelegatingAcceptor() {
+            @Override
+            public <T> void checkpoint(IGrade<T> grade) {
+                if (function[0] == null) {
+                    throw new IllegalStateException("Function should be found");
+                }
+            }
+            
+            @Override
+            protected void onMethodDeclaration(FunctionObject obj) {
+                function[0] = obj;
+                syncronizer.subgoalDone(Grade.DONE);
+            }
+            
+            @Override
+            protected void onAssignment(PythonConstruct subexpr) {
+                ExpressionValueGoal subGoal = new ExpressionValueGoal(subexpr, ExpressionValueGoal.this
+                        .getContext(), new PythonValueSetAcceptor() {
+                    public <T> void checkpoint(IGrade<T> grade) {
+                        RuntimeObject result = getResultByContext(getContext());
+                        //TODO: unsafe type cast
+                        function[0] = (FunctionObject) result;
+                        syncronizer.subgoalDone(grade);
+                    }
+                });
+                ExpressionValueGoal.this.schedule(subGoal);
+            }
+        }));
+        for (int i = 0; i < args.size(); i++) {
+            final int pos = i;
+            PythonConstruct arg = args.get(i);
+            results.add(null);
+            schedule(new ExpressionValueGoal(arg, getContext(), new PythonValueSetAcceptor() {
+                public <T> void checkpoint(IGrade<T> grade) {
+                    results.set(pos, getResultByContext(getContext()));
+                    syncronizer.subgoalDone(grade);
+                }
+            }));
         }
     }
 }

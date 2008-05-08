@@ -25,7 +25,7 @@ public abstract class Goal implements IGoal {
         scheduler.schedule(this, goals, strategy);
     }
     
-    protected <T> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
+    public <T> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
         return scheduler.checkpoint(acceptor, grade);
     }
     

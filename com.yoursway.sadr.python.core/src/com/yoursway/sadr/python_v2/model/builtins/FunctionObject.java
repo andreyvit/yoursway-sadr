@@ -36,4 +36,9 @@ public class FunctionObject extends PythonObject {
     public RuntimeObject evaluate(List<RuntimeObject> args) {
         throw new NotImplementedException();
     }
+    
+    @Override
+    public String describe() {
+        return "function";
+    }
 }

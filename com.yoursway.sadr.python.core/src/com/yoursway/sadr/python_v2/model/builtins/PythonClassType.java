@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 /**
@@ -44,8 +45,13 @@ public class PythonClassType extends PythonObject implements PythonClass {
         return null;
     }
     
+    @Override
     public String describe() {
-        ASTNode node = instanceHistory().sourceDeclaration().node();
+        PythonConstruct decl = instanceHistory().sourceDeclaration();
+        if (decl == null) {
+            return "type";
+        }
+        ASTNode node = decl.node();
         if (node instanceof PythonClassDeclaration) {
             return ((PythonClassDeclaration) node).getName();
         } else
