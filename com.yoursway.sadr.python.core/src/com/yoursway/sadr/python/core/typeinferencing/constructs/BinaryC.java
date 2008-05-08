@@ -19,4 +19,6 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
         return getChildContructs().get(1);
     }
     
+    public abstract String getOperationMethodName();
+    
 }

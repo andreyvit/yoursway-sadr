@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -21,22 +22,22 @@ public class ResolveNameGoal extends Goal {
     }
     
     public void preRun() {
-        AssignmentC resultAssignmentC = null;
+        PythonConstruct result = null;
         Scope scope = variableReference.parentScope();
         //FIXME change getEnclosedConstructs to iterator allowing parallel execution
-        resultAssignmentC = findInScope(scope);
+        result = findInScope(scope);
         scope = scope.parentScope();
-        while (resultAssignmentC == null && scope != null) {
-            resultAssignmentC = findInScope(scope);
+        while (result == null && scope != null) {
+            result = findInScope(scope);
             scope = scope.parentScope();
         }
-        if (resultAssignmentC != null) {
-            acceptor.addResult(resultAssignmentC);
+        if (result != null) {
+            acceptor.addResult(result);
         }
         checkpoint(acceptor, Grade.DONE);
     }
     
-    private AssignmentC findInScope(Scope scope) {
+    private PythonConstruct findInScope(Scope scope) {
         List<PythonConstruct> children = scope.getEnclosedconstructs();
         AssignmentC resultAssignmentC = null;
         for (PythonConstruct construct : children) {
@@ -53,10 +54,15 @@ public class ResolveNameGoal extends Goal {
                     }
                 }
             }
+            if (construct instanceof MethodDeclarationC) {
+                MethodDeclarationC declarationC = (MethodDeclarationC) construct;
+                return declarationC;
+            }
         }
         return resultAssignmentC;
     }
     
+    @Override
     public CheckpointToken flush() {
         // TODO Auto-generated method stub
         return null;

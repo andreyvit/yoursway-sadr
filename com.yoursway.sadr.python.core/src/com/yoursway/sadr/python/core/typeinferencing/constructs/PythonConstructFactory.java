@@ -48,6 +48,7 @@ import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
+import com.yoursway.sadr.python_v2.model.builtins.PythonLambdaExpressionC;
 
 public class PythonConstructFactory {
     
@@ -91,6 +92,8 @@ public class PythonConstructFactory {
             return new MethodDeclarationC(scope, (MethodDeclaration) node);
         if (node instanceof PythonClassDeclaration)
             return new ClassDeclarationC(scope, (PythonClassDeclaration) node);
+        if (node instanceof PythonLambdaExpression)
+            return new PythonLambdaExpressionC(scope, (PythonLambdaExpression) node);
         if (node instanceof BinaryExpression)
             return wrapBinaryExpression(scope, (BinaryExpression) node);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
@@ -99,14 +102,14 @@ public class PythonConstructFactory {
                 || node instanceof PythonArgument || node instanceof PythonDelStatement
                 || node instanceof PythonImportStatement || node instanceof PythonFunctionDecorator
                 || node instanceof PythonDictExpression || node instanceof PythonWithStatement
-                || node instanceof PythonLambdaExpression || node instanceof PythonRaiseStatement
-                || node instanceof PythonImportExpression || node instanceof PythonImportAsExpression
-                || node instanceof PythonListExpression || node instanceof PythonTestListExpression
-                || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
-                || node instanceof UnaryExpression || node instanceof PythonTestListExpression
-                || node instanceof FloatNumericLiteral || node instanceof PythonWhileStatement
-                || node instanceof PythonYieldStatement || node instanceof ComplexNumericLiteral
-                || node instanceof PythonTryStatement || node instanceof PythonExceptStatement)
+                || node instanceof PythonRaiseStatement || node instanceof PythonImportExpression
+                || node instanceof PythonImportAsExpression || node instanceof PythonListExpression
+                || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
+                || node instanceof ExpressionList || node instanceof UnaryExpression
+                || node instanceof PythonTestListExpression || node instanceof FloatNumericLiteral
+                || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement
+                || node instanceof ComplexNumericLiteral || node instanceof PythonTryStatement
+                || node instanceof PythonExceptStatement)
             return new UnhandledC(scope, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }

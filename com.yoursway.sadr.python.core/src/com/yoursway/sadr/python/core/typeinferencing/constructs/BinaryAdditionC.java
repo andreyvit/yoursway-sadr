@@ -10,4 +10,9 @@ public class BinaryAdditionC extends BinaryC {
         super(sc, node);
     }
     
+    @Override
+    public String getOperationMethodName() {
+        return "__add__";
+    }
+    
 }

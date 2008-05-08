@@ -11,4 +11,10 @@ public class BinaryPercentC extends BinaryC {
     BinaryPercentC(Scope sc, BinaryExpression node) {
         super(sc, node);
     }
+    
+    @Override
+    public String getOperationMethodName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

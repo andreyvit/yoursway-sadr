@@ -8,11 +8,9 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsAffector;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class ReturnC extends PythonConstructImpl<ReturnStatement> implements ReturnsAffector {
+public class ReturnC extends PythonConstructImpl<ReturnStatement> {
     
     ReturnC(Scope sc, ReturnStatement node) {
         super(sc, node);
@@ -23,12 +21,16 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> implements Ret
         return continuation.consume(emptyValueInfo(), requestor);
     }
     
-    public void actOnReturns(ReturnsRequest request) {
-        request.add(wrap(innerContext(), node.getExpression()));
-    }
-    
     public PythonConstruct getReturnedConstruct() {
         assert getChildContructs().size() == 1 : "Return statement contract violated.";
         return getChildContructs().get(0);
+    }
+    
+    @Override
+    public void traverse(PythonConstructVisitor visitor) {
+        if (visitor.visit(this)) {
+            getReturnedConstruct().traverse(visitor);
+        }
+        visitor.endVisit(this);
     }
 }
