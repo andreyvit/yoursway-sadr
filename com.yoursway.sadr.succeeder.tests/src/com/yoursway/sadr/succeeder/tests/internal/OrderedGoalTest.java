@@ -61,7 +61,7 @@ public class OrderedGoalTest extends TestCase {
 
 		}
 
-		public void checkpoint(IGrade<?> grade) {
+		public <T> void checkpoint(IGrade<T> grade) {
 			assertEquals(results.size(), 2);
 			assertEquals(42, results.get(0).intValue());
 			assertEquals(42, results.get(1).intValue());
@@ -94,9 +94,16 @@ public class OrderedGoalTest extends TestCase {
 	@Test
 	public void testOrderedGoal() {
 		Engine engine = new Engine(new DefaultStrategy());
-		Acceptor acceptor = new Acceptor();
-		engine.schedule(null, new GoalImpl(acceptor));
-		engine.schedule(null, new GoalImpl(acceptor));
-		engine.run();
+		final Acceptor acceptor = new Acceptor();
+		engine.run(new Goal(){
+			public void preRun() {
+				schedule(new GoalImpl(acceptor));
+				schedule(new GoalImpl(acceptor));
+			}
+
+			public CheckpointToken flush() {
+				return null;
+			}
+		});
 	}
 }

@@ -48,12 +48,21 @@ public class EngineTests {
 	private static class AssertingAcceptor implements IAcceptor {
 		private int actualResult;
 		
-		AssertingAcceptor(int actualResult) {
+		AssertingAcceptor(){
+			actualResult = -1;
+		}
+		
+		void setResult(int actualResult) {
 			this.actualResult = actualResult;
 		}
 
-		public void checkpoint(IGrade<?> grade) {
+		public void checkpoint(Grade grade) {
 			assertEquals(1, actualResult);
+		}
+
+		public <T> void checkpoint(IGrade<T> grade) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}
@@ -61,13 +70,14 @@ public class EngineTests {
 	@Test
 	public void singleGoal() {
 		Engine scheduler = new Engine(new DefaultStrategy());
-		scheduler.schedule(null, new Goal(){
+		Goal goal = new Goal(){
 			private int result = 0;
-			private IAcceptor acceptor;
+			private AssertingAcceptor acceptor;
 
 			public void preRun() {
 				result = 1;
-				acceptor = new AssertingAcceptor(result);
+				acceptor = new AssertingAcceptor();
+				acceptor.setResult(result);
 				checkpoint(acceptor, Grade.DONE);
 			}
 
@@ -75,8 +85,8 @@ public class EngineTests {
 				return checkpoint(acceptor, Grade.DONE);
 			}
 			
-		});
-		scheduler.run();
+		};
+		scheduler.run(goal);
 	}
 	
 	private static class SequentialGoal extends Goal{
@@ -92,7 +102,7 @@ public class EngineTests {
 			result = depth;
 			checkpoint(new IAcceptor(){
 				
-				public void checkpoint(IGrade<?> grade) {
+				public <T> void checkpoint(IGrade<T> grade) {
 					if (result < SequentialGoal.MAX_DEPTH) {
 						schedule(new SequentialGoal(depth+1));
 					}
@@ -112,8 +122,7 @@ public class EngineTests {
 	@Test
 	public void sequentialGoals() {
 		Engine scheduler = new Engine(new DefaultStrategy());
-		scheduler.schedule(null, new SequentialGoal(0));
-		scheduler.run();
+		scheduler.run(new SequentialGoal(0));
 	}
 	
 }

@@ -25,10 +25,9 @@ public class DefaultSchedulingStrategiesTests {
 			this.actualResult = actualResult;
 		}
 
-		public void checkpoint(IGrade<?> grade) {
+		public <T> void checkpoint(IGrade<T> grade) {
 			assertEquals(1, actualResult);
 		}
-		
 	}
 	
 	private static class SleepingGoal extends Goal{
@@ -59,8 +58,7 @@ public class DefaultSchedulingStrategiesTests {
 	
 	@Test
 	public void testTimeLimitPruning() {
-		Engine engeine = new Engine(new TimeLimitBasedSchedulingStrategy(500));
-		engeine.schedule(null, new SleepingGoal());
-		engeine.run();
+		Engine engine = new Engine(new TimeLimitBasedSchedulingStrategy(500));
+		engine.run(new SleepingGoal());
 	}
 }
