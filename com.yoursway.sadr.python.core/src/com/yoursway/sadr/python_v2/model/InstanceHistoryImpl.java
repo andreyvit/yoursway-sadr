@@ -7,13 +7,16 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
 public class InstanceHistoryImpl implements InstanceHistory {
     private final Set<RuntimeObject> history = new HashSet<RuntimeObject>();
-    private final PythonConstruct decl;
     private final RuntimeObject initialState;
+    private final PythonConstruct decl;
     
     public InstanceHistoryImpl(RuntimeObject source, PythonConstruct decl) {
+        if (source == null) {
+            throw new IllegalArgumentException("Source can't be null");
+        }
         initialState = source;
-        this.decl = decl;
         history.add(source);
+        this.decl = decl;
     }
     
     void addInstance(RuntimeObject instance) {

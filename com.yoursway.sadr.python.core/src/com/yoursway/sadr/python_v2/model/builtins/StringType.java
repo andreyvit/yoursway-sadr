@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.StringLiteralC;
+import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class StringType extends PythonClassType {
@@ -19,6 +20,12 @@ public class StringType extends PythonClassType {
     }
     
     public static RuntimeObject newStringObject(StringLiteralC literal) {
-        return new PythonObjectWithValue<StringLiteralC>(instance(), literal);
+        StringValue value = new StringValue(literal.stringValue());
+        return new PythonObjectWithValue(instance(), value, literal);
+    }
+    
+    @Override
+    public String describe() {
+        return "str";
     }
 }

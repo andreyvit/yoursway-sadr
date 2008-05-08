@@ -27,15 +27,16 @@ public class ExpressionValueGoal extends ContextSensitiveGoal {
         this.acceptor = acceptor;
     }
     
+    @Override
     public CheckpointToken flush() {
         return null;
     }
     
     public void preRun() {
         final PythonValueSetAcceptor subgoalAcceptor = new PythonValueSetAcceptor() {
-            public void checkpoint(IGrade<?> grade) {
+            public <T> void checkpoint(IGrade<T> grade) {
                 acceptor.setResult(getResult());
-                ExpressionValueGoal.this.checkpoint(acceptor, Grade.DONE);
+                ExpressionValueGoal.this.checkpoint(acceptor, grade);
             }
         };
         if (expression instanceof IntegerLiteralC) {

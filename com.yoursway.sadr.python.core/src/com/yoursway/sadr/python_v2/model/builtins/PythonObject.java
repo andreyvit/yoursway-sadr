@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class PythonObject implements RuntimeObject {
     
     private final InstanceHistoryImpl history;
     
-    Map<String, RuntimeObject> attributes;
+    Map<String, RuntimeObject> attributes = new HashMap<String, RuntimeObject>();
     private PythonClass type;
     
     protected RuntimeObject lookupInSuperclasses(String name) {
@@ -80,7 +81,12 @@ public class PythonObject implements RuntimeObject {
     }
     
     public String describe() {
-        ASTNode node = instanceHistory().sourceDeclaration().node();
+        PythonConstruct declaration = instanceHistory().sourceDeclaration();
+        if (declaration == null) {
+            throw new IllegalStateException("No declarations found. Can't describe "
+                    + this.getClass().getSimpleName() + " instance.");
+        }
+        ASTNode node = declaration.node();
         if (node instanceof PythonClassDeclaration) {
             return ((PythonClassDeclaration) node).getName();
         } else

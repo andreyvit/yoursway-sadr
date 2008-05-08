@@ -25,16 +25,6 @@ public class StringValue extends AbstractValue implements ValueTraits {
     }
     
     @Override
-    public String coherseToString() {
-        return value;
-    }
-    
-    @Override
-    public boolean cohersibleToString() {
-        return true;
-    }
-    
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

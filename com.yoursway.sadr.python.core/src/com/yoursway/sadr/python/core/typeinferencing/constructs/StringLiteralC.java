@@ -26,7 +26,7 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
         return continuation.consume(builder.build(), requestor);
     }
     
-    private String stringValue() {
+    public String stringValue() {
         String v = node.getValue();
         v = unquote(v);
         v = v.replaceAll("\\n", "\n");
