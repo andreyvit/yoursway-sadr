@@ -9,6 +9,7 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.BigNumericLiteral;
 import org.eclipse.dltk.ast.expressions.ExpressionList;
+import org.eclipse.dltk.ast.expressions.FloatNumericLiteral;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.VariableReference;
@@ -16,13 +17,18 @@ import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonDelStatement;
+import org.eclipse.dltk.python.parser.ast.PythonExceptStatement;
 import org.eclipse.dltk.python.parser.ast.PythonForStatement;
 import org.eclipse.dltk.python.parser.ast.PythonImportFromStatement;
 import org.eclipse.dltk.python.parser.ast.PythonImportStatement;
 import org.eclipse.dltk.python.parser.ast.PythonRaiseStatement;
+import org.eclipse.dltk.python.parser.ast.PythonTryStatement;
+import org.eclipse.dltk.python.parser.ast.PythonWhileStatement;
 import org.eclipse.dltk.python.parser.ast.PythonWithStatement;
+import org.eclipse.dltk.python.parser.ast.PythonYieldStatement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.ComplexNumericLiteral;
 import org.eclipse.dltk.python.parser.ast.expressions.PrintExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonAllImportExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
@@ -97,7 +103,10 @@ public class PythonConstructFactory {
                 || node instanceof PythonImportExpression || node instanceof PythonImportAsExpression
                 || node instanceof PythonListExpression || node instanceof PythonTestListExpression
                 || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
-                || node instanceof UnaryExpression || node instanceof PythonTestListExpression)
+                || node instanceof UnaryExpression || node instanceof PythonTestListExpression
+                || node instanceof FloatNumericLiteral || node instanceof PythonWhileStatement
+                || node instanceof PythonYieldStatement || node instanceof ComplexNumericLiteral
+                || node instanceof PythonTryStatement || node instanceof PythonExceptStatement)
             return new UnhandledC(scope, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }

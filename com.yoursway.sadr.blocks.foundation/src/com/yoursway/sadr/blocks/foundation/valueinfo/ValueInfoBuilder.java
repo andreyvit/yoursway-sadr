@@ -30,7 +30,7 @@ public class ValueInfoBuilder {
         return this;
     }
     
-    public ValueInfoBuilder addValues(ValueInfo result) {
+    public ValueInfoBuilder add(ValueInfo result) {
         typeSetBuilder.addAll(result.getTypeSet());
         valueSetBuilder.addAll(result.getValueSet());
         return this;

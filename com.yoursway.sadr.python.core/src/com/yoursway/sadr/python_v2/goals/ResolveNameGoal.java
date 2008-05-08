@@ -10,12 +10,12 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.Goal;
 
-public class ResolveName extends Goal {
+public class ResolveNameGoal extends Goal {
     
     private final VariableReferenceC variableReference;
     private final ResolvedNameAcceptor acceptor;
     
-    public ResolveName(VariableReferenceC variableReference, ResolvedNameAcceptor acceptor) {
+    public ResolveNameGoal(VariableReferenceC variableReference, ResolvedNameAcceptor acceptor) {
         this.variableReference = variableReference;
         this.acceptor = acceptor;
     }
