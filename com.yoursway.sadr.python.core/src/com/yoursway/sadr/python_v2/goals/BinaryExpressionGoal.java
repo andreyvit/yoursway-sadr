@@ -3,9 +3,9 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.BinaryC;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
+import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IGrade;
 

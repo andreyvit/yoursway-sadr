@@ -3,15 +3,14 @@ package com.yoursway.sadr.python_v2.goals.internal;
 import java.util.List;
 
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonLambdaExpressionC;
-import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.Goal;
 import com.yoursway.sadr.succeeder.IGoal;
 
@@ -35,11 +34,6 @@ public final class CallResolver {
             final PythonValueSetAcceptor acceptor, final Context context) {
         if (callable.getDecl() == null) {
             return new Goal() {
-                
-                @Override
-                public CheckpointToken flush() {
-                    return null;
-                }
                 
                 public void preRun() {
                     acceptor.addResult(callable.evaluate(args), context);

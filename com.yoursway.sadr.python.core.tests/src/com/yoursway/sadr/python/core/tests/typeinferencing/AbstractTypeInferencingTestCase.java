@@ -40,6 +40,7 @@ import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
@@ -51,8 +52,9 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.ResolveNameGoal;
-import com.yoursway.sadr.python_v2.goals.ResolvedNameAcceptor;
+import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
@@ -514,17 +516,22 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            ResolvedNameAcceptorImpl acceptor = new ResolvedNameAcceptorImpl();
-            
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+                public <T> void checkpoint(IGrade<T> grade) {
+                }
+            };
             IGoal goal = createGoal(fileC, acceptor);
             int actualLine = -2;
             String prefix = "";
             if (goal != null) {
                 engine.run(goal);
                 
-                PythonConstruct result = acceptor.getResult();
+                ValueInfo result = acceptor.getResult();
                 if (result != null) {
-                    actualLine = getLine(cu, result.node());
+                    Collection<Value> vals = result.getValueSet().containedValues();
+                    PythonConstruct decl = ((RuntimeObject) vals.iterator().next()).instanceHistory()
+                            .sourceDeclaration();//FIXME I am Dirty Hack! Fix me, please.
+                    actualLine = getLine(cu, decl.node());
                 }
                 
                 prefix = goal.toString() + " : ";
@@ -534,12 +541,13 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public IGoal createGoal(PythonFileC fileC, ResolvedNameAcceptor acceptor) {
+        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
             ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             if (construct instanceof VariableReferenceC) {
-                return new ResolveNameGoal((VariableReferenceC) construct, acceptor);
+                return new ResolveNameToObjectGoal((VariableReferenceC) construct, acceptor,
+                        Context.EMPTY_CONTEXT);
             } else {
                 throw new IllegalStateException("Should be VariableReferenceC, but found "
                         + construct.getClass().getSimpleName());

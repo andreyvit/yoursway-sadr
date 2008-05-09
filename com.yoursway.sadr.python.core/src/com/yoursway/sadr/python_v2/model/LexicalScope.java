@@ -14,7 +14,10 @@ import java.util.Set;
  * Lexical scopes should be implemented as dictionaries (hence are allowed to be
  * dynamically changed) but must take hierarchical structure into account for
  * name resolution.
+ * 
+ * @deprecated but may be used in less dynamic languages as a building block.
  */
+@Deprecated
 public interface LexicalScope {
     /**
      * Looks a name up in the lexical scope according to name resolution rules.

@@ -25,6 +25,7 @@ import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequest
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.OuteriorNodeLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
+import com.yoursway.sadr.python_v2.model.Context;
 
 public class FileContributionsManager implements OuteriorNodeLookup, SearchService {
     

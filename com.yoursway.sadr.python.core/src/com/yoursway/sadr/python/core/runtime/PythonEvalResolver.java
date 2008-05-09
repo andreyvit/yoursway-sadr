@@ -18,7 +18,6 @@ import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EvalRootC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
@@ -28,6 +27,7 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGo
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
+import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.Engine;
 
 public class PythonEvalResolver {
