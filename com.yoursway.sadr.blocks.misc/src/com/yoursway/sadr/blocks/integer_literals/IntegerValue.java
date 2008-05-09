@@ -15,6 +15,10 @@ public class IntegerValue extends AbstractValue implements ValueTraits {
         return value;
     }
     
+    public IntegerValue add(IntegerValue val) {
+    	return new IntegerValue(this.value() + val.value());
+    }
+    
     @Override
     public String toString() {
         return describe();
@@ -49,4 +53,8 @@ public class IntegerValue extends AbstractValue implements ValueTraits {
             return false;
         return true;
     }
+
+	public IntegerValue subtract(IntegerValue value2) {
+		return new IntegerValue(this.value() - value2.value());
+	}
 }

@@ -21,7 +21,7 @@ public class StringType extends PythonClassType {
     
     public static RuntimeObject newStringObject(StringLiteralC literal) {
         StringValue value = new StringValue(literal.stringValue());
-        return new PythonObjectWithValue(instance(), value, literal);
+        return new PythonObjectWithValue<StringValue>(instance(), value, literal);
     }
     
     @Override

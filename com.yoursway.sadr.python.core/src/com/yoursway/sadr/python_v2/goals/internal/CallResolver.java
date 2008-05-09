@@ -8,6 +8,7 @@ import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonLambdaExpressionC;
@@ -42,10 +43,14 @@ public final class CallResolver {
                 
             };
         } else if (callable.getDecl() instanceof MethodDeclarationC) {
-            return new CallReturnValueGoal((MethodDeclarationC) callable.getDecl(), context, acceptor);
+            MethodDeclarationC decl = (MethodDeclarationC) callable.getDecl();
+            Context actualArguments = new ContextImpl(decl.node().getArguments(), args);
+            return new CallReturnValueGoal((MethodDeclarationC) callable.getDecl(), actualArguments, acceptor);
         } else if (callable.getDecl() instanceof PythonLambdaExpressionC) {
-            return new ExpressionValueGoal(((PythonLambdaExpressionC) callable.getDict()).getExpression(),
-                    context, acceptor);
+            PythonLambdaExpressionC decl = (PythonLambdaExpressionC) callable.getDecl();
+            Context actualArguments = new ContextImpl(decl.node().getArguments(), args);
+            return new ExpressionValueGoal(((PythonLambdaExpressionC) callable.getDecl()).getExpression(),
+                    actualArguments, acceptor);
         }
         throw new IllegalStateException("should never reach this place");
     }

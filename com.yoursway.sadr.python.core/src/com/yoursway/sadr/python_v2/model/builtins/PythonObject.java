@@ -47,6 +47,8 @@ public class PythonObject implements RuntimeObject {
         //TODO try __getattribute__ execution.
         if (!attributes.containsKey(name)) {
             // TODO try __getattr__ execution
+            if (this.type.getDict().containsKey(name))
+                return type.getDict().get(name);
             return lookupInSuperclasses(name);
         }
         return attributes.get(name);

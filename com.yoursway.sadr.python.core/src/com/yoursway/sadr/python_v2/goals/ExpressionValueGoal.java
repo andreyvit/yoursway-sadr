@@ -64,8 +64,8 @@ public class ExpressionValueGoal extends ContextSensitiveGoal {
     }
     
     private void scheduleVariableReferenceC() {
-        Goal resolveNameGoal = new ResolveNameToObjectGoal(
-                (VariableReferenceC) expression, acceptor, getContext());
+        Goal resolveNameGoal = new ResolveNameToObjectGoal((VariableReferenceC) expression, acceptor,
+                getContext());
         schedule(resolveNameGoal);
     }
     
@@ -87,6 +87,7 @@ public class ExpressionValueGoal extends ContextSensitiveGoal {
             public <T> void checkpoint(IGrade<T> grade) {
                 if (getResultByContext(getContext()) instanceof FunctionObject) {
                     function[0] = (FunctionObject) getResultByContext(getContext());
+                    syncronizer.subgoalDone(grade);
                 }
             }
         }, getContext()));

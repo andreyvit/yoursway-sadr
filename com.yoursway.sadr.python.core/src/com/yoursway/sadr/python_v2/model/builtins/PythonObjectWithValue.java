@@ -3,16 +3,17 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
-public class PythonObjectWithValue extends PythonObject implements RuntimeObjectWithValue {
+public class PythonObjectWithValue<ValueType extends Value> extends PythonObject implements
+        RuntimeObjectWithValue<ValueType> {
     
-    private final Value value;
+    private final ValueType value;
     
-    public PythonObjectWithValue(PythonClass type, Value value, PythonConstruct declaration) {
+    public PythonObjectWithValue(PythonClass type, ValueType value, PythonConstruct declaration) {
         super(type, declaration);
         this.value = value;
     }
     
-    public Value getValue() {
+    public ValueType getValue() {
         return value;
     }
     
