@@ -24,6 +24,7 @@ public class IntType extends PythonClassType implements PythonClass {
             }
         };
         setAttribute("__add__", addFunc);
+        
         FunctionObject subtract = new FunctionObject() {
             @Override
             public RuntimeObject evaluate(List<RuntimeObject> args) {
@@ -33,6 +34,26 @@ public class IntType extends PythonClassType implements PythonClass {
             }
         };
         setAttribute("__sub__", subtract);
+        
+        FunctionObject multiply = new FunctionObject() {
+            @Override
+            public RuntimeObject evaluate(List<RuntimeObject> args) {
+                PythonObjectWithValue<IntegerValue>[] castedArgs = castArguments(args);
+                IntegerValue result = castedArgs[0].getValue().multiply(castedArgs[1].getValue());
+                return new PythonObjectWithValue<IntegerValue>(instance(), result, null);
+            }
+        };
+        setAttribute("__mul__", multiply);
+        
+        FunctionObject divide = new FunctionObject() {
+            @Override
+            public RuntimeObject evaluate(List<RuntimeObject> args) {
+                PythonObjectWithValue<IntegerValue>[] castedArgs = castArguments(args);
+                IntegerValue result = castedArgs[0].getValue().divide(castedArgs[1].getValue());
+                return new PythonObjectWithValue<IntegerValue>(instance(), result, null);
+            }
+        };
+        setAttribute("__div__", divide);
     }
     
     private static IntType instance = new IntType();

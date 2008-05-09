@@ -57,4 +57,12 @@ public class IntegerValue extends AbstractValue implements ValueTraits {
 	public IntegerValue subtract(IntegerValue value2) {
 		return new IntegerValue(this.value() - value2.value());
 	}
+
+	public IntegerValue multiply(IntegerValue value2) {
+		return new IntegerValue(this.value() * value2.value());
+	}
+
+	public IntegerValue divide(IntegerValue value2) {
+		return new IntegerValue(this.value() / value2.value());
+	}
 }
