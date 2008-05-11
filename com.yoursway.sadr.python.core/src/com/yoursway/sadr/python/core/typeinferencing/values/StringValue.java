@@ -48,4 +48,12 @@ public class StringValue extends AbstractValue implements ValueTraits {
             return false;
         return true;
     }
+    
+    public StringValue add(StringValue val) {
+        return new StringValue(this.value() + val.value());
+    }
+    
+    public String value() {
+        return value;
+    }
 }

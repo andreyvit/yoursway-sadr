@@ -10,7 +10,8 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
 public class IntType extends PythonClassType implements PythonClass {
     private static PythonObjectWithValue<IntegerValue>[] castArguments(List<RuntimeObject> args) {
         assert args.size() == 2;
-        return new PythonObjectWithValue[] { (PythonObjectWithValue<IntegerValue>) args.get(0),
+        return new PythonObjectWithValue[] { 
+                (PythonObjectWithValue<IntegerValue>) args.get(0),
                 (PythonObjectWithValue<IntegerValue>) args.get(1) };
     }
     
