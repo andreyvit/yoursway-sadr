@@ -3,7 +3,6 @@ package com.yoursway.sadr.python_v2.goals;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.Goal;
 
 public class ResolveReference extends Goal {
@@ -12,11 +11,6 @@ public class ResolveReference extends Goal {
     
     public ResolveReference(PythonVariableAccessExpression expression, PythonValueSetAcceptor acceptor) {
         this.acceptor = acceptor;
-    }
-    
-    public CheckpointToken flush() {
-        // TODO Auto-generated method stub
-        return null;
     }
     
     public void preRun() {

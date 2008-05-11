@@ -34,8 +34,7 @@ public abstract class Goal implements IGoal {
     }
     
     public CheckpointToken flush() {
-        //TEMPORARILY children flush is not required
-        //remove this method to re-require
+        // TODO Auto-generated method stub
         return null;
     }
 }

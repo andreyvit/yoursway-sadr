@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.Goal;
 import com.yoursway.sadr.succeeder.IAcceptor;
@@ -34,19 +33,12 @@ public class DefaultSchedulingStrategiesTests {
 		
 		AssertingAcceptor acceptor = new AssertingAcceptor(33);
 
-		public CheckpointToken flush() {
-			return checkpoint(acceptor, Grade.DONE);
-		}
-
 		public void preRun() {
 				acceptor.setResult(1);
 				checkpoint(acceptor, Grade.INTERMEDIATE);
 				try { Thread.sleep(2000); } 
 				catch (InterruptedException e) { e.printStackTrace(); }
 				schedule(new Goal(){
-					public CheckpointToken flush() {
-						return checkpoint(acceptor, Grade.INTERMEDIATE);
-					}
 					public void preRun() {
 							acceptor.setResult(0);
 							checkpoint(acceptor, Grade.DONE);

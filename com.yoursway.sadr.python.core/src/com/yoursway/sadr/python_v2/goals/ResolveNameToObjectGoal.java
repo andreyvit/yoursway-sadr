@@ -10,22 +10,24 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.succeeder.CheckpointToken;
-import com.yoursway.sadr.succeeder.Goal;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 
-public class ResolveNameGoal extends Goal {
+public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     
-    private final ResolvedNameAcceptor acceptor;
+    private final PythonValueSetAcceptor acceptor;
     private final PythonConstructImpl variableReference;
     private final String name;
     
-    public ResolveNameGoal(VariableReferenceC var, ResolvedNameAcceptor acceptor) {
+    public ResolveNameToObjectGoal(VariableReferenceC var, PythonValueSetAcceptor acceptor, Context context) {
+        super(context);
         variableReference = var;
         this.name = var.node().getName();
         this.acceptor = acceptor;
     }
     
-    public ResolveNameGoal(ProcedureCallC var, ResolvedNameAcceptor acceptor) {
+    public ResolveNameToObjectGoal(ProcedureCallC var, PythonValueSetAcceptor acceptor, Context context) {
+        super(context);
         variableReference = var;
         this.name = var.node().getProcedureName();
         this.acceptor = acceptor;
@@ -37,14 +39,18 @@ public class ResolveNameGoal extends Goal {
         //FIXME change getEnclosedConstructs to iterator allowing parallel execution
         result = findInScope(scope);
         scope = scope.parentScope();
+        if (null == result && variableReference instanceof VariableReferenceC) {
+            String name = ((VariableReferenceC) variableReference).node().getName();
+            if (getContext().contains(name)) {
+                acceptor.addResult(getContext().getActualArguement(name), getContext());
+                checkpoint(acceptor, Grade.DONE);
+            }
+        }
         while (result == null && scope != null) {
             result = findInScope(scope);
             scope = scope.parentScope();
         }
-        if (result != null) {
-            acceptor.addResult(result);
-        }
-        checkpoint(acceptor, Grade.DONE);
+        processResultConstruct(result);
     }
     
     private PythonConstruct findInScope(Scope scope) {
@@ -64,7 +70,7 @@ public class ResolveNameGoal extends Goal {
                     }
                 }
             }
-            if (construct instanceof MethodDeclarationC) {
+            if (construct instanceof MethodDeclarationC) {//FIXME merge with previous if-statement.
                 MethodDeclarationC declarationC = (MethodDeclarationC) construct;
                 if (declarationC.node().getName().equals(this.name)) {
                     result = declarationC;
@@ -74,10 +80,18 @@ public class ResolveNameGoal extends Goal {
         return result;
     }
     
-    @Override
-    public CheckpointToken flush() {
-        // TODO Auto-generated method stub
-        return null;
+    public void processResultConstruct(PythonConstruct result) {
+        //TODO if result is null return IMPOSSIBLE object
+        if (result instanceof AssignmentC) {
+            AssignmentC assignmentC = (AssignmentC) result;
+            PythonConstruct subexpr = assignmentC.rhs();
+            schedule(new ExpressionValueGoal(subexpr, getContext(), acceptor));
+        } else if (result instanceof MethodDeclarationC) {
+            MethodDeclarationC methodDeclarationC = (MethodDeclarationC) result;
+            FunctionObject obj = new FunctionObject(methodDeclarationC);
+            acceptor.addResult(obj, getContext());
+            checkpoint(acceptor, Grade.DONE);
+        }
     }
     
 }

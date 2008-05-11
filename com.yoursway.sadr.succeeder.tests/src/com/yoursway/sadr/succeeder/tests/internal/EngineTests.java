@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.Goal;
 import com.yoursway.sadr.succeeder.IAcceptor;
@@ -80,10 +79,6 @@ public class EngineTests {
 				acceptor.setResult(result);
 				checkpoint(acceptor, Grade.DONE);
 			}
-
-			public CheckpointToken flush() {
-				return checkpoint(acceptor, Grade.DONE);
-			}
 			
 		};
 		scheduler.run(goal);
@@ -111,10 +106,6 @@ public class EngineTests {
 				}
 	
 			}, Grade.INTERMEDIATE);
-		}
-	
-		public CheckpointToken flush() {
-			return checkpoint(acceptor, Grade.DONE);
 		}
 		
 	}

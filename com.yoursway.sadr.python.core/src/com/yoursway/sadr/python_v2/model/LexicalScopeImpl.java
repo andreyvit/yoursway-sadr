@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 
+@Deprecated
 public class LexicalScopeImpl implements LexicalScope {
     
     private final Map<String, RuntimeObject> namesToObjects = new HashMap<String, RuntimeObject>();

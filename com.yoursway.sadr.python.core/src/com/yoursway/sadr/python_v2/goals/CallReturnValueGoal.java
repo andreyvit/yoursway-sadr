@@ -1,10 +1,9 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructVisitor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ReturnC;
-import com.yoursway.sadr.succeeder.CheckpointToken;
+import com.yoursway.sadr.python_v2.model.Context;
 
 public class CallReturnValueGoal extends ContextSensitiveGoal {
     
@@ -33,10 +32,5 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
                 return false;
             }
         });
-    }
-    
-    public CheckpointToken flush() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

@@ -3,8 +3,8 @@ package com.yoursway.sadr.python.core.runtime;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.references.VariableReference;
 
-import com.yoursway.sadr.python.core.runtime.contributions.Context;
 import com.yoursway.sadr.python.core.runtime.contributions.ContributableItem;
+import com.yoursway.sadr.python_v2.model.Context;
 
 public class PythonSourceField extends PythonField implements ContributableItem {
     

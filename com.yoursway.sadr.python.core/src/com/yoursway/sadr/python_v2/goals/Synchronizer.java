@@ -2,25 +2,20 @@ package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.succeeder.IGrade;
 
-public class Synchronizer {
-    private final GoalSharedData data;
+abstract class Synchronizer {
+    private int counter;
     
-    public Synchronizer(int items) {
-        this.data = new GoalSharedData(items);
-    }
-    
-    public Synchronizer(GoalSharedData data) {
-        this.data = data;
+    public Synchronizer(int i) {
+        assert i > 0;
+        counter = i;
     }
     
     public <T> void subgoalDone(IGrade<T> grade) {
-        if (!grade.isDone())
-            return;
-        if (data.decrement() == 0)
+        --counter;
+        if (counter <= 0) {
             allDone(grade);
+        }
     }
     
-    public <T> void allDone(IGrade<T> grade) {
-    }
-    
+    public abstract <T> void allDone(IGrade<T> grade);
 }
