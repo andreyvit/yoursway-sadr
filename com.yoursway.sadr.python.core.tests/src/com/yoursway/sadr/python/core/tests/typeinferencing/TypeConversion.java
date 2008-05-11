@@ -10,7 +10,7 @@ public final class TypeConversion extends AbstractTypeInferencingTestCase {
     }
 
     @Test
-    public void __str__() throws Exception {
+    public void __len__() throws Exception {
         runTest();
     }
 
@@ -20,7 +20,7 @@ public final class TypeConversion extends AbstractTypeInferencingTestCase {
     }
 
     @Test
-    public void __len__() throws Exception {
+    public void __str__() throws Exception {
         runTest();
     }
 

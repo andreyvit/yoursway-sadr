@@ -5,7 +5,7 @@ import org.junit.Test;
 public final class UnaryOperators extends AbstractTypeInferencingTestCase {
 
     @Test
-    public void __pos__() throws Exception {
+    public void __invert__() throws Exception {
         runTest();
     }
 
@@ -15,7 +15,7 @@ public final class UnaryOperators extends AbstractTypeInferencingTestCase {
     }
 
     @Test
-    public void __invert__() throws Exception {
+    public void __pos__() throws Exception {
         runTest();
     }
 

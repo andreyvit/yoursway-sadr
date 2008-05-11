@@ -10,7 +10,7 @@ public final class ImportTests extends AbstractTypeInferencingTestCase {
     }
 
     @Test
-    public void packImportAll() throws Exception {
+    public void importByAlias() throws Exception {
         runTest();
     }
 
@@ -20,12 +20,12 @@ public final class ImportTests extends AbstractTypeInferencingTestCase {
     }
 
     @Test
-    public void importByAlias() throws Exception {
+    public void importModule() throws Exception {
         runTest();
     }
 
     @Test
-    public void importModule() throws Exception {
+    public void packImportAll() throws Exception {
         runTest();
     }
 

@@ -2,20 +2,21 @@ package com.yoursway.sadr.python.core.tests.typeinferencing;
 
 import org.junit.Test;
 
-public class AcceptanceTestsIteration2 extends AbstractTypeInferencingTestCase {
+public final class AcceptanceTestsIteration2 extends AbstractTypeInferencingTestCase {
+
     @Test
-    public void colorsys() throws Exception {
+    public void Colorsys() throws Exception {
         runTest();
     }
-    
+
     @Test
-    public void fib() throws Exception {
+    public void Fib() throws Exception {
         runTest();
     }
-    
+
     @Test
-    public void setupPy() throws Exception {
+    public void SetupPy() throws Exception {
         runTest();
     }
-    
+
 }

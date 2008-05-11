@@ -9,4 +9,9 @@ public final class ContextManagerTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
 
+    @Test
+    public void contextManagerTest() throws Exception {
+        runTest();
+    }
+
 }
