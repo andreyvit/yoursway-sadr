@@ -7,3 +7,4 @@ def boo():
   f.xxx = 42
   y = f.xxx ## expr y => int
 
+

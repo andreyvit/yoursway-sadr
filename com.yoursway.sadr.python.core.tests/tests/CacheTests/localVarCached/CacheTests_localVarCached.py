@@ -6,3 +6,4 @@ def bozz():
   print x   ## cached localvar-type x
 
 
+

@@ -41,7 +41,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         scope = scope.parentScope();
         if (null == result && variableReference instanceof VariableReferenceC) {
             String name = ((VariableReferenceC) variableReference).node().getName();
-            if (getContext().contains(name)) {
+            if (getContext() != null && getContext().contains(name)) {
                 acceptor.addResult(getContext().getActualArguement(name), getContext());
                 checkpoint(acceptor, Grade.DONE);
             }

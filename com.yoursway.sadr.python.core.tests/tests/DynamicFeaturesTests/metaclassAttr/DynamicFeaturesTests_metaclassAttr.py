@@ -8,3 +8,4 @@ class C(object):
 x = C.attr ## value x => 0
 
 
+

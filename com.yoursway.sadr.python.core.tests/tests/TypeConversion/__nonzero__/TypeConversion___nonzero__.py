@@ -5,3 +5,4 @@ class Foo(object):
 x = bool(Foo()) ## value x => True
 
 
+

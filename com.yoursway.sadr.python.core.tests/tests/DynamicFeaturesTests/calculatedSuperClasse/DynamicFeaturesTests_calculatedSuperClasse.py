@@ -6,3 +6,4 @@ class D(klass):pass
 x = D().a ## value x => 0
 
 
+

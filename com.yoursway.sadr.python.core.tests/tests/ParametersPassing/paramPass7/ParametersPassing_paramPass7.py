@@ -4,3 +4,4 @@ def f(**args):
 r = f(**{'py':0}) ## value r => 0
 
 
+

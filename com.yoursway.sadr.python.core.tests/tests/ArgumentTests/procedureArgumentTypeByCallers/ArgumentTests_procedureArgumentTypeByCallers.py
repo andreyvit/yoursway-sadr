@@ -9,3 +9,4 @@ def ggg():
   boz(Foo())
 
 
+

@@ -40,3 +40,4 @@ def read_file(f):
 s = read_file(None)
 z = repr(s) ## value z => "<RPM header 7:3proxy-0.5.3h.alt1>"
 
+

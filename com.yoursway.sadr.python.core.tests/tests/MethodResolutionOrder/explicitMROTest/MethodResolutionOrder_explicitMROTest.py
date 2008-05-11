@@ -16,3 +16,4 @@ class D(B,A):pass
 y = D().f() ## value y => 1
 
 
+

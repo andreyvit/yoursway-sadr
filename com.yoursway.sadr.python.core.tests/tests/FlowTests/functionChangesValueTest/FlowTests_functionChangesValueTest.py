@@ -7,3 +7,4 @@ def f(arg):
 f(c)
 a = c.q ## value a => 1
 
+

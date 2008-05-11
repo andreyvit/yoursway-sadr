@@ -9,3 +9,4 @@ class D(object):
 
 a = C().z ## value a => 0
 
+

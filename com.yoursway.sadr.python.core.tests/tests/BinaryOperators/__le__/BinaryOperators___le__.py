@@ -6,3 +6,4 @@ class Foo(object):
         return Q()
 x = Foo() <= Foo() ## expr x => Q
 
+

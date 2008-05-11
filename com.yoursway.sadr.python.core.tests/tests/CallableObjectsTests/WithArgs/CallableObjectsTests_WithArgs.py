@@ -5,3 +5,4 @@ class Foo(object):
 foo = Foo()
 x = foo(1, 2) ## value x => 1
 
+

@@ -4,3 +4,4 @@ def f():
 x = f.__doc__ ## value x => "function doc" 
 
 
+

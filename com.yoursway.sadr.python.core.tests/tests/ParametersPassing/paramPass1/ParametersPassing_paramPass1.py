@@ -4,3 +4,4 @@ def f(*args):
 r = f(*(1,2)) ## value r => 2
 
 
+

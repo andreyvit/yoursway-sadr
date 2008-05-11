@@ -24,3 +24,4 @@ print q            ## value q => 0
 b = None in Container() ## value b => False
 
 
+

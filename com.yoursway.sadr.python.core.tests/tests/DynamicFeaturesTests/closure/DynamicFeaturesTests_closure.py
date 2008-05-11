@@ -9,3 +9,4 @@ qq = f()
 x = qq()    ## value x => 1
 
 
+

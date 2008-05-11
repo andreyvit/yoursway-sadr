@@ -30,3 +30,4 @@ del c[None]
 item2 = c[None]    ## value item2 => 3
 
 
+

@@ -7,3 +7,4 @@ def bar():
   y = x
   print y ## expr y => Foo
 
+

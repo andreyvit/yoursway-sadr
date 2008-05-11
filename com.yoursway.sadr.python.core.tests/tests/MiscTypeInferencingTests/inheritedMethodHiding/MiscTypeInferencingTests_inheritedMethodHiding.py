@@ -12,3 +12,4 @@ def boz():
   z = f.foo()
   print z ## expr z => str
 
+

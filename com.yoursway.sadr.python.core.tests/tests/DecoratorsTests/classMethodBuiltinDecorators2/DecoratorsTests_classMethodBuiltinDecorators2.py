@@ -9,3 +9,4 @@ class Foo():
 
 c1 = Foo.f() ## value c1 => Foo
 
+

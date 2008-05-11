@@ -7,3 +7,4 @@ class Foo:
     x = s.foo()
     print x ## expr x => int
 
+

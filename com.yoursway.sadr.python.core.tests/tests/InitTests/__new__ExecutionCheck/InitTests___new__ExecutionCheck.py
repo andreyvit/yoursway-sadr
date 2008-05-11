@@ -4,3 +4,4 @@ class C(object):
     def __new__(cls):
         return Q();
 q = C() ## expr q => Q
+

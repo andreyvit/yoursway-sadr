@@ -7,3 +7,4 @@ x = C.__doc__ ## value x => "class doc"
 y = C.f.__doc__ ## value y => "method doc"
 
 
+

@@ -5,3 +5,4 @@ class Py(object):
 x = Py().any_attribute ## value x => 0
 
 
+

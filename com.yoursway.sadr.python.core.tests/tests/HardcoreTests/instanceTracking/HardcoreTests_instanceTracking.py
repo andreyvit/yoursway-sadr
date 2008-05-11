@@ -25,3 +25,4 @@ xxx.biz = 42
 foo = bar.boz.biz
 print foo ## expr foo => int
 
+

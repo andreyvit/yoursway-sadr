@@ -8,3 +8,4 @@ class Foo(object):
 x = Foo()
  x *= Foo() ## expr x => Q
 
+

@@ -13,3 +13,4 @@ def foo():
 	w = Bar(5).a ## expr w => int
 	print w ## value w => 5
 
+

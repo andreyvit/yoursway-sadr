@@ -4,3 +4,4 @@ def f(*args):
 r = f(*[1,2,3]) ## value r => 1
 
 
+

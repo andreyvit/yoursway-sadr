@@ -7,3 +7,4 @@ def bozz():
     y = 24
   print y ## value y => 42
 
+

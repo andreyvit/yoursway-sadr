@@ -6,3 +6,4 @@ c.m = method
 x = c.m() ## value x => 0 
 
 
+

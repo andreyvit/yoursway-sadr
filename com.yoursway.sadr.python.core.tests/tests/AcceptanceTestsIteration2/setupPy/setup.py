@@ -18,13 +18,13 @@ name = "Tkinter"                             ## value name => "Tkinter"
 description = "Tk Extension to Python"       ## value description => "Tk Extension to Python"
 ext_modules_args = (
 	'_tkinter', 
-	['_tkinter.c', 'tkappinit.c']            
+	['_tkinter.c', 'tkappinit.c'])      
 x = ext_modules_args ## value x => ("_tkinter", ["_tkinter.c", "tkappinit.c"])
 x = ext_modules_args ## expr ext_modules_args => list
-ext_modules_kwargs = {                       
+ext_modules_kwargs = dict(                       
     define_macros=[('WITH_APPINIT', 1)],
     include_dirs = inc_dirs,
     libraries = libs,
     library_dirs = lib_dirs,
-}
+)
 y = ext_modules_kwargs ## expr y => dict

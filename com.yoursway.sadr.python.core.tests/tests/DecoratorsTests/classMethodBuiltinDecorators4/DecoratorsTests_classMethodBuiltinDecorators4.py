@@ -9,3 +9,4 @@ class Foo():
 
 a = Foo.q(0) ## value a => 0
 
+

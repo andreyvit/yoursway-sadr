@@ -12,3 +12,4 @@ def bar():
   y = zzz[1]
   print y ## expr y => Foo
 
+

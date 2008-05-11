@@ -5,3 +5,4 @@ y = C().method()      ## value y => 1
 z = f()               ## value z => 2
 
 
+

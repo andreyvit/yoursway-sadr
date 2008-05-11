@@ -11,3 +11,4 @@ class Bar:
     m.boz(Foo())
 
 
+

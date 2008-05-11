@@ -8,3 +8,4 @@ class Foo:
     x = self.foo()
     print x ## value x => 10
 
+

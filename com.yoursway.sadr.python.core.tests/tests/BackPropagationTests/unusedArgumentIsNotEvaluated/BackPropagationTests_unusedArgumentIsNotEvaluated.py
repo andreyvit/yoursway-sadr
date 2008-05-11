@@ -12,3 +12,4 @@ def bozz():
   print a	## not-cached localvar-type a
   print b	## cached localvar-type b
 
+
