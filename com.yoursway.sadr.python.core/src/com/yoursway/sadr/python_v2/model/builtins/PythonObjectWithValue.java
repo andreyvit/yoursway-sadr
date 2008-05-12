@@ -13,6 +13,11 @@ public class PythonObjectWithValue<ValueType extends Value> extends PythonObject
         this.value = value;
     }
     
+    public PythonObjectWithValue(PythonClass type, ValueType value) {
+        super(type);
+        this.value = value;
+    }
+    
     public ValueType getValue() {
         return value;
     }

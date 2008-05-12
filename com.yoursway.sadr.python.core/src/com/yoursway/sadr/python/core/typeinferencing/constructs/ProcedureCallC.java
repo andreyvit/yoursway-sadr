@@ -76,4 +76,8 @@ public class ProcedureCallC extends CallC {
         }
     }
     
+    @Override
+    public String toString() {
+        return node.getProcedureName() + "()";
+    }
 }

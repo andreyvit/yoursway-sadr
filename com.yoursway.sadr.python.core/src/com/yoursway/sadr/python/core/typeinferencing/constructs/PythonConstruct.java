@@ -13,5 +13,4 @@ public interface PythonConstruct {
     void traverse(PythonConstructVisitor visitor);
     
     public ASTNode node();
-    
 }

@@ -77,8 +77,13 @@ public class EngineTests {
 				result = 1;
 				acceptor = new AssertingAcceptor();
 				acceptor.setResult(result);
-				checkpoint(acceptor, Grade.DONE);
+				updateGrade(acceptor, Grade.DONE);
 			}
+
+            @Override
+            protected String describe() {
+                return "";
+            }
 			
 		};
 		scheduler.run(goal);
@@ -95,7 +100,7 @@ public class EngineTests {
 		
 		public void preRun() {
 			result = depth;
-			checkpoint(new IAcceptor(){
+			updateGrade(new IAcceptor(){
 				
 				public <T> void checkpoint(IGrade<T> grade) {
 					if (result < SequentialGoal.MAX_DEPTH) {
@@ -107,7 +112,11 @@ public class EngineTests {
 	
 			}, Grade.INTERMEDIATE);
 		}
-		
+
+        @Override
+        protected String describe() {
+            return "";
+        }
 	}
 	
 	@Test

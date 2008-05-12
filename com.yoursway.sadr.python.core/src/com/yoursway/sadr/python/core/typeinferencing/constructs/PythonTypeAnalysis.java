@@ -3,7 +3,6 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
@@ -36,7 +35,7 @@ public class PythonTypeAnalysis implements AnalysisProvider {
         public BinaryOperationHandlerImplementation() {
         }
         
-        public void setContext(PythonConstructImpl<BinaryExpression> context, final ValueInfo leftInfo,
+        public void setContext(PythonConstruct context, final ValueInfo leftInfo,
                 final ValueInfo rightInfo) {
             final StandardTypes builtins = context.staticContext().builtins();
             final ValueInfoBuilder builder = new ValueInfoBuilder();
@@ -99,7 +98,7 @@ public class PythonTypeAnalysis implements AnalysisProvider {
             return types;
         }
         
-        public void setContext(PythonConstructImpl<BinaryExpression> context, ValueInfoGoal leftGoal,
+        public void setContext(PythonConstruct context, ValueInfoGoal leftGoal,
                 ValueInfoGoal rightGoal) {
             this.leftGoal = leftGoal;
             this.rightGoal = rightGoal;

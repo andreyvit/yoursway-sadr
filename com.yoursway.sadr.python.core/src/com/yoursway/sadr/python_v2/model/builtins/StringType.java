@@ -14,15 +14,20 @@ public class StringType extends PythonClassType {
     }
     
     private StringType() {
-        FunctionObject addFunc = new FunctionObject() {
+        FunctionObject addFunc = new FunctionObject("__add__") {
             @Override
             public RuntimeObject evaluate(List<RuntimeObject> args) {
                 PythonObjectWithValue<StringValue>[] castedArgs = castArguments(args);
                 StringValue result = castedArgs[0].getValue().add(castedArgs[1].getValue());
-                return new PythonObjectWithValue<StringValue>(instance(), result, null);
+                return newStringObject(result);
             }
         };
-        setAttribute("__add__", addFunc);
+        
+        FunctionObject[] functions = new FunctionObject[] { addFunc };
+        
+        for (FunctionObject func : functions) {
+            setAttribute(func.name(), func);
+        }
     }
     
     private static StringType instance = new StringType();
@@ -36,8 +41,17 @@ public class StringType extends PythonClassType {
         return new PythonObjectWithValue<StringValue>(instance(), value, literal);
     }
     
+    public static RuntimeObject newStringObject(StringValue value) {
+        return new PythonObjectWithValue<StringValue>(instance(), value, null);
+    }
+    
+    public static RuntimeObject newStringObject(String value) {
+        return newStringObject(new StringValue(value));
+    }
+    
     @Override
     public String describe() {
         return "str";
     }
+    
 }

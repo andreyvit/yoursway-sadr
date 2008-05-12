@@ -10,20 +10,27 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class FunctionObject extends PythonObject {
     private final PythonConstruct decl; //either MethodDeclarationC or PythonLambdaExpressionC
+    private final String name;
     
     public FunctionObject(MethodDeclarationC decl) {
         super(Builtins.FUNCTION);
         this.decl = decl;
+        this.name = decl.node().getName();
+        setAttribute("__name__", StringType.newStringObject(name));
     }
     
     public FunctionObject(PythonLambdaExpressionC decl) {
         super(Builtins.FUNCTION);
         this.decl = decl;
+        this.name = "<lambda>";
+        setAttribute("__name__", StringType.newStringObject(name));
     }
     
-    public FunctionObject() {
+    public FunctionObject(String name) {
         super(Builtins.FUNCTION);
         this.decl = null;
+        this.name = name;
+        setAttribute("__name__", StringType.newStringObject(name));
     }
     
     /**
@@ -39,6 +46,10 @@ public class FunctionObject extends PythonObject {
     
     @Override
     public String describe() {
-        return "function";
+        return "function " + name();
+    }
+    
+    public String name() {
+        return this.name;
     }
 }

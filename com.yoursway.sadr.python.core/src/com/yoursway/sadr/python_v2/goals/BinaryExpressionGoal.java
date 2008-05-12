@@ -26,9 +26,12 @@ public class BinaryExpressionGoal extends ContextSensitiveGoal {
         PythonValueSetAcceptor leftSubgoalAcceptor = new PythonValueSetAcceptor() {
             public <T> void checkpoint(IGrade<T> grade) {
                 if (getResult().isEmpty()) {
-                    throw new IllegalStateException("Left subexpressions must return any result.");
+                    throw new IllegalStateException("Left subexpression must return any result.");
                 }
                 RuntimeObject result = getResultByContext(getContext());
+                if (result == null) {
+                    throw new IllegalStateException("Left subexpression must return any result.");
+                }
                 setLeft(result);
             }
         };
@@ -36,9 +39,12 @@ public class BinaryExpressionGoal extends ContextSensitiveGoal {
         PythonValueSetAcceptor rightSubgoalAcceptor = new PythonValueSetAcceptor() {
             public <T> void checkpoint(IGrade<T> grade) {
                 if (getResult().isEmpty()) {
-                    throw new IllegalStateException("Right subexpressions must return any result.");
+                    throw new IllegalStateException("Right subexpression must return any result.");
                 }
                 RuntimeObject result = getResultByContext(getContext());
+                if (result == null) {
+                    throw new IllegalStateException("Right subexpression must return any result.");
+                }
                 setRight(result);
             }
         };
@@ -69,5 +75,11 @@ public class BinaryExpressionGoal extends ContextSensitiveGoal {
         List<RuntimeObject> actualArgs = new ArrayList<RuntimeObject>(1);
         actualArgs.add(argument);
         schedule(CallResolver.callMethod(receiver, name, actualArgs, acceptor, getContext()));
+    }
+    
+    @Override
+    public String describe() {
+        String basic = super.describe();
+        return basic + "\nfor expression " + expression.toString();
     }
 }

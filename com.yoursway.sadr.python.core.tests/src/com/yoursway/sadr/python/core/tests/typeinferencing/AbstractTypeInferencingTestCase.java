@@ -388,6 +388,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
                 public <T> void checkpoint(IGrade<T> grade) {
+                    System.out.println("Done");
                     //do nothing;
                 }
             };

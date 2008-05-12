@@ -83,4 +83,8 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
         return result;
     }
     
+    @Override
+    public String toString() {
+        return node.fqnRepresentation();
+    }
 }

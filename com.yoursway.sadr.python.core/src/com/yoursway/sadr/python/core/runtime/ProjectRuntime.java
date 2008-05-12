@@ -58,7 +58,7 @@ public class ProjectRuntime {
             ModuleDeclaration moduleDecl = parser.parse(module.getElementName().toCharArray(), module
                     .getSourceAsCharArray(), null);
             
-            PythonFileC moduleObject = new PythonFileC(null, moduleDecl);
+            PythonFileC moduleObject = new PythonFileC(null, moduleDecl, module.getElementName());
             //FIXME convert module names to python code form (e.g. "package.module").
             nameToModule.put(module.getElementName(), moduleObject);
         } catch (ModelException e) {

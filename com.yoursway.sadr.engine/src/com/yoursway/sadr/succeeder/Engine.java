@@ -26,7 +26,7 @@ public class Engine implements IScheduler {
     @SuppressWarnings("unchecked")
     public <T> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
         IGrade<T> previousGrade = (IGrade<T>) acceptors.get(acceptor);
-        if (previousGrade != null && previousGrade.compareTo((T) grade) > 0) {
+        if (previousGrade != null && previousGrade.compareTo((T) grade) >= 0) { // >= for debugging purposes
             throw new IllegalArgumentException("Grade should not decrease for "
                     + acceptor.getClass().getSimpleName());
         }
@@ -75,7 +75,9 @@ public class Engine implements IScheduler {
         schedule(null, goal);
         while (!queue.isEmpty()) {
             passGoals();
-            passCheckpoints();
+            while(!acceptors.isEmpty()){
+                passCheckpoints();
+            }
         }
     }
     
@@ -86,6 +88,7 @@ public class Engine implements IScheduler {
         for (IGoal goal : list) {
             ISchedulingStrategy strategy = goalToStrategy.remove(goal);
             goal.setScheduler(this);
+            System.out.println("Running goal: " + goal.toString().replace("\n", " "));
             if (strategy.prune(goal)) {
                 goal.flush();
             } else {

@@ -5,7 +5,7 @@ package com.yoursway.sadr.python_v2.model;
  * Encapsulates actual arguments.
  */
 public interface Context {
-    RuntimeObject getActualArguement(String name);
+    RuntimeObject getActualArgument(String name);
     
     boolean contains(String name);
     
@@ -15,7 +15,7 @@ public interface Context {
             return false;
         }
         
-        public RuntimeObject getActualArguement(String name) {
+        public RuntimeObject getActualArgument(String name) {
             return null;
         }
     };

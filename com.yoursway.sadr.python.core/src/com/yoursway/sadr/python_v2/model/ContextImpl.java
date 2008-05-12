@@ -12,10 +12,14 @@ public class ContextImpl implements Context {
     Map<String, RuntimeObject> args = new HashMap<String, RuntimeObject>();
     
     public ContextImpl(List<ASTNode> formalArguments, List<RuntimeObject> actualArguments) {
-        assert formalArguments.size() == actualArguments.size() : "Temporary assertion";
+        if (formalArguments.size() != actualArguments.size()) {
+            throw new IllegalStateException("FIXME");
+        }
         for (int i = 0; i < formalArguments.size(); i++) {
             ASTNode formalArgument = formalArguments.get(i);
-            assert formalArgument instanceof PythonArgument;
+            if (!(formalArgument instanceof PythonArgument)) {
+                throw new IllegalStateException("FIXME");
+            }
             args.put(((PythonArgument) formalArgument).getName(), actualArguments.get(i));
         }
     }
@@ -24,7 +28,7 @@ public class ContextImpl implements Context {
         return args.containsKey(name);
     }
     
-    public RuntimeObject getActualArguement(String name) {
+    public RuntimeObject getActualArgument(String name) {
         return args.get(name);
     }
     

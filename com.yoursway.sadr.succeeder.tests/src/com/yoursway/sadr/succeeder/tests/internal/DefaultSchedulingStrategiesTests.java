@@ -35,16 +35,26 @@ public class DefaultSchedulingStrategiesTests {
 
 		public void preRun() {
 				acceptor.setResult(1);
-				checkpoint(acceptor, Grade.INTERMEDIATE);
+				updateGrade(acceptor, Grade.INTERMEDIATE);
 				try { Thread.sleep(2000); } 
 				catch (InterruptedException e) { e.printStackTrace(); }
 				schedule(new Goal(){
 					public void preRun() {
 							acceptor.setResult(0);
-							checkpoint(acceptor, Grade.DONE);
+							updateGrade(acceptor, Grade.DONE);
 					}
+
+                    @Override
+                    protected String describe() {
+                        return "";
+                    }
 				});
 		}
+
+        @Override
+        protected String describe() {
+            return "";
+        }
 		
 	}
 	

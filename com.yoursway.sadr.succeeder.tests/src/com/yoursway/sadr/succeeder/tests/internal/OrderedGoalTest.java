@@ -84,6 +84,11 @@ public class OrderedGoalTest extends TestCase {
 			resultAcceptor.resultProduced(42);
 		}
 
+        @Override
+        protected String describe() {
+            return "";
+        }
+
 	}
 
 	@Test
@@ -95,6 +100,11 @@ public class OrderedGoalTest extends TestCase {
 				schedule(new GoalImpl(acceptor));
 				schedule(new GoalImpl(acceptor));
 			}
+
+            @Override
+            protected String describe() {
+                return "";
+            }
 		});
 	}
 }

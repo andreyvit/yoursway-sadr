@@ -18,6 +18,7 @@ import com.yoursway.sadr.succeeder.IGoal;
 public final class CallResolver {
     public static IGoal callMethod(RuntimeObject receiver, String methodName, List<RuntimeObject> actualArgs,
             PythonValueSetAcceptor acceptor, Context context) {
+        
         RuntimeObject callable = receiver.getAttribute(methodName);
         if (!(callable instanceof FunctionObject)) {
             throw new IllegalArgumentException("callable should be FunctionObject");
@@ -38,14 +39,20 @@ public final class CallResolver {
                 
                 public void preRun() {
                     acceptor.addResult(callable.evaluate(args), context);
-                    checkpoint(acceptor, Grade.DONE);
+                    updateGrade(acceptor, Grade.DONE);
+                }
+                
+                @Override
+                protected String describe() {
+                    return "Evaluating function " + callable.name();
                 }
                 
             };
         } else if (callable.getDecl() instanceof MethodDeclarationC) {
             MethodDeclarationC decl = (MethodDeclarationC) callable.getDecl();
-            Context actualArguments = new ContextImpl(decl.node().getArguments(), args);
-            return new CallReturnValueGoal((MethodDeclarationC) callable.getDecl(), actualArguments, acceptor);
+            final Context actualArguments = new ContextImpl(decl.node().getArguments(), args);
+            return new CallReturnValueGoal((MethodDeclarationC) callable.getDecl(), actualArguments, context,
+                    acceptor);
         } else if (callable.getDecl() instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC decl = (PythonLambdaExpressionC) callable.getDecl();
             Context actualArguments = new ContextImpl(decl.node().getArguments(), args);

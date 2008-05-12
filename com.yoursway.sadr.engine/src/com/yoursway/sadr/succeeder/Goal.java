@@ -25,7 +25,7 @@ public abstract class Goal implements IGoal {
         scheduler.schedule(this, goals, strategy);
     }
     
-    public <T> CheckpointToken checkpoint(IAcceptor acceptor, IGrade<T> grade) {
+    public <T> CheckpointToken updateGrade(IAcceptor acceptor, IGrade<T> grade) {
         return scheduler.checkpoint(acceptor, grade);
     }
     
@@ -37,4 +37,11 @@ public abstract class Goal implements IGoal {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public String toString() {
+        return describe();
+    }
+    
+    abstract protected String describe();
 }

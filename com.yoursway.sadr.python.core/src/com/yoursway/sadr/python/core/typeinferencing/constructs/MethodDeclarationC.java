@@ -14,13 +14,8 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> implements Scope {
     
-    private final List<PythonConstruct> children;
-    
     MethodDeclarationC(Scope sc, MethodDeclaration node) {
         super(sc, node);
-        
-        children = wrapEnclosedChildren(this);
-        
         //        String name = node.getName();
         //        PythonClassImpl klass = staticContext().currentClass();
         //        if (klass != null) {
@@ -34,8 +29,10 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
         //        }
     }
     
-    private List<PythonConstruct> wrapEnclosedChildren(Scope innerScope) {
-        return PythonConstructFactory.wrap(this, node.getBody().getChilds());
+    @Override
+    protected void wrapEnclosedChildren() {
+        List<PythonConstruct> children = PythonConstructFactory.wrap(this, this.node.getStatements());
+        setChildConstructs(children);
     }
     
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
@@ -43,8 +40,12 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
         return continuation.consume(emptyValueInfo(), requestor);
     }
     
+    public String displayName() {
+        return "Method " + this.node.getName();
+    }
+    
     public List<PythonConstruct> getEnclosedconstructs() {
-        return children;
+        return getChildContructs();
     }
     
     //    public void actOnModel(ModelRequest request) {

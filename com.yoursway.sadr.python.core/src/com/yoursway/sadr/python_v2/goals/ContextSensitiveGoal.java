@@ -14,10 +14,20 @@ public abstract class ContextSensitiveGoal extends Goal {
     public Context getContext() {
         return context;
     }
-
+    
     @Override
     public CheckpointToken flush() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public String describe() {
+        String simpleName = this.getClass().getSimpleName();
+        if (this.getContext() != null) {
+            return simpleName + " with context";
+        } else {
+            return simpleName;
+        }
     }
 }

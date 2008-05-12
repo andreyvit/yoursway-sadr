@@ -54,4 +54,8 @@ public class MethodCallC extends CallC implements IndexAffector {
         request.addMethodCall(node.getMethodName(), this);
     }
     
+    @Override
+    public String toString() {
+        return node.getReceiver() + "." + node.getMethodName() + "()";
+    }
 }

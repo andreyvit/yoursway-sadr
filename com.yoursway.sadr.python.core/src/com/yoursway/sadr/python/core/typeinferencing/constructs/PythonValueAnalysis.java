@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
@@ -17,7 +16,7 @@ public class PythonValueAnalysis implements AnalysisProvider {
     
     public BinaryOperationHandler getBinaryPercentHandler() {
         return new BinaryOperationHandler() {
-            private PythonConstructImpl<BinaryExpression> context;
+            private PythonConstruct context;
             private ValueInfoGoal leftGoal;
             private ValueInfoGoal rightGoal;
             private ValueInfo leftInfo;
@@ -46,7 +45,7 @@ public class PythonValueAnalysis implements AnalysisProvider {
                 return builder.build();
             }
             
-            public void setContext(PythonConstructImpl<BinaryExpression> context, ValueInfoGoal leftGoal,
+            public void setContext(PythonConstruct context, ValueInfoGoal leftGoal,
                     ValueInfoGoal rightGoal) {
                 this.context = context;
                 this.leftGoal = leftGoal;

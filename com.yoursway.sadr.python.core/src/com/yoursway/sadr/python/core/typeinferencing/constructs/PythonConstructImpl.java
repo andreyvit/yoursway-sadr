@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,16 +13,20 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     protected final N node;
     private final Scope parentScope;
-    private List<PythonConstruct> childContructs;
+    private List<PythonConstruct> childConstructs;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
         this.node = node;
-        
-        List<ASTNode> children = this.node.getChilds();
-        childContructs = new ArrayList<PythonConstruct>(children.size());
-        for (ASTNode child : children) {
-            childContructs.add(wrap(child));
+        wrapEnclosedChildren();
+    }
+    
+    protected void wrapEnclosedChildren() {
+        if (this instanceof Scope) {
+            Scope scope = (Scope) this;
+            childConstructs = PythonConstructFactory.wrap(scope, this.node.getChilds());
+        } else {
+            childConstructs = PythonConstructFactory.wrap(parentScope, this.node.getChilds());
         }
     }
     
@@ -39,6 +42,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return PythonConstructFactory.wrapConstruct(node, parentScope);
     }
     
+    protected PythonConstruct wrap(ASTNode node, Scope scope) {
+        return PythonConstructFactory.wrapConstruct(node, scope);
+    }
+    
     public PythonConstruct subconstructFor(ASTNode node) {
         PythonConstruct result = innerSubsonstructFor(node);
         if (result == null)
@@ -51,7 +58,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (isNode(node))
             return this;
         // TODO check offset here
-        for (PythonConstruct c : childContructs) {
+        for (PythonConstruct c : childConstructs) {
             PythonConstruct sc = ((PythonConstructImpl<?>) c).innerSubsonstructFor(node);
             if (sc != null)
                 return sc;
@@ -66,7 +73,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     //    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
     //            ContinuationScheduler requestor,
     //            ControlFlowGraphRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
-    //        List<PythonConstruct> constructs = filter(childContructs(), NOT_METHOD);
+    //        List<PythonConstruct> constructs = filter(childConstructs(), NOT_METHOD);
     //        return continuation.process(
     //                new ControlFlowGraph<PythonConstruct, Scope, PythonDynamicContext, ASTNode>(
     //                        constructs), requestor);
@@ -119,19 +126,27 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     public List<PythonConstruct> getChildContructs() {
-        return childContructs;
+        return childConstructs;
     }
     
     protected void setChildConstructs(List<PythonConstruct> constructs) {
-        childContructs = constructs;
+        childConstructs = constructs;
     }
     
     public void traverse(PythonConstructVisitor visitor) {
         if (visitor.visit(this)) {
-            for (PythonConstruct construct : childContructs) {
+            for (PythonConstruct construct : childConstructs) {
                 construct.traverse(visitor);
             }
             visitor.endVisit(this);
         }
+    }
+    
+    @Override
+    public String toString() {
+        if (this instanceof Scope) {
+            return ((Scope) this).displayName();
+        }
+        return node.toString();
     }
 }

@@ -13,8 +13,11 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implements Scope {
     
-    public PythonFileC(Scope sc, ModuleDeclaration node) {
+    private final String moduleName;
+    
+    public PythonFileC(Scope sc, ModuleDeclaration node, String name) {
         super(sc, node);
+        this.moduleName = name;
     }
     
     @Override
@@ -33,6 +36,10 @@ public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implemen
     
     public PythonConstruct parentConstruct() {
         return (PythonConstruct) parentScope();
+    }
+    
+    public String displayName() {
+        return "Module " + this.moduleName;
     }
     
 }
