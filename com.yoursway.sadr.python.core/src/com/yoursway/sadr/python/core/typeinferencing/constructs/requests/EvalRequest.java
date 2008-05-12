@@ -8,11 +8,10 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.core.constructs.VisitorRequestor;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 
 public class EvalRequest implements
         Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode> {

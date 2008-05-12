@@ -5,7 +5,6 @@ import com.yoursway.sadr.python.core.runtime.PythonField;
 import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 
 public class Goals {

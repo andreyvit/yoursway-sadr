@@ -3,6 +3,10 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.BinaryExpressionGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     
@@ -21,4 +25,8 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     
     public abstract String getOperationMethodName();
     
+    @Override
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        return new BinaryExpressionGoal(this, context, acceptor);
+    }
 }

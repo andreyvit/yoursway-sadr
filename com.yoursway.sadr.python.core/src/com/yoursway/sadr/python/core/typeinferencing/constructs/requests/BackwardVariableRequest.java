@@ -10,13 +10,13 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class BackwardVariableRequest implements
-        BackwardRequest<PythonConstruct, Scope, PythonDynamicContext, ASTNode>,
-        AssignmentInfoRequestor, AssignmentInfoProvider {
+        BackwardRequest<PythonConstruct, Scope, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor,
+        AssignmentInfoProvider {
     
     private final PythonVariable variable;
     

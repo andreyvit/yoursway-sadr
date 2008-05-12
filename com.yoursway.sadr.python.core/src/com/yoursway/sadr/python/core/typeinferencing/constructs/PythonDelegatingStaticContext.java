@@ -11,7 +11,6 @@ import com.yoursway.sadr.core.propagation.PropagationTracker;
 import com.yoursway.sadr.python.core.runtime.PythonAnalysisSchema;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;

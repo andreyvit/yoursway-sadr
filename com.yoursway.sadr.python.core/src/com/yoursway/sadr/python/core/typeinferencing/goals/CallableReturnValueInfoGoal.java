@@ -14,7 +14,6 @@ import com.yoursway.sadr.python.core.runtime.PythonBuiltinProcedure;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicMethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicProcedureScope;

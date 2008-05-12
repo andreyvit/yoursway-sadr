@@ -339,7 +339,7 @@ public abstract class AbstractTypeInferencingTestCase {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueGoal(construct, null, acceptor);
+            return construct.evaluate(null, acceptor);
         }
         
     }
@@ -409,7 +409,7 @@ public abstract class AbstractTypeInferencingTestCase {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return new ExpressionValueGoal(construct, null, acceptor);//FIXME?
+            return construct.evaluate(null, acceptor);//FIXME?
         }
     }
     

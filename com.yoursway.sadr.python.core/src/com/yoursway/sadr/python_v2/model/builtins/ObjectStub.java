@@ -2,7 +2,6 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import org.eclipse.dltk.ast.statements.Statement;
 
-
 /**
  * Represents an unevaluated expression that must be evaluated before use.
  */

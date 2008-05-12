@@ -20,7 +20,6 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.RootPythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.OuteriorNodeLookup;

@@ -11,7 +11,6 @@ import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;

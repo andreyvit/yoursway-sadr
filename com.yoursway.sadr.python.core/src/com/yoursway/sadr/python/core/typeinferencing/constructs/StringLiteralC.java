@@ -2,28 +2,18 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 
-import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
-import com.yoursway.sadr.blocks.simple_types.SimpleType;
-import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.StringType;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     
     StringLiteralC(Scope sc, StringLiteral node) {
         super(sc, node);
-    }
-    
-    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
-        ValueInfoBuilder builder = new ValueInfoBuilder();
-        SimpleType t = staticContext().builtins().stringType();
-        builder.add(new SimpleTypeItem(t), new StringValue(stringValue()));
-        return continuation.consume(builder.build(), requestor);
     }
     
     public String stringValue() {
@@ -44,4 +34,18 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
         return text;
     }
     
+    @Override
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                acceptor.addResult(StringType.newStringObject(StringLiteralC.this), getContext());
+                updateGrade(acceptor, Grade.DONE);
+            }
+            
+            @Override
+            public String describe() {
+                return super.describe() + "\nfor expression " + StringLiteralC.this.toString();
+            }
+        };
+    }
 }

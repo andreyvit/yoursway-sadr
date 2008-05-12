@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
-import java.math.BigInteger;
-
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 
@@ -13,46 +11,6 @@ public class BooleanValue extends AbstractValue implements ValueTraits {
     
     public BooleanValue(boolean value) {
         this.value = value;
-    }
-    
-    @Override
-    public boolean cohersibleToBoolean() {
-        return true;
-    }
-    
-    @Override
-    public boolean coherseToBoolean() {
-        return this.value;
-    }
-    
-    @Override
-    public boolean cohersibleToString() {
-        return true;
-    }
-    
-    @Override
-    public String coherseToString() {
-        return value ? TRUE : FALSE;
-    }
-    
-    @Override
-    public long integerValue() {
-        return value ? 1 : 0;
-    }
-    
-    @Override
-    public boolean isInteger() {
-        return false;
-    }
-    
-    @Override
-    public BigInteger longValue() {
-        return BigInteger.valueOf(value ? 1 : 0);
-    }
-    
-    @Override
-    public boolean isLong() {
-        return false;
     }
     
     @Override
@@ -78,5 +36,17 @@ public class BooleanValue extends AbstractValue implements ValueTraits {
     
     public ValueTraits traits() {
         return this;
+    }
+    
+    public BooleanValue and(BooleanValue value2) {
+        return new BooleanValue(this.value && value2.value);
+    }
+    
+    public BooleanValue or(BooleanValue value2) {
+        return new BooleanValue(this.value || value2.value);
+    }
+    
+    public BooleanValue xor(BooleanValue value2) {
+        return new BooleanValue(this.value ^ value2.value);
     }
 }

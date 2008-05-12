@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.core.typeinferencing.services;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 
 public interface SearchService {
     

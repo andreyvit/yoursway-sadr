@@ -4,8 +4,8 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
-import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonProcedure;
+import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonSourceProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
 

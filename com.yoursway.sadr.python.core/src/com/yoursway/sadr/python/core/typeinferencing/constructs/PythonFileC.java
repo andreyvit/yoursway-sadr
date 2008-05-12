@@ -35,7 +35,7 @@ public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implemen
     }
     
     public PythonConstruct parentConstruct() {
-        return (PythonConstruct) parentScope();
+        return parentScope();
     }
     
     public String displayName() {

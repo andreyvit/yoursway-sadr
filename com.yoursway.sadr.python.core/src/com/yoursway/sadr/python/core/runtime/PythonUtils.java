@@ -25,9 +25,9 @@ import com.yoursway.sadr.blocks.foundation.typesets.TypeSetBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
-import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
 import com.yoursway.sadr.python.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.python.core.typeinferencing.types.StubType;
+import com.yoursway.sadr.python_v2.model.builtins.InstanceType;
 
 public class PythonUtils {
     

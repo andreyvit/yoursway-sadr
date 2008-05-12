@@ -91,7 +91,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         if (result instanceof AssignmentC) {
             AssignmentC assignmentC = (AssignmentC) result;
             PythonConstruct subexpr = assignmentC.rhs();
-            schedule(new ExpressionValueGoal(subexpr, getContext(), acceptor));
+            schedule(subexpr.evaluate(getContext(), acceptor));
         } else if (result instanceof MethodDeclarationC) {
             MethodDeclarationC methodDeclarationC = (MethodDeclarationC) result;
             FunctionObject obj = new FunctionObject(methodDeclarationC);

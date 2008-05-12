@@ -7,12 +7,12 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
+import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
-import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
 import com.yoursway.sadr.python.core.runtime.PythonSourceMethod;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;

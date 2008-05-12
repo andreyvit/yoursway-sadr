@@ -2,7 +2,7 @@ package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.succeeder.IGrade;
 
-abstract class Synchronizer {
+abstract public class Synchronizer {
     private int counter;
     
     public Synchronizer(int i) {

@@ -49,8 +49,8 @@ public class BinaryExpressionGoal extends ContextSensitiveGoal {
             }
         };
         
-        schedule(new ExpressionValueGoal(expression.getLeft(), getContext(), leftSubgoalAcceptor));
-        schedule(new ExpressionValueGoal(expression.getRight(), getContext(), rightSubgoalAcceptor));
+        schedule(expression.getLeft().evaluate(getContext(), leftSubgoalAcceptor));
+        schedule(expression.getRight().evaluate(getContext(), rightSubgoalAcceptor));
     }
     
     protected void setLeft(RuntimeObject runtimeObject) {

@@ -10,7 +10,12 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> implements Scope {
     
@@ -48,6 +53,20 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
         return getChildContructs();
     }
     
+    @Override
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            
+            public void preRun() {
+                updateGrade(acceptor, Grade.DONE);
+            }
+            
+            @Override
+            public String describe() {
+                return super.describe() + "\nfor expression " + MethodDeclarationC.this.toString();
+            }
+        };
+    }
     //    public void actOnModel(ModelRequest request) {
     //        PythonClassImpl klass = staticContext().currentClass();
     //        if (klass != null) {
@@ -58,4 +77,5 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
     //            innerScope = new ProcedureScope(nearestScope(), procedure, node);
     //        }
     //    }
+    
 }

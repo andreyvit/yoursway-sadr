@@ -3,7 +3,6 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;

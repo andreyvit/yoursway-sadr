@@ -8,6 +8,9 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.google.common.base.Predicate;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
     
@@ -148,5 +151,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
             return ((Scope) this).displayName();
         }
         return node.toString();
+    }
+    
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        throw new UnsupportedOperationException("Evaluate is not enabled for class "
+                + this.getClass().getSimpleName());
     }
 }

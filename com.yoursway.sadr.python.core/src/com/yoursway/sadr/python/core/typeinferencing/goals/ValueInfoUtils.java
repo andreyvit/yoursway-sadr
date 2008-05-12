@@ -31,7 +31,7 @@ public class ValueInfoUtils {
                         : ((MetaClassType) type).runtimeMetaClass());
                 PythonBasicClass sup = (klass).superclassOfTheSameKind();
                 if (sup != null)
-                    builder.add(PythonUtils.createType(sup));
+                    builder.addType(PythonUtils.createType(sup));
             }
         }
         // TODO: handle values
@@ -47,14 +47,14 @@ public class ValueInfoUtils {
                 if (component == UnknownType.INSTANCE)
                     unknownTypeEncountered = true;
                 else
-                    builder.add(component);
+                    builder.addType(component);
             }
         if (builder.isEmpty() && unknownTypeEncountered)
-            builder.add(UnknownType.INSTANCE);
+            builder.addType(UnknownType.INSTANCE);
         for (Value value : valueInfo.getValueSet().containedValues())
             if (value instanceof ArrayValue) {
                 ValueSet component = ((ArrayValue) value).combinedComponent();
-                builder.add(component);
+                builder.addValues(component);
             }
         return builder.build();
     }

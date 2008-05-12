@@ -43,7 +43,7 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
             @Override
             public boolean visit(ReturnC construct) {
                 ReturnC ret = construct;
-                schedule(new ExpressionValueGoal(ret.getReturnedConstruct(), getContext(), acceptor));
+                schedule(ret.getReturnedConstruct().evaluate(getContext(), acceptor));
                 return false;
             }
         });

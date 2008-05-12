@@ -14,7 +14,6 @@ import com.yoursway.sadr.python.core.runtime.PythonCallableArgument.Usage;
 import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.LocalScope;
 import com.yoursway.sadr.python_v2.model.Context;
 
 public class PythonSourceProcedure extends PythonProcedure implements NodeBoundItem, LocalVariableContainer {

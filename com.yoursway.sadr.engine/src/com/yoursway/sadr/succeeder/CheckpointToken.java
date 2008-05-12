@@ -2,7 +2,7 @@ package com.yoursway.sadr.succeeder;
 
 /**
  * The hidden agenda of introducing this class is to make SADR users call
- * {@link IScheduler#checkpoint(IAcceptor, IGrade)} method on
+ * {@link IScheduler#updateGrade(IAcceptor, IGrade)} method on
  * {@link IGoal#flush()}.
  */
 

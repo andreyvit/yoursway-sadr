@@ -24,6 +24,11 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.ResolveReference;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpression> {
     
@@ -84,7 +89,22 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     }
     
     @Override
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                schedule(new ResolveReference(FieldAccessC.this, acceptor));
+            }
+            
+            @Override
+            public String describe() {
+                return super.describe() + "\nfor expression " + FieldAccessC.this.toString();
+            }
+        };
+    }
+    
+    @Override
     public String toString() {
         return node.fqnRepresentation();
     }
+    
 }

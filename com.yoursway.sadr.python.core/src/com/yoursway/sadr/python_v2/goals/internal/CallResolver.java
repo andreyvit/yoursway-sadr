@@ -56,8 +56,8 @@ public final class CallResolver {
         } else if (callable.getDecl() instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC decl = (PythonLambdaExpressionC) callable.getDecl();
             Context actualArguments = new ContextImpl(decl.node().getArguments(), args);
-            return new ExpressionValueGoal(((PythonLambdaExpressionC) callable.getDecl()).getExpression(),
-                    actualArguments, acceptor);
+            return ((PythonLambdaExpressionC) callable
+            .getDecl()).getExpression().evaluate(actualArguments, acceptor);
         }
         throw new IllegalStateException("should never reach this place");
     }

@@ -2,15 +2,14 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import org.eclipse.dltk.ast.references.VariableReference;
 
-import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
-import com.yoursway.sadr.blocks.simple_types.SimpleType;
-import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.BoolType;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class BooleanLiteralC extends PythonConstructImpl<VariableReference> {
     
@@ -18,15 +17,26 @@ public class BooleanLiteralC extends PythonConstructImpl<VariableReference> {
         super(sc, node);
     }
     
-    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
+    public boolean getValue() {
         String repr = node.getName();
-        if (repr == null || !(repr.equals(BooleanValue.TRUE) || repr.equals(BooleanValue.FALSE)))
+        if (!BooleanValue.TRUE.equals(repr) && !BooleanValue.FALSE.equals(repr))
             throw new NullPointerException();
-        ValueInfoBuilder builder = new ValueInfoBuilder();
-        SimpleType t = staticContext().builtins().boolType();
-        builder.add(new SimpleTypeItem(t), new BooleanValue(repr.equals(BooleanValue.TRUE)));
-        return continuation.consume(builder.build(), requestor);
+        return BooleanValue.TRUE.equals(repr);
     }
     
+    @Override
+    public IGoal evaluate(final Context context, final PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                acceptor.addResult(BoolType.newBooleanObject(BooleanLiteralC.this), context);
+                updateGrade(acceptor, Grade.DONE);
+            }
+            
+            @Override
+            public String describe() {
+                String basic = super.describe();
+                return basic + "\nfor expression " + BooleanLiteralC.this.toString();
+            }
+        };
+    }
 }

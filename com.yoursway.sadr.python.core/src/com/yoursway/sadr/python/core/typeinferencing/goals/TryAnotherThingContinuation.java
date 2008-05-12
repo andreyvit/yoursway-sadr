@@ -5,8 +5,8 @@ package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.SimpleContinuation;
 
 public final class TryAnotherThingContinuation implements ValueInfoContinuation {

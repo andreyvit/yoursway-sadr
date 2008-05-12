@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.common.base.Predicate;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonField;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 
