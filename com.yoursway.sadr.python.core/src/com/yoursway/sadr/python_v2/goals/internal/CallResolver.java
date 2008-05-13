@@ -2,16 +2,17 @@ package com.yoursway.sadr.python_v2.goals.internal;
 
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonLambdaExpressionC;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObjectWithValue;
 import com.yoursway.sadr.succeeder.Goal;
 import com.yoursway.sadr.succeeder.IGoal;
 
@@ -56,9 +57,24 @@ public final class CallResolver {
         } else if (callable.getDecl() instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC decl = (PythonLambdaExpressionC) callable.getDecl();
             Context actualArguments = new ContextImpl(decl.node().getArguments(), args);
-            return ((PythonLambdaExpressionC) callable
-            .getDecl()).getExpression().evaluate(actualArguments, acceptor);
+            return ((PythonLambdaExpressionC) callable.getDecl()).getExpression().evaluate(actualArguments,
+                    acceptor);
         }
         throw new IllegalStateException("should never reach this place");
+    }
+    
+    /**
+     * @param from
+     *            collection to retrieve element(s) from.
+     * @param what
+     *            index, key, or slice object
+     * @return goal which performs the request (it would perform __getitem__ on
+     *         the collection).
+     */
+    public static <CollectionType extends Value> IGoal getFromCollection(
+            PythonObjectWithValue<CollectionType> from, RuntimeObject what, Context context,
+            PythonValueSetAcceptor acceptor) {
+        //TODO
+        return null;
     }
 }
