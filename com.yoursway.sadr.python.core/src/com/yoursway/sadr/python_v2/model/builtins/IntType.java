@@ -9,7 +9,8 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
 //TODO generalize implementation for built-in types.
 public class IntType extends PythonClassType implements PythonClass {
     private static PythonObjectWithValue<IntegerValue>[] castArguments(List<RuntimeObject> args) {
-        assert args.size() == 2;
+        if (!(args.size() == 2))
+            throw new IllegalArgumentException("castArguments require 2 arguments, was " + args.size());
         return new PythonObjectWithValue[] { (PythonObjectWithValue<IntegerValue>) args.get(0),
                 (PythonObjectWithValue<IntegerValue>) args.get(1) };
     }

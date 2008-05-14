@@ -1,9 +1,8 @@
 package com.yoursway.sadr.blocks.integer_literals;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 
-public class IntegerValue extends AbstractValue implements ValueTraits {
+public class IntegerValue extends AbstractValue{
     
     private final long value;
     
@@ -22,10 +21,6 @@ public class IntegerValue extends AbstractValue implements ValueTraits {
     
     public String describe() {
         return Long.toString(value);
-    }
-    
-    public ValueTraits traits() {
-        return this;
     }
     
     @Override

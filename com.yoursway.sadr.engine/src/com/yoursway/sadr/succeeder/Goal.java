@@ -13,6 +13,10 @@ public abstract class Goal implements IGoal {
         scheduler.schedule(this, goal);
     }
     
+    protected void schedule(Collection<IGoal> goals) {
+        scheduler.schedule(this, goals);
+    }
+    
     public void schedule(IGoal goal, ISchedulingStrategy strategy) {
         scheduler.schedule(this, goal, strategy);
     }

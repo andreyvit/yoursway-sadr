@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 
-public class ArrayValue extends AbstractValue implements ValueTraits {
+public class ArrayValue extends AbstractValue {
     
     private final List<ValueSet> items = new ArrayList<ValueSet>();
     
@@ -35,9 +34,5 @@ public class ArrayValue extends AbstractValue implements ValueTraits {
         }
         result.append(']');
         return result.toString();
-    }
-    
-    public ValueTraits traits() {
-        return this;
     }
 }

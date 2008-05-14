@@ -94,6 +94,8 @@ public class PythonConstructFactory {
             return new ClassDeclarationC(scope, (PythonClassDeclaration) node);
         if (node instanceof PythonLambdaExpression)
             return new PythonLambdaExpressionC(scope, (PythonLambdaExpression) node);
+        if (node instanceof PythonListExpression)
+            return new PythonListExpressionC(scope, (PythonListExpression) node);
         if (node instanceof BinaryExpression)
             return wrapBinaryExpression(scope, (BinaryExpression) node);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
@@ -103,13 +105,12 @@ public class PythonConstructFactory {
                 || node instanceof PythonImportStatement || node instanceof PythonFunctionDecorator
                 || node instanceof PythonDictExpression || node instanceof PythonWithStatement
                 || node instanceof PythonRaiseStatement || node instanceof PythonImportExpression
-                || node instanceof PythonImportAsExpression || node instanceof PythonListExpression
-                || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
-                || node instanceof ExpressionList || node instanceof UnaryExpression
-                || node instanceof PythonTestListExpression || node instanceof FloatNumericLiteral
-                || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement
-                || node instanceof ComplexNumericLiteral || node instanceof PythonTryStatement
-                || node instanceof PythonExceptStatement)
+                || node instanceof PythonImportAsExpression || node instanceof PythonTestListExpression
+                || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
+                || node instanceof UnaryExpression || node instanceof PythonTestListExpression
+                || node instanceof FloatNumericLiteral || node instanceof PythonWhileStatement
+                || node instanceof PythonYieldStatement || node instanceof ComplexNumericLiteral
+                || node instanceof PythonTryStatement || node instanceof PythonExceptStatement)
             return new UnhandledC(scope, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }

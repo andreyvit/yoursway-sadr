@@ -2,8 +2,11 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dltk.ast.ASTListNode;
+import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
@@ -14,6 +17,8 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaration> implements Scope {
     
+    private List<PythonConstruct> supers;
+    
     ClassDeclarationC(Scope sc, PythonClassDeclaration node) {
         super(sc, node);
     }
@@ -22,6 +27,13 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
     protected void wrapEnclosedChildren() {
         List<PythonConstruct> children = PythonConstructFactory.wrap(this, this.node.getStatements());
         setChildConstructs(children);
+        ASTListNode superClasses = this.node.getSuperClasses();
+        if (superClasses != null) {
+            List<ASTNode> childs = superClasses.getChilds();
+            supers = PythonConstructFactory.wrap(this, childs);
+        } else {
+            supers = new ArrayList<PythonConstruct>();
+        }
     }
     
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
@@ -44,6 +56,10 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
     
     public List<PythonConstruct> getEnclosedconstructs() {
         return getChildContructs();
+    }
+    
+    public List<PythonConstruct> getSuperClasses() {
+        return supers;
     }
     
 }

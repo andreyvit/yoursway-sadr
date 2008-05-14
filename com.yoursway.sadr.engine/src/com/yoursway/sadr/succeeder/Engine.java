@@ -47,6 +47,12 @@ public class Engine implements IScheduler {
         return linkedList;
     }
     
+    public void schedule(IGoal goal, Collection<IGoal> subgoals) {
+        for (IGoal subgoal : subgoals) {
+            schedule(goal, subgoal);
+        }
+    }
+    
     public void schedule(IGoal goal, IGoal subgoal, ISchedulingStrategy strategy) {
         if (goal != null) {
             Collection<IGoal> subgoals = goalToSubgoals.get(goal);

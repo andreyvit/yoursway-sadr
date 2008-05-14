@@ -1,9 +1,8 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 
-public class StringValue extends AbstractValue implements ValueTraits {
+public class StringValue extends AbstractValue {
     
     private final String value;
     
@@ -18,10 +17,6 @@ public class StringValue extends AbstractValue implements ValueTraits {
     
     public String describe() {
         return "\"" + value + "\"";
-    }
-    
-    public ValueTraits traits() {
-        return this;
     }
     
     @Override

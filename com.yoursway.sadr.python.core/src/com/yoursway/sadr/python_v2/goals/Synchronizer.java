@@ -3,7 +3,11 @@ package com.yoursway.sadr.python_v2.goals;
 import com.yoursway.sadr.succeeder.IGrade;
 
 abstract public class Synchronizer {
-    private int counter;
+    protected int counter;
+    
+    protected Synchronizer() {
+        
+    }
     
     public Synchronizer(int i) {
         assert i > 0;
@@ -13,9 +17,9 @@ abstract public class Synchronizer {
     public <T> void subgoalDone(IGrade<T> grade) {
         --counter;
         if (counter <= 0) {
-            allDone(grade);
+            completed(grade);
         }
     }
     
-    public abstract <T> void allDone(IGrade<T> grade);
+    public abstract <T> void completed(IGrade<T> grade);
 }

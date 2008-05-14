@@ -13,6 +13,8 @@ public interface IScheduler {
     
     void schedule(IGoal goal, IGoal subgoal, ISchedulingStrategy strategy);
     
+    void schedule(IGoal goal, Collection<IGoal> subgoals);
+    
     void schedule(IGoal goal, Collection<IGoal> subgoals, ISchedulingStrategy strategy);
     
     <T> CheckpointToken updateGrade(IAcceptor acceptor, IGrade<T> grade);

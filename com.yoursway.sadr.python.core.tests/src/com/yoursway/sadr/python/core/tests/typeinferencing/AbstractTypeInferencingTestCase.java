@@ -50,7 +50,6 @@ import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -87,7 +86,9 @@ public abstract class AbstractTypeInferencingTestCase {
     
     @After
     public void tearDown() throws Exception {
-        testProject.delete(true, true, null);
+        if (testProject != null) {
+            testProject.delete(true, true, null);
+        }
     }
     
     protected void runTest() throws Exception {

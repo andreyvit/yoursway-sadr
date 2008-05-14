@@ -80,4 +80,9 @@ public class ProcedureCallC extends CallC {
     public String toString() {
         return node.getProcedureName() + "()";
     }
+    
+    @Override
+    public PythonConstruct getReceiver() {
+        return null;
+    }
 }

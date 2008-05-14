@@ -23,7 +23,8 @@ public class ListType extends PythonClassType {
         return instance;
     }
     
-    PythonObjectWithValue<ListValue> newListObject(List<RuntimeObject> list) {
+    public static PythonObjectWithValue<ListValue> newListObject(List<RuntimeObject> list) {
         return new PythonObjectWithValue<ListValue>(instance(), new ListValue(list));
     }
+    
 }

@@ -1,9 +1,11 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+
 public final class InstanceType extends PythonClassType implements PythonClass {
     private final PythonClassType klass;
     
-    public InstanceType(PythonClass klass) {
+    public InstanceType(PythonClassType klass) {
         this.klass = this;
     }
     
@@ -14,5 +16,10 @@ public final class InstanceType extends PythonClassType implements PythonClass {
     @Override
     public String toString() {
         return klass.describe();
+    }
+    
+    public static InstanceType createSelf(CallC expression) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

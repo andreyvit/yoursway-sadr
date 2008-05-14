@@ -5,6 +5,7 @@ import java.util.List;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodCallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ProcedureCallC;
@@ -17,9 +18,17 @@ import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 
 public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     
-    private final PythonValueSetAcceptor acceptor;
+    protected final PythonValueSetAcceptor acceptor;
     private final PythonConstructImpl<?> var;
     private final String name;
+    
+    protected ResolveNameToObjectGoal(PythonConstructImpl<?> start, String name,
+            PythonValueSetAcceptor acceptor, Context context) {
+        super(context);
+        this.name = name;
+        this.acceptor = acceptor;
+        this.var = start;
+    }
     
     public ResolveNameToObjectGoal(VariableReferenceC var, PythonValueSetAcceptor acceptor, Context context) {
         super(context);
@@ -60,7 +69,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         processResultConstruct(result);
     }
     
-    private PythonConstruct findInScope(Scope scope) {
+    protected PythonConstruct findInScope(Scope scope) {
         List<PythonConstruct> children = scope.getEnclosedconstructs();
         PythonConstruct result = null;
         for (PythonConstruct construct : children) {
@@ -76,9 +85,15 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
                         result = assignmentC;
                     }
                 }
-            }
-            if (construct instanceof MethodDeclarationC) {//FIXME merge with previous if-statement.
+            } else if (construct instanceof MethodDeclarationC) {
+                //FIXME merge with previous if-statement.
                 MethodDeclarationC declarationC = (MethodDeclarationC) construct;
+                if (declarationC.node().getName().equals(this.name)) {
+                    result = declarationC;
+                }
+            } else if (construct instanceof ClassDeclarationC) {
+                //FIXME merge with previous if-statement.
+                ClassDeclarationC declarationC = (ClassDeclarationC) construct;
                 if (declarationC.node().getName().equals(this.name)) {
                     result = declarationC;
                 }
@@ -97,8 +112,13 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
             FunctionObject obj = new FunctionObject(methodDeclarationC);
             acceptor.addResult(obj, getContext());
             updateGrade(acceptor, Grade.DONE);
-        } else if(result == null){
-          //TODO if result is null return IMPOSSIBLE object
+        } else if (result instanceof ClassDeclarationC) {
+            ClassDeclarationC classDeclarationC = (ClassDeclarationC) result;
+            FunctionObject obj = new FunctionObject(classDeclarationC);
+            acceptor.addResult(obj, getContext());
+            updateGrade(acceptor, Grade.DONE);
+        } else if (result == null) {
+            //TODO if result is null return IMPOSSIBLE object
         } else {
             throw new IllegalStateException("should never reach this place");
         }
@@ -106,8 +126,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     
     @Override
     public String describe() {
-        String basic = super.describe();
         String scope = (var.parentScope()).toString();
-        return basic + "\nfor name " + this.name + " in " + scope;
+        return super.describe() + "\nfor name " + this.name + " in " + scope;
     }
 }

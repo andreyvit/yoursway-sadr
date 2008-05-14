@@ -1,9 +1,8 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 
-public class BooleanValue extends AbstractValue implements ValueTraits {
+public class BooleanValue extends AbstractValue {
     
     private final boolean value;
     public static final String TRUE = "True";
@@ -15,7 +14,7 @@ public class BooleanValue extends AbstractValue implements ValueTraits {
     
     @Override
     public int hashCode() {
-        return (value ? TRUE : FALSE).hashCode();
+        return new Boolean(value).hashCode();
     }
     
     @Override
@@ -34,19 +33,15 @@ public class BooleanValue extends AbstractValue implements ValueTraits {
         return value ? TRUE : FALSE;
     }
     
-    public ValueTraits traits() {
-        return this;
+    public BooleanValue and(BooleanValue rhs) {
+        return new BooleanValue(this.value && rhs.value);
     }
     
-    public BooleanValue and(BooleanValue value2) {
-        return new BooleanValue(this.value && value2.value);
+    public BooleanValue or(BooleanValue rhs) {
+        return new BooleanValue(this.value || rhs.value);
     }
     
-    public BooleanValue or(BooleanValue value2) {
-        return new BooleanValue(this.value || value2.value);
-    }
-    
-    public BooleanValue xor(BooleanValue value2) {
-        return new BooleanValue(this.value ^ value2.value);
+    public BooleanValue xor(BooleanValue rhs) {
+        return new BooleanValue(this.value ^ rhs.value);
     }
 }

@@ -8,7 +8,8 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class StringType extends PythonClassType {
     private static PythonObjectWithValue<StringValue>[] castArguments(List<RuntimeObject> args) {
-        assert args.size() == 2;
+        if (!(args.size() == 2))
+            throw new IllegalArgumentException("castArguments require 2 arguments, was " + args.size());
         return new PythonObjectWithValue[] { (PythonObjectWithValue<StringValue>) args.get(0),
                 (PythonObjectWithValue<StringValue>) args.get(1) };
     }

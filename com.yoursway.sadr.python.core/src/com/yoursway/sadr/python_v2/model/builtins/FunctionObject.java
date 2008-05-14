@@ -4,6 +4,7 @@ import java.util.List;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
@@ -11,6 +12,7 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
 public class FunctionObject extends PythonObject {
     private final PythonConstruct decl; //either MethodDeclarationC or PythonLambdaExpressionC
     private final String name;
+    private PythonClassType boundClass = null;
     
     public FunctionObject(MethodDeclarationC decl) {
         super(Builtins.FUNCTION);
@@ -33,11 +35,27 @@ public class FunctionObject extends PythonObject {
         setAttribute("__name__", StringType.newStringObject(name));
     }
     
+    public FunctionObject(ClassDeclarationC classDeclarationC) {//class name
+        super(Builtins.FUNCTION);
+        this.decl = classDeclarationC;
+        this.name = classDeclarationC.node().getName();
+        //find/run constructor
+    }
+    
     /**
-     * @return either MethodDeclaration or PythonLambdaExpression object
+     * @return either MethodDeclarationC or PythonLambdaExpressionC or
+     *         ClassDeclarationC object
      */
     public PythonConstruct getDecl() {
         return decl;
+    }
+    
+    public boolean isBound() {
+        return boundClass != null;
+    }
+    
+    public PythonClassType getBoundClass() {
+        return boundClass;
     }
     
     public RuntimeObject evaluate(List<RuntimeObject> args) {
@@ -51,5 +69,9 @@ public class FunctionObject extends PythonObject {
     
     public String name() {
         return this.name;
+    }
+    
+    public void bind(PythonClassType instanceType) {
+        this.boundClass = instanceType;
     }
 }
