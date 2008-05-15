@@ -5,7 +5,7 @@ import com.yoursway.sadr.python.core.runtime.PythonClass;
 
 public interface StandardTypes {
     
-    PythonClass objectClass();
+    PythonClassType objectClass();
     
     SimpleType stringType();
     

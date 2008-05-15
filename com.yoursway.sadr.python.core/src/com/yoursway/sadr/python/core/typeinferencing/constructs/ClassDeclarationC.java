@@ -15,7 +15,7 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaration> implements Scope {
+public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     
     private List<PythonConstruct> supers;
     
@@ -25,12 +25,16 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
     
     @Override
     protected void wrapEnclosedChildren() {
-        List<PythonConstruct> children = PythonConstructFactory.wrap(this, this.node.getStatements());
+        List<PythonConstruct> children = PythonConstructFactory.wrap(this.node.getStatements(), this);
         setChildConstructs(children);
+        wrapSuperclasses();
+    }
+    
+    private void wrapSuperclasses() {
         ASTListNode superClasses = this.node.getSuperClasses();
         if (superClasses != null) {
             List<ASTNode> childs = superClasses.getChilds();
-            supers = PythonConstructFactory.wrap(this, childs);
+            supers = PythonConstructFactory.wrap(childs, this);
         } else {
             supers = new ArrayList<PythonConstruct>();
         }
@@ -43,7 +47,7 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
     
     //    public void actOnModel(ModelRequest request) {
     //        String superclassName = PythonUtils.superclassName(node);
-    //        PythonClass superclass = null;
+    //        PythonClassType superclass = null;
     //        if (superclassName != null)
     //            superclass = staticContext().classLookup().lookupClass(superclassName);
     //        
@@ -54,12 +58,12 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
         return "Class " + node.getName();
     }
     
-    public List<PythonConstruct> getEnclosedconstructs() {
-        return getChildContructs();
-    }
-    
     public List<PythonConstruct> getSuperClasses() {
         return supers;
+    }
+    
+    public String getName() {
+        return node.getName();
     }
     
 }

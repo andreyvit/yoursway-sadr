@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.StringLiteralC;
@@ -17,7 +18,7 @@ public class StringType extends PythonClassType {
     private StringType() {
         FunctionObject addFunc = new FunctionObject("__add__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args) {
+            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
                 PythonObjectWithValue<StringValue>[] castedArgs = castArguments(args);
                 StringValue result = castedArgs[0].getValue().add(castedArgs[1].getValue());
                 return newStringObject(result);

@@ -7,6 +7,12 @@ public class NilValue extends AbstractValue {
     public NilValue() {
     }
     
+    private static final NilValue instance = new NilValue();
+    
+    public static NilValue instance() {
+        return instance;
+    }
+    
     @Override
     public String toString() {
         return describe();

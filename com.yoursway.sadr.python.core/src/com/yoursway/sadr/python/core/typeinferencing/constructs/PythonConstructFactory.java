@@ -40,6 +40,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonImportExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 import org.eclipse.dltk.python.parser.ast.statements.EmptyStatement;
@@ -52,16 +53,16 @@ import com.yoursway.sadr.python_v2.model.builtins.PythonLambdaExpressionC;
 
 public class PythonConstructFactory {
     
-    public static List<PythonConstruct> wrap(Scope scope, List<ASTNode> enclosedNodes) {
+    public static List<PythonConstruct> wrap(List<ASTNode> enclosedNodes, Scope scope) {
         ArrayList<PythonConstruct> list = new ArrayList<PythonConstruct>();
         for (ASTNode node : enclosedNodes) {
-            PythonConstruct construct = PythonConstructFactory.wrapConstruct(node, scope);
+            PythonConstruct construct = PythonConstructFactory.wrap(node, scope);
             list.add(construct);
         }
         return list;
     }
     
-    public static PythonConstruct wrapConstruct(ASTNode node, Scope scope) {
+    public static PythonConstruct wrap(ASTNode node, Scope scope) {
         if (node instanceof ModuleDeclaration)
             throw new RuntimeException("ModuleDeclaration cannot be wrapped with wrap()");
         if (node instanceof StringLiteral)
@@ -96,6 +97,10 @@ public class PythonConstructFactory {
             return new PythonLambdaExpressionC(scope, (PythonLambdaExpression) node);
         if (node instanceof PythonListExpression)
             return new PythonListExpressionC(scope, (PythonListExpression) node);
+        if (node instanceof PythonTupleExpression)
+            return new PythonTupleExpressionC(scope, (PythonTupleExpression) node);
+        if (node instanceof PythonDictExpression)
+            return new PythonDictExpressionC(scope, (PythonDictExpression) node);
         if (node instanceof BinaryExpression)
             return wrapBinaryExpression(scope, (BinaryExpression) node);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
@@ -103,11 +108,10 @@ public class PythonConstructFactory {
                 || node instanceof PythonImportFromStatement || node instanceof PythonAllImportExpression
                 || node instanceof PythonArgument || node instanceof PythonDelStatement
                 || node instanceof PythonImportStatement || node instanceof PythonFunctionDecorator
-                || node instanceof PythonDictExpression || node instanceof PythonWithStatement
-                || node instanceof PythonRaiseStatement || node instanceof PythonImportExpression
-                || node instanceof PythonImportAsExpression || node instanceof PythonTestListExpression
-                || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
-                || node instanceof UnaryExpression || node instanceof PythonTestListExpression
+                || node instanceof PythonWithStatement || node instanceof PythonRaiseStatement
+                || node instanceof PythonImportExpression || node instanceof PythonImportAsExpression
+                || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
+                || node instanceof ExpressionList || node instanceof UnaryExpression
                 || node instanceof FloatNumericLiteral || node instanceof PythonWhileStatement
                 || node instanceof PythonYieldStatement || node instanceof ComplexNumericLiteral
                 || node instanceof PythonTryStatement || node instanceof PythonExceptStatement)

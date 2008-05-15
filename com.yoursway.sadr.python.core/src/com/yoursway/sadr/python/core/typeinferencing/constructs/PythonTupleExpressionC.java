@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import java.util.List;
 
-import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -11,16 +11,16 @@ import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResultsCollector;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
-import com.yoursway.sadr.python_v2.model.builtins.ListType;
-import com.yoursway.sadr.python_v2.model.builtins.ListValue;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObjectWithValue;
+import com.yoursway.sadr.python_v2.model.builtins.TupleType;
+import com.yoursway.sadr.python_v2.model.builtins.TupleValue;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
-public class PythonListExpressionC extends PythonConstructImpl<PythonListExpression> implements
+public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpression> implements
         PythonConstruct {
     
-    public PythonListExpressionC(Scope sc, PythonListExpression node) {
+    public PythonTupleExpressionC(Scope sc, PythonTupleExpression node) {
         super(sc, node);
     }
     
@@ -33,8 +33,9 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
                     @Override
                     public <T> void completed(IGrade<T> grade) {
                         List<RuntimeObject> actualArguments = getResults();
-                        PythonObjectWithValue<ListValue> listObject = ListType.newListObject(actualArguments);
-                        acceptor.addResult(listObject, context);
+                        PythonObjectWithValue<TupleValue> tupleObject = TupleType
+                                .newTupleObject(actualArguments);
+                        acceptor.addResult(tupleObject, context);
                         updateGrade(acceptor, Grade.DONE);
                     }
                 };
@@ -47,7 +48,7 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
             
             @Override
             public String describe() {
-                return super.describe() + "\nfor expression " + PythonListExpressionC.this.toString();
+                return super.describe() + "\nfor expression " + PythonTupleExpressionC.this.toString();
             }
         };
     }

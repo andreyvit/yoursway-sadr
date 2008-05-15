@@ -11,15 +11,19 @@ import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class ResultsCollector extends Synchronizer {
     List<RuntimeObject> results;
+    private final Context context;
+    private int itemCount;
     
-    public ResultsCollector(int capacity) {
+    public ResultsCollector(int capacity, Context context) {
+        this.context = context;
+        itemCount = 0;
         results = new ArrayList<RuntimeObject>(capacity);
     }
     
-    public List<IGoal> addSubgoals(List<PythonConstruct> items, Context context) {
+    public List<IGoal> addSubgoals(List<PythonConstruct> items) {
         List<IGoal> subgoals = new ArrayList<IGoal>(items.size());
         for (PythonConstruct construct : items) {
-            IGoal evaluate = construct.evaluate(context, createAcceptor(context));
+            IGoal evaluate = construct.evaluate(context, createAcceptor());
             subgoals.add(evaluate);
         }
         return subgoals;
@@ -29,8 +33,9 @@ public abstract class ResultsCollector extends Synchronizer {
         return results;
     }
     
-    public PythonValueSetAcceptor createAcceptor(final Context context) {
-        final int item = counter++;
+    public PythonValueSetAcceptor createAcceptor() {
+        final int item = itemCount++;
+        counter++;
         results.add(null);
         return new PythonValueSetAcceptor() {
             public <T> void checkpoint(IGrade<T> grade) {

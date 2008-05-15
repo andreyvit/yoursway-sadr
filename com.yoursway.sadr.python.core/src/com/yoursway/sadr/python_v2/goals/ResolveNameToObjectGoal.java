@@ -10,20 +10,21 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodCallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ProcedureCallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 
 public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     
     protected final PythonValueSetAcceptor acceptor;
-    private final PythonConstructImpl<?> var;
+    private final PythonConstruct var;
     private final String name;
     
-    protected ResolveNameToObjectGoal(PythonConstructImpl<?> start, String name,
-            PythonValueSetAcceptor acceptor, Context context) {
+    protected ResolveNameToObjectGoal(PythonConstruct start, String name, PythonValueSetAcceptor acceptor,
+            Context context) {
         super(context);
         this.name = name;
         this.acceptor = acceptor;
@@ -41,9 +42,9 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         super(context);
         this.var = var;
         if (var instanceof MethodCallC) {
-            this.name = var.node().getMethodName();
+            this.name = var.node().getName();
         } else if (var instanceof ProcedureCallC) {
-            this.name = var.node().getProcedureName();
+            this.name = var.node().getName();
         } else {
             throw new IllegalStateException("should never reach this place");
         }
@@ -60,6 +61,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
             if (getContext() != null && getContext().contains(this.name)) {
                 acceptor.addResult(getContext().getActualArgument(this.name), getContext());
                 updateGrade(acceptor, Grade.DONE);
+                return;
             }
         }
         while (result == null && scope != null) {
@@ -70,7 +72,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     }
     
     protected PythonConstruct findInScope(Scope scope) {
-        List<PythonConstruct> children = scope.getEnclosedconstructs();
+        List<PythonConstruct> children = scope.getEnclosedConstructs();
         PythonConstruct result = null;
         for (PythonConstruct construct : children) {
             if (this.var == construct) {
@@ -118,7 +120,12 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
             acceptor.addResult(obj, getContext());
             updateGrade(acceptor, Grade.DONE);
         } else if (result == null) {
+            RuntimeObject object = Builtins.instance().getAttribute(name);
+            if (object != null) {
+                acceptor.addResult(object, getContext());
+            }
             //TODO if result is null return IMPOSSIBLE object
+            updateGrade(acceptor, Grade.DONE);
         } else {
             throw new IllegalStateException("should never reach this place");
         }

@@ -5,6 +5,8 @@ import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValue
 import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.dltk.ast.references.VariableReference;
+import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
@@ -16,6 +18,9 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRe
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class AssignmentC extends PythonConstructImpl<Assignment> {
     
@@ -52,12 +57,26 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
         provideAssignmentInfo(request);
     }
     
+    @Override
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        return rightPart.evaluate(context, acceptor);
+    }
+    
     private void provideAssignmentInfo(AssignmentInfoRequestor request) {
         PythonConstruct lhs = lhs();
         PythonConstruct rhs = rhs();
         Collection<MumblaWumblaThreesome> swingerParty = lhs.mumblaWumbla();
         for (MumblaWumblaThreesome threesome : swingerParty)
             request.accept(new AssignmentInfo(threesome, rhs));
+    }
+    
+    public String getName() {
+        Statement left = node.getLeft();
+        if (left instanceof VariableReference) {
+            VariableReference reference = (VariableReference) left;
+            return reference.getName();
+        }
+        return null;
     }
     
     //    public void actOnModel(ModelRequest request) {

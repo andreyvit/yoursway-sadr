@@ -4,6 +4,7 @@
 package com.yoursway.sadr.python_v2.goals.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
@@ -16,7 +17,6 @@ import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResultsCollector;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
-import com.yoursway.sadr.python_v2.model.builtins.PythonClass;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -27,8 +27,8 @@ final class CallInitMethodGoal extends ContextSensitiveGoal {
     
     static InstanceRegistrar instanceRegistrar = new InstanceRegistrarImpl();
     
-    public CallInitMethodGoal(ClassDeclarationC decl, List<RuntimeObject> args, Context context,
-            PythonValueSetAcceptor acceptor) {
+    public CallInitMethodGoal(ClassDeclarationC decl, List<RuntimeObject> args,
+            HashMap<String, RuntimeObject> kwargs, Context context, PythonValueSetAcceptor acceptor) {
         super(context);
         this.acceptor = acceptor;
         this.classDeclarationC = decl;
@@ -36,14 +36,14 @@ final class CallInitMethodGoal extends ContextSensitiveGoal {
     }
     
     public void preRun() {
-        ResultsCollector rc = new ResultsCollector(args.size()) {
+        ResultsCollector rc = new ResultsCollector(args.size(), getContext()) {
             @Override
             public <T> void completed(IGrade<T> grade) {
-                List<PythonClass> supers = new ArrayList<PythonClass>();
+                List<PythonClassType> supers = new ArrayList<PythonClassType>();
                 for (RuntimeObject obj : getResults()) {
-                    supers.add((PythonClass) obj);
+                    supers.add((PythonClassType) obj);
                 }
-                PythonClassType receiverType = new PythonClassType(supers);
+                PythonClassType receiverType = new PythonUserClassType(classDeclarationC, supers);
                 InstanceValue receiver = new InstanceValue(receiverType, instanceRegistrar);
                 acceptor.addResult(receiver, getContext());
                 updateGrade(acceptor, grade);
@@ -51,11 +51,11 @@ final class CallInitMethodGoal extends ContextSensitiveGoal {
             }
         };
         List<PythonConstruct> superClasses = classDeclarationC.getSuperClasses();
-        schedule(rc.addSubgoals(superClasses, getContext()));
+        schedule(rc.addSubgoals(superClasses));
     }
     
     @Override
     public String describe() {
-        return "Class constructor goal";
+        return super.describe() + "\nfor " + classDeclarationC.displayName();
     }
 }

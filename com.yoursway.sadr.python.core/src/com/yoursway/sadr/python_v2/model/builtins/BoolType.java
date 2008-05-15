@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.BooleanLiteralC;
@@ -7,7 +8,7 @@ import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 //TODO generalize implementation for built-in types.
-public class BoolType extends PythonClassType implements PythonClass {
+public class BoolType extends PythonClassType {
     private static PythonObjectWithValue<BooleanValue>[] castArguments(List<RuntimeObject> args) {
         assert args.size() == 2;
         return new PythonObjectWithValue[] { (PythonObjectWithValue<BooleanValue>) args.get(0),
@@ -17,7 +18,7 @@ public class BoolType extends PythonClassType implements PythonClass {
     private BoolType() {
         FunctionObject and = new FunctionObject("__and__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args) {
+            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
                 PythonObjectWithValue<BooleanValue>[] castedArgs = castArguments(args);
                 BooleanValue result = castedArgs[0].getValue().and(castedArgs[1].getValue());
                 return newBooleanObject(result);
@@ -26,7 +27,7 @@ public class BoolType extends PythonClassType implements PythonClass {
         
         FunctionObject or = new FunctionObject("__or__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args) {
+            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
                 PythonObjectWithValue<BooleanValue>[] castedArgs = castArguments(args);
                 BooleanValue result = castedArgs[0].getValue().or(castedArgs[1].getValue());
                 return newBooleanObject(result);
@@ -35,7 +36,7 @@ public class BoolType extends PythonClassType implements PythonClass {
         
         FunctionObject xor = new FunctionObject("__xor__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args) {
+            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
                 PythonObjectWithValue<BooleanValue>[] castedArgs = castArguments(args);
                 BooleanValue result = castedArgs[0].getValue().xor(castedArgs[1].getValue());
                 return newBooleanObject(result);

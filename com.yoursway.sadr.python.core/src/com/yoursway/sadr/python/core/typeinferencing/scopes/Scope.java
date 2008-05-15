@@ -10,7 +10,7 @@ public interface Scope extends PythonConstruct {
      */
     Scope parentScope();
     
-    List<PythonConstruct> getEnclosedconstructs();
+    List<PythonConstruct> getEnclosedConstructs();
     
     String displayName();
 }

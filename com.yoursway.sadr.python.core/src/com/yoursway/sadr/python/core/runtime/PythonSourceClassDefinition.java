@@ -17,7 +17,7 @@ import com.yoursway.sadr.python_v2.model.Context;
 public class PythonSourceClassDefinition extends PythonClassDefinition implements ContributableItem,
         LocalVariableContainer {
     
-    private final PythonClass superclass;
+    private final PythonClassType superclass;
     private final PythonClassDeclaration node;
     
     private final Collection<PythonScopedVariable> localVariables = new ArrayList<PythonScopedVariable>();
@@ -26,7 +26,7 @@ public class PythonSourceClassDefinition extends PythonClassDefinition implement
     private final ClassScope scope;
     
     public PythonSourceClassDefinition(ClassScope scope, Context context, ClassDeclarationC construct,
-            PythonClass superclass) {
+            PythonClassType superclass) {
         super(scope.klass());
         this.scope = scope;
         this.node = construct.node();
@@ -39,7 +39,7 @@ public class PythonSourceClassDefinition extends PythonClassDefinition implement
     }
     
     @Override
-    public PythonClass superclass() {
+    public PythonClassType superclass() {
         return superclass;
     }
     

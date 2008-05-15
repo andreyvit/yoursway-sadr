@@ -34,22 +34,22 @@ public abstract class PythonMethod implements Callable {
     }
     
     public boolean canBeCalledFrom(PythonBasicClass receiver) {
-        PythonClass klass = runtimeClass();
+        PythonClassType klass = runtimeClass();
         if (receiver instanceof PythonMetaClass)
             if (!isStatic())
                 return false;
             else
                 return (((PythonMetaClass) receiver).instanceClass().isDerivedFrom(klass));
         else
-            return ((PythonClass) receiver).isDerivedFrom(klass);
+            return ((PythonClassType) receiver).isDerivedFrom(klass);
         
     }
     
-    public PythonClass runtimeClass() {
+    public PythonClassType runtimeClass() {
         if (isStatic())
             return ((PythonMetaClass) klass).instanceClass();
         else
-            return (PythonClass) klass;
+            return (PythonClassType) klass;
     }
     
     public boolean isStatic() {

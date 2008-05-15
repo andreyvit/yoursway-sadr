@@ -26,7 +26,7 @@ public abstract class Goal implements IGoal {
     }
     
     public <T> CheckpointToken updateGrade(IAcceptor acceptor, IGrade<T> grade) {
-        return scheduler.updateGrade(acceptor, grade);
+        return scheduler.updateGrade(this, acceptor, grade);
     }
     
     public final void setScheduler(IScheduler scheduler) {

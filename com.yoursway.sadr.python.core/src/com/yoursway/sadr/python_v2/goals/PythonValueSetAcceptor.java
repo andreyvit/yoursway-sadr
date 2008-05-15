@@ -2,6 +2,8 @@ package com.yoursway.sadr.python_v2.goals;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
@@ -15,21 +17,31 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
     private final ValueInfoBuilder builder = new ValueInfoBuilder();
     
     public void addResult(RuntimeObject result, Context context) {
-        builder.add(result.getType(), result);
-        objectToContext.put(context, result);
+        if (result != null) {
+            builder.add(result.getType(), result);
+            objectToContext.put(context, result);
+        }
     }
     
     public RuntimeObject getResultByContext(Context context) {
         return objectToContext.get(context);
     }
     
+    protected void setResults(PythonValueSetAcceptor other) {
+        Set<Entry<Context, RuntimeObject>> entries = other.objectToContext.entrySet();
+        for (Entry<Context, RuntimeObject> entry : entries) {
+            objectToContext.put(entry.getKey(), entry.getValue());
+        }
+    }
+    
     public ValueInfo getResult() {
         return builder.build();
     }
     
-    public void setResult(ValueInfo result) {
-        if (!builder.isEmpty())
-            throw new IllegalStateException("You can use setResult only when acceptor is empty");
-        builder.add(result);
-    }
+    //    public void setResult(ValueInfo result) {
+    //        throw new IllegalStateException("Don't use this method");
+    //        if (!builder.isEmpty())
+    //            throw new IllegalStateException("You can use setResult only when acceptor is empty");
+    //        builder.add(result);
+    //    }
 }

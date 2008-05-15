@@ -26,7 +26,7 @@ public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
             
             @Override
             public String describe() {
-                String basic = super.describe();
+                String basic = "Evaluating integer literal";
                 return basic + "\nfor expression " + IntegerLiteralC.this.toString();
             }
         };

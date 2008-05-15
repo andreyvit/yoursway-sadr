@@ -25,12 +25,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     protected void wrapEnclosedChildren() {
-        if (this instanceof Scope) {
-            Scope scope = (Scope) this;
-            childConstructs = PythonConstructFactory.wrap(scope, this.node.getChilds());
-        } else {
-            childConstructs = PythonConstructFactory.wrap(parentScope, this.node.getChilds());
-        }
+        childConstructs = PythonConstructFactory.wrap(this.node.getChilds(), parentScope);
     }
     
     public PythonConstruct staticallyEnclosingConstruct() {
@@ -42,11 +37,11 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     protected PythonConstruct wrap(ASTNode node) {
-        return PythonConstructFactory.wrapConstruct(node, parentScope);
+        return PythonConstructFactory.wrap(node, parentScope);
     }
     
     protected PythonConstruct wrap(ASTNode node, Scope scope) {
-        return PythonConstructFactory.wrapConstruct(node, scope);
+        return PythonConstructFactory.wrap(node, scope);
     }
     
     public PythonConstruct subconstructFor(ASTNode node) {
@@ -57,7 +52,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return result;
     }
     
-    PythonConstruct innerSubsonstructFor(ASTNode node) {
+    private PythonConstruct innerSubsonstructFor(ASTNode node) {
         if (isNode(node))
             return this;
         // TODO check offset here
@@ -128,28 +123,19 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return parentScope;
     }
     
-    public List<PythonConstruct> getChildContructs() {
+    public List<PythonConstruct> getChildConstructs() {
         return childConstructs;
     }
     
     protected void setChildConstructs(List<PythonConstruct> constructs) {
-        childConstructs = constructs;
-    }
-    
-    public void traverse(PythonConstructVisitor visitor) {
-        if (visitor.visit(this)) {
-            for (PythonConstruct construct : childConstructs) {
-                construct.traverse(visitor);
-            }
-            visitor.endVisit(this);
+        if (constructs == null) {
+            throw new IllegalArgumentException("setChildConstructs(null) called!");
         }
+        childConstructs = constructs;
     }
     
     @Override
     public String toString() {
-        if (this instanceof Scope) {
-            return ((Scope) this).displayName();
-        }
         return node.toString();
     }
     

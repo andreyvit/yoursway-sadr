@@ -2,14 +2,14 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
 
-public final class InstanceType extends PythonClassType implements PythonClass {
+public final class InstanceType extends PythonClassType {
     private final PythonClassType klass;
     
     public InstanceType(PythonClassType klass) {
         this.klass = this;
     }
     
-    public PythonClass runtimeClass() {
+    public PythonClassType runtimeClass() {
         return klass;
     }
     

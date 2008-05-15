@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python_v2.goals;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.BinaryC;
@@ -74,7 +75,9 @@ public class BinaryExpressionGoal extends ContextSensitiveGoal {
         String name = expression.getOperationMethodName();
         List<RuntimeObject> actualArgs = new ArrayList<RuntimeObject>(1);
         actualArgs.add(argument);
-        schedule(CallResolver.callMethod(receiver, name, actualArgs, acceptor, getContext()));
+        HashMap<String, RuntimeObject> kwargs = new HashMap<String, RuntimeObject>();
+        schedule(CallResolver.callMethod(receiver, name, actualArgs, kwargs,
+                acceptor, getContext()));
     }
     
     @Override

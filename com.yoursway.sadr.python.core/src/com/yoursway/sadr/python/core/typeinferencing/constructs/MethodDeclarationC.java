@@ -17,7 +17,7 @@ import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
-public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> implements Scope {
+public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     
     MethodDeclarationC(Scope sc, MethodDeclaration node) {
         super(sc, node);
@@ -36,7 +36,7 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
     
     @Override
     protected void wrapEnclosedChildren() {
-        List<PythonConstruct> children = PythonConstructFactory.wrap(this, this.node.getStatements());
+        List<PythonConstruct> children = PythonConstructFactory.wrap(this.node.getStatements(), this);
         setChildConstructs(children);
     }
     
@@ -47,10 +47,6 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
     
     public String displayName() {
         return "Method " + this.node.getName();
-    }
-    
-    public List<PythonConstruct> getEnclosedconstructs() {
-        return getChildContructs();
     }
     
     @Override

@@ -172,6 +172,10 @@ public abstract class AbstractTypeInferencingTestCase {
             int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
             needToken(tok, "=>");
             String correctClassRef = tok.nextToken();
+            while (tok.hasMoreTokens()) {
+                correctClassRef += " " + tok.nextToken();
+            }
+            
             assertion = new ExpressionValueAssertion(expr, namePos, correctClassRef);
             //        } else if ("localvar-type".equals(test)) {
             //            String expr = tok.nextToken();

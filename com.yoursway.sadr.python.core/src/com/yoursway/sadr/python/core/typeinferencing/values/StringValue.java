@@ -16,7 +16,7 @@ public class StringValue extends AbstractValue {
     }
     
     public String describe() {
-        return "\"" + value + "\"";
+        return "\'" + value + "\'";
     }
     
     @Override

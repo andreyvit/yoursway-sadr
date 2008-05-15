@@ -16,11 +16,11 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     }
     
     public PythonConstruct getLeft() {
-        return getChildContructs().get(0);
+        return getChildConstructs().get(0);
     }
     
     public PythonConstruct getRight() {
-        return getChildContructs().get(1);
+        return getChildConstructs().get(1);
     }
     
     public abstract String getOperationMethodName();

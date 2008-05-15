@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.util.HashMap;
 import java.util.List;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -58,7 +59,7 @@ public class FunctionObject extends PythonObject {
         return boundClass;
     }
     
-    public RuntimeObject evaluate(List<RuntimeObject> args) {
+    public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
         throw new NotImplementedException();
     }
     

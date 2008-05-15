@@ -1,7 +1,6 @@
 package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.python_v2.model.Context;
-import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class ExpressionValueGoal extends ContextSensitiveGoal {
     
@@ -12,12 +11,12 @@ public abstract class ExpressionValueGoal extends ContextSensitiveGoal {
         this.acceptor = acceptor;
     }
     
-    PythonValueSetAcceptor createAcceptor(final PythonValueSetAcceptor resultAcceptor) {
-        return new PythonValueSetAcceptor() {
-            public <T> void checkpoint(IGrade<T> grade) {
-                resultAcceptor.setResult(getResult());
-                updateGrade(resultAcceptor, grade);
-            }
-        };
-    }
+    //    PythonValueSetAcceptor createAcceptor(final PythonValueSetAcceptor resultAcceptor) {
+    //        return new PythonValueSetAcceptor() {
+    //            public <T> void checkpoint(IGrade<T> grade) {
+    //                resultAcceptor.setResults(this);
+    //                updateGrade(resultAcceptor, grade);
+    //            }
+    //        };
+    //    }
 }

@@ -7,6 +7,7 @@ import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
+import com.yoursway.sadr.python_v2.model.builtins.InstanceType;
 
 public class TypeUtils {
     

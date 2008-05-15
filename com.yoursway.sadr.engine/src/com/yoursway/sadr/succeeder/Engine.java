@@ -12,23 +12,48 @@ import java.util.TreeMap;
 
 public class Engine implements IScheduler {
     
+    final boolean DEBUG = true;
+    
     private Map<IAcceptor, IGrade<?>> acceptors = new HashMap<IAcceptor, IGrade<?>>();
+    private final Map<IAcceptor, IGrade<?>> oldAcceptors = new HashMap<IAcceptor, IGrade<?>>();
     private final TreeMap<Integer, LinkedList<IGoal>> queue = new TreeMap<Integer, LinkedList<IGoal>>();
     private final HashSet<IGoal> allPlannedGoals = new HashSet<IGoal>();
     private final ISchedulingStrategy defaultStrategy;
     private final Map<IGoal, ISchedulingStrategy> goalToStrategy = new HashMap<IGoal, ISchedulingStrategy>();
     private final Map<IGoal, Collection<IGoal>> goalToSubgoals = new HashMap<IGoal, Collection<IGoal>>();
+    private final Map<IGoal, IGoal> parentGoals = new HashMap<IGoal, IGoal>();
     
     public Engine(ISchedulingStrategy strategy) {
         this.defaultStrategy = strategy;
     }
     
+    public String printGoalStack(IGoal goal) {
+        StringBuilder output = new StringBuilder();
+        while (goal != null) {
+            output.append(goal.toString().replace("\n", "") + '\n');
+            goal = parentGoals.get(goal);
+        }
+        return output.toString();
+    }
+    
     @SuppressWarnings("unchecked")
-    public <T> CheckpointToken updateGrade(IAcceptor acceptor, IGrade<T> grade) {
+    public <T> CheckpointToken updateGrade(IGoal goal, IAcceptor acceptor, IGrade<T> grade) {
         IGrade<T> previousGrade = (IGrade<T>) acceptors.get(acceptor);
-        if (previousGrade != null && previousGrade.compareTo((T) grade) >= 0) { // >= for debugging purposes
+        if (previousGrade != null && previousGrade.compareTo((T) grade) > 0) {
             throw new IllegalArgumentException("Grade should not decrease for "
                     + acceptor.getClass().getSimpleName());
+        }
+        if (DEBUG) {
+            if (oldAcceptors.containsKey(acceptor)) {
+                IGrade<T> oldGrade = (IGrade<T>) oldAcceptors.get(acceptor);
+                if (oldGrade.compareTo((T) grade) >= 0) {
+                    throw new IllegalArgumentException("Grade typically should increase for "
+                            + acceptor.getClass().getSimpleName() + "\n" + "Goals stack:"
+                            + printGoalStack(goal));
+                    
+                }
+            }
+            oldAcceptors.put(acceptor, grade);
         }
         acceptors.put(acceptor, grade);
         return CheckpointToken.instance();
@@ -61,6 +86,7 @@ public class Engine implements IScheduler {
                 goalToSubgoals.put(goal, subgoals);
             }
             subgoals.add(subgoal);
+            parentGoals.put(subgoal, goal);
         }
         int priority = strategy.getPriority(subgoal);
         goalToStrategy.put(subgoal, strategy);

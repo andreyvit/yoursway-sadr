@@ -17,55 +17,44 @@ public class PythonObject implements RuntimeObject {
     private final InstanceHistoryImpl history;
     
     Map<String, RuntimeObject> attributes = new HashMap<String, RuntimeObject>();
-    private PythonClass type;
-    
-    protected RuntimeObject lookupInSuperclasses(String name) {
-        for (PythonClass cls : type.getSuperClasses()) {
-            RuntimeObject object = cls.getDict().get(name);
-            if (object != null)
-                return object;
-        }
-        return null;
-    }
+    private PythonClassType type;
     
     public Map<String, RuntimeObject> getDict() {
         return attributes;
     }
     
-    public PythonObject(PythonClass type) {
+    public PythonObject(PythonClassType type) {
         //assert type != null;
         this.type = type;
         history = new InstanceHistoryImpl(this, null);
     }
     
-    public PythonObject(PythonClass type, PythonConstruct declaration) {
+    public PythonObject(PythonClassType type, PythonConstruct declaration) {
         this.type = type;
         history = new InstanceHistoryImpl(this, declaration);
     }
     
     public RuntimeObject getAttribute(String name) {
-        //TODO try __getattribute__ execution.
-        if (!attributes.containsKey(name)) {
-            // TODO try __getattr__ execution
-            if (this.type.getDict().containsKey(name))
-                return type.getDict().get(name);
-            return lookupInSuperclasses(name);
-        }
         return attributes.get(name);
     }
     
     //TODO refactor setAttribute() method
     public void setAttribute(String name, RuntimeObject object) {
-        assert null != name && null != object;
-        //TODO try __setattr__ execution
+        if (null == name || null == object) {
+            throw new IllegalArgumentException("setAttribute failed for class"
+                    + this.getClass().getSimpleName());
+        }
         attributes.put(name, object);
     }
     
+    /**
+     * Should be asynchronous
+     */
     public RuntimeObject getType() {
         return type;
     }
     
-    public void setType(PythonClass type) {
+    public void setType(PythonClassType type) {
         this.type = type;
     }
     
@@ -73,6 +62,9 @@ public class PythonObject implements RuntimeObject {
         return attributes.keySet();
     }
     
+    /**
+     * Remove?
+     */
     public InstanceHistory instanceHistory() {
         return history;
     }

@@ -1,43 +1,57 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
+import com.yoursway.sadr.python.core.runtime.PythonMethod;
+import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 /**
  * Represents a class type object. Supports class attributes name resolution.
  */
-public class PythonClassType extends PythonObject implements PythonClass {
+public class PythonClassType extends PythonObject {
     
-    private List<PythonClass> supers;
+    private List<PythonClassType> supers;
     
     public PythonClassType() {
         super(Builtins.TYPE);
-        supers = new ArrayList<PythonClass>(1);
+        supers = new ArrayList<PythonClassType>(1);
         supers.add(Builtins.OBJECT);
     }
     
-    public PythonClassType(List<PythonClass> supers) {
+    public PythonClassType(List<PythonClassType> supers) {
         super(Builtins.TYPE);
-        this.supers = supers;
+        setSuperClasses(supers);
     }
     
-    public List<PythonClass> getSuperClasses() {
+    public List<PythonClassType> getSuperClasses() {
         return supers;
     }
     
-    public void setSuperClasses(List<PythonClass> supers) {
-        this.supers = supers;
+    public void setSuperClasses(List<PythonClassType> supers) {
+        if (supers == null)
+            this.supers = new ArrayList<PythonClassType>(0);
+        else
+            this.supers = supers;
     }
     
     @Override
+    public RuntimeObject getAttribute(String name) {
+        if (attributes.containsKey(name))
+            return attributes.get(name);
+        else
+            return lookupInSuperclasses(name);
+        
+    }
+    
     protected RuntimeObject lookupInSuperclasses(String name) {
-        for (PythonClass cls : this.supers) {
+        for (PythonClassType cls : supers) {
             RuntimeObject object = cls.getDict().get(name);
             if (object != null)
                 return object;
@@ -56,5 +70,15 @@ public class PythonClassType extends PythonObject implements PythonClass {
             return ((PythonClassDeclaration) node).getName();
         } else
             return "(unknown)";
+    }
+    
+    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void findMethod(String name, MethodRequestor requestor) {
+        // TODO Auto-generated method stub
+        
     }
 }

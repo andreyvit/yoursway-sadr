@@ -1,7 +1,10 @@
 package com.yoursway.sadr.python_v2.goals;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructVisitor;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ReturnC;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
@@ -32,26 +35,32 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
     }
     
     public void preRun() {
-        if (getContext() == null) {
-            //TODO schedule search and new goals for each result. 
-        }
-        evaluateInContext(getContext());
-    }
-    
-    private void evaluateInContext(Context context) {
-        methodDecl.traverse(new PythonConstructVisitor() {
-            @Override
-            public boolean visit(ReturnC construct) {
-                ReturnC ret = construct;
-                schedule(ret.getReturnedConstruct().evaluate(getContext(), acceptor));
-                return false;
+        List<PythonConstruct> enclosedconstructs = methodDecl.getEnclosedConstructs();
+        List<ReturnC> returns = new LinkedList<ReturnC>();
+        for (PythonConstruct construct : enclosedconstructs) {
+            if (construct instanceof ReturnC) {
+                ReturnC returnC = (ReturnC) construct;
+                returns.add(returnC);
             }
-        });
+        }
+        //        ResultsCollector collector = new ResultsCollector(returns.size()) {
+        //            @Override
+        //            public <T> void completed(IGrade<T> grade) {
+        //                
+        //            }
+        //        };
+        for (ReturnC item : returns) {
+            schedule(item.getReturnedConstruct().evaluate(getContext(), acceptor));
+            //FIXME: returning only first return result for now.
+            break;
+        }
+        //        if (returns.isEmpty()) {
+        //            updateGrade(acceptor, Grade.DONE);
+        //        }
     }
     
     @Override
     public String describe() {
-        String basic = super.describe();
-        return basic + "\nfor " + methodDecl.displayName();
+        return super.describe() + "\nfor " + methodDecl.displayName();
     }
 }

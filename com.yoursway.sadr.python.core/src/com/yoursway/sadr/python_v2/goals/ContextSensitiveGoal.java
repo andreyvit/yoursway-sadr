@@ -24,6 +24,10 @@ public abstract class ContextSensitiveGoal extends Goal {
     @Override
     public String describe() {
         String simpleName = this.getClass().getSimpleName();
+        if (simpleName.equals("")) {
+            simpleName = this.getClass().getName();
+            simpleName = simpleName.substring(simpleName.lastIndexOf('.') + 1);
+        }
         if (this.getContext() != null) {
             return simpleName + " with context";
         } else {

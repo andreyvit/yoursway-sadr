@@ -1,16 +1,15 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.model.LexicalScopeImpl;
+import com.yoursway.sadr.python.core.typeinferencing.values.NilValue;
 
 /**
  * Utility and declaration class.
  */
-public class Builtins extends LexicalScopeImpl {
+public class Builtins extends PythonClassType {
     
     private static PythonClassType typeType = null;
     
-    private static PythonClass createTypeType() {
+    private static PythonClassType createTypeType() {
         if (null == typeType) {
             typeType = new PythonClassType();
             typeType.setType(typeType);
@@ -18,40 +17,34 @@ public class Builtins extends LexicalScopeImpl {
         return typeType;
     }
     
-    public static final PythonClass TYPE = createTypeType(); //TODO
-    public static final ObjectType OBJECT = ObjectType.instance(); //TODO
-    public static final PythonClass FUNCTION = createTypeType(); //TODO
-    public static final PythonClass MODULE = createTypeType(); //TODO
-    public static final IntType INT = IntType.instance();
-    public static final BoolType BOOL = BoolType.instance();
-    public static final StringType STRING = StringType.instance();
-    public static final PythonClass NONE = createTypeType();
-    
-    private static void init(Builtins inst) {
-        inst.setName("type", TYPE);
-        inst.setName("object", OBJECT);
-        inst.setName("int", INT);
-        inst.setName("str", STRING);
-        inst.setName("bool", BOOL);
+    public static PythonObject createNone() {
+        return new PythonObjectWithValue<NilValue>(NONE, NilValue.instance());
     }
+    
+    public static final PythonClassType TYPE = createTypeType(); //TODO
+    public static final ObjectType OBJECT = ObjectType.instance(); //TODO
+    public static final PythonClassType FUNCTION = createTypeType(); //TODO
+    public static final PythonClassType MODULE = createTypeType(); //TODO
+    public static final PythonClassType NONE = createTypeType();
+    
+    private static Builtins module = null;
     
     //---------Singleton infrastructure---------
     private Builtins() {
-        super(null);
-        init(this);
     }
     
-    private static Builtins module = new Builtins();
-    
-    public static Builtins getBuiltinModule() {
+    public static Builtins instance() {
+        if (module == null) {
+            module = new Builtins();
+            module.setAttribute("type", TYPE);
+            module.setAttribute("object", OBJECT);
+            module.setAttribute("int", IntType.instance());
+            module.setAttribute("str", StringType.instance());
+            module.setAttribute("bool", BoolType.instance());
+            module.setAttribute("list", ListType.instance());
+            module.setAttribute("tuple", TupleType.instance());
+            module.setAttribute("dict", DictType.instance());
+        }
         return module;
-    }
-    
-    public static Builtins createModule() {
-        return new Builtins();
-    }
-    
-    public Scope parentScope() {
-        return null;
     }
 }

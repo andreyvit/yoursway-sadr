@@ -21,20 +21,20 @@ import org.eclipse.dltk.python.parser.ast.expressions.CallHolder;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
-import com.yoursway.sadr.engine.AnalysisEngine;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.PythonProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.succeeder.Engine;
+import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.succeeder.IGrade;
 
 public class PythonCompletionEngine extends ScriptCompletionEngine {
     
@@ -52,7 +52,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
     
     private PythonRuntimeModel runtimeModel;
     
-    private AnalysisEngine engine;
+    private Engine engine;
     
     private ProjectRuntime projectRuntime;
     
@@ -114,8 +114,9 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
             
             if (wordStarting != null)
                 projectRuntime = new ProjectRuntime(modelModule.getScriptProject());
-            fileC = projectRuntime.getConstructFor(modelModule);
-            runtimeModel = projectRuntime.getModel();
+            fileC = projectRuntime.getModule(modelModule.getElementName());
+            //            fileC = projectRuntime.getConstructFor(modelModule);
+            //            runtimeModel = projectRuntime.getModel();
             engine = projectRuntime.getEngine();
             
             boolean enableKeywordCompletion = true;
@@ -198,11 +199,20 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         String prefix = ((VariableReference) name).getName().substring(0, position - name.sourceStart());
         
         PythonConstruct construct = fileC.subconstructFor(receiver);
-        ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(),
-                InfoKind.TYPE);
-        engine.evaluate(goal);
-        ValueInfo types = goal.roughResult();
-        for (PythonMethod method : ValueInfoUtils.findMethodsByPrefix(types, prefix))
+        
+        //        ExpressionValueInfoGoal goal = new ExpressionValueInfoGoal(construct, new EmptyDynamicContext(),
+        //                InfoKind.TYPE);
+        
+        final ValueInfo values[] = new ValueInfo[] { null };
+        PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+            public <T> void checkpoint(IGrade<T> grade) {
+                values[0] = getResult();
+            }
+        };
+        IGoal goal = construct.evaluate(null, acceptor);
+        engine.run(goal);
+        
+        for (PythonMethod method : ValueInfoUtils.findMethodsByPrefix(values[0], prefix))
             reportMethod(method, 4242);
     }
     

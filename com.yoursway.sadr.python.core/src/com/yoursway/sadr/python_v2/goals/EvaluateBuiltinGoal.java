@@ -3,6 +3,7 @@
  */
 package com.yoursway.sadr.python_v2.goals;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.yoursway.sadr.python.Grade;
@@ -16,17 +17,19 @@ public final class EvaluateBuiltinGoal extends Goal {
     private final FunctionObject callable;
     private final Context context;
     private final PythonValueSetAcceptor acceptor;
+    private final HashMap<String, RuntimeObject> kwargs;
     
-    public EvaluateBuiltinGoal(List<RuntimeObject> args, FunctionObject callable, Context context,
-            PythonValueSetAcceptor acceptor) {
+    public EvaluateBuiltinGoal(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs,
+            FunctionObject callable, Context context, PythonValueSetAcceptor acceptor) {
         this.args = args;
+        this.kwargs = kwargs;
         this.callable = callable;
         this.context = context;
         this.acceptor = acceptor;
     }
     
     public void preRun() {
-        acceptor.addResult(callable.evaluate(args), context);
+        acceptor.addResult(callable.evaluate(args, kwargs), context);
         updateGrade(acceptor, Grade.DONE);
     }
     

@@ -16,7 +16,7 @@ public class ProcedureCallC extends CallC {
         super(sc, node);
     }
     
-    //    private ContinuationRequestorCalledToken classNewInstance(PythonClass klass, PythonDynamicContext dc,
+    //    private ContinuationRequestorCalledToken classNewInstance(PythonClassType klass, PythonDynamicContext dc,
     //            InfoKind infoKind, ContinuationScheduler requestor, ValueInfoContinuation continuation) {
     //        Value value = new InstanceValue(klass, staticContext().instanceRegistrar());
     //        SingleTypeSet ts = TypeSetFactory.typeSetWith(new InstanceType(klass));
@@ -35,7 +35,7 @@ public class ProcedureCallC extends CallC {
     //            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
     //        final String name = node.getProcedureName();
     //        if (name != null) {
-    //            PythonClass klass = staticContext().classLookup().findClass(name);
+    //            PythonClassType klass = staticContext().classLookup().findClass(name);
     //            if (klass != null)
     //                return classNewInstance(klass, dc, infoKind, requestor, continuation);
     //        }
@@ -65,20 +65,20 @@ public class ProcedureCallC extends CallC {
     //    }
     //    
     public void actOnIndex(IndexRequest request) {
-        request.addProcedureCall(node.getProcedureName(), this);
+        request.addProcedureCall(node.getName(), this);
     }
     
     public void actOnEval(EvalRequest request) {
         ASTNode args = node.getArgs();
         List<ASTNode> children = PythonUtils.childrenOf(args);
-        if (node.getProcedureName().equals("eval") && children.size() > 0) {
+        if (node.getName().equals("eval") && children.size() > 0) {
             request.addEval(this, subconstructFor(children.get(0)));
         }
     }
     
     @Override
     public String toString() {
-        return node.getProcedureName() + "()";
+        return node.getName() + "()";
     }
     
     @Override

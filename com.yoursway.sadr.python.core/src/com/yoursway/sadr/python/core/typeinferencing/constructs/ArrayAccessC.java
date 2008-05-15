@@ -30,9 +30,20 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
         }
         
     };
+    private final PythonConstruct array;
     
     ArrayAccessC(Scope sc, PythonArrayAccessExpression node) {
         super(sc, node);
+        array = wrap(node.getArray());
+    }
+    
+    @Override
+    protected void wrapEnclosedChildren() {
+        super.wrapEnclosedChildren();
+    }
+    
+    public PythonConstruct array() {
+        return array;
     }
     
     public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,
@@ -52,10 +63,6 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
             }
             
         });
-    }
-    
-    public PythonConstruct array() {
-        return wrap(innerContext(), node.getArray());
     }
     
     @Override

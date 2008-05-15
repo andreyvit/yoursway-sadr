@@ -1,23 +1,53 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.util.ArrayList;
+
+import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructFactory;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructImpl;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.succeeder.IGoal;
 
-public class PythonLambdaExpressionC extends PythonConstructImpl<PythonLambdaExpression> {
+public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpression> {
     
     private final PythonConstruct body;
     
     public PythonLambdaExpressionC(Scope sc, PythonLambdaExpression node) {
         super(sc, node);
-        body = PythonConstructFactory.wrapConstruct(node.getBodyExpression(), sc);
+        body = getChildConstructs().get(0);
+    }
+    
+    @Override
+    protected void wrapEnclosedChildren() {
+        Expression onlyChild = node.getBodyExpression();
+        ArrayList<PythonConstruct> constructs = new ArrayList<PythonConstruct>();
+        constructs.add(PythonConstructFactory.wrap(onlyChild, this));
+        setChildConstructs(constructs);
     }
     
     public PythonConstruct getExpression() {
         return body;
     }
     
+    @Override
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                FunctionObject obj = new FunctionObject(PythonLambdaExpressionC.this);
+                acceptor.addResult(obj, getContext());
+                updateGrade(acceptor, Grade.DONE);
+            }
+        };
+    }
+    
+    public String displayName() {
+        return "Lambda";
+    }
 }

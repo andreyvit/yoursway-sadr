@@ -4,9 +4,9 @@ import org.eclipse.dltk.ast.ASTNode;
 
 public class PythonBuiltinClassDefinition extends PythonClassDefinition {
     
-    private final PythonClass superclass;
+    private final PythonClassType superclass;
     
-    public PythonBuiltinClassDefinition(PythonClass klass, PythonClass superclass) {
+    public PythonBuiltinClassDefinition(PythonClassType klass, PythonClassType superclass) {
         super(klass);
         this.superclass = superclass;
     }
@@ -17,7 +17,7 @@ public class PythonBuiltinClassDefinition extends PythonClassDefinition {
     }
     
     @Override
-    public PythonClass superclass() {
+    public PythonClassType superclass() {
         return superclass;
     }
     

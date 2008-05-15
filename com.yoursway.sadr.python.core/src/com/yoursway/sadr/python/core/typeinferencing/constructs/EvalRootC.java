@@ -8,7 +8,7 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
-public class EvalRootC extends PythonConstructImpl<ModuleDeclaration> implements RootPythonConstruct {
+public class EvalRootC extends PythonConstructImpl<ModuleDeclaration> {
     
     public EvalRootC(Scope sc, ModuleDeclaration node) {
         super(sc, node);
@@ -17,10 +17,6 @@ public class EvalRootC extends PythonConstructImpl<ModuleDeclaration> implements
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
         throw new UnsupportedOperationException();
-    }
-    
-    public Scope innerStaticContext() {
-        return innerContext();
     }
     
 }

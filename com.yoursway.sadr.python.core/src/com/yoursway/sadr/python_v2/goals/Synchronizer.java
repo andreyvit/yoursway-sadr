@@ -6,7 +6,7 @@ abstract public class Synchronizer {
     protected int counter;
     
     protected Synchronizer() {
-        
+        counter = 0;
     }
     
     public Synchronizer(int i) {
