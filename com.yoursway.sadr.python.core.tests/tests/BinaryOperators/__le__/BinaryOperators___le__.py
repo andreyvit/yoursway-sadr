@@ -2,8 +2,6 @@
 class Q(object):pass
 
 class Foo(object):
-    def __le__ (self, arg0, arg1):
+    def __le__ (lhs, rhs):
         return Q()
 x = Foo() <= Foo() ## expr x => Q
-
-

@@ -4,7 +4,7 @@ class Q(object):pass
 """
 klass = """
 class Foo(object):
-    def %s (self, arg0, arg1):
+    def %s (lhs, rhs):
         return Q()
 """
 

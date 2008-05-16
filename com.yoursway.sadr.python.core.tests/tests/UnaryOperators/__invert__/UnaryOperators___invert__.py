@@ -2,8 +2,6 @@
 class Q(object):pass
 
 class Foo(object):
-    def __invert__ (self, arg0, arg1):
+    def __invert__ (lhs, rhs):
         return Q()
 x = ~Foo() ## expr x => Q
-
-
