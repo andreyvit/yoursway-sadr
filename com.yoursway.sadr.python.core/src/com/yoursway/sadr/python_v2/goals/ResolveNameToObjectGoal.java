@@ -19,7 +19,7 @@ import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 
 public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     
-    protected final PythonValueSetAcceptor acceptor;
+    private PythonValueSetAcceptor acceptor;
     private final PythonConstruct var;
     private final String name;
     
@@ -27,7 +27,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
             Context context) {
         super(context);
         this.name = name;
-        this.acceptor = acceptor;
+        this.setAcceptor(acceptor);
         this.var = start;
     }
     
@@ -35,7 +35,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         super(context);
         this.var = var;
         this.name = var.node().getName();
-        this.acceptor = acceptor;
+        this.setAcceptor(acceptor);
     }
     
     public ResolveNameToObjectGoal(CallC var, PythonValueSetAcceptor acceptor, Context context) {
@@ -48,7 +48,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         } else {
             throw new IllegalStateException("should never reach this place");
         }
-        this.acceptor = acceptor;
+        this.setAcceptor(acceptor);
     }
     
     public void preRun() {
@@ -59,8 +59,8 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         scope = scope.parentScope();
         if (null == result) {
             if (getContext() != null && getContext().contains(this.name)) {
-                acceptor.addResult(getContext().getActualArgument(this.name), getContext());
-                updateGrade(acceptor, Grade.DONE);
+                getAcceptor().addResult(getContext().getActualArgument(this.name), getContext());
+                updateGrade(getAcceptor(), Grade.DONE);
                 return;
             }
         }
@@ -108,24 +108,24 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         if (result instanceof AssignmentC) {
             AssignmentC assignmentC = (AssignmentC) result;
             PythonConstruct subexpr = assignmentC.rhs();
-            schedule(subexpr.evaluate(getContext(), acceptor));
+            schedule(subexpr.evaluate(getContext(), getAcceptor()));
         } else if (result instanceof MethodDeclarationC) {
             MethodDeclarationC methodDeclarationC = (MethodDeclarationC) result;
             FunctionObject obj = new FunctionObject(methodDeclarationC);
-            acceptor.addResult(obj, getContext());
-            updateGrade(acceptor, Grade.DONE);
+            getAcceptor().addResult(obj, getContext());
+            updateGrade(getAcceptor(), Grade.DONE);
         } else if (result instanceof ClassDeclarationC) {
             ClassDeclarationC classDeclarationC = (ClassDeclarationC) result;
             FunctionObject obj = new FunctionObject(classDeclarationC);
-            acceptor.addResult(obj, getContext());
-            updateGrade(acceptor, Grade.DONE);
+            getAcceptor().addResult(obj, getContext());
+            updateGrade(getAcceptor(), Grade.DONE);
         } else if (result == null) {
             RuntimeObject object = Builtins.instance().getAttribute(name);
             if (object != null) {
-                acceptor.addResult(object, getContext());
+                getAcceptor().addResult(object, getContext());
             }
             //TODO if result is null return IMPOSSIBLE object
-            updateGrade(acceptor, Grade.DONE);
+            updateGrade(getAcceptor(), Grade.DONE);
         } else {
             throw new IllegalStateException("should never reach this place");
         }
@@ -135,5 +135,13 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     public String describe() {
         String scope = (var.parentScope()).toString();
         return super.describe() + "\nfor name " + this.name + " in " + scope;
+    }
+
+    public void setAcceptor(PythonValueSetAcceptor acceptor) {
+        this.acceptor = acceptor;
+    }
+
+    public PythonValueSetAcceptor getAcceptor() {
+        return acceptor;
     }
 }

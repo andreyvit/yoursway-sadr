@@ -23,6 +23,10 @@ public final class CallResolver {
     public static IGoal callMethod(RuntimeObject receiver, String methodName, List<RuntimeObject> args,
             HashMap<String, RuntimeObject> kwargs, PythonValueSetAcceptor acceptor, Context context) {
         RuntimeObject callable = receiver.getAttribute(methodName);
+        if (callable == null && receiver instanceof PythonUserClassType) {
+            PythonUserClassType userClass = (PythonUserClassType) receiver;
+            return callClassMethod(userClass, methodName, args, kwargs, acceptor, context);
+        }
         if (!(callable instanceof FunctionObject)) {
             throw new IllegalArgumentException("callable should be FunctionObject");
         }
@@ -34,9 +38,10 @@ public final class CallResolver {
         }
     }
     
-    public static IGoal callClassMethod(PythonUserClassType klass, String methodName,
-            List<RuntimeObject> actualArgs, PythonValueSetAcceptor acceptor, Context context) {
-        return new FindClassMethodGoal(klass.getDecl(), methodName, acceptor, context);
+    public static IGoal callClassMethod(PythonUserClassType receiver, final String methodName,
+            final List<RuntimeObject> args, final HashMap<String, RuntimeObject> kwargs,
+            final PythonValueSetAcceptor acceptor, final Context context) {
+        return new FindClassMethodGoal(receiver.getDecl(), methodName, args, kwargs, acceptor, context);
     }
     
     public static IGoal callFunction(final FunctionObject callable, final List<RuntimeObject> args,
@@ -53,7 +58,6 @@ public final class CallResolver {
         } else if (declC instanceof ClassDeclarationC) {
             final ClassDeclarationC classDeclarationC = (ClassDeclarationC) declC;
             return new CallInitMethodGoal(classDeclarationC, args, kwargs, context, acceptor);
-            
         } else if (declC instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC lambdaC = (PythonLambdaExpressionC) declC;
             List realArgs = lambdaC.node().getArguments();
