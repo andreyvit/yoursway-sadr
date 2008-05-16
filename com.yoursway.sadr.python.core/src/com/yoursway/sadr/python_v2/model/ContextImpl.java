@@ -13,12 +13,14 @@ public class ContextImpl implements Context {
     
     public ContextImpl(List<ASTNode> formalArguments, List<RuntimeObject> actualArguments) {
         if (formalArguments.size() != actualArguments.size()) {
-            throw new IllegalStateException("FIXME");
+            throw new IllegalStateException("Argument number mismatch: " + actualArguments.size()
+                    + " given, " + formalArguments.size() + " required");
         }
         for (int i = 0; i < formalArguments.size(); i++) {
             ASTNode formalArgument = formalArguments.get(i);
             if (!(formalArgument instanceof PythonArgument)) {
-                throw new IllegalStateException("FIXME");
+                throw new IllegalStateException("Wrong argument number " + (i + 1)
+                        + ": Expected PythonArgument, got " + formalArgument.getClass().getSimpleName());
             }
             args.put(((PythonArgument) formalArgument).getName(), actualArguments.get(i));
         }

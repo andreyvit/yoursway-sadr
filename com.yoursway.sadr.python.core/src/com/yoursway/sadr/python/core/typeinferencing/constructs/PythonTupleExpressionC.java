@@ -29,7 +29,7 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
                 List<PythonConstruct> args = getChildConstructs();
-                ResultsCollector synchronizer = new ResultsCollector(args.size(), context) {
+                ResultsCollector rc = new ResultsCollector(args.size(), context) {
                     @Override
                     public <T> void completed(IGrade<T> grade) {
                         List<RuntimeObject> actualArguments = getResults();
@@ -42,8 +42,9 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
                 
                 //arguments objects are placed right after function object
                 for (PythonConstruct arg : args) {
-                    schedule(arg.evaluate(context, synchronizer.createAcceptor()));
+                    schedule(arg.evaluate(context, rc.createAcceptor()));
                 }
+                rc.startCollecting();
             }
             
             @Override

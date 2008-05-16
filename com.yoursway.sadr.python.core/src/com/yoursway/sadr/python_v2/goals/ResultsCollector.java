@@ -10,13 +10,12 @@ import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class ResultsCollector extends Synchronizer {
-    List<RuntimeObject> results;
+    private final List<RuntimeObject> results;
     private final Context context;
-    private int itemCount;
+    private boolean adding = true;
     
     public ResultsCollector(int capacity, Context context) {
         this.context = context;
-        itemCount = 0;
         results = new ArrayList<RuntimeObject>(capacity);
     }
     
@@ -33,9 +32,17 @@ public abstract class ResultsCollector extends Synchronizer {
         return results;
     }
     
+    @Override
+    final public <T> void subgoalDone(IGrade<T> grade) {
+        if (adding)
+            throw new IllegalStateException("Done signal not possible in init stage.");
+        super.subgoalDone(grade);
+    }
+    
     public PythonValueSetAcceptor createAcceptor() {
-        final int item = itemCount++;
-        counter++;
+        if (!adding)
+            throw new IllegalStateException("Adding not available in waiting stage.");
+        final int item = counter++;
         results.add(null);
         return new PythonValueSetAcceptor() {
             public <T> void checkpoint(IGrade<T> grade) {
@@ -44,6 +51,10 @@ public abstract class ResultsCollector extends Synchronizer {
                 ResultsCollector.this.subgoalDone(grade);
             }
         };
+    }
+    
+    final public void startCollecting() {
+        adding = false;
     }
     
 }

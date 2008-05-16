@@ -7,7 +7,6 @@ import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
-import com.yoursway.sadr.succeeder.IGrade;
 
 public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpression> {
     
@@ -72,13 +71,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                schedule(receiver().evaluate(context, new PythonValueSetAcceptor() {
-                    public <T> void checkpoint(IGrade<T> grade) {
-                        IGoal goal = new FindClassAttributeGoal(getResultByContext(context), variable(),
-                                acceptor, context);
-                        schedule(goal);
-                    }
-                }));
+                schedule(receiver().evaluate(context, acceptor));
             }
             
             @Override

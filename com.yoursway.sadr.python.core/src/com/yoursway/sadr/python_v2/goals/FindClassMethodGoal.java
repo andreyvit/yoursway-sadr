@@ -17,7 +17,7 @@ public class FindClassMethodGoal extends ResolveNameToObjectGoal {
     public FindClassMethodGoal(ClassDeclarationC decl, String name, final List<RuntimeObject> args,
             final HashMap<String, RuntimeObject> kwargs, final PythonValueSetAcceptor parentAcceptor,
             final Context context) {
-        super(null, name, null, context);
+        super(decl, name, null, context);
         this.setAcceptor(new PythonValueSetAcceptor() {
             
             public <T> void checkpoint(IGrade<T> grade) {

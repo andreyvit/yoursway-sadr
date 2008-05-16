@@ -106,6 +106,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                         schedule(assignmentC.rhs().evaluate(context, rc.createAcceptor()));
                     }
                 }
+                rc.startCollecting();
             }
             
             //            protected String getName(final CallC var) {

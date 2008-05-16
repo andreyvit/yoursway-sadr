@@ -23,6 +23,13 @@ public class PythonClassType extends PythonObject {
         super(Builtins.TYPE);
         supers = new ArrayList<PythonClassType>(1);
         supers.add(Builtins.OBJECT);
+        
+    }
+    
+    public PythonClassType(PythonClassType superClass) {
+        super(Builtins.TYPE);
+        supers = new ArrayList<PythonClassType>(1);
+        supers.add(superClass);
     }
     
     public PythonClassType(List<PythonClassType> supers) {
@@ -57,6 +64,10 @@ public class PythonClassType extends PythonObject {
                 return object;
         }
         return null;
+    }
+    
+    public void setAttribute(FunctionObject object) {
+        setAttribute(object.name(), object);
     }
     
     @Override

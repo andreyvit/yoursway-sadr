@@ -3,8 +3,11 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import static com.google.common.collect.Iterators.transform;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 
@@ -20,6 +23,16 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
+import com.yoursway.sadr.python_v2.goals.ResultsCollector;
+import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
+import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.succeeder.IGrade;
 
 public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpression> {
     
@@ -31,19 +44,45 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
         
     };
     private final PythonConstruct array;
+    private final PythonConstruct index;
     
     ArrayAccessC(Scope sc, PythonArrayAccessExpression node) {
         super(sc, node);
         array = wrap(node.getArray());
+        index = wrap((ASTNode) node.getIndex().getChilds().get(0));
     }
     
     @Override
     protected void wrapEnclosedChildren() {
-        super.wrapEnclosedChildren();
+        setChildConstructs(new ArrayList<PythonConstruct>());
     }
     
     public PythonConstruct array() {
         return array;
+    }
+    
+    @Override
+    public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                ResultsCollector rc = new ResultsCollector(2, context) {
+                    @Override
+                    public <T> void completed(IGrade<T> grade) {
+                        List<RuntimeObject> results = getResults();
+                        RuntimeObject arrayObject = results.get(0);
+                        List<RuntimeObject> args = new ArrayList<RuntimeObject>();
+                        args.add(results.get(1));
+                        if (arrayObject.getType() instanceof PythonClassType) {
+                            schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, null,
+                                    acceptor, context));
+                        }
+                    }
+                };
+                schedule(new ResolveNameToObjectGoal((VariableReferenceC) array, rc.createAcceptor(), context));
+                schedule(index.evaluate(context, rc.createAcceptor()));
+                rc.startCollecting();
+            }
+        };
     }
     
     public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,

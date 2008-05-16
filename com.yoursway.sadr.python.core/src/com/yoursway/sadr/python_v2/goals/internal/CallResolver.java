@@ -8,6 +8,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
 import com.yoursway.sadr.python_v2.goals.EvaluateBuiltinGoal;
 import com.yoursway.sadr.python_v2.goals.FindClassMethodGoal;
@@ -23,8 +24,9 @@ public final class CallResolver {
     public static IGoal callMethod(RuntimeObject receiver, String methodName, List<RuntimeObject> args,
             HashMap<String, RuntimeObject> kwargs, PythonValueSetAcceptor acceptor, Context context) {
         RuntimeObject callable = receiver.getAttribute(methodName);
-        if (callable == null && receiver instanceof PythonUserClassType) {
-            PythonUserClassType userClass = (PythonUserClassType) receiver;
+        if (callable == null && receiver instanceof InstanceValue) {
+            PythonUserClassType userClass = (PythonUserClassType) receiver.getType();
+            args.add(0, receiver);
             return callClassMethod(userClass, methodName, args, kwargs, acceptor, context);
         }
         if (!(callable instanceof FunctionObject)) {
@@ -57,10 +59,10 @@ public final class CallResolver {
             return new CallReturnValueGoal((MethodDeclarationC) declC, actualArguments, context, acceptor);
         } else if (declC instanceof ClassDeclarationC) {
             final ClassDeclarationC classDeclarationC = (ClassDeclarationC) declC;
-            return new CallInitMethodGoal(classDeclarationC, args, kwargs, context, acceptor);
+            return new CreateInstanceGoal(classDeclarationC, args, kwargs, context, acceptor);
         } else if (declC instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC lambdaC = (PythonLambdaExpressionC) declC;
-            List realArgs = lambdaC.node().getArguments();
+            List<ASTNode> realArgs = lambdaC.node().getArguments();
             Context actualArguments = new ContextImpl(realArgs, args);
             return ((PythonLambdaExpressionC) declC).getExpression().evaluate(actualArguments, acceptor);
         }

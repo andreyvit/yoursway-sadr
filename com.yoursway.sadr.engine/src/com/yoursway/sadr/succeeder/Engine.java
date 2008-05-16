@@ -22,6 +22,7 @@ public class Engine implements IScheduler {
     private final Map<IGoal, ISchedulingStrategy> goalToStrategy = new HashMap<IGoal, ISchedulingStrategy>();
     private final Map<IGoal, Collection<IGoal>> goalToSubgoals = new HashMap<IGoal, Collection<IGoal>>();
     private final Map<IGoal, IGoal> parentGoals = new HashMap<IGoal, IGoal>();
+    private final Map<IAcceptor, IGoal> acceptorGoals = new HashMap<IAcceptor, IGoal>();
     
     public Engine(ISchedulingStrategy strategy) {
         this.defaultStrategy = strategy;
@@ -30,7 +31,7 @@ public class Engine implements IScheduler {
     public String printGoalStack(IGoal goal) {
         StringBuilder output = new StringBuilder();
         while (goal != null) {
-            output.append(goal.toString().replace("\n", "") + '\n');
+            output.append("+-> " + goal.toString().replace("\n", " ") + '\n');
             goal = parentGoals.get(goal);
         }
         return output.toString();
@@ -48,7 +49,7 @@ public class Engine implements IScheduler {
                 IGrade<T> oldGrade = (IGrade<T>) oldAcceptors.get(acceptor);
                 if (oldGrade.compareTo((T) grade) >= 0) {
                     throw new IllegalArgumentException("Grade typically should increase for "
-                            + acceptor.getClass().getSimpleName() + "\n" + "Goals stack:"
+                            + acceptor.getClass().getSimpleName() + "\n" + "Goals stack:\n"
                             + printGoalStack(goal));
                     
                 }
@@ -56,6 +57,7 @@ public class Engine implements IScheduler {
             oldAcceptors.put(acceptor, grade);
         }
         acceptors.put(acceptor, grade);
+        acceptorGoals.put(acceptor, goal);
         return CheckpointToken.instance();
     }
     
@@ -135,7 +137,13 @@ public class Engine implements IScheduler {
         acceptors = new HashMap<IAcceptor, IGrade<?>>();
         for (IAcceptor acceptor : generation.keySet()) {
             IGrade<?> grade = generation.get(acceptor);
-            acceptor.checkpoint(grade);
+            try {
+                acceptor.checkpoint(grade);
+            } catch (RuntimeException re) {
+                System.out.println("Failed goal stack:");
+                System.out.println(printGoalStack(acceptorGoals.get(acceptor)));
+                throw re;
+            }
         }
     }
 }

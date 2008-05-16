@@ -27,7 +27,7 @@ public class PythonUserClassType extends PythonClassType {
     
     @Override
     public String describe() {
-        return "Type " + getName();
+        return getName();
     }
     
     //    IGoal findMethod(String name, PythonValueSetAcceptor acceptor, final Context context) {
