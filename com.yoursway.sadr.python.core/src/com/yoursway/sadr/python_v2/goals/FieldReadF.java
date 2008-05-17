@@ -16,6 +16,14 @@ public class FieldReadF extends Frog {
         this.field = field;
     }
     
+    public Frog getReceiver() {
+        return receiver;
+    }
+    
+    public String getField() {
+        return field;
+    }
+    
     @Override
     public String toString() {
         return receiver + "." + getClass().getSimpleName() + "(" + field + ")";

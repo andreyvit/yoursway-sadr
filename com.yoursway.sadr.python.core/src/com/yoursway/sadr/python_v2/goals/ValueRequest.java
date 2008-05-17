@@ -15,6 +15,10 @@ public class ValueRequest implements Request {
     
     public Frog apply(Frog frog, Effect effect) {
         Frog result = effect.apply(frog);
+        if (!result.equals(frog))
+            System.out.println("FROG:  " + frog + " => " + result);
+        else
+            System.out.println("FROG:  " + frog);
         RuntimeObject value = result.compactValue();
         if (value == null)
             return result;
@@ -22,6 +26,10 @@ public class ValueRequest implements Request {
             acceptor.addResult(value, EMPTY_CONTEXT);
             return null;
         }
+    }
+    
+    public Request clone(Effect effect) {
+        return this;
     }
     
 }

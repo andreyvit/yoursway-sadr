@@ -17,6 +17,10 @@ public class SideEffectRequest implements Request {
     
     public Frog apply(Frog frog, Effect effect) {
         Frog result = effect.apply(frog);
+        if (!result.equals(frog))
+            System.out.println("SFROG:  " + frog + " => " + result);
+        else
+            System.out.println("SFROG:  " + frog);
         TransferOfControl value = result.compactSideEffect();
         if (value == null)
             return result;
@@ -25,4 +29,9 @@ public class SideEffectRequest implements Request {
             return null;
         }
     }
+    
+    public Request clone(Effect effect) {
+        return new SideEffectRequest(request, swamp, effect.apply(requestFrog));
+    }
+    
 }

@@ -15,6 +15,10 @@ public class UserClassF extends Frog {
         this.construct = construct;
     }
     
+    public ClassDeclarationC getConstruct() {
+        return construct;
+    }
+    
     @Override
     public Frog replace(Frog lhs, Frog rhs) {
         if (lhs.equals(this))
@@ -30,4 +34,30 @@ public class UserClassF extends Frog {
     public String toString() {
         return getClass().getSimpleName() + "(" + construct + ")";
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((construct == null) ? 0 : construct.hashCode());
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final UserClassF other = (UserClassF) obj;
+        if (construct == null) {
+            if (other.construct != null)
+                return false;
+        } else if (!construct.equals(other.construct))
+            return false;
+        return true;
+    }
+    
 }

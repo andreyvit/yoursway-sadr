@@ -30,7 +30,8 @@ public class ReadFieldGoal extends ContextSensitiveGoal implements Swamp {
         this.acceptor = acceptor;
     }
     
-    public void parrotizeStartingWithParentOf(final PythonConstruct currentConstruct, final Frog frog, final Request request) {
+    public void parrotizeStartingWithParentOf(final PythonConstruct currentConstruct, final Frog frog,
+            final Request request) {
         schedule(new FindPrevConstructGoal(currentConstruct, new PythonConstructAcceptor() {
             @Override
             public <T> void checkpoint(IGrade<T> grade) {
@@ -47,18 +48,23 @@ public class ReadFieldGoal extends ContextSensitiveGoal implements Swamp {
         parrotizeStartingWithParentOf(receiver, frog, new ValueRequest(acceptor));
     }
     
-    public void parrotizeStartingWith(PythonConstruct previousConstruct, final Frog frog, final Request request) {
+    public void parrotizeStartingWith(PythonConstruct previousConstruct, final Frog frog,
+            final Request request) {
         Effects effects = previousConstruct.getEffects();
         for (Effect effect : effects.getEffects()) {
-            Frog newFrog = request.apply(frog, effect);
+            Request clone = request.clone(effect);
+            Frog newFrog = clone.apply(frog, effect);
             if (newFrog != null)
-                parrotizeStartingWithParentOf(previousConstruct, newFrog, request);
+                parrotizeStartingWithParentOf(previousConstruct, newFrog, clone);
         }
         for (Frog crazyFrog : effects.getFrogs()) {
             SideEffectRequest sideEffectRequest = new SideEffectRequest(request, ReadFieldGoal.this, frog);
             parrotizeStartingWithParentOf(previousConstruct, crazyFrog, sideEffectRequest);
         }
         if (effects.getEffects().isEmpty())
+            //            if (!effects.getFrogs().isEmpty())
+            //                System.out.println("ReadFieldGoal.parrotizeStartingWith()");
+            //            else
             parrotizeStartingWithParentOf(previousConstruct, frog, request);
     }
     

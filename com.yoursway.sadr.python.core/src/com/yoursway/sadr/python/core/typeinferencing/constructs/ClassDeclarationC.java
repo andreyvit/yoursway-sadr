@@ -74,4 +74,14 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
         return node.getName();
     }
     
+    public MethodDeclarationC findDeclaredMethod(String methodName) {
+        for (PythonConstruct construct : getChildConstructs())
+            if (construct instanceof MethodDeclarationC) {
+                MethodDeclarationC methodC = (MethodDeclarationC) construct;
+                if (methodC.name().equals(methodName))
+                    return methodC;
+            }
+        return null;
+    }
+    
 }
