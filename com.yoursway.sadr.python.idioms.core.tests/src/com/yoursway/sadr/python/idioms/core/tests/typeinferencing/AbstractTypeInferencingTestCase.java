@@ -57,6 +57,7 @@ import com.yoursway.sadr.python.idioms.core.TreePrinter;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;
 import com.yoursway.sadr.python.idioms.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.idioms.core.tests.internal.StringInputStream;
+import com.yoursway.sadr.succeeder.Engine;
 
 public abstract class AbstractTypeInferencingTestCase {
 
@@ -112,12 +113,12 @@ public abstract class AbstractTypeInferencingTestCase {
 		ProjectRuntime projectRuntime = new ProjectRuntime(
 				scriptProject);
 
-		AnalysisEngine engine = projectRuntime.getEngine();
+		Engine engine = projectRuntime.getEngine();
 
 		StringBuilder expected = new StringBuilder();
 		StringBuilder actual = new StringBuilder();
 
-		for (ISourceModule sourceModule : projectRuntime.getSourceModules()) {
+		for (ISourceModule sourceModule : projectRuntime.getModules()) {
 			String headline = "==== " + sourceModule.getElementName()
 					+ " ====\n";
 			expected.append(headline);
@@ -129,7 +130,7 @@ public abstract class AbstractTypeInferencingTestCase {
 	}
 
 	private void checkFile(ISourceModule sourceModule,
-			ProjectRuntime projectRuntime, AnalysisEngine engine,
+			ProjectRuntime projectRuntime, Engine engine,
 			StringBuilder expected, StringBuilder actual)
 			throws ModelException, Exception {
 		Collection<IAssertion> assertions = new ArrayList<IAssertion>();
@@ -296,7 +297,7 @@ public abstract class AbstractTypeInferencingTestCase {
 	public interface IAssertion {
 
 		void check(PythonFileC fileC,
-				ISourceModule cu, AnalysisEngine engine,
+				ISourceModule cu, Engine engine,
 				StringBuilder expected, StringBuilder actual) throws Exception;
 
 		ValueInfoGoal createGoal(PythonFileC fileC);
@@ -323,7 +324,7 @@ public abstract class AbstractTypeInferencingTestCase {
 			 assertNotNull(node);
 			PythonConstruct construct = fileC.subconstructFor(node);
 			while(construct.node() instanceof VariableReference)
-				construct = construct.parent();
+				construct = construct.parentScope();
 			assertNotNull(construct);
 			Idiom idiom = new Idiom(this.pattern);
 			IdiomMatch match = idiom.match(construct);

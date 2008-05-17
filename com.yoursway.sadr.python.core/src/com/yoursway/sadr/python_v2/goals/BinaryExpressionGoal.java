@@ -82,7 +82,6 @@ public class BinaryExpressionGoal extends ContextSensitiveGoal {
     
     @Override
     public String describe() {
-        String basic = super.describe();
-        return basic + "\nfor expression " + expression.toString();
+        return super.describe() + "\nfor expression " + expression.toString();
     }
 }

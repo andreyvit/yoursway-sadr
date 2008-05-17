@@ -50,6 +50,7 @@ import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
+import com.yoursway.sadr.python.core.typeinferencing.goals.CreateSwampGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -147,7 +148,6 @@ public abstract class AbstractTypeInferencingTestCase {
         
         if (assertions.size() == 0)
             return;
-        
         PythonFileC fileC = projectRuntime.getModule(sourceModule.getElementName());
         for (IAssertion assertion : assertions)
             assertion.check(fileC, sourceModule, engine, expected, actual);
@@ -181,6 +181,15 @@ public abstract class AbstractTypeInferencingTestCase {
             //            String expr = tok.nextToken();
             //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
             //            assertion = new LocalVarTypeAssertion(expr, namePos);
+        } else if ("swamp-test".equals(test)) {
+            String expr = tok.nextToken();
+            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
+            needToken(tok, "=>");
+            String correctClassRef = tok.nextToken();
+            while (tok.hasMoreTokens()) {
+                correctClassRef += " " + tok.nextToken();
+            }
+            assertion = new SwampTestAssertion(expr, namePos, correctClassRef);
         } else if ("has-method".equals(test)) {
             //            String expr = tok.nextToken();
             //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
@@ -415,6 +424,49 @@ public abstract class AbstractTypeInferencingTestCase {
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             return construct.evaluate(null, acceptor);//FIXME?
+        }
+    }
+    
+    class SwampTestAssertion implements IAssertion {
+        
+        private final String correctClassRef;
+        
+        private final String expression;
+        
+        private final int namePos;
+        
+        public SwampTestAssertion(String expression, int namePos, String ClassRecorrectClassReff) {
+            this.expression = expression;
+            this.namePos = namePos;
+            this.correctClassRef = ClassRecorrectClassReff;
+        }
+        
+        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+                StringBuilder actual) throws Exception {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+                public <T> void checkpoint(IGrade<T> grade) {
+                    System.out.println("Done");
+                    //do nothing;
+                }
+            };
+            IGoal goal = createGoal(fileC, acceptor);
+            engine.run(goal);
+            ValueInfo result = acceptor.getResult();
+            String[] possibleValues = result.describePossibleValues();
+            Arrays.sort(possibleValues, Strings.getNaturalComparator());
+            String values = Strings.join(possibleValues, ",");
+            if (values.length() == 0)
+                values = "(none)";
+            String prefix = expression + " : ";
+            expected.append(prefix).append(correctClassRef).append('\n');
+            actual.append(prefix).append(values).append('\n');
+        }
+        
+        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+            ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
+            assertNotNull(node);
+            PythonConstruct construct = fileC.subconstructFor(node);
+            return new CreateSwampGoal(null, acceptor);//FIXME?
         }
     }
     

@@ -29,7 +29,7 @@ public class IdiomMatch {
 	public boolean match(PythonConstruct realConstruct) {
 		this.realConstruct = realConstruct;
 		matchMemory = Maps.newHashMap();
-		List<ASTNode> childs = realConstruct.parent().node().getChilds();
+		List<ASTNode> childs = realConstruct.parentScope().node().getChilds();
 		int size = parsedSource.getStatements().size();
 		ASTNode first = realConstruct.node();
 		List<ASTNode> slice = sliceNodes(childs, first, size);

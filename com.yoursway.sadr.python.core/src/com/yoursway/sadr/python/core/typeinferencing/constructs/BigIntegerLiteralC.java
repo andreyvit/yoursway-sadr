@@ -1,19 +1,14 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import java.math.BigInteger;
-
 import org.eclipse.dltk.ast.expressions.BigNumericLiteral;
 
-import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
-import com.yoursway.sadr.blocks.integer_literals.LongValue;
-import com.yoursway.sadr.blocks.integer_literals.RuntimeModelWithIntegerTypes;
-import com.yoursway.sadr.blocks.simple_types.SimpleType;
-import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.LongType;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
     
@@ -21,16 +16,19 @@ public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
         super(sc, literal);
     }
     
-    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
-        ValueInfoBuilder builder = new ValueInfoBuilder();
-        
-        RuntimeModelWithIntegerTypes modelWithIntegerTypes = staticContext().schema().integerTypesSupport
-                .facelet(staticContext().runtimeModel());
-        SimpleType t = modelWithIntegerTypes.longType();
-        BigInteger v = node.getLongValue();
-        builder.add(new SimpleTypeItem(t), new LongValue(v));
-        
-        return continuation.consume(builder.build(), requestor);
+    @Override
+    public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                acceptor.addResult(LongType.newLongObject(BigIntegerLiteralC.this), context);
+                updateGrade(acceptor, Grade.DONE);
+            }
+            
+            @Override
+            public String describe() {
+                String basic = "Evaluating integer literal";
+                return basic + "\nfor expression " + BigIntegerLiteralC.this.toString();
+            }
+        };
     }
 }

@@ -3,9 +3,8 @@ package com.yoursway.sadr.blocks.integer_literals;
 import java.math.BigInteger;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.ValueTraits;
 
-public class LongValue extends AbstractValue implements ValueTraits {
+public class LongValue extends AbstractValue {
     
     private final BigInteger value;
     
@@ -17,41 +16,12 @@ public class LongValue extends AbstractValue implements ValueTraits {
         return value;
     }
     
-    @Override
     public String toString() {
         return describe();
     }
     
     public String describe() {
         return value.toString();
-    }
-    
-    public ValueTraits traits() {
-        return this;
-    }
-    
-    public String coherseToString() {
-        return value.toString();
-    }
-    
-    public boolean cohersibleToString() {
-        return true;
-    }
-    
-    public BigInteger longValue() {
-        return value;
-    }
-    
-    public boolean isLong() {
-        return true;
-    }
-    
-    public long integerValue() {
-        return 0;
-    }
-    
-    public boolean isInteger() {
-        return false;
     }
     
     @Override
@@ -70,12 +40,21 @@ public class LongValue extends AbstractValue implements ValueTraits {
         final LongValue other = (LongValue) obj;
         return (value.equals(other.value));
     }
-    
-    public boolean coherseToBoolean() {
-        return (value.signum() != 0);
+
+    public LongValue add(LongValue val) {
+    	return new LongValue(this.value().add(val.value()));
     }
     
-    public boolean cohersibleToBoolean() {
-        return true;
+    public LongValue subtract(LongValue val) {
+    	return new LongValue(this.value().subtract(val.value()));
     }
+    
+    public LongValue multiply(LongValue val) {
+    	return new LongValue(this.value().multiply(val.value()));
+    }
+    
+    public LongValue divide(LongValue val) {
+    	return new LongValue(this.value().divide(val.value()));
+    }
+    
 }

@@ -38,7 +38,7 @@ public class Idiom {
 
 	public void printCompareInfo(PythonConstruct construct) {
 		System.out.println("<<< --- Real file parse tree ---");
-		TreePrinter.printTree(construct.parent().node().getChilds());
+		TreePrinter.printTree(construct.parentScope().node().getChilds());
 		for(IdiomMatcher matcher: matchers){
 			System.out.println("--------------------------");
 			matcher.printMatchTree();
