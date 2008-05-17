@@ -41,17 +41,17 @@ public abstract class Goal implements IGoal {
     @Override
     public String toString() {
         String result = describe();
-        if (result == null) {
-            String simpleName = this.getClass().getSimpleName();
-            if (simpleName.equals("")) {
-                simpleName = this.getClass().getName();
-                simpleName = simpleName.substring(simpleName.lastIndexOf('.') + 1);
-            }
-            return simpleName;
-        } else {
-            return result;
-        }
+        if (result == null)
+            throw new NullPointerException("result is null");
+        return result;
     }
     
-    abstract protected String describe();
+    protected String describe() {
+        String simpleName = this.getClass().getSimpleName();
+        if (simpleName.equals("")) {
+            simpleName = this.getClass().getName();
+            simpleName = simpleName.substring(simpleName.lastIndexOf('.') + 1);
+        }
+        return simpleName;
+    }
 }

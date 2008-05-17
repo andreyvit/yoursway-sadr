@@ -62,7 +62,8 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
         return supers;
     }
     
-    public String getName() {
+    @Override
+    public String name() {
         return node.getName();
     }
     

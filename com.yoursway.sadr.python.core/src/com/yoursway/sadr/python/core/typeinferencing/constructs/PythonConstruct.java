@@ -22,4 +22,8 @@ public interface PythonConstruct {
     Scope parentScope();
     
     List<PythonConstruct> getChildConstructs();
+    
+    Frog toFrog();
+    
+    Effects getEffects();
 }

@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
+import static java.util.Collections.singletonList;
 
 import java.util.Collection;
 
@@ -77,6 +78,12 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
             return reference.getName();
         }
         return null;
+    }
+    
+    @Override
+    public Effects getEffects() {
+        Effect effect = new AssignmentEffect(lhs().toFrog(), rhs().toFrog());
+        return new Effects(singletonList(effect), Effects.NO_FROGS);
     }
     
     //    public void actOnModel(ModelRequest request) {

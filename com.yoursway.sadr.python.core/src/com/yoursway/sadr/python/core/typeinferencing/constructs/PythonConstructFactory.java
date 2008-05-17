@@ -49,7 +49,6 @@ import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
-import com.yoursway.sadr.python_v2.model.builtins.PythonLambdaExpressionC;
 
 public class PythonConstructFactory {
     

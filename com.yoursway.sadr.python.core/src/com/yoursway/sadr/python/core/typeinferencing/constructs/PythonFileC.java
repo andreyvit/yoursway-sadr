@@ -28,4 +28,13 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> {
         return "Module " + this.moduleName;
     }
     
+    @Override
+    public Scope getFileScope() {
+        return this;
+    }
+    
+    @Override
+    public String name() {
+        return this.moduleName;
+    }
 }

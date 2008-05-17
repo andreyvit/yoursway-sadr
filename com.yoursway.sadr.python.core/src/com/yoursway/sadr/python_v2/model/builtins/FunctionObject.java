@@ -8,6 +8,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonLambdaExpressionC;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class FunctionObject extends PythonObject {

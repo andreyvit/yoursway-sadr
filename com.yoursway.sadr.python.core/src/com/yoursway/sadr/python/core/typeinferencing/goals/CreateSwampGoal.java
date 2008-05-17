@@ -13,9 +13,4 @@ public class CreateSwampGoal extends Goal {
         
     }
     
-    @Override
-    protected String describe() {
-        return null;
-    }
-    
 }

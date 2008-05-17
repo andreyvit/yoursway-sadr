@@ -63,6 +63,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
             }
         };
     }
+    
     //    public void actOnModel(ModelRequest request) {
     //        PythonClassImpl klass = staticContext().currentClass();
     //        if (klass != null) {
@@ -74,4 +75,8 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     //        }
     //    }
     
+    @Override
+    public String name() {
+        return this.node.getName();
+    }
 }

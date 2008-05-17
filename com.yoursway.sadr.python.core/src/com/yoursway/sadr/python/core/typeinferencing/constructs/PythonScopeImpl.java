@@ -28,15 +28,21 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     }
     
     private void addChildren(PythonConstruct construct, List<PythonConstruct> children) {
-        children.add(construct);
         for (PythonConstruct child : construct.getChildConstructs()) {
             if (this == child.parentScope())
                 addChildren(child, children);
         }
+        children.add(construct);
     }
     
     @Override
     public String toString() {
         return ((Scope) this).displayName();
+    }
+    
+    abstract public String name();
+    
+    public Scope getFileScope() {
+        return parentScope().getFileScope();
     }
 }

@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
+import static com.yoursway.sadr.python.core.typeinferencing.constructs.Effects.NONE;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -143,4 +145,14 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         throw new UnsupportedOperationException("Evaluate is not enabled for class "
                 + this.getClass().getSimpleName());
     }
+    
+    public Frog toFrog() {
+        throw new UnsupportedOperationException("All frogs gone to heaven, except "
+                + getClass().getSimpleName());
+    }
+    
+    public Effects getEffects() {
+        return NONE;
+    }
+    
 }

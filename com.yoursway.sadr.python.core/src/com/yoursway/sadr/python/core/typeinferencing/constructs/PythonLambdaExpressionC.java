@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python_v2.model.builtins;
+package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import java.util.ArrayList;
 
@@ -6,13 +6,11 @@ import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstructFactory;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpression> {
@@ -49,5 +47,10 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
     
     public String displayName() {
         return "Lambda";
+    }
+    
+    @Override
+    public String name() {
+        return "<lambda>";
     }
 }

@@ -8,6 +8,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonLambdaExpressionC;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
 import com.yoursway.sadr.python_v2.goals.EvaluateBuiltinGoal;
@@ -17,7 +18,6 @@ import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
-import com.yoursway.sadr.python_v2.model.builtins.PythonLambdaExpressionC;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public final class CallResolver {

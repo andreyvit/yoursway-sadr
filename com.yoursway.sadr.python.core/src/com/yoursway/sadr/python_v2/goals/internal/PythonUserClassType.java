@@ -22,7 +22,7 @@ public class PythonUserClassType extends PythonClassType {
     }
     
     String getName() {
-        return decl.getName();
+        return decl.name();
     }
     
     @Override
