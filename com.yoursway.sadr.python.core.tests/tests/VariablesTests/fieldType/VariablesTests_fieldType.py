@@ -8,3 +8,4 @@ class Foo:
     print y ## expr y => int
 
 
+

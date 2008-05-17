@@ -15,6 +15,11 @@ public final class VariablesTests extends AbstractTypeInferencingTestCase {
     }
     
     @Test
+    public void dumb3() throws Exception {
+        runTest();
+    }
+    
+    @Test
     public void classAsStorage() throws Exception {
         runTest();
     }

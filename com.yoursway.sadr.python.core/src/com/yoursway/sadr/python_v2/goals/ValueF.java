@@ -14,7 +14,7 @@ public class ValueF extends Frog {
     }
     
     @Override
-    public RuntimeObject compact() {
+    public RuntimeObject compactValue() {
         return value;
     }
     

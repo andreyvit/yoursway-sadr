@@ -6,3 +6,4 @@ def foo():
 	p = Foo.a ## expr p => int
 	q = Foo.a ## value q => 5
 
+

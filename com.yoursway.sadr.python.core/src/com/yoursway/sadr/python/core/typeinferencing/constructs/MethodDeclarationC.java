@@ -1,9 +1,13 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
+import static com.yoursway.sadr.python.core.typeinferencing.constructs.Effects.NO_FROGS;
+import static java.util.Collections.singleton;
 
 import java.util.List;
 
+import org.eclipse.dltk.ast.declarations.Argument;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
@@ -14,6 +18,7 @@ import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.VariableReadF;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
@@ -78,5 +83,17 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     @Override
     public String name() {
         return this.node.getName();
+    }
+    
+    @Override
+    public Effects getEffects() {
+        return new Effects(singleton(new MethodDeclarationEffect(this)), NO_FROGS);
+    }
+    
+    public List<Frog> getArgumentFrogs() {
+        List<Frog> result = newArrayList();
+        for (Argument arg : (List<Argument>) node.getArguments())
+            result.add(new VariableReadF(arg.getName()));
+        return result;
     }
 }

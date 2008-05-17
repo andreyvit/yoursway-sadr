@@ -6,7 +6,6 @@ import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.Goal;
 
 public class FindPrevConstructGoal extends Goal {
@@ -26,7 +25,7 @@ public class FindPrevConstructGoal extends Goal {
     }
     
     public void preRun() {
-        System.out.println(((Engine) scheduler()).printGoalStack(this));
+        //        System.out.println(((Engine) scheduler()).printGoalStack(this));
         PythonConstruct prevConstruct = findPrevConstruct(current);
         if (prevConstruct == null) {
             schedule(new FindCallersGoal(current.parentScope(), acceptor));

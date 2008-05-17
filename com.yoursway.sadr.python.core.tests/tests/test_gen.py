@@ -139,7 +139,7 @@ if __name__ == '__main__':
         update_all_tests()
     elif len(sys.argv)==3:
         test_builder = TestBuilder(sys.argv[1])
-        test_builder.addTest(sys.argv[2])
+        test_builder.addTest(sys.argv[2], "")
         update_test_suite(sys.argv[1], test_builder) # add previous tests 
     else:
         print """Usage: 

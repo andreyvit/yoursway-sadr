@@ -66,7 +66,7 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     
     @Override
     public Effects getEffects() {
-        return new Effects(singleton(new ClassEffect(this)), NO_FROGS);
+        return new Effects(singleton(new ClassDeclarationEffect(this)), NO_FROGS);
     }
     
     @Override

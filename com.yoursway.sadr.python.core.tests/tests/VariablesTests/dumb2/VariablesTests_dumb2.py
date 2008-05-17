@@ -14,3 +14,4 @@ a.x = Foo()
 w = a.x
 print w ## expr w => Foo 
 
+
