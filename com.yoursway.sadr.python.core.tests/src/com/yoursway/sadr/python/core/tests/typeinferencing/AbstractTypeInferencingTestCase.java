@@ -465,7 +465,7 @@ public abstract class AbstractTypeInferencingTestCase {
         public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
-            PythonConstruct construct = fileC.subconstructFor(node);
+            //            PythonConstruct construct = fileC.subconstructFor(node);
             return new CreateSwampGoal(null, acceptor);//FIXME?
         }
     }
