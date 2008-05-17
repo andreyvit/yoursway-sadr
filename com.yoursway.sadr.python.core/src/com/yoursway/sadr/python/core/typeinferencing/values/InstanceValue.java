@@ -3,6 +3,7 @@ package com.yoursway.sadr.python.core.typeinferencing.values;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
@@ -17,6 +18,12 @@ public class InstanceValue extends PythonObject {
     public InstanceValue(PythonClassType receiverType, InstanceRegistrar registrar) {
         super(receiverType);
         id = registrar.registerInstance(this);
+    }
+    
+    public void setField(String key, ValueSet value) {
+        ValueSet valueSet = fieldValues.get(key);
+        if (valueSet == null)
+            valueSet = new ValueInfoBuilder();
     }
     
     @Override
