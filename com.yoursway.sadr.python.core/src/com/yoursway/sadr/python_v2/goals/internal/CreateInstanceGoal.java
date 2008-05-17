@@ -26,7 +26,7 @@ public final class CreateInstanceGoal extends ContextSensitiveGoal {
     private final ClassDeclarationC classDeclarationC;
     //  private final List<RuntimeObject> args;
     
-    static InstanceRegistrar instanceRegistrar = new InstanceRegistrarImpl();
+    public static InstanceRegistrar instanceRegistrar = new InstanceRegistrarImpl();
     
     public CreateInstanceGoal(ClassDeclarationC decl, List<RuntimeObject> args,
             HashMap<String, RuntimeObject> kwargs, Context context, PythonValueSetAcceptor acceptor) {

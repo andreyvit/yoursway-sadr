@@ -1,6 +1,8 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
+import static com.yoursway.sadr.python.core.typeinferencing.constructs.Effects.NO_FROGS;
+import static java.util.Collections.singleton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +62,11 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     
     public List<PythonConstruct> getSuperClasses() {
         return supers;
+    }
+    
+    @Override
+    public Effects getEffects() {
+        return new Effects(singleton(new ClassEffect(this)), NO_FROGS);
     }
     
     @Override

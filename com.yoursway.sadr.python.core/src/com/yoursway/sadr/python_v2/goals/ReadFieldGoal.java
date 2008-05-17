@@ -10,6 +10,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.Frog;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public class ReadFieldGoal extends ContextSensitiveGoal {
@@ -42,13 +43,14 @@ public class ReadFieldGoal extends ContextSensitiveGoal {
                     for (Effect effect : effects.getEffects()) {
                         Frog newFrog = apply(frog, effect);
                         if (newFrog != null)
-                            parrotize(currentConstruct, newFrog);
+                            parrotize(previousConstruct, newFrog);
                     }
                     for (Frog crazyFrog : effects.getFrogs()) {
                         // TODO hui znaet
                         System.out.println("ReadFieldGoal.checkpoint(): " + crazyFrog);
                     }
-                    parrotize(previousConstruct, frog);
+                    if (effects.getEffects().isEmpty())
+                        parrotize(previousConstruct, frog);
                 }
             }
         }));
@@ -56,11 +58,13 @@ public class ReadFieldGoal extends ContextSensitiveGoal {
     
     protected Frog apply(Frog frog, Effect effect) {
         Frog result = effect.apply(frog);
-        if (result instanceof ValueF) {
-            acceptor.addResult(((ValueF) result).getValue(), EMPTY_CONTEXT);
+        RuntimeObject value = result.compact();
+        if (value == null)
+            return result;
+        else {
+            acceptor.addResult(value, EMPTY_CONTEXT);
             return null;
         }
-        return result;
     }
     
     public void preRun() {

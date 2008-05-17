@@ -9,6 +9,7 @@ import com.yoursway.sadr.python.core.runtime.PythonUtils;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.CallF;
 
 public class ProcedureCallC extends CallC {
     
@@ -85,4 +86,14 @@ public class ProcedureCallC extends CallC {
     public PythonConstruct getReceiver() {
         return null;
     }
+    
+    private PythonConstruct function() {
+        return wrap(node.getFunction());
+    }
+    
+    @Override
+    public Frog toFrog() {
+        return new CallF(function().toFrog());
+    }
+    
 }

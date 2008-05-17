@@ -93,7 +93,7 @@ public class Engine implements IScheduler {
         int priority = strategy.getPriority(subgoal);
         goalToStrategy.put(subgoal, strategy);
         LinkedList<IGoal> thisPriority = lookupByPriority(priority);
-        thisPriority.add(subgoal);
+        thisPriority.addFirst(subgoal);
         boolean added = allPlannedGoals.add(subgoal);
         if (!added)
             throw new IllegalArgumentException("Trying adding goal twice: " + subgoal.toString());

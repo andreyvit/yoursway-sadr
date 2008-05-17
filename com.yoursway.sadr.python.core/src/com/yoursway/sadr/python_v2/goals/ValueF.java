@@ -13,7 +13,8 @@ public class ValueF extends Frog {
         this.value = value;
     }
     
-    public RuntimeObject getValue() {
+    @Override
+    public RuntimeObject compact() {
         return value;
     }
     
