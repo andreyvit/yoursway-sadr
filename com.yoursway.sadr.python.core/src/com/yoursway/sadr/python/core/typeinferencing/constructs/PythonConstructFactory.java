@@ -128,10 +128,10 @@ public class PythonConstructFactory {
     
     private static PythonConstruct wrapBinaryExpression(Scope sc, BinaryExpression node) {
         String operator = node.getOperator();
-        if (operator.equals("+"))
-            return new BinaryAdditionC(sc, node);
-        if (operator.equals("%"))
-            return new BinaryPercentC(sc, node);
+        if (BinaryOperationC.isBinaryOperation(operator))
+            return new BinaryOperationC(sc, node);
+        //        if (operator.equals("%"))
+        //            return new BinaryPercentC(sc, node);
         //        Comparison comparison = BinaryComparisonC.parseComparison(operator);
         //        if (comparison != null)
         //            return new BinaryComparisonC(sc, node, comparison);

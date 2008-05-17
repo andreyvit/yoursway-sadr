@@ -22,6 +22,11 @@ public class FindClassMethodGoal extends ResolveNameToObjectGoal {
             
             public <T> void checkpoint(IGrade<T> grade) {
                 RuntimeObject result = getResultByContext(context);
+                if (result == null) {
+                    acceptor().addResult(null, context);
+                    updateGrade(acceptor(), grade);
+                    return;
+                }
                 schedule(CallResolver.callFunction((FunctionObject) result, args, kwargs, parentAcceptor,
                         context));
             }

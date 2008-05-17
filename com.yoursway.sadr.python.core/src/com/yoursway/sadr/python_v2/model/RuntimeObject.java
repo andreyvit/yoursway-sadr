@@ -25,7 +25,8 @@ public interface RuntimeObject extends Type, Value {
     //     *            value
     //     */
     //    @Deprecated
-    //    void setAttribute(String name, RuntimeObject object);
+    void setAttribute(String name, RuntimeObject object);
+    
     //    
     //    /**
     //     * @return objects' names (instance attributes).

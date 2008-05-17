@@ -17,6 +17,7 @@ import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResultsCollector;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -42,7 +43,13 @@ public final class CreateInstanceGoal extends ContextSensitiveGoal {
             public <T> void completed(IGrade<T> grade) {
                 List<PythonClassType> supers = new ArrayList<PythonClassType>();
                 for (RuntimeObject obj : getResults()) {
-                    supers.add((PythonClassType) obj);
+                    if (obj instanceof FunctionObject) {
+                        FunctionObject func = (FunctionObject) obj;
+                        ClassDeclarationC decl = (ClassDeclarationC) func.getDecl();
+                        PythonClassType superType = new PythonUserClassType(decl);
+                        supers.add(superType);
+                    }
+                    
                 }
                 PythonClassType receiverType = new PythonUserClassType(classDeclarationC, supers);
                 InstanceValue receiver = new InstanceValue(receiverType, instanceRegistrar);

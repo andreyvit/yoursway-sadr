@@ -61,8 +61,8 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         scope = scope.parentScope();
         if (null == result) {
             if (getContext() != null && getContext().contains(this.name)) {
-                getAcceptor().addResult(getContext().getActualArgument(this.name), getContext());
-                updateGrade(getAcceptor(), Grade.DONE);
+                acceptor().addResult(getContext().getActualArgument(this.name), getContext());
+                updateGrade(acceptor(), Grade.DONE);
                 return;
             }
             if (name.equals("self") && this.var.parentScope() instanceof MethodDeclarationC && scope != null
@@ -118,24 +118,24 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         if (result instanceof AssignmentC) {
             AssignmentC assignmentC = (AssignmentC) result;
             PythonConstruct subexpr = assignmentC.rhs();
-            schedule(subexpr.evaluate(getContext(), getAcceptor()));
+            schedule(subexpr.evaluate(getContext(), acceptor()));
         } else if (result instanceof MethodDeclarationC) {
             MethodDeclarationC methodDeclarationC = (MethodDeclarationC) result;
             FunctionObject obj = new FunctionObject(methodDeclarationC);
-            getAcceptor().addResult(obj, getContext());
-            updateGrade(getAcceptor(), Grade.DONE);
+            acceptor().addResult(obj, getContext());
+            updateGrade(acceptor(), Grade.DONE);
         } else if (result instanceof ClassDeclarationC) {
             ClassDeclarationC classDeclarationC = (ClassDeclarationC) result;
             FunctionObject obj = new FunctionObject(classDeclarationC);
-            getAcceptor().addResult(obj, getContext());
-            updateGrade(getAcceptor(), Grade.DONE);
+            acceptor().addResult(obj, getContext());
+            updateGrade(acceptor(), Grade.DONE);
         } else if (result == null) {
             RuntimeObject object = Builtins.instance().getAttribute(name);
             if (object != null) {
-                getAcceptor().addResult(object, getContext());
+                acceptor().addResult(object, getContext());
             }
             //TODO if result is null return IMPOSSIBLE object
-            updateGrade(getAcceptor(), Grade.DONE);
+            updateGrade(acceptor(), Grade.DONE);
         } else {
             throw new IllegalStateException("should never reach this place");
         }
@@ -151,7 +151,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         this.acceptor = acceptor;
     }
     
-    public PythonValueSetAcceptor getAcceptor() {
+    public PythonValueSetAcceptor acceptor() {
         return acceptor;
     }
 }

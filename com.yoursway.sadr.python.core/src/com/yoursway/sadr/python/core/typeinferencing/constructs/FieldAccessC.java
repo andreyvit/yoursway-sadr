@@ -71,6 +71,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
+                
                 schedule(receiver().evaluate(context, acceptor));
             }
             
@@ -88,10 +89,4 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     public PythonConstruct variable() {
         return variable;
     }
-    
-    @Override
-    public String toString() {
-        return node.fqnRepresentation();
-    }
-    
 }
