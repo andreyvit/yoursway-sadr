@@ -78,27 +78,30 @@ class TestModule(object):
             module = open(path + module_name + '.py', 'wb')
             print >> module, self.content
 
-
 class TestBuilder(object):
     def __init__(self, suite_name, path = JUNIT_TESTS_PATH):
         self.java_tests = []
         self.suite_name = suite_name
         mkdirs(path)
         mkdirs(suite_name)
-        self.java_test_file = open(path + suite_name + ".java", "wb")
+        self.java_test_file = open(path + suite_name + ".java", "wt")
+	self.JAVA_TEST_BODY = JAVA_TEST_BODY
+	self.JAVA_TEST_TAIL = JAVA_TEST_TAIL
         print >>self.java_test_file, JAVA_TEST_HEAD % suite_name
         
     def __del__(self):
+	print "Suite", self.suite_name
         for test_name in sorted(self.java_tests):
-            print >>self.java_test_file, JAVA_TEST_BODY % test_name
-        print >> self.java_test_file, JAVA_TEST_TAIL
+	    print "Found test:", test_name
+            self.java_test_file.write(self.JAVA_TEST_BODY % test_name)
+        self.java_test_file.write(self.JAVA_TEST_TAIL)
 
     def __make_python_test(self, test_name, content):
         path = self.suite_name + "/" + test_name + "/"
         file_name = self.suite_name + '_'+test_name + '.py'
         mkdirs(path)
-        file = open(path + file_name, "wb")
-        print >> file, content
+        file = open(path + file_name, "wt")
+        file.write(content)
     
     def addTest(self, test_name, script_content):
         self.java_tests.append(test_name)
@@ -120,7 +123,7 @@ def update_test_suite(suite, builder):
         if os.path.exists(oldfile):
             os.rename(oldfile, newfile)
         if os.path.exists(newfile):
-            contents = open(newfile, 'rb').read()
+            contents = open(newfile, 'rt').read()
         elif os.listdir(python_test_dir): #is there any file or directory?
             contents = ""
         else: # no files -- no test
