@@ -20,9 +20,9 @@ public class BinaryOperationC extends BinaryC {
         binoplist.put("**", "__pow__");
         binoplist.put("<<", "__lshift__");
         binoplist.put(">>", "__rshift__");
-        binoplist.put("&", "__and__");
+        binoplist.put("&&", "__and__");//numeric and
         binoplist.put("^", "__xor__");
-        binoplist.put("|", "__or__");
+        binoplist.put("||", "__or__");//numeric or
         binoplist.put("/", "__div__");
         
         //      binoplist.put("+", "__radd__");
