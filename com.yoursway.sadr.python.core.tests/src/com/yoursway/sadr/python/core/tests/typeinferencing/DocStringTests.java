@@ -8,15 +8,12 @@ public final class DocStringTests extends AbstractTypeInferencingTestCase {
     public void classAndMethodDoc() throws Exception {
         runTest();
     }
-
     @Test
     public void functionDoc() throws Exception {
         runTest();
     }
-
     @Test
     public void moduleDoc() throws Exception {
         runTest();
     }
-
 }

@@ -21,7 +21,7 @@ public final class BackPropagationTests extends AbstractTypeInferencingTestCase 
     
     @Test
     public void infiniteLoop() throws Exception {
-        //runTest();
+        runTest();
     }
     
     @Test
@@ -36,12 +36,11 @@ public final class BackPropagationTests extends AbstractTypeInferencingTestCase 
     
     @Test
     public void progression() throws Exception {
-        //runTest();
+        runTest();
     }
     
     @Test
     public void unusedArgumentIsNotEvaluated() throws Exception {
         runTest();
     }
-    
 }

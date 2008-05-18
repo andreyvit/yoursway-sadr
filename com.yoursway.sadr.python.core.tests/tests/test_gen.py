@@ -98,7 +98,7 @@ class TestBuilder(object):
 
     def __make_python_test(self, test_name, content):
         path = self.suite_name + "/" + test_name + "/"
-        file_name = self.suite_name + '_'+test_name + '.py'
+        file_name = test_name + '_'+ self.suite_name + '.py'
         mkdirs(path)
         file = open(path + file_name, "wt")
         file.write(content)
@@ -117,11 +117,14 @@ def update_test_suite(suite, builder):
     for test in sorted(os.listdir(suite)):
         python_test_dir = suite+'/'+test+'/'
         if not os.path.isdir(python_test_dir): continue
-        oldfile = python_test_dir+OLD_FILE_NAME
-        file_name = suite + '_'+test + '.py'
+        oldfile = python_test_dir + OLD_FILE_NAME
+        oldfile2 = python_test_dir + suite + '_'+ test + '.py'
+        file_name = test + '_'+ suite + '.py'
         newfile = python_test_dir+file_name
         if os.path.exists(oldfile):
             os.rename(oldfile, newfile)
+        if os.path.exists(oldfile2):
+            os.rename(oldfile2, newfile)
         if os.path.exists(newfile):
             contents = open(newfile, 'rt').read()
         elif os.listdir(python_test_dir): #is there any file or directory?

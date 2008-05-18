@@ -8,15 +8,12 @@ public final class LambdaExpressionTests extends AbstractTypeInferencingTestCase
     public void lamdaFlowsTest() throws Exception {
         runTest();
     }
-
     @Test
     public void parametrizedLambdaFlows() throws Exception {
         runTest();
     }
-
     @Test
     public void simpleLambdaCalc() throws Exception {
         runTest();
     }
-
 }

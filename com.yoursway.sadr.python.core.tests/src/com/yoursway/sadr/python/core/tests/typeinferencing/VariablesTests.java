@@ -33,10 +33,6 @@ public final class VariablesTests extends AbstractTypeInferencingTestCase {
         runTest();
     }
     @Test
-    public void dumb6() throws Exception {
-        runTest();
-    }
-    @Test
     public void equalNamesAssignment() throws Exception {
         runTest();
     }

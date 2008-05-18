@@ -8,10 +8,8 @@ public final class ContainerEmulation extends AbstractTypeInferencingTestCase {
     public void allMethodsIncluded() throws Exception {
         runTest();
     }
-
     @Test
     public void iterationTest() throws Exception {
         runTest();
     }
-
 }

@@ -8,15 +8,12 @@ public final class ForLoopTests extends AbstractTypeInferencingTestCase {
     public void counterAfterLoop() throws Exception {
         runTest();
     }
-
     @Test
     public void counterValues() throws Exception {
         runTest();
     }
-
     @Test
     public void innerLoop() throws Exception {
         runTest();
     }
-
 }

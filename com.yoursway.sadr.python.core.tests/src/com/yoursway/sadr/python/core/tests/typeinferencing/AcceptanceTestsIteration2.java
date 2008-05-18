@@ -8,15 +8,12 @@ public final class AcceptanceTestsIteration2 extends AbstractTypeInferencingTest
     public void colorsys() throws Exception {
         runTest();
     }
-
     @Test
     public void fib() throws Exception {
         runTest();
     }
-
     @Test
     public void setupPy() throws Exception {
         runTest();
     }
-
 }

@@ -1,11 +1,21 @@
 from test_gen import TestBuilder
 value_klass = """
-class Q(object):pass
+class Q(object):
+	pass
+
 """
 klass = """
 class Foo(object):
-    def %s (lhs, rhs):
+    def %s (self, rhs):
         return Q()
+
+"""
+
+unklass = """
+class Foo(object):
+    def %s (self):
+        return Q()
+
 """
 
 BINARY_OPERATORS = {
@@ -67,16 +77,16 @@ ASS_OPERATORS = {
 }
 
 TEST_BINOP = "x = Foo() %s Foo() ## expr x => Q"
-TEST_ASS = "x = Foo()\n x %s Foo() ## expr x => Q"
+TEST_ASS = "x = Foo()\nx %s Foo() ## expr x => Q"
 TEST_UNOP = "x = %sFoo() ## expr x => Q"
 
-def gen_tests(suite_name, operators, test_str):
+def gen_tests(suite_name, operators, test_str, klass):
     builder = TestBuilder(suite_name)
     for oper, symname in operators.items():
         script_content = value_klass + klass % oper + test_str % symname
         builder.addTest(oper, script_content)
 
 if __name__ == "__main__":
-    gen_tests("BinaryOperators", BINARY_OPERATORS, TEST_BINOP)
-    gen_tests("UnaryOperators", UNARY_OPERATORS, TEST_UNOP)
-    gen_tests("AssignmentOperators", ASS_OPERATORS, TEST_ASS)
+    gen_tests("BinaryOperators", BINARY_OPERATORS, TEST_BINOP, klass)
+    gen_tests("UnaryOperators", UNARY_OPERATORS, TEST_UNOP, unklass)
+    gen_tests("AssignmentOperators", ASS_OPERATORS, TEST_ASS, klass)

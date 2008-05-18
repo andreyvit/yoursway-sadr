@@ -8,10 +8,8 @@ public final class MethodResolutionOrder extends AbstractTypeInferencingTestCase
     public void explicitMROTest() throws Exception {
         runTest();
     }
-
     @Test
     public void mroAttrTest() throws Exception {
         runTest();
     }
-
 }

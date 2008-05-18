@@ -8,10 +8,8 @@ public final class ScopingTests extends AbstractTypeInferencingTestCase {
     public void fileLevelVariableRead() throws Exception {
         runTest();
     }
-
     @Test
     public void fileLocalVariable() throws Exception {
         runTest();
     }
-
 }

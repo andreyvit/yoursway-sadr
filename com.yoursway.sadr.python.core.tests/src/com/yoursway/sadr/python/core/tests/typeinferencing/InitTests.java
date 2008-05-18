@@ -8,10 +8,8 @@ public final class InitTests extends AbstractTypeInferencingTestCase {
     public void __init__ExecutionCheck() throws Exception {
         runTest();
     }
-
     @Test
     public void __new__ExecutionCheck() throws Exception {
         runTest();
     }
-
 }

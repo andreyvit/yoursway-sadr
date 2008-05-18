@@ -8,5 +8,4 @@ public final class ArrayHandlingTests extends AbstractTypeInferencingTestCase {
     public void simpleArrayAccess() throws Exception {
         runTest();
     }
-
 }

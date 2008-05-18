@@ -8,5 +8,4 @@ public final class DescriptorsTests extends AbstractTypeInferencingTestCase {
     public void descriptorTest() throws Exception {
         runTest();
     }
-
 }

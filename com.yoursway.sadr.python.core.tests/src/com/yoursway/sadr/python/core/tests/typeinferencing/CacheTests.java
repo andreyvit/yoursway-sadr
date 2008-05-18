@@ -8,5 +8,4 @@ public final class CacheTests extends AbstractTypeInferencingTestCase {
     public void localVarCached() throws Exception {
         runTest();
     }
-
 }

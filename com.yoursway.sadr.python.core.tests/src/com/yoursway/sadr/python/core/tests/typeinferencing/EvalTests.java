@@ -8,20 +8,16 @@ public final class EvalTests extends AbstractTypeInferencingTestCase {
     public void fieldAssignment() throws Exception {
         runTest();
     }
-
     @Test
     public void fieldAssignmentInMethodScope() throws Exception {
         runTest();
     }
-
     @Test
     public void methodDeclaration() throws Exception {
         runTest();
     }
-
     @Test
     public void methodsInCycle() throws Exception {
         runTest();
     }
-
 }

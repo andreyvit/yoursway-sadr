@@ -8,10 +8,8 @@ public final class ContextManagerTests extends AbstractTypeInferencingTestCase {
     public void contextManager() throws Exception {
         runTest();
     }
-
     @Test
     public void contextManagerTest() throws Exception {
         runTest();
     }
-
 }

@@ -8,5 +8,4 @@ public final class HardcoreTests extends AbstractTypeInferencingTestCase {
     public void instanceTracking() throws Exception {
         runTest();
     }
-
 }

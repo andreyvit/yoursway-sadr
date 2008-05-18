@@ -8,10 +8,8 @@ public final class CallableObjectsTests extends AbstractTypeInferencingTestCase 
     public void NoArgs() throws Exception {
         runTest();
     }
-
     @Test
     public void WithArgs() throws Exception {
         runTest();
     }
-
 }

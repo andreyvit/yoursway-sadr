@@ -8,10 +8,8 @@ public final class MiscValueInferencingTests extends AbstractTypeInferencingTest
     public void addition() throws Exception {
         runTest();
     }
-
     @Test
     public void functionReturningInt() throws Exception {
         runTest();
     }
-
 }

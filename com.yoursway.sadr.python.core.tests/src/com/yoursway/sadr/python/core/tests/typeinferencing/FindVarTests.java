@@ -8,5 +8,4 @@ public final class FindVarTests extends AbstractTypeInferencingTestCase {
     public void simpleTest() throws Exception {
         runTest();
     }
-
 }

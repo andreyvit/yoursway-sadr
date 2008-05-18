@@ -8,20 +8,16 @@ public final class TypeConversion extends AbstractTypeInferencingTestCase {
     public void __int__() throws Exception {
         runTest();
     }
-
     @Test
     public void __len__() throws Exception {
         runTest();
     }
-
     @Test
     public void __nonzero__() throws Exception {
         runTest();
     }
-
     @Test
     public void __str__() throws Exception {
         runTest();
     }
-
 }

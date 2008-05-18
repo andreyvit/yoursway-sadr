@@ -8,5 +8,4 @@ public final class TruethValuesTests extends AbstractTypeInferencingTestCase {
     public void consts() throws Exception {
         runTest();
     }
-
 }

@@ -8,5 +8,4 @@ public final class ControlFlowTests extends AbstractTypeInferencingTestCase {
     public void ifHandling() throws Exception {
         runTest();
     }
-
 }
