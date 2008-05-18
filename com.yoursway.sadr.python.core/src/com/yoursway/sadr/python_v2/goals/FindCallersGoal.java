@@ -1,8 +1,11 @@
 package com.yoursway.sadr.python_v2.goals;
 
+import static com.yoursway.sadr.python.Grade.DONE;
+
 import java.util.List;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodCallC;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.ProcedureCallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -27,14 +30,20 @@ public class FindCallersGoal extends Goal {
                 if (this.name.equals(callC.node().getName())) {
                     acceptor.addResult(callC);
                 }
-            }
-            if (construct instanceof PythonScopeImpl<?>) {
+            } else if (construct instanceof ProcedureCallC) {
+                ProcedureCallC callC = (ProcedureCallC) construct;
+                if (this.name.equals(callC.node().getName())) {
+                    acceptor.addResult(callC);
+                }
+            } else if (construct instanceof PythonScopeImpl<?>) {
                 findInScope((Scope) construct);
             }
         }
     }
     
     public void preRun() {
+        System.out.println(scheduler().getGoalStack(this));
         findInScope(this.parentScope.getFileScope());
+        updateGrade(acceptor, DONE);
     }
 }

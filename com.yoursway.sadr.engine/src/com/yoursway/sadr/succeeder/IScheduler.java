@@ -19,4 +19,6 @@ public interface IScheduler {
     
     <T> CheckpointToken updateGrade(IGoal goal, IAcceptor acceptor, IGrade<T> grade);
     
+    String getGoalStack(IGoal goal);
+    
 }

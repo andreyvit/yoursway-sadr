@@ -35,6 +35,22 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
         children.add(construct);
     }
     
+    public List<PythonConstruct> getEnclosedConstructs2() {
+        List<PythonConstruct> encloseds = new LinkedList<PythonConstruct>();
+        for (PythonConstruct construct : getChildConstructs()) {
+            addChildren2(construct, encloseds);
+        }
+        return encloseds;
+    }
+    
+    private void addChildren2(PythonConstruct construct, List<PythonConstruct> children) {
+        children.add(construct);
+        for (PythonConstruct child : construct.getChildConstructs()) {
+            if (this == child.parentScope())
+                addChildren2(child, children);
+        }
+    }
+    
     @Override
     public String toString() {
         return ((Scope) this).displayName();

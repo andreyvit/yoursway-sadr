@@ -82,7 +82,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     }
     
     protected PythonConstruct findInScope(Scope scope) {
-        List<PythonConstruct> children = scope.getEnclosedConstructs();
+        List<PythonConstruct> children = scope.getEnclosedConstructs2();
         PythonConstruct result = null;
         for (PythonConstruct construct : children) {
             if (this.var == construct) {

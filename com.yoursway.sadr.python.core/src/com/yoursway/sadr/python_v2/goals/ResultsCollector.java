@@ -3,6 +3,7 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
@@ -48,13 +49,16 @@ public abstract class ResultsCollector extends Synchronizer {
             public <T> void checkpoint(IGrade<T> grade) {
                 RuntimeObject result = getResultByContext(context);
                 results.set(item, result);
-                ResultsCollector.this.subgoalDone(grade);
+                if (grade.isDone())
+                    ResultsCollector.this.subgoalDone(grade);
             }
         };
     }
     
     final public void startCollecting() {
         adding = false;
+        if (counter <= 0)
+            completed(Grade.DONE);
     }
     
 }

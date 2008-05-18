@@ -21,4 +21,9 @@ public class PythonConstructAcceptor implements IAcceptor {
     public List<PythonConstruct> getResults() {
         return constructs;
     }
+    
+    public void addResults(List<PythonConstruct> results) {
+        constructs.addAll(results);
+    }
+    
 }

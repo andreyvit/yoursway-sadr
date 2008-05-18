@@ -12,9 +12,12 @@ public interface Scope extends PythonConstruct {
     
     List<PythonConstruct> getEnclosedConstructs();
     
+    List<PythonConstruct> getEnclosedConstructs2();
+    
     String displayName();
     
     String name();
     
     Scope getFileScope();
+    
 }

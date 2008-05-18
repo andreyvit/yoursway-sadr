@@ -28,7 +28,7 @@ public class Engine implements IScheduler {
         this.defaultStrategy = strategy;
     }
     
-    public String printGoalStack(IGoal goal) {
+    public String getGoalStack(IGoal goal) {
         StringBuilder output = new StringBuilder();
         while (goal != null) {
             output.append("+-> " + goal.toString().replace("\n", " ") + '\n');
@@ -50,7 +50,7 @@ public class Engine implements IScheduler {
                 if (oldGrade.compareTo((T) grade) >= 0) {
                     throw new IllegalArgumentException("Grade typically should increase for "
                             + acceptor.getClass().getSimpleName() + "\n" + "Goals stack:\n"
-                            + printGoalStack(goal));
+                            + getGoalStack(goal));
                     
                 }
             }
@@ -141,7 +141,7 @@ public class Engine implements IScheduler {
                 acceptor.checkpoint(grade);
             } catch (RuntimeException re) {
                 System.out.println("Failed goal stack:");
-                System.out.println(printGoalStack(acceptorGoals.get(acceptor)));
+                System.out.println(getGoalStack(acceptorGoals.get(acceptor)));
                 throw re;
             }
         }

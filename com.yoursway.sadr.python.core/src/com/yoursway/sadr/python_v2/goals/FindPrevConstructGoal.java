@@ -7,8 +7,44 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.succeeder.Goal;
+import com.yoursway.sadr.succeeder.IAcceptor;
+import com.yoursway.sadr.succeeder.IGrade;
 
 public class FindPrevConstructGoal extends Goal {
+    
+    private final class PrevConstructAcceptor extends PythonConstructAcceptor {
+        
+        private final IAcceptor nextAcceptor;
+        
+        public PrevConstructAcceptor(IAcceptor nextAcceptor) {
+            this.nextAcceptor = nextAcceptor;
+        }
+        
+        @Override
+        public <K> void checkpoint(IGrade<K> grade) {
+            nextAcceptor.checkpoint(grade);
+            acceptor.addResults(getResults());
+        }
+    }
+    
+    private final class CallersAcceptor extends PythonConstructAcceptor {
+        
+        @Override
+        public <T> void checkpoint(IGrade<T> grade) {
+            SimpleSynchronizer sync = new SimpleSynchronizer() {
+                
+                @Override
+                public <K> void completed(IGrade<K> grade) {
+                    updateGrade(acceptor, grade);
+                }
+                
+            };
+            for (PythonConstruct construct : getResults())
+                schedule(new FindPrevConstructGoal(construct,
+                        new PrevConstructAcceptor(sync.createAcceptor())));
+            sync.startCollecting();
+        }
+    }
     
     private final PythonConstructAcceptor acceptor;
     private final PythonConstruct current;
@@ -25,10 +61,11 @@ public class FindPrevConstructGoal extends Goal {
     }
     
     public void preRun() {
-        //        System.out.println(((Engine) scheduler()).printGoalStack(this));
+        
         PythonConstruct prevConstruct = findPrevConstruct(current);
+        System.out.println("PREV: " + current + " --> " + prevConstruct);
         if (prevConstruct == null) {
-            schedule(new FindCallersGoal(current.parentScope(), acceptor));
+            schedule(new FindCallersGoal(current.parentScope(), new CallersAcceptor()));
         } else {
             acceptor.addResult(prevConstruct);
             updateGrade(acceptor, Grade.DONE);
