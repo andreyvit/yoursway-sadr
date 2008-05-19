@@ -216,7 +216,10 @@ public abstract class AbstractTypeInferencingTestCase {
         Matcher matcher = pat.matcher(originalLine);
         assertTrue(matcher.find());
         int namePosInsideLine = matcher.start();
-        assertTrue(matcher.find());
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Incorrect test: can't find " + expr);
+            //            assertTrue(matcher.find());
+        }
         
         // check that there are no more possible matches
         int secondPos = matcher.start();

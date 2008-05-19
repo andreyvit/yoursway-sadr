@@ -16,7 +16,7 @@ y = c.d ## value y => 0
 c.d = 1
 z = c.d ## value z => 1
 del c.d
-q = c.d ## value qq => None
+q = c.d ## value q => None
 
 
 
