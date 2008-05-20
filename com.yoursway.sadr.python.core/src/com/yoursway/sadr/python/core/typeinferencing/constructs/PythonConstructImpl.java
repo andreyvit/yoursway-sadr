@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.google.common.base.Predicate;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
@@ -27,7 +26,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     protected void wrapEnclosedChildren() {
-        childConstructs = PythonConstructFactory.wrap(this.node.getChilds(), parentScope);
+        setChildConstructs(PythonConstructFactory.wrap(this.node.getChilds(), parentScope()));
     }
     
     public PythonConstruct staticallyEnclosingConstruct() {
@@ -79,19 +78,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     //                        constructs), requestor);
     //    }
     
-    @SuppressWarnings("unchecked")
-    protected List<ASTNode> enclosedNodes() {
-        return node.getChilds();
-    }
-    
-    protected static final Predicate<PythonConstruct> NOT_METHOD = new Predicate<PythonConstruct>() {
-        
-        public boolean apply(PythonConstruct t) {
-            return !(t instanceof MethodDeclarationC);
-        }
-        
-    };
-    
     public Collection<MumblaWumblaThreesome> mumblaWumbla() {
         return null;
     }
@@ -113,15 +99,14 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (getClass() != obj.getClass())
             return false;
         final PythonConstructImpl other = (PythonConstructImpl) obj;
-        if (node == null) {
-            if (other.node != null)
-                return false;
-        } else if (!node.equals(other.node))
-            return false;
-        return true;
+        return (node == other.node);
     }
     
     public Scope parentScope() {
+        return parentScope;
+    }
+    
+    public Scope innerScope() {
         return parentScope;
     }
     
@@ -142,8 +127,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
-        throw new UnsupportedOperationException("Evaluate is not enabled for class "
-                + this.getClass().getSimpleName());
+        throw new UnsupportedOperationException("Evaluate is not enabled for node class "
+                + this.node.getClass().getSimpleName());
     }
     
     public Frog toFrog() {

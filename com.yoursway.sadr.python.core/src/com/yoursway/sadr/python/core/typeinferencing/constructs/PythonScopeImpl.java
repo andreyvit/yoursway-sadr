@@ -15,6 +15,11 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     }
     
     @Override
+    public Scope innerScope() {
+        return this;
+    }
+    
+    @Override
     protected void wrapEnclosedChildren() {
         setChildConstructs(PythonConstructFactory.wrap(this.node.getChilds(), this));
     }

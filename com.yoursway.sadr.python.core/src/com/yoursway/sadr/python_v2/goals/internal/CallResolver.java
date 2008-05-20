@@ -49,13 +49,16 @@ public final class CallResolver {
     public static IGoal callFunction(final FunctionObject callable, final List<RuntimeObject> args,
             HashMap<String, RuntimeObject> kwargs, final PythonValueSetAcceptor acceptor,
             final Context context) {
+        if (callable == null) {
+            throw new IllegalStateException("Callable is null");
+        }
         PythonConstruct declC = callable.getDecl();
         if (declC == null) {
             return new EvaluateBuiltinGoal(args, kwargs, callable, context, acceptor);
         } else if (declC instanceof MethodDeclarationC) {
             MethodDeclarationC methodDeclC = (MethodDeclarationC) declC;
             List<ASTNode> realArgs = methodDeclC.node().getArguments();
-            final Context actualArguments = new ContextImpl(realArgs, args);
+            final Context actualArguments = new ContextImpl(realArgs, args, kwargs);
             return new CallReturnValueGoal((MethodDeclarationC) declC, actualArguments, context, acceptor);
         } else if (declC instanceof ClassDeclarationC) {
             final ClassDeclarationC classDeclarationC = (ClassDeclarationC) declC;
@@ -63,7 +66,7 @@ public final class CallResolver {
         } else if (declC instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC lambdaC = (PythonLambdaExpressionC) declC;
             List<ASTNode> realArgs = lambdaC.node().getArguments();
-            Context actualArguments = new ContextImpl(realArgs, args);
+            Context actualArguments = new ContextImpl(realArgs, args, kwargs);
             return ((PythonLambdaExpressionC) declC).getExpression().evaluate(actualArguments, acceptor);
         }
         throw new IllegalStateException("should never reach this place");

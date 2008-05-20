@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,20 +21,15 @@ import com.yoursway.sadr.succeeder.IGrade;
 public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpression> implements
         PythonConstruct {
     
-    private List<PythonConstruct> args;
+    private final List<PythonConstruct> args;
     
     public PythonDictExpressionC(Scope sc, PythonDictExpression node) {
         super(sc, node);
+        args = PythonConstructFactory.wrap(this.node.getChilds(), parentScope());
     }
     
     public List<PythonConstruct> getArgs() {
         return args;
-    }
-    
-    @Override
-    protected void wrapEnclosedChildren() {
-        args = PythonConstructFactory.wrap(this.node.getChilds(), parentScope());
-        setChildConstructs(new ArrayList<PythonConstruct>());
     }
     
     @Override

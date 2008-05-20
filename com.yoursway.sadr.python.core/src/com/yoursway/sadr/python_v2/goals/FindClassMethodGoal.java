@@ -14,9 +14,9 @@ import com.yoursway.sadr.succeeder.IGrade;
 public class FindClassMethodGoal extends ResolveNameToObjectGoal {
     private final ClassDeclarationC decl;
     
-    public FindClassMethodGoal(ClassDeclarationC decl, String name, final List<RuntimeObject> args,
-            final HashMap<String, RuntimeObject> kwargs, final PythonValueSetAcceptor parentAcceptor,
-            final Context context) {
+    public FindClassMethodGoal(final ClassDeclarationC decl, final String name,
+            final List<RuntimeObject> args, final HashMap<String, RuntimeObject> kwargs,
+            final PythonValueSetAcceptor parentAcceptor, final Context context) {
         super(decl, name, null, context);
         this.setAcceptor(new PythonValueSetAcceptor() {
             

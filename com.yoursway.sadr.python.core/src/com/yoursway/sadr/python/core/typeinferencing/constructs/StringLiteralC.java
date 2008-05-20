@@ -6,6 +6,7 @@ import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.ValueF;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.StringType;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -47,5 +48,10 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
                 return super.describe() + "\nfor expression " + StringLiteralC.this.toString();
             }
         };
+    }
+    
+    @Override
+    public Frog toFrog() {
+        return new ValueF(StringType.newStringObject(this));
     }
 }

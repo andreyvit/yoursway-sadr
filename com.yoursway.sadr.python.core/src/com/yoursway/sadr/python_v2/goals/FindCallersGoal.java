@@ -23,7 +23,7 @@ public class FindCallersGoal extends Goal {
     }
     
     public void findInScope(Scope scope) {
-        List<PythonConstruct> childConstructs = scope.getChildConstructs();
+        List<PythonConstruct> childConstructs = scope.getEnclosedConstructs();
         for (PythonConstruct construct : childConstructs) {
             if (construct instanceof MethodCallC) {
                 MethodCallC callC = (MethodCallC) construct;
@@ -35,7 +35,8 @@ public class FindCallersGoal extends Goal {
                 if (this.name.equals(callC.node().getName())) {
                     acceptor.addResult(callC);
                 }
-            } else if (construct instanceof PythonScopeImpl<?>) {
+            }
+            if (construct instanceof PythonScopeImpl<?>) {
                 findInScope((Scope) construct);
             }
         }

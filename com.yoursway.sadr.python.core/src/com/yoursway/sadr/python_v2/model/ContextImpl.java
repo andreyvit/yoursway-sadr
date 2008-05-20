@@ -10,8 +10,22 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 public class ContextImpl implements Context {
     
     Map<String, RuntimeObject> args = new HashMap<String, RuntimeObject>();
+    RuntimeObject last_args = null;
+    RuntimeObject last_kwargs = null;
     
-    public ContextImpl(List<ASTNode> formalArguments, List<RuntimeObject> actualArguments) {
+    public ContextImpl(List<ASTNode> formalArguments, PythonArguments real) {
+        int argId = 0;
+        List<RuntimeObject> realArgs = real.getArgs();
+        for (ASTNode node : formalArguments) {
+            if (!(node instanceof PythonArgument))
+                throw new IllegalStateException("Wrong argument number " + (i + 1)
+                        + ": Expected PythonArgument, got " + node.getClass().getSimpleName());
+            PythonArgument argument = (PythonArgument) node;
+            ASTNode initialization = argument.getInitialization();
+            if (initialization == null) {
+                realArgs.get(argId++);
+            }
+        }
         if (formalArguments.size() != actualArguments.size()) {
             throw new IllegalStateException("Argument number mismatch: " + actualArguments.size()
                     + " given, " + formalArguments.size() + " required");

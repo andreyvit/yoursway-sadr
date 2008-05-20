@@ -20,34 +20,8 @@ public class MethodCallC extends CallC implements IndexAffector {
     
     MethodCallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
-        receiver = wrap(node.getReceiver());
+        receiver = wrap(node.getFunction());
     }
-    
-    //    public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,
-    //            final InfoKind infoKind, ContinuationScheduler requestor, final ValueInfoContinuation continuation) {
-    //        final PythonConstruct receiver = wrap(innerContext(), node.getReceiver());
-    //        final String name = node.getMethodName();
-    //        return requestor.schedule(new Continuation() {
-    //            
-    //            final ValueInfoGoal recvGoal = new ExpressionValueInfoGoal(receiver, dc, infoKind);
-    //            
-    //            public Goal[] provideSubgoals() {
-    //                return new Goal[] { recvGoal };
-    //            }
-    //            
-    //            public void done(ContinuationScheduler requestor) {
-    //                CollectingMethodRequestor rq = new CollectingMethodRequestor();
-    //                ValueInfoUtils.findMethod(recvGoal.result(null), name, rq);
-    //                if (rq.anythingFound())
-    //                    requestor.schedule(new CallablesReturnTypeCont(infoKind, arguments(), dc, rq.asArray(),
-    //                            recvGoal.result(null), continuation));
-    //                else
-    //                    continuation.consume(emptyValueInfo(), requestor);
-    //            }
-    //            
-    //        });
-    //        
-    //    }
     
     public void actOnIndex(IndexRequest request) {
         request.addMethodCall(node.getName(), this);
@@ -55,7 +29,7 @@ public class MethodCallC extends CallC implements IndexAffector {
     
     @Override
     public String toString() {
-        return node.getReceiver() + "." + node.getName() + "()";
+        return node.toString();
     }
     
     @Override

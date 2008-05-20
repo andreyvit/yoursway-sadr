@@ -8,7 +8,7 @@ public abstract class SimpleSynchronizer extends Synchronizer {
     private boolean adding = true;
     
     @Override
-    final public <T> void subgoalDone(IGrade<T> grade) {
+    final public <K> void subgoalDone(IGrade<K> grade) {
         if (adding)
             throw new IllegalStateException("Done signal not possible in init stage.");
         super.subgoalDone(grade);

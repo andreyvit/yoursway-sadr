@@ -78,6 +78,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                         } else if (method instanceof PythonClassType) {
                             function = (FunctionObject) method.getAttribute("__call__");
                         }
+                        if (function == null) {
+                            throw new IllegalStateException("Unable to find callable " + func
+                                    + ", resolved to " + method);
+                        }
                         schedule(CallResolver.callFunction(function, args, kwargs, acceptor, getContext()));
                         //                        if (expression instanceof MethodCallC) {
                         //                            function.bind(InstanceType.createSelf(expression));

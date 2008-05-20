@@ -39,6 +39,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonImportAsExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonImportExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonSubscriptExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
@@ -111,9 +112,10 @@ public class PythonConstructFactory {
                 || node instanceof PythonImportExpression || node instanceof PythonImportAsExpression
                 || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
                 || node instanceof ExpressionList || node instanceof UnaryExpression
-                || node instanceof FloatNumericLiteral || node instanceof PythonWhileStatement
-                || node instanceof PythonYieldStatement || node instanceof ComplexNumericLiteral
-                || node instanceof PythonTryStatement || node instanceof PythonExceptStatement)
+                || node instanceof PythonSubscriptExpression || node instanceof FloatNumericLiteral
+                || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement
+                || node instanceof ComplexNumericLiteral || node instanceof PythonTryStatement
+                || node instanceof PythonExceptStatement)
             return new UnhandledC(scope, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }

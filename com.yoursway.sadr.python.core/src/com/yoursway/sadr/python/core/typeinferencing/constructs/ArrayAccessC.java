@@ -52,11 +52,6 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
         index = wrap((ASTNode) node.getIndex().getChilds().get(0));
     }
     
-    @Override
-    protected void wrapEnclosedChildren() {
-        setChildConstructs(new ArrayList<PythonConstruct>());
-    }
-    
     public PythonConstruct array() {
         return array;
     }

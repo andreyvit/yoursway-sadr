@@ -3,6 +3,7 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.List;
 
 import com.yoursway.sadr.python.Grade;
+import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -64,10 +65,11 @@ public class FindPrevConstructGoal extends Goal {
         
         PythonConstruct prevConstruct = findPrevConstruct(current);
         System.out.println("PREV: " + current + " --> " + prevConstruct);
-        if (prevConstruct == null) {
-            schedule(new FindCallersGoal(current.parentScope(), new CallersAcceptor()));
+        if (prevConstruct == null && current instanceof MethodDeclarationC) {
+            schedule(new FindCallersGoal(current.innerScope(), new CallersAcceptor()));
         } else {
-            acceptor.addResult(prevConstruct);
+            if (prevConstruct != null)
+                acceptor.addResult(prevConstruct);
             updateGrade(acceptor, Grade.DONE);
         }
     }
@@ -81,8 +83,9 @@ public class FindPrevConstructGoal extends Goal {
             if (current.equals(construct)) {
                 break;
             }
-            if (!(construct instanceof VariableReferenceC))
-                result = construct;
+            if (construct instanceof VariableReferenceC)
+                continue;
+            result = construct;
         }
         return result;
     }
