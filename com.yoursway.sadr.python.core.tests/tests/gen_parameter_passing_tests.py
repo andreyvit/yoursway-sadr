@@ -17,6 +17,16 @@ def f(*args):
 r = f(1,2) ## value r => 2
 """, 
 """
+def f(a, b=5, *args):
+    return a+b+len(args)
+r = f(1,2) ## value r => 3
+""", 
+"""
+def f(a, b=5, c=3):
+    return a+b+c
+r = f(1,c=2) ## value r => 8
+""", 
+"""
 def f(**args):
     return args['py'] + args['q']
 r = f(py = 2, q = 1) ## value r => 3

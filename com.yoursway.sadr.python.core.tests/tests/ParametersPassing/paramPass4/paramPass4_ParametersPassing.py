@@ -1,7 +1,4 @@
 
-def f(*s_args, **kw_args):
-    return s_args[0] + kw_args['py']
-r = f(2, py = 1) ## value r => 3
-
-
-
+def f(a, b=5, c=3):
+    return a+b+c
+r = f(1,c=2) ## value r => 8
