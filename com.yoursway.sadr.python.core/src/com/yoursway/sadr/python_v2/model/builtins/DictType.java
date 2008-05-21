@@ -1,28 +1,22 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
 
+import com.yoursway.sadr.python_v2.model.PythonArguments;
+import com.yoursway.sadr.python_v2.model.PythonArgumentsReader;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class DictType extends PythonClassType {
     private DictType() {
-        FunctionObject create = new FunctionObject("__call__") {
+        setAttribute(new FunctionObject("__call__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
-                PythonObjectWithValue<DictValue> dictObject = DictType.newDictObject();
-                HashMap<RuntimeObject, RuntimeObject> dict = dictObject.getValue().getDict();
-                Set<Entry<String, RuntimeObject>> kwentries = kwargs.entrySet();
-                for (Entry<String, RuntimeObject> entry : kwentries) {
-                    RuntimeObject key = StringType.newStringObject(entry.getKey());
-                    dict.put(key, entry.getValue());
-                }
-                return dictObject;
+            public RuntimeObject evaluate(PythonArguments args) {
+                PythonArgumentsReader reader = new PythonArgumentsReader(args);
+                HashMap<String, RuntimeObject> kwargs = reader.lastKwargs();
+                return DictType.wrapStrDict(kwargs);
             }
-        };
-        setAttribute("__call__", create);
+        });
     }
     
     private static final DictType instance = new DictType();
@@ -36,8 +30,22 @@ public class DictType extends PythonClassType {
         return "dict";
     }
     
-    public static PythonObjectWithValue<DictValue> newDictObject() {
+    public static PythonObjectWithValue<DictValue> wrap() {
         return new PythonObjectWithValue<DictValue>(instance(), new DictValue());
     }
     
+    public static PythonObjectWithValue<DictValue> wrap(HashMap<RuntimeObject, RuntimeObject> dict) {
+        return new PythonObjectWithValue<DictValue>(instance(), new DictValue(dict));
+    }
+    
+    public static PythonObjectWithValue<DictValue> wrapStrDict(HashMap<String, RuntimeObject> strDict) {
+        PythonObjectWithValue<DictValue> dict = new PythonObjectWithValue<DictValue>(instance(),
+                new DictValue());
+        HashMap<RuntimeObject, RuntimeObject> hashMap = dict.getValue().getDict();
+        for (Entry<String, RuntimeObject> entry : strDict.entrySet()) {
+            RuntimeObject key = StringType.wrap(entry.getKey());
+            hashMap.put(key, entry.getValue());
+        }
+        return dict;
+    }
 }

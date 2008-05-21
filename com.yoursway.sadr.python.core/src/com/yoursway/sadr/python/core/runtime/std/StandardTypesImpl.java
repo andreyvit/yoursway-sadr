@@ -12,7 +12,7 @@ public class StandardTypesImpl implements StandardTypes {
     
     // ELLIPSIS -> OPTIONAL
     
-    private final PythonClassType objectClass;
+    private final PythonMetaType objectClass;
     private final SimpleType stringType;
     private final SimpleType nilType;
     private final SimpleType boolType;
@@ -150,7 +150,7 @@ public class StandardTypesImpl implements StandardTypes {
         //            }
     }
     
-    public PythonClassType objectClass() {
+    public PythonMetaType objectClass() {
         return objectClass;
     }
     

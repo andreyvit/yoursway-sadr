@@ -7,8 +7,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.ResultsCollector;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObjectWithValue;
@@ -34,7 +34,7 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
                     public <T> void completed(IGrade<T> grade) {
                         List<RuntimeObject> actualArguments = getResults();
                         PythonObjectWithValue<TupleValue> tupleObject = TupleType
-                                .newTupleObject(actualArguments);
+                                .wrap(actualArguments);
                         acceptor.addResult(tupleObject, context);
                         updateGrade(acceptor, Grade.DONE);
                     }

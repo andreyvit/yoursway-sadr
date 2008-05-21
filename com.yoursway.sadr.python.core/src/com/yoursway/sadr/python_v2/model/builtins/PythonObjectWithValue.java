@@ -36,4 +36,14 @@ public class PythonObjectWithValue<ValueType extends Value> extends PythonObject
     public String describe() {
         return value.describe();
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T convertValue(RuntimeObject type) {
+        if (!getType().equals(type)) {
+            return null;
+        }
+        Object value = getValue();
+        return (T) value;
+    }
 }

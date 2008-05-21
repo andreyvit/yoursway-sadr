@@ -2,13 +2,14 @@ package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.FieldAccessC;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.succeeder.Goal;
 
-public class ResolveReference extends Goal {
+public class ResolveReferenceGoal extends Goal {
     
     private final PythonValueSetAcceptor acceptor;
     
-    public ResolveReference(FieldAccessC fieldAccessC, PythonValueSetAcceptor acceptor) {
+    public ResolveReferenceGoal(FieldAccessC fieldAccessC, PythonValueSetAcceptor acceptor) {
         this.acceptor = acceptor;
     }
     

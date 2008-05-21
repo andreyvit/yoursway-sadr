@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.core.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class PythonClassType extends PythonBasicClass {
+public class PythonMetaType extends PythonBasicClass {
     
     private final String name;
     
@@ -11,7 +11,7 @@ public class PythonClassType extends PythonBasicClass {
     
     private final PythonMetaClass metaClass;
     
-    public PythonClassType(PythonRuntimeModel model, String name) {
+    public PythonMetaType(PythonRuntimeModel model, String name) {
         this.name = name;
         metaClass = new PythonMetaClass(this, model);
         model.addClass(this);
@@ -29,15 +29,15 @@ public class PythonClassType extends PythonBasicClass {
         return metaClass;
     }
     
-    public PythonClassType superclass() {
+    public PythonMetaType superclass() {
         return calculateSuperclass();
     }
     
-    private PythonClassType calculateSuperclass() {
+    private PythonMetaType calculateSuperclass() {
         if (definitions.isEmpty())
             return null;
         for (PythonClassDefinition def : definitions) {
-            PythonClassType superclass = def.superclass();
+            PythonMetaType superclass = def.superclass();
             if (superclass != null)
                 return superclass;
         }
@@ -54,10 +54,10 @@ public class PythonClassType extends PythonBasicClass {
         return superclass();
     }
     
-    public boolean isDerivedFrom(PythonClassType declaredClass) {
+    public boolean isDerivedFrom(PythonMetaType declaredClass) {
         if (this == declaredClass)
             return true;
-        PythonClassType sup = superclass();
+        PythonMetaType sup = superclass();
         return sup != null && sup.isDerivedFrom(declaredClass);
     }
     

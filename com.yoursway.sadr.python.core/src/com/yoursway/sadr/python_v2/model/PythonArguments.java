@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.HashMap;
@@ -19,11 +20,22 @@ public class PythonArguments {
         this.lastKwarg = last_kwarg;
     }
     
+    public PythonArguments() {
+        this.args = newArrayList();
+        this.kwargs = newHashMap();
+        this.lastArg = null;
+        this.lastKwarg = null;
+    }
+    
     public PythonArguments(List<RuntimeObject> args) {
         this.args = args;
         this.kwargs = newHashMap();
         this.lastArg = null;
         this.lastKwarg = null;
+    }
+    
+    public PythonArgumentsReader parse() {
+        return new PythonArgumentsReader(this);
     }
     
     public List<RuntimeObject> getArgs() {

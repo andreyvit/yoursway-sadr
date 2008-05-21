@@ -36,4 +36,8 @@ public interface RuntimeObject extends Type, Value {
     Map<String, RuntimeObject> getDict();
     
     InstanceHistory instanceHistory();
+    
+    @SuppressWarnings("unchecked")
+    public <T> T convertValue(RuntimeObject type);
+    
 }

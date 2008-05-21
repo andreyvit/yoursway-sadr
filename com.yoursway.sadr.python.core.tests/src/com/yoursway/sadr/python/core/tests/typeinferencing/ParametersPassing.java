@@ -36,4 +36,12 @@ public final class ParametersPassing extends AbstractTypeInferencingTestCase {
     public void paramPass7() throws Exception {
         runTest();
     }
+    @Test
+    public void paramPass8() throws Exception {
+        runTest();
+    }
+    @Test
+    public void paramPass9() throws Exception {
+        runTest();
+    }
 }

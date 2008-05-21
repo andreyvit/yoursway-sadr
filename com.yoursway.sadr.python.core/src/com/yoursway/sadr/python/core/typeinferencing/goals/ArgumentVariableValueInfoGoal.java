@@ -179,10 +179,10 @@ public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
         private TypeSet calculateTypeSet(Collection<CallC> calls) {
             if (calls.isEmpty())
                 return emptyTypeSet();
-            Set<PythonClassType> klasses = classLookup.findClassesByMethods(methodNames(calls));
+            Set<PythonMetaType> klasses = classLookup.findClassesByMethods(methodNames(calls));
             if (!klasses.isEmpty()) {
                 TypeSetBuilder subbuilder = new TypeSetBuilder();
-                for (PythonClassType klass : klasses)
+                for (PythonMetaType klass : klasses)
                     subbuilder.add(new InstanceType(klass));
                 TypeSet typeset = subbuilder.build();
                 if (!typeset.isEmpty())

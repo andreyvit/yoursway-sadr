@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.yoursway.sadr.python.Grade;
@@ -13,8 +12,10 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.ProcedureCallC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
@@ -69,8 +70,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
                     && scope instanceof ClassDeclarationC) {
                 ClassDeclarationC classC = (ClassDeclarationC) scope;
                 //FIXME: HACK for self handling
-                schedule(new CreateInstanceGoal(classC, new ArrayList<RuntimeObject>(), null, getContext(),
-                        acceptor));
+                schedule(new CreateInstanceGoal(classC, new PythonArguments(), null, acceptor));
                 return;
             }
         }

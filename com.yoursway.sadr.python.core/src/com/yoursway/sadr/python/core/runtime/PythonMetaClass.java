@@ -4,14 +4,14 @@ import com.yoursway.sadr.python.core.runtime.std.NewMethod;
 
 public class PythonMetaClass extends PythonBasicClass {
     
-    private final PythonClassType klass;
+    private final PythonMetaType klass;
     
-    public PythonMetaClass(PythonClassType klass, PythonRuntimeModel model) {
+    public PythonMetaClass(PythonMetaType klass, PythonRuntimeModel model) {
         this.klass = klass;
         new NewMethod(this, model);
     }
     
-    public PythonClassType instanceClass() {
+    public PythonMetaType instanceClass() {
         return klass;
     }
     
@@ -22,7 +22,7 @@ public class PythonMetaClass extends PythonBasicClass {
     
     @Override
     public PythonBasicClass superclassOfTheSameKind() {
-        PythonClassType sup = klass.superclass();
+        PythonMetaType sup = klass.superclass();
         return (sup != null ? sup.metaClass() : null);
     }
     

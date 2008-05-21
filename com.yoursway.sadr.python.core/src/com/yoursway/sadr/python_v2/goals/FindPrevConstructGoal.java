@@ -7,6 +7,8 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclaratio
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonConstructAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.SimpleSynchronizer;
 import com.yoursway.sadr.succeeder.Goal;
 import com.yoursway.sadr.succeeder.IAcceptor;
 import com.yoursway.sadr.succeeder.IGrade;

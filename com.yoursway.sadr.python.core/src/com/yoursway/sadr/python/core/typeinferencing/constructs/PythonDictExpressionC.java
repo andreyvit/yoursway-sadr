@@ -8,8 +8,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonDictExpression;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.ResultsCollector;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.DictType;
@@ -41,7 +41,7 @@ public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpress
                     @Override
                     public <T> void completed(IGrade<T> grade) {
                         List<RuntimeObject> actualArguments = getResults();
-                        PythonObjectWithValue<DictValue> dictObject = DictType.newDictObject();
+                        PythonObjectWithValue<DictValue> dictObject = DictType.wrap();
                         HashMap<RuntimeObject, RuntimeObject> dict = dictObject.getValue().getDict();
                         for (int i = 0; i < args.size() / 2; i++) {
                             RuntimeObject key = actualArguments.get(i * 2);

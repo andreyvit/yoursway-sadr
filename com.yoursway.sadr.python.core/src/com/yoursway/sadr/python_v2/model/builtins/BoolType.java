@@ -1,44 +1,43 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.BooleanLiteralC;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
+import com.yoursway.sadr.python_v2.model.ArgumentsUtil;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 //TODO generalize implementation for built-in types.
 public class BoolType extends PythonClassType {
-    private static PythonObjectWithValue<BooleanValue>[] castArguments(List<RuntimeObject> args) {
-        assert args.size() == 2;
-        return new PythonObjectWithValue[] { (PythonObjectWithValue<BooleanValue>) args.get(0),
-                (PythonObjectWithValue<BooleanValue>) args.get(1) };
+    private static List<BooleanValue> castArguments(PythonArguments args) {
+        return ArgumentsUtil.getCastedArgs(args, 2, instance());
     }
     
     private BoolType() {
         FunctionObject and = new FunctionObject("__and__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
-                PythonObjectWithValue<BooleanValue>[] castedArgs = castArguments(args);
-                BooleanValue result = castedArgs[0].getValue().and(castedArgs[1].getValue());
+            public RuntimeObject evaluate(PythonArguments args) {
+                List<BooleanValue> casted = castArguments(args);
+                BooleanValue result = casted.get(0).and(casted.get(1));
                 return newBooleanObject(result);
             }
         };
         
         FunctionObject or = new FunctionObject("__or__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
-                PythonObjectWithValue<BooleanValue>[] castedArgs = castArguments(args);
-                BooleanValue result = castedArgs[0].getValue().or(castedArgs[1].getValue());
+            public RuntimeObject evaluate(PythonArguments args) {
+                List<BooleanValue> casted = castArguments(args);
+                BooleanValue result = casted.get(0).or(casted.get(1));
                 return newBooleanObject(result);
             }
         };
         
         FunctionObject xor = new FunctionObject("__xor__") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
-                PythonObjectWithValue<BooleanValue>[] castedArgs = castArguments(args);
-                BooleanValue result = castedArgs[0].getValue().xor(castedArgs[1].getValue());
+            public RuntimeObject evaluate(PythonArguments args) {
+                List<BooleanValue> casted = castArguments(args);
+                BooleanValue result = casted.get(0).xor(casted.get(1));
                 return newBooleanObject(result);
             }
         };
