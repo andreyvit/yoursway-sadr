@@ -73,7 +73,7 @@ public class PythonEvalResolver {
                 ContinuationScheduler requestor, SimpleContinuation continuation) {
             final PythonConstruct arg = info.getArgument();
             ValueInfoGoal goal = new ExpressionValueInfoGoal(arg, new EmptyDynamicContext(), InfoKind.VALUE);
-            engine.evaluate(goal, null);
+            engine.evaluate(xxx);
             ValueSet valueSet = goal.roughResult().getValueSet();
             Collection<String> values = new ArrayList<String>();
             for (Value value : valueSet.containedValues())

@@ -1,6 +1,6 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import com.yoursway.sadr.python_v2.goals.TransferOfControl;
+import com.yoursway.sadr.python_v2.goals.sideeffects.TransferOfControl;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public abstract class Frog {

@@ -3,7 +3,6 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 import static com.google.common.collect.Iterators.transform;
 import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,11 +23,12 @@ import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
-import com.yoursway.sadr.python_v2.goals.ResultsCollector;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -65,11 +65,11 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
                     public <T> void completed(IGrade<T> grade) {
                         List<RuntimeObject> results = getResults();
                         RuntimeObject arrayObject = results.get(0);
-                        List<RuntimeObject> args = new ArrayList<RuntimeObject>();
-                        args.add(results.get(1));
+                        PythonArguments args = new PythonArguments();
+                        args.getArgs().add(results.get(1));
                         if (arrayObject.getType() instanceof PythonClassType) {
-                            schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, null,
-                                    acceptor, context));
+                            schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, acceptor,
+                                    context));
                         }
                     }
                 };

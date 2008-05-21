@@ -86,4 +86,8 @@ public class PythonObject implements RuntimeObject {
         } else
             return "(unknown object)";
     }
+    
+    public <T> T convertValue(RuntimeObject type) {
+        return null;
+    }
 }

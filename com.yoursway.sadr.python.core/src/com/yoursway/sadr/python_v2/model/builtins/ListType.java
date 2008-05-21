@@ -1,21 +1,31 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import java.util.HashMap;
 import java.util.List;
 
+import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
+import com.yoursway.sadr.python_v2.model.ArgumentsUtil;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class ListType extends PythonClassType {
     private ListType() {
-        FunctionObject append = new FunctionObject("append") {
+        setAttribute(new FunctionObject("append") {
             @Override
-            public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
-                assert args.size() == 2;
-                //TODO
+            public RuntimeObject evaluate(PythonArguments args) {
                 return Builtins.NONE;
             }
-        };
-        setAttribute("append", append);
+        });
+        
+        setAttribute(new FunctionObject("__getitem__") {
+            @Override
+            @SuppressWarnings("unchecked")
+            public RuntimeObject evaluate(PythonArguments args) {
+                List<RuntimeObject> list = ArgumentsUtil.getArgs(args, 2);
+                ListValue array = list.get(0).convertValue(ListType.instance());
+                IntegerValue index = list.get(1).convertValue(IntType.instance());
+                return array.getList().get((int) index.value());
+            }
+        });
     }
     
     private static final ListType instance = new ListType();

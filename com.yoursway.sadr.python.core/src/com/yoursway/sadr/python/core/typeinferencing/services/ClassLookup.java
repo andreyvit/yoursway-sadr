@@ -4,22 +4,22 @@ import java.util.Set;
 
 import com.yoursway.sadr.blocks.integer_literals.IntegerTypesSupport;
 import com.yoursway.sadr.blocks.integer_literals.RuntimeModelWithIntegerTypes;
-import com.yoursway.sadr.python.core.runtime.PythonClassType;
+import com.yoursway.sadr.python.core.runtime.PythonMetaType;
 import com.yoursway.sadr.python.core.runtime.std.StandardTypes;
 
 public interface ClassLookup {
     
-    PythonClassType lookupClass(String name);
+    PythonMetaType lookupClass(String name);
     
-    PythonClassType findClass(String name);
+    PythonMetaType findClass(String name);
     
     StandardTypes standardTypes();
     
-    PythonClassType[] allClasses();
+    PythonMetaType[] allClasses();
     
-    PythonClassType[] findClassesWithMethod(String method);
+    PythonMetaType[] findClassesWithMethod(String method);
     
-    Set<PythonClassType> findClassesByMethods(String[] methods);
+    Set<PythonMetaType> findClassesByMethods(String[] methods);
     
     IntegerTypesSupport integerTypesSupport();
     

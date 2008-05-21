@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import java.util.HashMap;
-import java.util.List;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -9,6 +7,7 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclaration
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonLambdaExpressionC;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class FunctionObject extends PythonObject {
@@ -20,21 +19,21 @@ public class FunctionObject extends PythonObject {
         super(Builtins.FUNCTION);
         this.decl = decl;
         this.name = decl.node().getName();
-        setAttribute("__name__", StringType.newStringObject(name));
+        setAttribute("__name__", StringType.wrap(name));
     }
     
     public FunctionObject(PythonLambdaExpressionC decl) {
         super(Builtins.FUNCTION);
         this.decl = decl;
         this.name = "<lambda>";
-        setAttribute("__name__", StringType.newStringObject(name));
+        setAttribute("__name__", StringType.wrap(name));
     }
     
     public FunctionObject(String name) {
         super(Builtins.FUNCTION);
         this.decl = null;
         this.name = name;
-        setAttribute("__name__", StringType.newStringObject(name));
+        setAttribute("__name__", StringType.wrap(name));
     }
     
     public FunctionObject(ClassDeclarationC classDeclarationC) {//class name
@@ -60,7 +59,7 @@ public class FunctionObject extends PythonObject {
         return boundClass;
     }
     
-    public RuntimeObject evaluate(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs) {
+    public RuntimeObject evaluate(PythonArguments args) {
         throw new NotImplementedException();
     }
     

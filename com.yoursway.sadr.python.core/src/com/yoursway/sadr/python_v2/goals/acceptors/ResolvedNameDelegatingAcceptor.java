@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yoursway.sadr.python_v2.goals;
+package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentC;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;

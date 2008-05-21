@@ -11,8 +11,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexAffector;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.goals.CallF;
-import com.yoursway.sadr.python_v2.goals.FieldReadF;
+import com.yoursway.sadr.python_v2.goals.sideeffects.CallF;
+import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
 
 public class MethodCallC extends CallC implements IndexAffector {
     

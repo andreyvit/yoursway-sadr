@@ -4,18 +4,18 @@ import org.eclipse.dltk.ast.ASTNode;
 
 public abstract class PythonClassDefinition {
     
-    private final PythonClassType klass;
+    private final PythonMetaType klass;
     
-    public PythonClassDefinition(PythonClassType klass) {
+    public PythonClassDefinition(PythonMetaType klass) {
         this.klass = klass;
         klass.addClassDefinition(this);
     }
     
-    public PythonClassType klass() {
+    public PythonMetaType klass() {
         return klass;
     }
     
-    public abstract PythonClassType superclass();
+    public abstract PythonMetaType superclass();
     
     public abstract ASTNode nodeForSelection();
     

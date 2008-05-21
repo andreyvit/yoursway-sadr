@@ -1,12 +1,10 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.yoursway.sadr.python.core.typeinferencing.constructs.BinaryC;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -69,15 +67,10 @@ public class BinaryExpressionGoal extends ContextSensitiveGoal {
     }
     
     private void onBothReady() {
-        //TODO evaluate result for each context
-        RuntimeObject receiver = left;
-        RuntimeObject argument = right;
         String name = expression.getOperationMethodName();
-        List<RuntimeObject> actualArgs = new ArrayList<RuntimeObject>(1);
-        actualArgs.add(argument);
-        HashMap<String, RuntimeObject> kwargs = new HashMap<String, RuntimeObject>();
-        schedule(CallResolver.callMethod(receiver, name, actualArgs, kwargs,
-                acceptor, getContext()));
+        PythonArguments args = new PythonArguments();
+        args.getArgs().add(right);
+        schedule(CallResolver.callMethod(left, name, args, acceptor, getContext()));
     }
     
     @Override

@@ -84,7 +84,7 @@ public class RootScope extends AbstractScope {
         throw new UnsupportedOperationException();
     }
     
-    public PythonClassType currentClass() {
+    public PythonMetaType currentClass() {
         throw new UnsupportedOperationException();
     }
     

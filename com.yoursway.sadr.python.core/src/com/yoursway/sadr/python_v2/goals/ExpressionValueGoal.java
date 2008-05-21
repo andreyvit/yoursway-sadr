@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.goals;
 
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 
 public abstract class ExpressionValueGoal extends ContextSensitiveGoal {

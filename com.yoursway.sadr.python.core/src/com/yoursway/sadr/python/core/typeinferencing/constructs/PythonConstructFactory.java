@@ -15,6 +15,7 @@ import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
+import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonDelStatement;
 import org.eclipse.dltk.python.parser.ast.PythonExceptStatement;
@@ -106,16 +107,16 @@ public class PythonConstructFactory {
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
                 || node instanceof PrintExpression || node instanceof EmptyStatement
                 || node instanceof PythonImportFromStatement || node instanceof PythonAllImportExpression
-                || node instanceof PythonArgument || node instanceof PythonDelStatement
-                || node instanceof PythonImportStatement || node instanceof PythonFunctionDecorator
-                || node instanceof PythonWithStatement || node instanceof PythonRaiseStatement
-                || node instanceof PythonImportExpression || node instanceof PythonImportAsExpression
-                || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
-                || node instanceof ExpressionList || node instanceof UnaryExpression
-                || node instanceof PythonSubscriptExpression || node instanceof FloatNumericLiteral
-                || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement
-                || node instanceof ComplexNumericLiteral || node instanceof PythonTryStatement
-                || node instanceof PythonExceptStatement)
+                || node instanceof PythonArgument || node instanceof PythonCallArgument
+                || node instanceof PythonDelStatement || node instanceof PythonImportStatement
+                || node instanceof PythonFunctionDecorator || node instanceof PythonWithStatement
+                || node instanceof PythonRaiseStatement || node instanceof PythonImportExpression
+                || node instanceof PythonImportAsExpression || node instanceof PythonTestListExpression
+                || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
+                || node instanceof UnaryExpression || node instanceof PythonSubscriptExpression
+                || node instanceof FloatNumericLiteral || node instanceof PythonWhileStatement
+                || node instanceof PythonYieldStatement || node instanceof ComplexNumericLiteral
+                || node instanceof PythonTryStatement || node instanceof PythonExceptStatement)
             return new UnhandledC(scope, node);
         throw new RuntimeException("No construct found for node " + node.getClass());
     }

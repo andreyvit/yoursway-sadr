@@ -31,7 +31,7 @@ import com.yoursway.utils.facelets.GemstoneImpl;
 public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements ClassLookup, VariableLookup,
         ProcedureLookup, RuntimeModel {
     
-    private final Collection<PythonClassType> klasses = new ArrayList<PythonClassType>();
+    private final Collection<PythonMetaType> klasses = new ArrayList<PythonMetaType>();
     
     private final Collection<PythonModule> modules = newArrayList();
     
@@ -57,18 +57,18 @@ public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements Cl
         standardTypes = new StandardTypesImpl(this, schema);
     }
     
-    public PythonClassType lookupClass(String name) {
-        PythonClassType klass = findClass(name);
+    public PythonMetaType lookupClass(String name) {
+        PythonMetaType klass = findClass(name);
         if (klass != null)
             return klass;
         return new PythonClass(this, name);
     }
     
-    public PythonClassType findClass(String name) {
+    public PythonMetaType findClass(String name) {
         return namesToClasses.get(name);
     }
     
-    public void addClass(PythonClassType klass) {
+    public void addClass(PythonMetaType klass) {
         klasses.add(klass);
         namesToClasses.put(klass.name(), klass);
     }
@@ -112,8 +112,8 @@ public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements Cl
     }
     
     private PythonClass[] calculateClassesWithMethod(String method) {
-        Collection<PythonClassType> result = new ArrayList<PythonClassType>();
-        for (PythonClassType klass : klasses) {
+        Collection<PythonMetaType> result = new ArrayList<PythonMetaType>();
+        for (PythonMetaType klass : klasses) {
             AnyMethodRequestor rq = new AnyMethodRequestor();
             klass.findMethod(method, rq);
             if (rq.anythingFound())
@@ -122,15 +122,15 @@ public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements Cl
         return result.toArray(new PythonClass[result.size()]);
     }
     
-    public Set<PythonClassType> findClassesByMethods(String[] methods) {
+    public Set<PythonMetaType> findClassesByMethods(String[] methods) {
         return calculateClassesByMethods(methods);
     }
     
-    private Set<PythonClassType> calculateClassesByMethods(String[] methods) {
-        Set<PythonClassType> klasses = null;
+    private Set<PythonMetaType> calculateClassesByMethods(String[] methods) {
+        Set<PythonMetaType> klasses = null;
         for (String method : methods) {
             PythonClass[] matching = findClassesWithMethod(method);
-            HashSet<PythonClassType> set = new HashSet<PythonClassType>(Arrays.asList(matching));
+            HashSet<PythonMetaType> set = new HashSet<PythonMetaType>(Arrays.asList(matching));
             if (set.isEmpty())
                 continue;
             if (klasses == null)
@@ -144,8 +144,8 @@ public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements Cl
         return klasses;
     }
     
-    private void eliminateExtraSubclasses(Set<PythonClassType> klasses, String[] methods) {
-        for (Iterator<PythonClassType> iter = klasses.iterator(); iter.hasNext();)
+    private void eliminateExtraSubclasses(Set<PythonMetaType> klasses, String[] methods) {
+        for (Iterator<PythonMetaType> iter = klasses.iterator(); iter.hasNext();)
             if (!iter.next().definesAtLeastOneOf(methods))
                 iter.remove();
     }

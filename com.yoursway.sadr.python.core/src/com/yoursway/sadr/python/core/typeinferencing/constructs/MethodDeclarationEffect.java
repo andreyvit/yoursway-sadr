@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
-import com.yoursway.sadr.python_v2.goals.UserMethodF;
-import com.yoursway.sadr.python_v2.goals.VariableReadF;
+import com.yoursway.sadr.python_v2.goals.sideeffects.UserMethodF;
+import com.yoursway.sadr.python_v2.goals.sideeffects.VariableReadF;
 
 public class MethodDeclarationEffect extends Effect {
     

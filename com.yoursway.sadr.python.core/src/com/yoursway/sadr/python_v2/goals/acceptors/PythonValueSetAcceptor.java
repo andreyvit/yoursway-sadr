@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python_v2.goals;
+package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import java.util.HashMap;
 import java.util.Map;

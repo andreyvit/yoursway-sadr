@@ -7,6 +7,13 @@ import com.yoursway.sadr.python.core.typeinferencing.constructs.Effects;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.Frog;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.VariableReferenceC;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonConstructAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
+import com.yoursway.sadr.python_v2.goals.sideeffects.Request;
+import com.yoursway.sadr.python_v2.goals.sideeffects.SideEffectRequest;
+import com.yoursway.sadr.python_v2.goals.sideeffects.Swamp;
+import com.yoursway.sadr.python_v2.goals.sideeffects.ValueRequest;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGrade;
 

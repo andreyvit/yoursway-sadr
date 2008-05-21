@@ -2,17 +2,17 @@ package com.yoursway.sadr.python.core.typeinferencing.constructs;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.ResultsCollector;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
@@ -21,7 +21,7 @@ import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     
-    private List<PythonConstruct> args;
+    private final List<PythonConstruct> args;
     private final PythonConstruct func;
     
     CallC(Scope sc, PythonCallExpression node) {
@@ -32,6 +32,12 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             args = PythonConstructFactory.wrap(node.getArgs().getChilds(), sc);
         }
         func = PythonConstructFactory.wrap(node.getFunction(), sc);
+        List<PythonConstruct> childs = new ArrayList<PythonConstruct>();
+        setChildConstructs(childs);
+    }
+    
+    @Override
+    protected void wrapEnclosedChildren() {
     }
     
     abstract public PythonConstruct getReceiver();
@@ -65,12 +71,12 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                         //                        CallResolver.callClassMethod(klass, expressionName, actualArguments, acceptor, context)
                         
                         List<RuntimeObject> evalArguments = getResults();
-                        HashMap<String, RuntimeObject> kwargs = new HashMap<String, RuntimeObject>();
                         RuntimeObject method = evalArguments.get(0);
                         int index = evalArguments.size() - kwnames.size();
-                        List<RuntimeObject> args = evalArguments.subList(1, index);
+                        PythonArguments args = new PythonArguments();
+                        args.getArgs().addAll(evalArguments.subList(1, index));
                         for (String key : kwnames) {
-                            kwargs.put(key, evalArguments.get(index++));
+                            args.getKwargs().put(key, evalArguments.get(index++));
                         }
                         FunctionObject function = null;
                         if (method instanceof FunctionObject) {
@@ -82,7 +88,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                             throw new IllegalStateException("Unable to find callable " + func
                                     + ", resolved to " + method);
                         }
-                        schedule(CallResolver.callFunction(function, args, kwargs, acceptor, getContext()));
+                        schedule(CallResolver.callFunction(function, args, acceptor, getContext()));
                         //                        if (expression instanceof MethodCallC) {
                         //                            function.bind(InstanceType.createSelf(expression));
                         //                            actualArguments.add(0, new InstanceValue(null, null));

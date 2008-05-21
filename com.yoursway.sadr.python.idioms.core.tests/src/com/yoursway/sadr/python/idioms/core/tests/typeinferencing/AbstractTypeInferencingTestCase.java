@@ -31,10 +31,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
@@ -42,18 +39,14 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
-import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.FileScope;
 import com.yoursway.sadr.python.idioms.core.Idiom;
 import com.yoursway.sadr.python.idioms.core.IdiomMatch;
-import com.yoursway.sadr.python.idioms.core.IdiomMatcher;
-import com.yoursway.sadr.python.idioms.core.TreePrinter;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;
 import com.yoursway.sadr.python.idioms.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.idioms.core.tests.internal.StringInputStream;
@@ -157,7 +150,7 @@ public abstract class AbstractTypeInferencingTestCase {
 		if (assertions.size() == 0)
 			return;
 
-		PythonFileC fileC = projectRuntime.getConstructFor(sourceModule);
+		PythonFileC fileC = projectRuntime.getModule(sourceModule.getElementName());
 		for (IAssertion assertion : assertions)
 			assertion.check(fileC, sourceModule, engine, expected,
 					actual);
@@ -317,7 +310,7 @@ public abstract class AbstractTypeInferencingTestCase {
 		}
 
 		public void check(PythonFileC fileC,
-				ISourceModule cu, AnalysisEngine engine,
+				ISourceModule cu, Engine engine,
 				StringBuilder expected, StringBuilder actual) throws Exception {
 			System.out.println();
 			ASTNode node = ASTUtils.findNodeAt(fileC.node(), lineOffset);
@@ -361,6 +354,5 @@ public abstract class AbstractTypeInferencingTestCase {
 			// EmptyDynamicContext(), InfoKind.TYPE);
 			return null;
 		}
-
 	}
 }

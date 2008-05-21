@@ -123,7 +123,7 @@ public class PythonUtils {
     }
     
     public static PythonMetaClass resolveStaticClassReference(ClassLookup lookup, SimpleReference receiver) {
-        PythonClassType klass = lookup.findClass(receiver.getName());
+        PythonMetaType klass = lookup.findClass(receiver.getName());
         return klass == null ? null : klass.metaClass();
     }
     
@@ -178,7 +178,7 @@ public class PythonUtils {
     //    }
     
     public static AbstractType createType(PythonBasicClass klass) {
-        return klass instanceof PythonClassType ? new InstanceType((PythonClassType) klass)
+        return klass instanceof PythonMetaType ? new InstanceType((PythonMetaType) klass)
                 : new MetaClassType((PythonMetaClass) klass);
     }
     
