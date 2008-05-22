@@ -137,7 +137,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     public Frog toFrog() {
         throw new UnsupportedOperationException("All frogs gone to heaven, except "
-                + getClass().getSimpleName());
+                + this.getClass().getSimpleName() + " of " + this.node.getClass().getSimpleName());
     }
     
     public Effects getEffects() {
