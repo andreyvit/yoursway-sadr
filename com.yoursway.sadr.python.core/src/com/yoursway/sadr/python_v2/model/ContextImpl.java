@@ -48,4 +48,8 @@ public class ContextImpl implements Context {
         return args.get(name);
     }
     
+    @Override
+    public String toString() {
+        return args.toString();
+    }
 }

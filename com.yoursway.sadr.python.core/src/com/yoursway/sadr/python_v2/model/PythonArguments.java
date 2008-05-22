@@ -9,8 +9,8 @@ import java.util.List;
 public class PythonArguments {
     private final List<RuntimeObject> args;
     private final HashMap<String, RuntimeObject> kwargs;
-    private final RuntimeObject lastArg;
-    private final RuntimeObject lastKwarg;
+    private RuntimeObject lastArg;
+    private RuntimeObject lastKwarg;
     
     public PythonArguments(List<RuntimeObject> args, HashMap<String, RuntimeObject> kwargs,
             RuntimeObject last_arg, RuntimeObject last_kwarg) {
@@ -52,5 +52,13 @@ public class PythonArguments {
     
     public RuntimeObject getLastKwarg() {
         return lastKwarg;
+    }
+    
+    public void setLastArg(RuntimeObject lastArg) {
+        this.lastArg = lastArg;
+    }
+    
+    public void setLastKwarg(RuntimeObject lastKwarg) {
+        this.lastKwarg = lastKwarg;
     }
 }

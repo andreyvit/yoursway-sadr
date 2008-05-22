@@ -1,8 +1,10 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
+import com.yoursway.sadr.python_v2.model.ArgumentsUtil;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.PythonArgumentsReader;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
@@ -15,6 +17,16 @@ public class DictType extends PythonClassType {
                 PythonArgumentsReader reader = new PythonArgumentsReader(args);
                 HashMap<String, RuntimeObject> kwargs = reader.lastKwargs();
                 return DictType.wrapStrDict(kwargs);
+            }
+        });
+        setAttribute(new FunctionObject("__getitem__") {
+            @Override
+            @SuppressWarnings("unchecked")
+            public RuntimeObject evaluate(PythonArguments args) {
+                List<RuntimeObject> list = ArgumentsUtil.getArgs(args, 2);
+                DictValue array = list.get(0).convertValue(DictType.instance());
+                PythonObjectWithValue<?> value = ((PythonObjectWithValue<?>) list.get(1));
+                return array.getDict().get(value);
             }
         });
     }

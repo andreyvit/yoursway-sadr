@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -70,14 +71,32 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                         //callee method object is result number zero
                         //                        CallResolver.callClassMethod(klass, expressionName, actualArguments, acceptor, context)
                         
-                        List<RuntimeObject> evalArguments = getResults();
-                        RuntimeObject method = evalArguments.get(0);
-                        int index = evalArguments.size() - kwnames.size();
-                        PythonArguments args = new PythonArguments();
-                        args.getArgs().addAll(evalArguments.subList(1, index));
-                        for (String key : kwnames) {
-                            args.getKwargs().put(key, evalArguments.get(index++));
+                        List<RuntimeObject> results = getResults();
+                        RuntimeObject method = results.get(0);
+                        int index = 1;
+                        PythonArguments real = new PythonArguments();
+                        for (PythonConstruct arg : args) {
+                            if (arg instanceof CallArgumentC) {
+                                RuntimeObject result = results.get(index++);
+                                CallArgumentC argC = (CallArgumentC) arg;
+                                if (argC.getStar() == PythonArgument.NOSTAR) {
+                                    real.getArgs().add(result);
+                                } else if (argC.getStar() == PythonArgument.STAR) {
+                                    real.setLastArg(result);
+                                } else if (argC.getStar() == PythonArgument.DOUBLESTAR) {
+                                    real.setLastKwarg(result);
+                                }
+                            }
                         }
+                        
+                        for (PythonConstruct arg : args) {
+                            if (arg instanceof AssignmentC) {
+                                AssignmentC assignmentC = (AssignmentC) arg;
+                                RuntimeObject result = results.get(index++);
+                                real.getKwargs().put(assignmentC.getName(), result);
+                            }
+                        }
+                        
                         FunctionObject function = null;
                         if (method instanceof FunctionObject) {
                             function = (FunctionObject) method;
@@ -88,7 +107,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                             throw new IllegalStateException("Unable to find callable " + func
                                     + ", resolved to " + method);
                         }
-                        schedule(CallResolver.callFunction(function, args, acceptor, getContext()));
+                        schedule(CallResolver.callFunction(function, real, acceptor, getContext()));
                         //                        if (expression instanceof MethodCallC) {
                         //                            function.bind(InstanceType.createSelf(expression));
                         //                            actualArguments.add(0, new InstanceValue(null, null));

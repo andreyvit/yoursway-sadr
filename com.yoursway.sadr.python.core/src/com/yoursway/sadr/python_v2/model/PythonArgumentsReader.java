@@ -23,7 +23,7 @@ public class PythonArgumentsReader {
     private int argId = 0;
     
     private RuntimeObject getArg(boolean required) {
-        if (realArgs.size() < argId) {
+        if (argId >= realArgs.size()) {
             if (required)
                 throw new IllegalStateException("Not enough arguments");
             else
@@ -37,12 +37,13 @@ public class PythonArgumentsReader {
     }
     
     public List<RuntimeObject> lastArgs() {
-        return realArgs;
+        return realArgs.subList(argId, realArgs.size());
     }
     
     public RuntimeObject getKwarg(String key, boolean required) {
-        if (realKwargs.containsKey(key))
-            return realKwargs.get(key);
+        if (realKwargs.containsKey(key)) {
+            return realKwargs.remove(key);
+        }
         return getArg(required);
     }
     

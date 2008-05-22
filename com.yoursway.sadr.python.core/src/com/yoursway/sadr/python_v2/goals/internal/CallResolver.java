@@ -29,8 +29,12 @@ public final class CallResolver {
             args.getArgs().add(0, receiver);
             return callClassMethod(userClass, methodName, args, acceptor, context);
         }
+        if (callable == null) {
+            throw new IllegalArgumentException("callable is null in CallResolver.callMethod()");
+        }
         if (!(callable instanceof FunctionObject)) {
-            throw new IllegalArgumentException("callable should be FunctionObject");
+            throw new IllegalArgumentException("callable is " + callable.getClass().getSimpleName()
+                    + " in CallResolver.callMethod()");
         }
         if (receiver.getDict().containsKey(methodName)) {
             return callFunction((FunctionObject) callable, args, acceptor, context);
