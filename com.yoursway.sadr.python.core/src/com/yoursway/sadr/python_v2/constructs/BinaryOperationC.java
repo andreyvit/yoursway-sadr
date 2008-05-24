@@ -1,63 +1,72 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import java.util.HashMap;
-
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
+import com.google.common.collect.Lists;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
+import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.succeeder.IGrade;
 
 public class BinaryOperationC extends BinaryC {
     
-    private final String opName;
-    
-    static HashMap<String, String> binoplist = new HashMap<String, String>();
-    static {
-        binoplist.put("+", "__add__");
-        binoplist.put("-", "__sub__");
-        binoplist.put("*", "__mul__");
-        binoplist.put("//", "__floordiv__");
-        binoplist.put("%", "__mod__");
-        binoplist.put("**", "__pow__");
-        binoplist.put("<<", "__lshift__");
-        binoplist.put(">>", "__rshift__");
-        binoplist.put("&&", "__and__");//numeric and
-        binoplist.put("^", "__xor__");
-        binoplist.put("||", "__or__");//numeric or
-        binoplist.put("/", "__div__");
-        
-        //      binoplist.put("+", "__radd__");
-        //      binoplist.put("-", "__rsub__");
-        //      binoplist.put("*", "__rmul__");
-        //      binoplist.put("/", "__rdiv__");
-        //      binoplist.put("//", "__rfloordiv__");
-        //      binoplist.put("%", "__rmod__");
-        //      binoplist.put("**", "__rpow__");
-        //      binoplist.put("<<", "__rlshift__");
-        //      binoplist.put(">>", "__rrshift__");
-        //      binoplist.put("&", "__rand__");
-        //      binoplist.put("^", "__rxor__");
-        //      binoplist.put("|", "__ror__");
-        
-        binoplist.put("<", "__lt__");
-        binoplist.put("<=", "__le__");
-        binoplist.put("==", "__eq__");
-        binoplist.put("!=", "__ne__");
-        binoplist.put(">", "__gt__");
-        binoplist.put(">=", "__ge__");
-    }
-    
-    static boolean isBinaryOperation(String name) {
-        return binoplist.containsKey(name);
-    }
+    private static final String LEFT = "left";
+    private static final String RIGHT = "right";
+    private final String leftOpName;
+    private final String rightOpName;
     
     BinaryOperationC(Scope sc, BinaryExpression node) {
         super(sc, node);
-        this.opName = binoplist.get(node.getOperator());
+        this.leftOpName = lbinoplist.get(node.getOperator());
+        this.rightOpName = rbinoplist.get(node.getOperator());
     }
     
     @Override
-    public String getOperationMethodName() {
-        return this.opName;
+    public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                ResultsCollector rc = new ResultsCollector(2, context) {
+                    @Override
+                    public <K> void completed(IGrade<K> grade) {
+                        final RuntimeObject left = getResults().get(LEFT);
+                        final RuntimeObject right = getResults().get(RIGHT);
+                        final PythonArguments args = new PythonArguments(Lists.newArrayList(left, right));
+                        final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor() {
+                            public <T> void checkpoint(IGrade<T> grade) {
+                                RuntimeObject callable = getResultByContext(context);
+                                if (callable == null) {
+                                    schedule(new PassResultGoal(context, acceptor, null));
+                                } else {
+                                    schedule(CallResolver
+                                            .callFunction(callable, args, acceptor, getContext()));
+                                }
+                            }
+                        };
+                        PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor() {
+                            public <T> void checkpoint(IGrade<T> grade) {
+                                RuntimeObject callable = getResultByContext(context);
+                                if (callable == null) {
+                                    schedule(CallResolver.findMethod(right, rightOpName, rightFound, context));
+                                } else {
+                                    schedule(CallResolver
+                                            .callFunction(callable, args, acceptor, getContext()));
+                                }
+                            }
+                        };
+                        schedule(CallResolver.findMethod(left, leftOpName, leftFound, context));
+                    }
+                };
+                schedule(rc.addSubgoal(getLeft(), LEFT));
+                schedule(rc.addSubgoal(getRight(), RIGHT));
+                rc.startCollecting();
+            }
+            
+        };
     }
-    
 }

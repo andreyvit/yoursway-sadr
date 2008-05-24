@@ -12,6 +12,27 @@ import com.yoursway.sadr.succeeder.IGoal;
 
 public class SyncFunctionObject extends FunctionObject {
     
+    private final class EvaluateBuiltinFunctionGoal extends ExpressionValueGoal {
+        private final PythonArguments args;
+        
+        private EvaluateBuiltinFunctionGoal(Context context, PythonValueSetAcceptor acceptor,
+                PythonArguments args) {
+            super(context, acceptor);
+            this.args = args;
+        }
+        
+        public void preRun() {
+            RuntimeObject result = SyncFunctionObject.this.evaluate(args);
+            acceptor.addResult(result, getContext());
+            updateGrade(acceptor, Grade.DONE);
+        }
+        
+        @Override
+        public String describe() {
+            return "EvaluateBuiltinFunctionGoal for function " + SyncFunctionObject.this.name();
+        }
+    }
+    
     public SyncFunctionObject(String name) {
         super(name);
     }
@@ -19,18 +40,7 @@ public class SyncFunctionObject extends FunctionObject {
     @Override
     public IGoal evaluateGoal(PythonValueSetAcceptor acceptor, final Context context,
             final PythonArguments args) {
-        return new ExpressionValueGoal(context, acceptor) {
-            public void preRun() {
-                RuntimeObject result = SyncFunctionObject.this.evaluate(args);
-                acceptor.addResult(result, context);
-                updateGrade(acceptor, Grade.DONE);
-            }
-            
-            @Override
-            public String describe() {
-                return "ExpressionValueGoal for function " + SyncFunctionObject.this.name();
-            }
-        };
+        return new EvaluateBuiltinFunctionGoal(context, acceptor, args);
     }
     
     public RuntimeObject evaluate(PythonArguments args) {

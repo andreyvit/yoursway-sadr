@@ -11,23 +11,22 @@ public class BinaryComparisonC extends BinaryC {
     
     private final Comparison comparison;
     
-    BinaryComparisonC(Scope sc, BinaryExpression node, Comparison comparison) {
+    BinaryComparisonC(Scope sc, BinaryExpression node) {
         super(sc, node);
-        this.comparison = comparison;
+        this.comparison = parseComparison(node.getOperator());
     }
     
-    private static final Map<String, Comparison> byOperator = createMap();
+    static Map<String, Comparison> byOperator;
     
-    private static Map<String, Comparison> createMap() {
-        Map<String, Comparison> result = new HashMap<String, Comparison>();
-        result.put("==", Comparison.EQUALS);
-        result.put("<>", Comparison.NOT_EQUALS);
-        result.put("!=", Comparison.NOT_EQUALS);
-        result.put("<", Comparison.LESS);
-        result.put("<=", Comparison.LESS_OR_EQUALS);
-        result.put(">", Comparison.GREATER);
-        result.put(">=", Comparison.GREATER_OR_EQUALS);
-        return result;
+    static {
+        byOperator = new HashMap<String, Comparison>();
+        byOperator.put("==", Comparison.EQUALS);
+        byOperator.put("<>", Comparison.NOT_EQUALS);
+        byOperator.put("!=", Comparison.NOT_EQUALS);
+        byOperator.put("<", Comparison.LESS);
+        byOperator.put("<=", Comparison.LESS_OR_EQUALS);
+        byOperator.put(">", Comparison.GREATER);
+        byOperator.put(">=", Comparison.GREATER_OR_EQUALS);
     }
     
     public static Comparison parseComparison(String operator) {
@@ -37,11 +36,4 @@ public class BinaryComparisonC extends BinaryC {
     public Comparison getComparison() {
         return comparison;
     }
-    
-    @Override
-    public String getOperationMethodName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
 }

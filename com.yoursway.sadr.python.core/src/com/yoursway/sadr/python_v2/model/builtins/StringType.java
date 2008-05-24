@@ -2,18 +2,12 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.List;
 
-import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python_v2.constructs.StringLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class StringType extends PythonClassType {
-    public RuntimeObject __call__(PythonArguments args) {
-        Value value = args.getSingle();
-        return wrap(value.toString());
-    }
-    
     public RuntimeObject __add__(PythonArguments args) {
         List<StringValue> values = args.castArgs(2, instance());
         StringValue result = values.get(0).add(values.get(1));
@@ -27,6 +21,7 @@ public class StringType extends PythonClassType {
     }
     
     private StringType() {
+        setAttribute(new RedirectFunctionObject("__call__", "__str__"));
     }
     
     private static StringType instance = new StringType();

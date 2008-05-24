@@ -19,7 +19,7 @@ public class PythonObject implements RuntimeObject {
     Map<String, RuntimeObject> attributes = new HashMap<String, RuntimeObject>();
     private PythonClassType type;
     
-    public Map<String, RuntimeObject> getDict() {
+    public Map<String, RuntimeObject> getAttributes() {
         return attributes;
     }
     

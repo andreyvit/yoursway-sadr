@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.NilValue;
 
 /**
@@ -19,6 +20,14 @@ public class Builtins extends PythonClassType {
     
     public static PythonObject createNone() {
         return new PythonValue<NilValue>(NONE, NilValue.instance());
+    }
+    
+    public static PythonObject createTrue() {
+        return new PythonValue<BooleanValue>(BoolType.instance(), new BooleanValue(true));
+    }
+    
+    public static PythonObject createFalse() {
+        return new PythonValue<BooleanValue>(BoolType.instance(), new BooleanValue(false));
     }
     
     public static final PythonClassType FUNCTION = getTypeType(); //TODO
@@ -42,6 +51,13 @@ public class Builtins extends PythonClassType {
             module.setAttribute("list", ListType.instance());
             module.setAttribute("tuple", TupleType.instance());
             module.setAttribute("dict", DictType.instance());
+            module.setAttribute("None", createNone());
+            module.setAttribute("True", createTrue());
+            module.setAttribute("False", createFalse());
+            module.setAttribute(new RedirectFunctionObject("len", "__len__"));
+            module.setAttribute(new RedirectFunctionObject("repr", "__repr__"));
+            module.setAttribute(new RedirectFunctionObject("unicode", "__unicode__"));
+            module.setAttribute(new RedirectFunctionObject("__unicode__", "__str__"));
         }
         return module;
     }

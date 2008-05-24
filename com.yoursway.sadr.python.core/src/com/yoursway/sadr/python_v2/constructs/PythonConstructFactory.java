@@ -50,7 +50,6 @@ import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 
 public class PythonConstructFactory {
     
@@ -73,7 +72,7 @@ public class PythonConstructFactory {
         if (node instanceof BigNumericLiteral)
             return new BigIntegerLiteralC(scope, (BigNumericLiteral) node);
         if (node instanceof VariableReference)
-            return wrapVariableReference(scope, (VariableReference) node);
+            return new VariableReferenceC(scope, ((VariableReference) node));
         if (node instanceof PythonCallExpression) {
             PythonCallExpression expression = (PythonCallExpression) node;
             if (expression.getReceiver() == null)
@@ -104,44 +103,50 @@ public class PythonConstructFactory {
             return new PythonDictExpressionC(scope, (PythonDictExpression) node);
         if (node instanceof BinaryExpression)
             return wrapBinaryExpression(scope, (BinaryExpression) node);
+        if (node instanceof UnaryExpression)
+            return wrapUnaryExpression(scope, (UnaryExpression) node);
         if (node instanceof PythonCallArgument)
             return new CallArgumentC(scope, (PythonCallArgument) node);
         if (node instanceof PythonArgument)
             return new ArgumentC(scope, (PythonArgument) node);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
-                || node instanceof PrintExpression || node instanceof EmptyStatement
-                || node instanceof PythonImportFromStatement || node instanceof PythonAllImportExpression
-                || node instanceof PythonArgument || node instanceof PythonDelStatement
-                || node instanceof PythonImportStatement || node instanceof PythonFunctionDecorator
-                || node instanceof PythonWithStatement || node instanceof PythonRaiseStatement
-                || node instanceof PythonImportExpression || node instanceof PythonImportAsExpression
-                || node instanceof PythonTestListExpression || node instanceof PythonVariableAccessExpression
-                || node instanceof ExpressionList || node instanceof UnaryExpression
+                || node instanceof EmptyStatement || node instanceof PythonImportFromStatement
+                || node instanceof PythonAllImportExpression || node instanceof PythonArgument
+                || node instanceof PythonDelStatement || node instanceof PythonImportStatement
+                || node instanceof PythonFunctionDecorator || node instanceof PythonWithStatement
+                || node instanceof PythonRaiseStatement || node instanceof PythonImportExpression
+                || node instanceof PythonImportAsExpression || node instanceof PythonTestListExpression
+                || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
                 || node instanceof PythonSubscriptExpression || node instanceof FloatNumericLiteral
                 || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement
                 || node instanceof ComplexNumericLiteral || node instanceof PythonTryStatement
-                || node instanceof PythonExceptStatement)
+                || node instanceof PythonExceptStatement) {
+            System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
             return new UnhandledC(scope, node);
+        }
         throw new RuntimeException("No construct found for node " + node.getClass());
-    }
-    
-    private static PythonConstruct wrapVariableReference(Scope sc, VariableReference node) {
-        String repr = node.getName();
-        if (repr != null && (repr.equals(BooleanValue.TRUE) || repr.equals(BooleanValue.FALSE)))
-            return new BooleanLiteralC(sc, node);
-        return new VariableReferenceC(sc, node);
     }
     
     private static PythonConstruct wrapBinaryExpression(Scope sc, BinaryExpression node) {
         String operator = node.getOperator();
         if (BinaryOperationC.isBinaryOperation(operator))
             return new BinaryOperationC(sc, node);
-        //        if (operator.equals("%"))
-        //            return new BinaryPercentC(sc, node);
-        //        Comparison comparison = BinaryComparisonC.parseComparison(operator);
-        //        if (comparison != null)
-        //            return new BinaryComparisonC(sc, node, comparison);
+        if (BinaryOperationC.isBinAssOperation(operator))
+            return new BinaryAssignmentC(sc, node);
+        Comparison comparison = BinaryComparisonC.parseComparison(operator);
+        if (comparison != null)
+            return new BinaryComparisonC(sc, node);
+        System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
         return new UnhandledC(sc, node);
+    }
+    
+    private static PythonConstruct wrapUnaryExpression(Scope sc, UnaryExpression node) {
+        String operator = node.getOperator();
+        if (UnaryOperationC.isUnaryOperation(operator))
+            return new UnaryOperationC(sc, node);
+        if (!(node instanceof PrintExpression))
+            System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
+        return new UnaryC(sc, node);
     }
     
 }

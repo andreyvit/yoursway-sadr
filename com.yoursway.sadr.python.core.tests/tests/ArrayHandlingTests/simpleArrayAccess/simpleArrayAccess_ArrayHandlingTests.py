@@ -7,8 +7,8 @@ def foo():
   return x
 
 def bar():
-  zzz = foo() ## expr zzz => Foo[]
-  y = zzz[0]
+  zzz = foo() ## expr zzz => list
+  y = zzz[1]
   print y ## expr y => Foo
 
 

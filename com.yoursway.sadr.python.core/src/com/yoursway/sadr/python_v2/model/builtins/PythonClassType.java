@@ -35,6 +35,8 @@ public class PythonClassType extends PythonObject {
                 e.printStackTrace();
                 throw e;
             } catch (Exception e) {
+                if (e.getCause() != null && e.getCause() instanceof RuntimeException)
+                    throw (RuntimeException) e.getCause();
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
@@ -94,7 +96,7 @@ public class PythonClassType extends PythonObject {
     
     protected RuntimeObject lookupInSuperclasses(String name) {
         for (PythonClassType cls : supers) {
-            RuntimeObject object = cls.getDict().get(name);
+            RuntimeObject object = cls.getAttributes().get(name);
             if (object != null)
                 return object;
         }

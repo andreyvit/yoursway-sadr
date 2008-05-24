@@ -5,7 +5,7 @@ class Q(object):
 
 class Foo(object):
     def __itruediv__ (self, rhs):
-        return Q()
+        print rhs
 
 x = Foo()
-x /= Foo() ## expr x => Q
+x /= Foo() ## expr x => Foo

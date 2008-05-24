@@ -8,7 +8,7 @@ METHS_TO_FUNCS = {
                   "__int__":"int"
                   }
 METHS_TO_VALS = {
-                  "__str__":"string",
+                  "__str__":"'string'",
                   "__nonzero__":"True",
                   "__len__":"1",
                   "__int__":"2"

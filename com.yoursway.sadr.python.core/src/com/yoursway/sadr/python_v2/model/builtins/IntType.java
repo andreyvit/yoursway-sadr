@@ -8,11 +8,6 @@ import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class IntType extends PythonClassType {
-    public RuntimeObject __call__(PythonArguments args) {
-        IntegerValue value = args.castSingle(instance());
-        return wrap(value);
-    }
-    
     public RuntimeObject __add__(PythonArguments args) {
         List<IntegerValue> values = args.castArgs(2, instance());
         IntegerValue result = values.get(0).add(values.get(1));
@@ -35,6 +30,10 @@ public class IntType extends PythonClassType {
         List<IntegerValue> values = args.castArgs(2, instance());
         IntegerValue result = values.get(0).divide(values.get(1));
         return wrap(result);
+    }
+    
+    public IntType() {
+        setAttribute(new RedirectFunctionObject("__call__", "__int__"));
     }
     
     private static IntType instance;

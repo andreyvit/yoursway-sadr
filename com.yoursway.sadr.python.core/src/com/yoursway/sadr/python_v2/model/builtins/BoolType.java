@@ -27,6 +27,7 @@ public class BoolType extends PythonClassType {
     }
     
     private BoolType() {
+        setAttribute(new RedirectFunctionObject("__call__", "__nonzero__"));
     }
     
     private static BoolType instance = new BoolType();
@@ -35,7 +36,7 @@ public class BoolType extends PythonClassType {
         return instance;
     }
     
-    public static PythonValue<BooleanValue> newBooleanObject(BooleanLiteralC literal) {
+    public static PythonValue<BooleanValue> wrap(BooleanLiteralC literal) {
         BooleanValue integerValue = new BooleanValue(literal.getValue());
         return new PythonValue<BooleanValue>(instance(), integerValue, literal);
     }

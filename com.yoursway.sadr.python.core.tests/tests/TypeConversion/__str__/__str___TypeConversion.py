@@ -1,7 +1,7 @@
 
 class Foo(object):
     def __str__ (self):
-        return string
+        return "string"
 x = str(Foo()) ## value x => string
 
 

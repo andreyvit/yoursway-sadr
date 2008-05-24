@@ -122,6 +122,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         } else if (result instanceof MethodDeclarationC) {
             MethodDeclarationC methodDeclarationC = (MethodDeclarationC) result;
             FunctionObject obj = new FunctionObject(methodDeclarationC);
+            
             acceptor().addResult(obj, getContext());
             updateGrade(acceptor(), Grade.DONE);
         } else if (result instanceof ClassDeclarationC) {

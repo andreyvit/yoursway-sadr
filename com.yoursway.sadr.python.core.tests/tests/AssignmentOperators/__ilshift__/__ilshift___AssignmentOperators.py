@@ -5,7 +5,7 @@ class Q(object):
 
 class Foo(object):
     def __ilshift__ (self, rhs):
-        return Q()
+        print rhs
 
 x = Foo()
-x <<= Foo() ## expr x => Q
+x <<= Foo() ## expr x => Foo

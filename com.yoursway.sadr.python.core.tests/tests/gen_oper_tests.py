@@ -4,7 +4,7 @@ class Q(object):
 	pass
 
 """
-klass = """
+binklass = """
 class Foo(object):
     def %s (self, rhs):
         return Q()
@@ -15,6 +15,13 @@ unklass = """
 class Foo(object):
     def %s (self):
         return Q()
+
+"""
+
+assklass = """
+class Foo(object):
+    def %s (self, rhs):
+        print rhs
 
 """
 
@@ -77,7 +84,7 @@ ASS_OPERATORS = {
 }
 
 TEST_BINOP = "x = Foo() %s Foo() ## expr x => Q"
-TEST_ASS = "x = Foo()\nx %s Foo() ## expr x => Q"
+TEST_ASS = "x = Foo()\nx %s Foo() ## expr x => Foo"
 TEST_UNOP = "x = %sFoo() ## expr x => Q"
 
 def gen_tests(suite_name, operators, test_str, klass):
@@ -87,6 +94,6 @@ def gen_tests(suite_name, operators, test_str, klass):
         builder.addTest(oper, script_content)
 
 if __name__ == "__main__":
-    gen_tests("BinaryOperators", BINARY_OPERATORS, TEST_BINOP, klass)
+    gen_tests("BinaryOperators", BINARY_OPERATORS, TEST_BINOP, binklass)
     gen_tests("UnaryOperators", UNARY_OPERATORS, TEST_UNOP, unklass)
-    gen_tests("AssignmentOperators", ASS_OPERATORS, TEST_ASS, klass)
+    gen_tests("AssignmentOperators", ASS_OPERATORS, TEST_ASS, assklass)

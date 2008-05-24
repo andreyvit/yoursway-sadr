@@ -28,7 +28,7 @@ public class BooleanLiteralC extends PythonConstructImpl<VariableReference> {
     public IGoal evaluate(final Context context, final PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                acceptor.addResult(BoolType.newBooleanObject(BooleanLiteralC.this), context);
+                acceptor.addResult(BoolType.wrap(BooleanLiteralC.this), context);
                 updateGrade(acceptor, Grade.DONE);
             }
             

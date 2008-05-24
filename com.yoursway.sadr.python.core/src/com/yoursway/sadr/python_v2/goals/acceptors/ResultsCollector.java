@@ -32,14 +32,18 @@ public abstract class ResultsCollector extends Synchronizer {
         return subgoals;
     }
     
+    public IGoal addSubgoal(PythonConstruct construct, Object name) {
+        return construct.evaluate(context, createAcceptor(name));
+    }
+    
     protected Map<Object, RuntimeObject> getResults() {
         return results;
     }
     
-    final public <T> void subgoalCompleted(Object name, IGrade<T> grade) {
+    final public <K> void subgoalCompleted(Object name, IGrade<K> grade) {
     }
     
-    final private <T> void subgoalDone(Object name, IGrade<T> grade) {
+    final private <K> void subgoalDone(Object name, IGrade<K> grade) {
         if (adding)
             throw new IllegalStateException(
                     "Done signal not possible in init stage. You forgot to run startCollecting()");

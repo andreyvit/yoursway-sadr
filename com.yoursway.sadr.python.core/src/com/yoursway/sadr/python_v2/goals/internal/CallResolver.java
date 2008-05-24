@@ -8,6 +8,7 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.PassResultGoal;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonLambdaExpressionC;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
@@ -24,32 +25,50 @@ import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public final class CallResolver {
-    public static IGoal callMethod(RuntimeObject receiver, String methodName, PythonArguments args,
-            PythonValueSetAcceptor acceptor, Context context) {
-        RuntimeObject callable = receiver.getAttribute(methodName);
-        if (callable == null && receiver instanceof InstanceValue) {
-            PythonUserClassType userClass = (PythonUserClassType) receiver.getType();
-            args.getArgs().add(0, receiver);
-            return callClassMethod(userClass, methodName, args, acceptor, context);
-        }
+    private static void assertCallable(RuntimeObject callable) {
         if (callable == null) {
-            throw new IllegalArgumentException("callable is null in CallResolver.callMethod()");
+            throw new IllegalArgumentException("callable is null");
         }
         if (!(callable instanceof FunctionObject)) {
-            throw new IllegalArgumentException("callable is " + callable.getClass().getSimpleName()
-                    + " in CallResolver.callMethod()");
-        }
-        if (receiver.getDict().containsKey(methodName)) {
-            return callFunction((FunctionObject) callable, args, acceptor, context);
-        } else {
-            args.getArgs().add(0, receiver);
-            return callFunction((FunctionObject) callable, args, acceptor, context);
+            throw new IllegalArgumentException("callable is not FunctionObject but "
+                    + callable.getClass().getSimpleName());
         }
     }
     
-    public static IGoal callClassMethod(PythonUserClassType receiver, final String methodName,
+    public static IGoal callMethod(final RuntimeObject receiver, final String methodName,
             final PythonArguments args, final PythonValueSetAcceptor acceptor, final Context context) {
-        return new FindClassMethodGoal(receiver.getDecl(), methodName, args, acceptor, context);
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor() {
+                    public <T> void checkpoint(IGrade<T> grade) {
+                        RuntimeObject callable = getResultByContext(context);
+                        assertCallable(callable);
+                        args.getArgs().add(0, receiver);
+                        schedule(callFunction((FunctionObject) callable, args, acceptor, context));
+                    }
+                };
+                schedule(findMethod(receiver, methodName, findAcceptor, context));
+            }
+        };
+    }
+    
+    public static IGoal findMethod(RuntimeObject receiver, String methodName,
+            PythonValueSetAcceptor acceptor, Context context) {
+        if (receiver == null) {
+            throw new IllegalStateException("Receiver is null!");
+        }
+        RuntimeObject callable = receiver.getAttribute(methodName); // look for builtins
+        if (callable == null && receiver instanceof InstanceValue) { // look into class definition
+            PythonUserClassType userClass = (PythonUserClassType) receiver.getType();
+            return new FindClassMethodGoal(userClass.getDecl(), methodName, acceptor, context);
+        }
+        return new PassResultGoal(context, acceptor, callable);
+    }
+    
+    public static IGoal callFunction(final RuntimeObject callable, final PythonArguments args,
+            final PythonValueSetAcceptor acceptor, final Context context) {
+        assertCallable(callable);
+        return callFunction((FunctionObject) callable, args, acceptor, context);
     }
     
     @SuppressWarnings("unchecked")
@@ -83,6 +102,9 @@ public final class CallResolver {
                         }
                     };
                     for (PythonArgument arg : realArgs) {
+                        if (arg == null || arg.getRef() == null) {
+                            throw new IllegalArgumentException("weird argument");
+                        }
                         String name = arg.getName();
                         if (actualArguments.getActualArgument(name) == null) {
                             PythonConstruct init = methodDeclC.getArgInit(name);
