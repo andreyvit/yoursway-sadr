@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.AssignmentEffect;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Effect;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Frog;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
+import com.yoursway.sadr.python_v2.constructs.AssignmentEffect;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.Effect;
+import com.yoursway.sadr.python_v2.constructs.Frog;
+import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.goals.internal.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 

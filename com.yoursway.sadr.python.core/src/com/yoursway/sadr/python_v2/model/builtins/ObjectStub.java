@@ -10,7 +10,7 @@ public class ObjectStub extends PythonObject {
     private final Statement statement;
     
     public ObjectStub(Statement statement) {
-        super(Builtins.OBJECT);
+        super(ObjectType.instance());
         this.statement = statement;
     }
     

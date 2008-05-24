@@ -15,14 +15,14 @@ import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.OuteriorNodeLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
+import com.yoursway.sadr.python_v2.constructs.CallC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.Context;
 
 public class FileContributionsManager implements OuteriorNodeLookup, SearchService {

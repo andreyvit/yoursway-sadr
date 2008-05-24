@@ -3,7 +3,7 @@ package com.yoursway.sadr.python_v2.goals.acceptors;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.succeeder.IAcceptor;
 import com.yoursway.sadr.succeeder.IGrade;
 

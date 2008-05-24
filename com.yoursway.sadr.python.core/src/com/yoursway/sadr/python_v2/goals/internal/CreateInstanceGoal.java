@@ -6,11 +6,11 @@ package com.yoursway.sadr.python_v2.goals.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.goals.ContextSensitiveGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
@@ -40,7 +40,7 @@ public final class CreateInstanceGoal extends ContextSensitiveGoal {
             @Override
             public <T> void completed(IGrade<T> grade) {
                 List<PythonClassType> supers = new ArrayList<PythonClassType>();
-                for (RuntimeObject obj : getResults()) {
+                for (RuntimeObject obj : getResults().values()) {
                     if (obj instanceof FunctionObject) {
                         FunctionObject func = (FunctionObject) obj;
                         ClassDeclarationC decl = (ClassDeclarationC) func.getDecl();

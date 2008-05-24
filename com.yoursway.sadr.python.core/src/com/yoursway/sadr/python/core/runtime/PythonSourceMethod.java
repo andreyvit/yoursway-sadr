@@ -11,8 +11,8 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument.Usage;
 import com.yoursway.sadr.python.core.runtime.contributions.NodeBoundItem;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
+import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.model.Context;
 
 public class PythonSourceMethod extends PythonMethod implements NodeBoundItem, LocalVariableContainer {

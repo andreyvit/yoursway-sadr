@@ -37,7 +37,6 @@ public interface RuntimeObject extends Type, Value {
     
     InstanceHistory instanceHistory();
     
-    @SuppressWarnings("unchecked")
     public <T> T convertValue(RuntimeObject type);
     
 }

@@ -11,7 +11,7 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import sun.reflect.generics.scope.ClassScope;
 
 import com.yoursway.sadr.python.core.runtime.contributions.ContributableItem;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.model.Context;
 
 public class PythonSourceClassDefinition extends PythonClassDefinition implements ContributableItem,

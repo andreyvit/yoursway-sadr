@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -9,7 +10,8 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 /**
@@ -17,23 +19,56 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
  */
 public class PythonClassType extends PythonObject {
     
+    private final class ReflectedFunctionObject extends SyncFunctionObject {
+        private final Method method;
+        
+        private ReflectedFunctionObject(String name, Method method) {
+            super(name);
+            this.method = method;
+        }
+        
+        @Override
+        public RuntimeObject evaluate(PythonArguments args) {
+            try {
+                return (RuntimeObject) method.invoke(PythonClassType.this, args);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                throw e;
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    
     private List<PythonClassType> supers;
     
     public PythonClassType() {
-        super(Builtins.TYPE);
+        super(null);
         supers = new ArrayList<PythonClassType>(1);
-        supers.add(Builtins.OBJECT);
-        
+        supers.add(ObjectType.instance());
+        setType(this);
+        addClassFunctions();
+    }
+    
+    private void addClassFunctions() {
+        Method[] methods = this.getClass().getMethods();
+        for (Method method : methods) {
+            String name = method.getName();
+            if (name.startsWith("__") && name.endsWith("__")) {
+                setAttribute(new ReflectedFunctionObject(name, method));
+            }
+        }
     }
     
     public PythonClassType(PythonClassType superClass) {
-        super(Builtins.TYPE);
+        super(Builtins.getTypeType());
         supers = new ArrayList<PythonClassType>(1);
         supers.add(superClass);
     }
     
     public PythonClassType(List<PythonClassType> supers) {
-        super(Builtins.TYPE);
+        super(Builtins.getTypeType());
         setSuperClasses(supers);
     }
     

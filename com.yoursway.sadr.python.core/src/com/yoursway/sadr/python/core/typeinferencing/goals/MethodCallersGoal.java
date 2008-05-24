@@ -14,10 +14,10 @@ import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.services.CallsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
+import com.yoursway.sadr.python_v2.constructs.CallC;
+import com.yoursway.sadr.python_v2.constructs.EmptyDynamicContext;
 
 public class MethodCallersGoal extends AbstractGoal {
     

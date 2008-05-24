@@ -12,9 +12,9 @@ import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonField;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.services.AssignmentsRequestor;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
+import com.yoursway.sadr.python_v2.constructs.EmptyDynamicContext;
 
 public class FieldValueInfoGoal extends AbstractValueInfoGoal {
     

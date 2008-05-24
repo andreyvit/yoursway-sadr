@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
 @Deprecated
 public class LexicalScopeImpl implements LexicalScope {

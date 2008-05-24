@@ -1,9 +1,9 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.blocks.foundation.wildcards.Wildcard;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.ArrayWildcard;
 import com.yoursway.sadr.python.core.typeinferencing.keys.wildcards.FieldWildcard;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
 /**
  * @see AssignmentInfo

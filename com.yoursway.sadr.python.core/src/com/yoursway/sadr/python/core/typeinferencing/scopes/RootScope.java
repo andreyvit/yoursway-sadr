@@ -9,8 +9,6 @@ import com.yoursway.sadr.core.propagation.PropagationTrackerImpl;
 import com.yoursway.sadr.python.core.runtime.PythonAnalysisSchema;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.NodeLookup;
@@ -18,6 +16,8 @@ import com.yoursway.sadr.python.core.typeinferencing.services.OuteriorNodeLookup
 import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.SearchService;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class RootScope extends AbstractScope {
     

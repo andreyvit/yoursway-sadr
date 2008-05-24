@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;

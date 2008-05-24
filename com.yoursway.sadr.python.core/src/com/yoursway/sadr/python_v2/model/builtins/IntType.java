@@ -3,53 +3,38 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.IntegerLiteralC;
-import com.yoursway.sadr.python_v2.model.ArgumentsUtil;
+import com.yoursway.sadr.python_v2.constructs.IntegerLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
-//TODO generalize implementation for built-in types.
 public class IntType extends PythonClassType {
-    private static List<IntegerValue> castArgs(PythonArguments args) {
-        return ArgumentsUtil.getCastedArgs(args, 2, instance());
+    public RuntimeObject __call__(PythonArguments args) {
+        IntegerValue value = args.castSingle(instance());
+        return wrap(value);
     }
     
-    private IntType() {
-        setAttribute(new FunctionObject("__add__") {
-            @Override
-            public RuntimeObject evaluate(PythonArguments args) {
-                List<IntegerValue> castedArgs = castArgs(args);
-                IntegerValue result = castedArgs.get(0).add(castedArgs.get(1));
-                return wrap(result);
-            }
-        });
-        
-        setAttribute(new FunctionObject("__sub__") {
-            @Override
-            public RuntimeObject evaluate(PythonArguments args) {
-                List<IntegerValue> castedArgs = castArgs(args);
-                IntegerValue result = castedArgs.get(0).subtract(castedArgs.get(1));
-                return wrap(result);
-            }
-        });
-        
-        setAttribute(new FunctionObject("__mul__") {
-            @Override
-            public RuntimeObject evaluate(PythonArguments args) {
-                List<IntegerValue> castedArgs = castArgs(args);
-                IntegerValue result = castedArgs.get(0).multiply(castedArgs.get(1));
-                return wrap(result);
-            }
-        });
-        
-        setAttribute(new FunctionObject("__div__") {
-            @Override
-            public RuntimeObject evaluate(PythonArguments args) {
-                List<IntegerValue> castedArgs = castArgs(args);
-                IntegerValue result = castedArgs.get(0).divide(castedArgs.get(1));
-                return wrap(result);
-            }
-        });
+    public RuntimeObject __add__(PythonArguments args) {
+        List<IntegerValue> values = args.castArgs(2, instance());
+        IntegerValue result = values.get(0).add(values.get(1));
+        return wrap(result);
+    }
+    
+    public RuntimeObject __sub__(PythonArguments args) {
+        List<IntegerValue> values = args.castArgs(2, instance());
+        IntegerValue result = values.get(0).subtract(values.get(1));
+        return wrap(result);
+    }
+    
+    public RuntimeObject __mul__(PythonArguments args) {
+        List<IntegerValue> values = args.castArgs(2, instance());
+        IntegerValue result = values.get(0).multiply(values.get(1));
+        return wrap(result);
+    }
+    
+    public RuntimeObject __div__(PythonArguments args) {
+        List<IntegerValue> values = args.castArgs(2, instance());
+        IntegerValue result = values.get(0).divide(values.get(1));
+        return wrap(result);
     }
     
     private static IntType instance;
@@ -61,17 +46,22 @@ public class IntType extends PythonClassType {
         return instance;
     }
     
-    public static PythonObjectWithValue<IntegerValue> wrap(IntegerLiteralC literal) {
+    public static PythonValue<IntegerValue> wrap(IntegerLiteralC literal) {
         IntegerValue integerValue = new IntegerValue(literal.node().getIntValue());
-        return new PythonObjectWithValue<IntegerValue>(instance(), integerValue, literal);
+        return new PythonValue<IntegerValue>(instance(), integerValue, literal);
     }
     
-    public static PythonObjectWithValue<IntegerValue> wrap(IntegerValue value) {
-        return new PythonObjectWithValue<IntegerValue>(instance(), value);
+    public static PythonValue<IntegerValue> wrap(IntegerValue value) {
+        return new PythonValue<IntegerValue>(instance(), value);
+    }
+    
+    public static RuntimeObject wrap(int value) {
+        return wrap(new IntegerValue(value));
     }
     
     @Override
     public String describe() {
         return "int";
     }
+    
 }

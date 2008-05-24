@@ -11,7 +11,7 @@ import org.eclipse.dltk.ast.statements.Statement;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
 @SuppressWarnings("unchecked")
 public class IdiomMatch {

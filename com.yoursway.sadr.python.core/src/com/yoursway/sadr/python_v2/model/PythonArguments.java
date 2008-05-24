@@ -3,8 +3,13 @@ package com.yoursway.sadr.python_v2.model;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+
+import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 
 public class PythonArguments {
     private final List<RuntimeObject> args;
@@ -34,10 +39,6 @@ public class PythonArguments {
         this.lastKwarg = null;
     }
     
-    public PythonArgumentsReader parse() {
-        return new PythonArgumentsReader(this);
-    }
-    
     public List<RuntimeObject> getArgs() {
         return args;
     }
@@ -60,5 +61,54 @@ public class PythonArguments {
     
     public void setLastKwarg(RuntimeObject lastKwarg) {
         this.lastKwarg = lastKwarg;
+    }
+    
+    public List<RuntimeObject> getArgs(int count) {
+        PythonArgumentsReader reader = new PythonArgumentsReader(this);
+        List<RuntimeObject> result = reader.lastArgs();
+        if (result.size() != count) {
+            throw new IllegalStateException("Argument number mismatch: " + count + " required, "
+                    + result.size() + " given");
+        }
+        if (reader.hasKwargs())
+            throw new IllegalStateException("More arguments than required");
+        return result;
+    }
+    
+    public <T extends Value> List<T> castArgs(int count, PythonClassType type) {
+        List<T> results = new ArrayList<T>();
+        for (RuntimeObject object : this.getArgs(count)) {
+            T value = object.convertValue(type);
+            results.add(value);
+        }
+        return results;
+    }
+    
+    public <T extends Value> T castSingle(PythonClassType type) {
+        RuntimeObject arg = this.getArgs(1).get(0);
+        T value = arg.convertValue(type);
+        return value;
+    }
+    
+    public <T extends Value> RuntimeObject getSingle() {
+        return this.getArgs(1).get(0);
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (RuntimeObject arg : this.args) {
+            builder.append(", " + arg);
+        }
+        for (Entry<String, RuntimeObject> arg : this.kwargs.entrySet()) {
+            builder.append(", " + arg.getKey() + "=" + arg.getValue());
+        }
+        if (this.lastArg != null) {
+            builder.append(", *" + this.lastArg);
+        }
+        if (this.lastKwarg != null) {
+            builder.append(", **" + this.lastKwarg);
+        }
+        return builder.substring(2);
     }
 }

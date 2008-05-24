@@ -8,10 +8,10 @@ import com.yoursway.sadr.core.constructs.VisitorRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
+import com.yoursway.sadr.python_v2.constructs.CallC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class IndexRequest implements
         Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor {

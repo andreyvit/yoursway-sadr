@@ -29,15 +29,15 @@ import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.CallsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.InstanceType;
+import com.yoursway.sadr.python_v2.constructs.CallC;
+import com.yoursway.sadr.python_v2.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
 public class ArgumentVariableValueInfoGoal extends AbstractValueInfoGoal {
     

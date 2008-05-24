@@ -8,11 +8,11 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.core.constructs.BackwardRequest;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class BackwardVariableRequest implements
         BackwardRequest<PythonConstruct, Scope, PythonDynamicContext, ASTNode>, AssignmentInfoRequestor,

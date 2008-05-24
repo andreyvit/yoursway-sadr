@@ -11,14 +11,14 @@ import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.Callable;
 import com.yoursway.sadr.python.core.runtime.PythonBuiltinMethod;
 import com.yoursway.sadr.python.core.runtime.PythonBuiltinProcedure;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.ReturnsRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicMethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DynamicProcedureScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.ProcedureScope;
+import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class CallableReturnValueInfoGoal extends AbstractValueInfoGoal {
     

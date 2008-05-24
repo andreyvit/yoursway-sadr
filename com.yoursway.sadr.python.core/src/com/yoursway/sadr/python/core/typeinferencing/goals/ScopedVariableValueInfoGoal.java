@@ -6,11 +6,11 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
 import com.yoursway.sadr.python.core.runtime.PythonScopedVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.VariableRequest;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class ScopedVariableValueInfoGoal extends AbstractValueInfoGoal {
     

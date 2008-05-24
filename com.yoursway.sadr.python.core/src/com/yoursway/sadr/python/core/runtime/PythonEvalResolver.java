@@ -18,15 +18,15 @@ import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EvalRootC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalRequest;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.EvalRequest.EvalInfo;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
+import com.yoursway.sadr.python_v2.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python_v2.constructs.EvalRootC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.Engine;
 

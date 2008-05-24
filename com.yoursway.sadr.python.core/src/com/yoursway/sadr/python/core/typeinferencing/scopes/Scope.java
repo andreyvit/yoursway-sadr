@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.core.typeinferencing.scopes;
 
 import java.util.List;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
 public interface Scope extends PythonConstruct {
     /**

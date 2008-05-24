@@ -9,7 +9,7 @@ public class Builtins extends PythonClassType {
     
     private static PythonClassType typeType = null;
     
-    private static PythonClassType createTypeType() {
+    static PythonClassType getTypeType() {
         if (null == typeType) {
             typeType = new PythonClassType();
             typeType.setType(typeType);
@@ -18,14 +18,12 @@ public class Builtins extends PythonClassType {
     }
     
     public static PythonObject createNone() {
-        return new PythonObjectWithValue<NilValue>(NONE, NilValue.instance());
+        return new PythonValue<NilValue>(NONE, NilValue.instance());
     }
     
-    public static final PythonClassType TYPE = createTypeType(); //TODO
-    public static final ObjectType OBJECT = ObjectType.instance(); //TODO
-    public static final PythonClassType FUNCTION = createTypeType(); //TODO
-    public static final PythonClassType MODULE = createTypeType(); //TODO
-    public static final PythonClassType NONE = createTypeType();
+    public static final PythonClassType FUNCTION = getTypeType(); //TODO
+    public static final PythonClassType MODULE = getTypeType(); //TODO
+    public static final PythonClassType NONE = getTypeType();
     
     private static Builtins module = null;
     
@@ -36,8 +34,8 @@ public class Builtins extends PythonClassType {
     public static Builtins instance() {
         if (module == null) {
             module = new Builtins();
-            module.setAttribute("type", TYPE);
-            module.setAttribute("object", OBJECT);
+            module.setAttribute("type", getTypeType());
+            module.setAttribute("object", ObjectType.instance());
             module.setAttribute("int", IntType.instance());
             module.setAttribute("str", StringType.instance());
             module.setAttribute("bool", BoolType.instance());

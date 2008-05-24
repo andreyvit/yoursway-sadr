@@ -32,7 +32,7 @@ public class ASTUtils {
     }
     
     public static ASTNode[] restoreWayToNode(ModuleDeclaration module, final ASTNode nde) {
-        final Stack stack = new Stack();
+        final Stack<ASTNode> stack = new Stack<ASTNode>();
         ASTVisitor visitor = new ASTVisitor() {
             
             boolean found = false;
@@ -62,7 +62,7 @@ public class ASTUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return (ASTNode[]) stack.toArray(new ASTNode[stack.size()]);
+        return stack.toArray(new ASTNode[stack.size()]);
     }
     
     /**

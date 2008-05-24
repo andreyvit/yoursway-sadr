@@ -1,5 +1,8 @@
 package com.yoursway.sadr.python_v2.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 //FIXME make real context or settle crocodiles here. 
 /**
  * Encapsulates actual arguments.
@@ -18,5 +21,17 @@ public interface Context {
         public RuntimeObject getActualArgument(String name) {
             return null;
         }
+        
+        public Set<String> keys() {
+            return new HashSet<String>();
+        }
+        
+        public void put(String name, RuntimeObject value) {
+            
+        }
     };
+    
+    Set<String> keys();
+    
+    void put(String name, RuntimeObject value);
 }

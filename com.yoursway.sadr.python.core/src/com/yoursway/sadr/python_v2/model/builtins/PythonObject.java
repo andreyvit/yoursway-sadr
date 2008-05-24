@@ -7,7 +7,7 @@ import java.util.Set;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.InstanceHistory;
 import com.yoursway.sadr.python_v2.model.InstanceHistoryImpl;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;

@@ -10,8 +10,8 @@ import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public final class MergeConstructsValueInfosContinuation implements Continuation {
     

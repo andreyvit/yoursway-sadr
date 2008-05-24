@@ -10,8 +10,8 @@ import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.core.constructs.VisitorRequestor;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class EvalRequest implements
         Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode> {

@@ -13,9 +13,9 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonUtils;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.EmptyDynamicContext;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
+import com.yoursway.sadr.python_v2.constructs.EmptyDynamicContext;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class FilterByReceiversContinuation implements Continuation {
     

@@ -6,8 +6,8 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonProcedure;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
 public class DynamicProcedureScope extends ChildScope implements VariableLookup {
     

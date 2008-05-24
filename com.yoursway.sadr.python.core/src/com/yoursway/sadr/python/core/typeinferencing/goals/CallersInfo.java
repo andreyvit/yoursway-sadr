@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.goals;
 
 import com.yoursway.sadr.engine.Result;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
+import com.yoursway.sadr.python_v2.constructs.CallC;
 
 public class CallersInfo implements Result {
     

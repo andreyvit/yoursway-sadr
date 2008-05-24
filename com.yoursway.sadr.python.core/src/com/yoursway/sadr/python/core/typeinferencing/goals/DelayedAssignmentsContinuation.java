@@ -9,8 +9,8 @@ import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.SimpleContinuation;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.AssignmentInfoProvider;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public final class DelayedAssignmentsContinuation implements SimpleContinuation {
     private final AssignmentInfoProvider request;

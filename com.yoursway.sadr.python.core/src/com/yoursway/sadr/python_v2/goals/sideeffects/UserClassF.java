@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python_v2.goals.sideeffects;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Frog;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.goals.internal.PythonUserClassType;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 

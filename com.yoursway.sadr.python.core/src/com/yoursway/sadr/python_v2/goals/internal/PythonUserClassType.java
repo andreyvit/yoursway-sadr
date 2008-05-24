@@ -2,7 +2,7 @@ package com.yoursway.sadr.python_v2.goals.internal;
 
 import java.util.List;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 
 public class PythonUserClassType extends PythonClassType {

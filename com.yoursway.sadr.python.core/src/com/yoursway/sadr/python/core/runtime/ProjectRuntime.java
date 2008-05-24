@@ -12,7 +12,7 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
+import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.succeeder.DefaultSchedulingStrategy;
 import com.yoursway.sadr.succeeder.Engine;
 

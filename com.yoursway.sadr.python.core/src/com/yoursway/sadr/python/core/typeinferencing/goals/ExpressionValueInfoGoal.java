@@ -13,10 +13,10 @@ import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.CallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.DtlArgumentVariable;
+import com.yoursway.sadr.python_v2.constructs.CallC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class ExpressionValueInfoGoal extends AbstractValueInfoGoal implements ValueInfoGoal,
         ConstructBoundGoal<PythonConstruct, Scope, PythonDynamicContext, ASTNode>,

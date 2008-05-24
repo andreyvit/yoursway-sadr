@@ -44,4 +44,8 @@ public class BooleanValue extends AbstractValue {
     public BooleanValue xor(BooleanValue rhs) {
         return new BooleanValue(this.value ^ rhs.value);
     }
+    
+    public BooleanValue not() {
+        return new BooleanValue(!this.value);
+    }
 }

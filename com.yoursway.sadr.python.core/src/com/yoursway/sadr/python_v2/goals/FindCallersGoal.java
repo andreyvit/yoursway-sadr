@@ -4,11 +4,11 @@ import static com.yoursway.sadr.python.Grade.DONE;
 
 import java.util.List;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodCallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ProcedureCallC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.constructs.MethodCallC;
+import com.yoursway.sadr.python_v2.constructs.ProcedureCallC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonConstructAcceptor;
 import com.yoursway.sadr.succeeder.Goal;
 

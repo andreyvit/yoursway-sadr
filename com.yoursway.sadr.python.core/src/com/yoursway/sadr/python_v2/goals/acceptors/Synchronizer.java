@@ -14,7 +14,7 @@ abstract public class Synchronizer {
         counter = i;
     }
     
-    public <T> void subgoalDone(IGrade<T> grade) {
+    protected <T> void subgoalDone(IGrade<T> grade) {
         --counter;
         if (counter <= 0) {
             completed(grade);

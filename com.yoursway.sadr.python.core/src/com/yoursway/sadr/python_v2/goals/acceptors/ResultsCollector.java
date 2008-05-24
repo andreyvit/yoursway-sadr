@@ -1,56 +1,66 @@
 package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class ResultsCollector extends Synchronizer {
-    private final List<RuntimeObject> results;
+    private final Map<Object, RuntimeObject> results;
     private final Context context;
     private boolean adding = true;
     
     public ResultsCollector(int capacity, Context context) {
         this.context = context;
-        results = new ArrayList<RuntimeObject>(capacity);
+        results = new HashMap<Object, RuntimeObject>(capacity);
     }
     
     public List<IGoal> addSubgoals(List<PythonConstruct> items) {
         List<IGoal> subgoals = new ArrayList<IGoal>(items.size());
+        int item = 0;
         for (PythonConstruct construct : items) {
-            IGoal evaluate = construct.evaluate(context, createAcceptor());
+            IGoal evaluate = construct.evaluate(context, createAcceptor(item++));
             subgoals.add(evaluate);
         }
         return subgoals;
     }
     
-    protected List<RuntimeObject> getResults() {
+    protected Map<Object, RuntimeObject> getResults() {
         return results;
     }
     
-    @Override
-    final public <T> void subgoalDone(IGrade<T> grade) {
+    final public <T> void subgoalCompleted(Object name, IGrade<T> grade) {
+    }
+    
+    final private <T> void subgoalDone(Object name, IGrade<T> grade) {
         if (adding)
-            throw new IllegalStateException("Done signal not possible in init stage.");
+            throw new IllegalStateException(
+                    "Done signal not possible in init stage. You forgot to run startCollecting()");
+        subgoalCompleted(name, grade);
         super.subgoalDone(grade);
     }
     
-    public PythonValueSetAcceptor createAcceptor() {
+    public PythonValueSetAcceptor createAcceptor(final Object name) {
         if (!adding)
             throw new IllegalStateException("Adding not available in waiting stage.");
-        final int item = counter++;
-        results.add(null);
+        counter++;
+        if (results.containsKey(name)) {
+            throw new IllegalArgumentException("Key " + name + " already found.");
+        }
+        results.put(name, null);
         return new PythonValueSetAcceptor() {
             public <T> void checkpoint(IGrade<T> grade) {
                 RuntimeObject result = getResultByContext(context);
-                results.set(item, result);
+                results.put(name, result);
                 if (grade.isDone())
-                    ResultsCollector.this.subgoalDone(grade);
+                    subgoalDone(name, grade);
             }
         };
     }

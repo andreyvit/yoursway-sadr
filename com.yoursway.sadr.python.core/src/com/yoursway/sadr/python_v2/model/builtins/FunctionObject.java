@@ -1,14 +1,13 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import com.yoursway.sadr.python.core.typeinferencing.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.MethodDeclarationC;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonLambdaExpressionC;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonLambdaExpressionC;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class FunctionObject extends PythonObject {
     private final PythonConstruct decl; //either MethodDeclarationC or PythonLambdaExpressionC
@@ -51,16 +50,16 @@ public class FunctionObject extends PythonObject {
         return decl;
     }
     
+    public IGoal evaluateGoal(PythonValueSetAcceptor acceptor, Context context, PythonArguments args) {
+        return null;
+    }
+    
     public boolean isBound() {
         return boundClass != null;
     }
     
     public PythonClassType getBoundClass() {
         return boundClass;
-    }
-    
-    public RuntimeObject evaluate(PythonArguments args) {
-        throw new NotImplementedException();
     }
     
     @Override

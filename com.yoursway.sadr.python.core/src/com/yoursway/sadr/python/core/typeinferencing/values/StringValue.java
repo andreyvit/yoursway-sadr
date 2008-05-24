@@ -51,4 +51,9 @@ public class StringValue extends AbstractValue {
     public String value() {
         return value;
     }
+    
+    public StringValue format(StringValue stringValue) {
+        //FIXME
+        return new StringValue(this.value() + stringValue.value());
+    }
 }

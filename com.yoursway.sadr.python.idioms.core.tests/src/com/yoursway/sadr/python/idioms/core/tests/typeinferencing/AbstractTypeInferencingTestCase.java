@@ -41,8 +41,6 @@ import org.junit.After;
 
 import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonFileC;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.idioms.core.Idiom;
@@ -50,6 +48,8 @@ import com.yoursway.sadr.python.idioms.core.IdiomMatch;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;
 import com.yoursway.sadr.python.idioms.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.idioms.core.tests.internal.StringInputStream;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.succeeder.Engine;
 
 public abstract class AbstractTypeInferencingTestCase {

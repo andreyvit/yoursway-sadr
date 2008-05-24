@@ -11,9 +11,9 @@ import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.runtime.PythonVariable;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonConstruct;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.PythonDynamicContext;
 import com.yoursway.sadr.python.core.typeinferencing.goals.CallInfo;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDynamicContext;
 
 public class CallsRequest implements
         Request<PythonConstruct, Scope, PythonDynamicContext, ASTNode> {

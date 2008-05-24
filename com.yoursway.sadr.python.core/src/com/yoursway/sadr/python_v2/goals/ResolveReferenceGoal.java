@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.FieldAccessC;
+import com.yoursway.sadr.python_v2.constructs.FieldAccessC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.succeeder.Goal;
 

@@ -2,8 +2,8 @@ package com.yoursway.sadr.python_v2.goals.sideeffects;
 
 import static com.yoursway.sadr.python_v2.model.Context.EMPTY_CONTEXT;
 
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Effect;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.Frog;
+import com.yoursway.sadr.python_v2.constructs.Effect;
+import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
