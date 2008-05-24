@@ -16,6 +16,9 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     protected static HashMap<String, String> oplist = new HashMap<String, String>();
     static {
         addOp(Expression.E_BNOT, "not ", "__not__");
+        addOp(Expression.E_LNOT, "~", "__invert__");
+        addOp(Expression.E_MINUS, "-", "__neg__");
+        addOp(Expression.E_BNOT, "+", "__pos__");
     }
     
     static void addOp(int kind, String name, String op) {

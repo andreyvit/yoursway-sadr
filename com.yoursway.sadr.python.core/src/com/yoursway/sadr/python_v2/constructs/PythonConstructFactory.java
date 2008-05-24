@@ -136,7 +136,8 @@ public class PythonConstructFactory {
         Comparison comparison = BinaryComparisonC.parseComparison(operator);
         if (comparison != null)
             return new BinaryComparisonC(sc, node);
-        System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
+        System.out.println("Warning: no construct for node " + node.getClass().getSimpleName() + "("
+                + node.getOperator() + ")");
         return new UnhandledC(sc, node);
     }
     
@@ -145,7 +146,8 @@ public class PythonConstructFactory {
         if (UnaryOperationC.isUnaryOperation(operator))
             return new UnaryOperationC(sc, node);
         if (!(node instanceof PrintExpression))
-            System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
+            System.out.println("Warning: no construct for node " + node.getClass().getSimpleName() + "("
+                    + node.getOperator() + ")");
         return new UnaryC(sc, node);
     }
     

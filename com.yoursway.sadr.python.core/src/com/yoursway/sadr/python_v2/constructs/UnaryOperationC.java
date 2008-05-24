@@ -17,7 +17,7 @@ public class UnaryOperationC extends UnaryC implements PythonConstruct {
     
     UnaryOperationC(Scope sc, UnaryExpression node) {
         super(sc, node);
-        opName = opnames.get(node.getOperator());
+        opName = oplist.get(node.getOperator());
     }
     
     @Override
