@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.yoursway.sadr.python_v2.goals.internal;
+package com.yoursway.sadr.python_v2.goals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +11,18 @@ import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImp
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.goals.ContextSensitiveGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
+import com.yoursway.sadr.python_v2.goals.internal.PythonUserClassType;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.sadr.succeeder.IGrade;
 
-public final class CreateInstanceGoal extends ContextSensitiveGoal {
+public class CreateInstanceGoal extends ContextSensitiveGoal {
     private final PythonValueSetAcceptor acceptor;
     private final ClassDeclarationC classDeclarationC;
     
@@ -50,7 +51,9 @@ public final class CreateInstanceGoal extends ContextSensitiveGoal {
                     
                 }
                 PythonClassType receiverType = new PythonUserClassType(classDeclarationC, supers);
-                InstanceValue receiver = new InstanceValue(receiverType, instanceRegistrar);
+                InstanceValue receiverValue = new InstanceValue(receiverType, instanceRegistrar);
+                PythonValue<InstanceValue> receiver = new PythonValue<InstanceValue>(receiverType,
+                        receiverValue);
                 acceptor.addResult(receiver, getContext());
                 updateGrade(acceptor, grade);
                 //                schedule(CallResolver.callFunction(receiver, "__init__", args, acceptor, getContext()));

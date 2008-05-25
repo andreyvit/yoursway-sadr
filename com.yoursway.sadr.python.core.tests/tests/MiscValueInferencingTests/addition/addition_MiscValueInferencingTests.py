@@ -13,6 +13,6 @@ def bozz():
   x = "abc"
   y = "def"
   z = x + y
-  print z ## value z => "abcdef"
+  print z ## value z => 'abcdef'
 
 

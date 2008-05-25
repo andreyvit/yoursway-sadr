@@ -8,16 +8,16 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class TupleType extends PythonClassType {
     public RuntimeObject __getitem__(PythonArguments args) {
-        List<RuntimeObject> list = args.getArgs(2);
+        List<RuntimeObject> list = args.readArgs(2);
         TupleValue array = list.get(0).convertValue(TupleType.instance());
-        IntegerValue index = list.get(1).convertValue(IntType.instance());
+        IntegerValue index = list.get(1).convertValue(IntegerType.instance());
         List<RuntimeObject> items = array.getList();
         return items.get((int) index.value());
     }
     
     public RuntimeObject __len__(PythonArguments args) {
         TupleValue list = args.castSingle(TupleType.instance());
-        return IntType.wrap(list.getList().size());
+        return IntegerType.wrap(list.getList().size());
     }
     
     private TupleType() {

@@ -8,6 +8,20 @@ import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class StringType extends PythonClassType {
+    public RuntimeObject __int__(PythonArguments args) {
+        RuntimeObject str = args.readSingle();
+        StringValue value = str.convertValue(instance());
+        int parsed = Integer.parseInt(value.toString());
+        return IntegerType.wrap(parsed);
+    }
+    
+    public RuntimeObject __str__(PythonArguments args) {
+        RuntimeObject str = args.readSingle();
+        if (str instanceof StringType)
+            return wrap("");
+        return wrap(str.toString());
+    }
+    
     public RuntimeObject __add__(PythonArguments args) {
         List<StringValue> values = args.castArgs(2, instance());
         StringValue result = values.get(0).add(values.get(1));

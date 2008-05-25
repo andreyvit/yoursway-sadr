@@ -45,14 +45,14 @@ public class DefaultSchedulingStrategiesTests {
 					}
 
                     @Override
-                    protected String describe() {
+					public String describe() {
                         return "";
                     }
 				});
 		}
 
         @Override
-        protected String describe() {
+		public String describe() {
             return "";
         }
 		

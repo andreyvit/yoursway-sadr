@@ -5,13 +5,13 @@ import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
-import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PassResultGoal;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonLambdaExpressionC;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
+import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.FindClassMethodGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
@@ -58,7 +58,7 @@ public final class CallResolver {
             throw new IllegalStateException("Receiver is null!");
         }
         RuntimeObject callable = receiver.getAttribute(methodName); // look for builtins
-        if (callable == null && receiver instanceof InstanceValue) { // look into class definition
+        if (callable == null && receiver.getType() instanceof PythonUserClassType) { // look into class definition
             PythonUserClassType userClass = (PythonUserClassType) receiver.getType();
             return new FindClassMethodGoal(userClass.getDecl(), methodName, acceptor, context);
         }

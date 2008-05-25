@@ -12,7 +12,8 @@ import java.util.TreeMap;
 
 public class Engine implements IScheduler {
     
-    final boolean DEBUG = true;
+    private static final boolean DEBUG_PRINT = false;
+    private static final boolean DEBUG = true;
     
     private Map<IAcceptor, IGrade<?>> acceptors = new HashMap<IAcceptor, IGrade<?>>();
     private final Map<IAcceptor, IGrade<?>> oldAcceptors = new HashMap<IAcceptor, IGrade<?>>();
@@ -31,7 +32,7 @@ public class Engine implements IScheduler {
     public String getGoalStack(IGoal goal) {
         StringBuilder output = new StringBuilder();
         while (goal != null) {
-            output.append("+-> " + goal.toString().replace("\n", " ") + '\n');
+            output.append("\\-> " + goal.describe().replace("\n", " ") + '\n');
             goal = parentGoals.get(goal);
         }
         return output.toString();
@@ -123,7 +124,8 @@ public class Engine implements IScheduler {
         for (IGoal goal : list) {
             ISchedulingStrategy strategy = goalToStrategy.remove(goal);
             goal.setScheduler(this);
-            System.out.println("Running goal: " + goal.toString().replace("\n", " "));
+            if (DEBUG_PRINT)
+                System.out.println("Running goal: " + goal.describe().replace("\n", " "));
             if (strategy.prune(goal)) {
                 goal.flush();
             } else {

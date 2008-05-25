@@ -13,7 +13,7 @@ import com.yoursway.sadr.python_v2.constructs.Effect;
 import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.goals.internal.CreateInstanceGoal;
+import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class CallF extends Frog {

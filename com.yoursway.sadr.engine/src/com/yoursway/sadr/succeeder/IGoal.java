@@ -48,31 +48,33 @@ package com.yoursway.sadr.succeeder;
  * higher grade than a previous.
  */
 public interface IGoal {
-	/**
-	 * Called once before preRun().
-	 * 
-	 * Cannot produce results. Cannot schedule subtasks.
-	 * 
-	 * @param scheduler
-	 *            Scheduler to be used to schedule subgoals.
-	 * @param resultAcceptor
-	 *            Acceptor, accepting result(s) of goal. Can schedule subtasks
-	 *            when called.
-	 */
-	void setScheduler(IScheduler scheduler);
-
-	/**
-	 * Called first when task is run.
-	 * 
-	 * Can produce results. Can schedule subtasks.
-	 */
-	void preRun();
-
-	/**
-	 * This method is called on the goal cancellation.
-	 * 
-	 * @return a {@link CheckpointToken} to assure that
-	 *         {@link IAcceptor#checkpoint(IGrade)} has been called.
-	 */
-	CheckpointToken flush();
+    /**
+     * Called once before preRun().
+     * 
+     * Cannot produce results. Cannot schedule subtasks.
+     * 
+     * @param scheduler
+     *            Scheduler to be used to schedule subgoals.
+     * @param resultAcceptor
+     *            Acceptor, accepting result(s) of goal. Can schedule subtasks
+     *            when called.
+     */
+    void setScheduler(IScheduler scheduler);
+    
+    /**
+     * Called first when task is run.
+     * 
+     * Can produce results. Can schedule subtasks.
+     */
+    void preRun();
+    
+    /**
+     * This method is called on the goal cancellation.
+     * 
+     * @return a {@link CheckpointToken} to assure that
+     *         {@link IAcceptor#checkpoint(IGrade)} has been called.
+     */
+    CheckpointToken flush();
+    
+    String describe();
 }

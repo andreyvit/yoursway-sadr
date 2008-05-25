@@ -18,6 +18,7 @@ import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -83,17 +84,23 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                             }
                         }
                         
-                        FunctionObject function = null;
                         if (method instanceof FunctionObject) {
-                            function = (FunctionObject) method;
+                            schedule(CallResolver.callFunction((FunctionObject) method, real, acceptor,
+                                    getContext()));
+                            return;
                         } else if (method instanceof PythonClassType) {
-                            function = (FunctionObject) method.getAttribute("__call__");
+                            schedule(CallResolver
+                                    .callMethod(method, "__call__", real, acceptor, getContext()));
+                            return;
+                        } else if (method instanceof PythonValue<?>) {
+                            schedule(CallResolver
+                                    .callMethod(method, "__call__", real, acceptor, getContext()));
+                            return;
                         }
-                        if (function == null) {
+                        if (method == null) {
                             throw new IllegalStateException("Unable to find callable " + func
                                     + ", resolved to " + method);
                         }
-                        schedule(CallResolver.callFunction(function, real, acceptor, getContext()));
                     }
                     
                 };

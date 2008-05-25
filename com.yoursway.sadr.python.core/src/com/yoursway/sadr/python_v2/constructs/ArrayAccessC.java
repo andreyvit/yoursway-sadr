@@ -11,7 +11,6 @@ import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -66,7 +65,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
                     public <T> void completed(IGrade<T> grade) {
                         Map<Object, RuntimeObject> results = getResults();
                         RuntimeObject arrayObject = results.get(0);
-                        PythonArguments args = new PythonArguments(Lists.newArrayList(results.get(1)));
+                        PythonArguments args = new PythonArguments(results.get(1));
                         if (arrayObject.getType() instanceof PythonClassType) {
                             schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, acceptor,
                                     context));

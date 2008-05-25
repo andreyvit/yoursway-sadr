@@ -93,7 +93,7 @@ public class FindPrevConstructGoal extends Goal {
     }
     
     @Override
-    protected String describe() {
+    public String describe() {
         return super.describe() + "(" + current + ")";
     }
     

@@ -7,7 +7,7 @@ import com.yoursway.sadr.python_v2.constructs.BooleanLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
-public class BoolType extends PythonClassType {
+public class BooleanType extends PythonClassType {
     public RuntimeObject __and__(PythonArguments args) {
         List<BooleanValue> values = args.castArgs(2, instance());
         BooleanValue result = values.get(0).and(values.get(1));
@@ -26,13 +26,13 @@ public class BoolType extends PythonClassType {
         return wrap(result);
     }
     
-    private BoolType() {
+    private BooleanType() {
         setAttribute(new RedirectFunctionObject("__call__", "__nonzero__"));
     }
     
-    private static BoolType instance = new BoolType();
+    private static BooleanType instance = new BooleanType();
     
-    static BoolType instance() {
+    static BooleanType instance() {
         return instance;
     }
     

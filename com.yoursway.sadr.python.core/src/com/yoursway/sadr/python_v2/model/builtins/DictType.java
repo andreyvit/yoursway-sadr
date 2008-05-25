@@ -16,7 +16,7 @@ public class DictType extends PythonClassType {
     }
     
     public RuntimeObject __getitem__(PythonArguments args) {
-        List<RuntimeObject> list = args.getArgs(2);
+        List<RuntimeObject> list = args.readArgs(2);
         DictValue array = list.get(0).convertValue(DictType.instance());
         PythonValue<?> value = ((PythonValue<?>) list.get(1));
         return array.getDict().get(value);
@@ -24,7 +24,7 @@ public class DictType extends PythonClassType {
     
     public RuntimeObject _len(PythonArguments args) {
         DictValue array = args.castSingle(DictType.instance());
-        return IntType.wrap(array.getDict().size());
+        return IntegerType.wrap(array.getDict().size());
     }
     
     private DictType() {

@@ -19,7 +19,7 @@ public class ResolveReferenceGoal extends Goal {
     }
     
     @Override
-    protected String describe() {
+    public String describe() {
         return this.getClass().getSimpleName();
     }
 }

@@ -2,7 +2,6 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
-import com.google.common.collect.Lists;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
@@ -36,7 +35,7 @@ public class BinaryOperationC extends BinaryC {
                     public <K> void completed(IGrade<K> grade) {
                         final RuntimeObject left = getResults().get(LEFT);
                         final RuntimeObject right = getResults().get(RIGHT);
-                        final PythonArguments args = new PythonArguments(Lists.newArrayList(left, right));
+                        final PythonArguments args = new PythonArguments(left, right);
                         final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor() {
                             public <T> void checkpoint(IGrade<T> grade) {
                                 RuntimeObject callable = getResultByContext(context);

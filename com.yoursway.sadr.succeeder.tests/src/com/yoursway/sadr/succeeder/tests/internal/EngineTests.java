@@ -81,7 +81,7 @@ public class EngineTests {
 			}
 
             @Override
-            protected String describe() {
+			public String describe() {
                 return "";
             }
 			
@@ -114,7 +114,7 @@ public class EngineTests {
 		}
 
         @Override
-        protected String describe() {
+		public String describe() {
             return "";
         }
 	}

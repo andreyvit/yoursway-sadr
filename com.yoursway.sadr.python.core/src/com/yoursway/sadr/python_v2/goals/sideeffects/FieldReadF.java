@@ -26,7 +26,7 @@ public class FieldReadF extends Frog {
     
     @Override
     public String toString() {
-        return receiver + "." + getClass().getSimpleName() + "(" + field + ")";
+        return "{" + receiver + "." + field + "}";
     }
     
     @Override

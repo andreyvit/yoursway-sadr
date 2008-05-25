@@ -85,7 +85,7 @@ public class OrderedGoalTest extends TestCase {
 		}
 
         @Override
-        protected String describe() {
+		public String describe() {
             return "";
         }
 
@@ -102,7 +102,7 @@ public class OrderedGoalTest extends TestCase {
 			}
 
             @Override
-            protected String describe() {
+			public String describe() {
                 return "";
             }
 		});

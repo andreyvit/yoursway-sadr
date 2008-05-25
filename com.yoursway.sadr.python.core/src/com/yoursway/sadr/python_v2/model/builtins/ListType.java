@@ -9,15 +9,15 @@ import com.yoursway.sadr.python_v2.model.RuntimeObject;
 public class ListType extends PythonClassType {
     
     public RuntimeObject __getitem__(PythonArguments args) {
-        List<RuntimeObject> list = args.getArgs(2);
+        List<RuntimeObject> list = args.readArgs(2);
         ListValue array = list.get(0).convertValue(ListType.instance());
-        IntegerValue index = list.get(1).convertValue(IntType.instance());
+        IntegerValue index = list.get(1).convertValue(IntegerType.instance());
         return array.getList().get((int) index.value());
     }
     
     public RuntimeObject __len__(PythonArguments args) {
         ListValue list = args.castSingle(ListType.instance());
-        return IntType.wrap(list.getList().size());
+        return IntegerType.wrap(list.getList().size());
     }
     
     private ListType() {

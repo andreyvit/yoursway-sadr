@@ -23,11 +23,11 @@ public class Builtins extends PythonClassType {
     }
     
     public static PythonObject createTrue() {
-        return new PythonValue<BooleanValue>(BoolType.instance(), new BooleanValue(true));
+        return new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(true));
     }
     
     public static PythonObject createFalse() {
-        return new PythonValue<BooleanValue>(BoolType.instance(), new BooleanValue(false));
+        return new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(false));
     }
     
     public static final PythonClassType FUNCTION = getTypeType(); //TODO
@@ -45,9 +45,9 @@ public class Builtins extends PythonClassType {
             module = new Builtins();
             module.setAttribute("type", getTypeType());
             module.setAttribute("object", ObjectType.instance());
-            module.setAttribute("int", IntType.instance());
+            module.setAttribute("int", IntegerType.instance());
             module.setAttribute("str", StringType.instance());
-            module.setAttribute("bool", BoolType.instance());
+            module.setAttribute("bool", BooleanType.instance());
             module.setAttribute("list", ListType.instance());
             module.setAttribute("tuple", TupleType.instance());
             module.setAttribute("dict", DictType.instance());

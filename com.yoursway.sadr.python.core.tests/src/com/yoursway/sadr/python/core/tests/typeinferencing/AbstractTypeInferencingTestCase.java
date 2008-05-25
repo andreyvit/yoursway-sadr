@@ -37,6 +37,7 @@ import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.core.PythonNature;
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.junit.After;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
@@ -48,12 +49,17 @@ import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
 import com.yoursway.sadr.python.core.typeinferencing.goals.CreateSwampGoal;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
+import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.ContextImpl;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -181,7 +187,7 @@ public abstract class AbstractTypeInferencingTestCase {
             //            String expr = tok.nextToken();
             //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
             //            assertion = new LocalVarTypeAssertion(expr, namePos);
-        } else if ("swamp-test".equals(test)) {
+        } else if ("swamp-test".equals(test)) { // not used yet
             String expr = tok.nextToken();
             int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
             needToken(tok, "=>");
@@ -228,6 +234,14 @@ public abstract class AbstractTypeInferencingTestCase {
         
         int namePos = namePosInsideLine + lineOffset;
         return namePos;
+    }
+    
+    private Context createSelfContext(final MethodDeclarationC func, RuntimeObject self) {
+        ArrayList<PythonArgument> list = new ArrayList<PythonArgument>();
+        Context context = new ContextImpl(list, new PythonArguments());
+        PythonArgument arg = (PythonArgument) func.node().getArguments().get(0);
+        context.put(arg.getName(), self);
+        return context;
     }
     
     protected static void assertCorrectString0(String fileName, Object object) throws IOException {
@@ -342,7 +356,7 @@ public abstract class AbstractTypeInferencingTestCase {
                     //do nothing
                 }
             };
-            engine.run(createGoal(fileC, acceptor));
+            engine.run(createGoal(engine, fileC, acceptor));
             ValueInfo result = acceptor.getResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
@@ -352,13 +366,31 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(types).append('\n');
         }
         
-        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+        public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSetAcceptor acceptor,
+                final PythonConstruct construct, final Engine engine) {
+            if (construct.innerScope() instanceof MethodDeclarationC
+                    && construct.innerScope().parentScope() instanceof ClassDeclarationC) {
+                final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
+                ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
+                return new CreateInstanceGoal(classC, new PythonArguments(), null,
+                        new PythonValueSetAcceptor() {
+                            public <T> void checkpoint(IGrade<T> grade) {
+                                Context context = createSelfContext(func, getResultByContext(null));
+                                IGoal goal = construct.evaluate(context, acceptor);
+                                engine.schedule(null, goal);
+                            }
+                        });
+            } else {
+                return construct.evaluate(null, acceptor);
+            }
+        }
+        
+        public IGoal createGoal(Engine engine, PythonFileC fileC, PythonValueSetAcceptor acceptor) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return construct.evaluate(null, acceptor);
+            return createSelfGoal(fileC, acceptor, construct, engine);
         }
-        
     }
     
     //    class LocalVarTypeAssertion implements IAssertion {
@@ -409,7 +441,7 @@ public abstract class AbstractTypeInferencingTestCase {
                     //do nothing;
                 }
             };
-            IGoal goal = createGoal(fileC, acceptor);
+            IGoal goal = createGoal(engine, fileC, acceptor);
             engine.run(goal);
             ValueInfo result = acceptor.getResult();
             String[] possibleValues = result.describePossibleValues();
@@ -422,11 +454,30 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(values).append('\n');
         }
         
-        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+        public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSetAcceptor acceptor,
+                final PythonConstruct construct, final Engine engine) {
+            if (construct.innerScope() instanceof MethodDeclarationC
+                    && construct.innerScope().parentScope() instanceof ClassDeclarationC) {
+                final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
+                ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
+                return new CreateInstanceGoal(classC, new PythonArguments(), null,
+                        new PythonValueSetAcceptor() {
+                            public <T> void checkpoint(IGrade<T> grade) {
+                                Context context = createSelfContext(func, getResultByContext(null));
+                                IGoal goal = construct.evaluate(context, acceptor);
+                                engine.schedule(null, goal);
+                            }
+                        });
+            } else {
+                return construct.evaluate(null, acceptor);
+            }
+        }
+        
+        public IGoal createGoal(Engine engine, PythonFileC fileC, PythonValueSetAcceptor acceptor) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
-            return construct.evaluate(null, acceptor);//FIXME?
+            return createSelfGoal(fileC, acceptor, construct, engine);
         }
     }
     
