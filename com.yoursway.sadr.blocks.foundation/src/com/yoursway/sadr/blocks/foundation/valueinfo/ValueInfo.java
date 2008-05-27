@@ -1,12 +1,12 @@
 package com.yoursway.sadr.blocks.foundation.valueinfo;
 
-import static com.yoursway.sadr.blocks.foundation.typesets.TypeSetFactory.emptyTypeSet;
 import static com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSetFactory.emptyValueSet;
 
 import java.util.Collection;
 
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
+import com.yoursway.sadr.blocks.foundation.typesets.TypeSetBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
@@ -16,8 +16,12 @@ public class ValueInfo implements IValueInfo {
     private final TypeSet typeSet;
     private final ValueSet valueSet;
     
-    public ValueInfo(TypeSet typeSet, ValueSet valueSet) {
-        this.typeSet = typeSet;
+    public ValueInfo(ValueSet valueSet) {
+    	TypeSetBuilder types = new TypeSetBuilder();
+    	for (Value value : valueSet.containedValues()) {
+    		types.add(value.getType());
+		}
+        this.typeSet = types.build();
         this.valueSet = valueSet;
     }
     
@@ -30,11 +34,11 @@ public class ValueInfo implements IValueInfo {
     }
     
     public static ValueInfo emptyValueInfo() {
-        return new ValueInfo(emptyTypeSet(), emptyValueSet());
+        return new ValueInfo(emptyValueSet());
     }
     
-    public static ValueInfo createResult(TypeSet typeSet, ValueSet valueSet) {
-        return new ValueInfo(typeSet, valueSet);
+    public static ValueInfo createResult(ValueSet valueSet) {
+        return new ValueInfo(valueSet);
     }
     
     public boolean isEmpty() {

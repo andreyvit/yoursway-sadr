@@ -26,9 +26,10 @@ public class UnaryOperationC extends UnaryC implements PythonConstruct {
             public void preRun() {
                 final PythonArguments args = new PythonArguments();
                 
-                final PythonValueSetAcceptor methodFound = new PythonValueSetAcceptor() {
-                    public <T> void checkpoint(IGrade<T> grade) {
-                        RuntimeObject callable = getResultByContext(context);
+                final PythonValueSetAcceptor methodFound = new PythonValueSetAcceptor(context) {
+                    
+                    @Override
+                    public <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                         if (callable == null) {
                             schedule(new PassResultGoal(context, acceptor, null));
                         } else {
@@ -37,9 +38,10 @@ public class UnaryOperationC extends UnaryC implements PythonConstruct {
                     }
                 };
                 
-                PythonValueSetAcceptor evaluated = new PythonValueSetAcceptor() {
-                    public <T> void checkpoint(IGrade<T> grade) {
-                        RuntimeObject left = getResultByContext(context);
+                PythonValueSetAcceptor evaluated = new PythonValueSetAcceptor(context) {
+                    
+                    @Override
+                    public <T> void acceptIndividualResult(RuntimeObject left, IGrade<T> grade) {
                         if (left == null) {
                             schedule(new PassResultGoal(context, acceptor, null));
                         } else {

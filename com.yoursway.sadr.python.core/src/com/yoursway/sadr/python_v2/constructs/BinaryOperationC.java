@@ -36,9 +36,10 @@ public class BinaryOperationC extends BinaryC {
                         final RuntimeObject left = getResults().get(LEFT);
                         final RuntimeObject right = getResults().get(RIGHT);
                         final PythonArguments args = new PythonArguments(left, right);
-                        final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor() {
-                            public <T> void checkpoint(IGrade<T> grade) {
-                                RuntimeObject callable = getResultByContext(context);
+                        final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor(context) {
+                            
+                            @Override
+                            public <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                                 if (callable == null) {
                                     schedule(new PassResultGoal(context, acceptor, null));
                                 } else {
@@ -47,9 +48,10 @@ public class BinaryOperationC extends BinaryC {
                                 }
                             }
                         };
-                        PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor() {
-                            public <T> void checkpoint(IGrade<T> grade) {
-                                RuntimeObject callable = getResultByContext(context);
+                        PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor(context) {
+                            
+                            @Override
+                            public <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                                 if (callable == null) {
                                     schedule(CallResolver.findMethod(right, rightOpName, rightFound, context));
                                 } else {

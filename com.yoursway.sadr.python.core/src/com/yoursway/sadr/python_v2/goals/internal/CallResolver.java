@@ -39,9 +39,10 @@ public final class CallResolver {
             final PythonArguments args, final PythonValueSetAcceptor acceptor, final Context context) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor() {
-                    public <T> void checkpoint(IGrade<T> grade) {
-                        RuntimeObject callable = getResultByContext(context);
+                PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor(context) {
+                    
+                    @Override
+                    public <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                         assertCallable(callable);
                         args.getArgs().add(0, receiver);
                         schedule(callFunction((FunctionObject) callable, args, acceptor, context));

@@ -59,9 +59,9 @@ public abstract class ResultsCollector extends Synchronizer {
             throw new IllegalArgumentException("Key " + name + " already found.");
         }
         results.put(name, null);
-        return new PythonValueSetAcceptor() {
-            public <T> void checkpoint(IGrade<T> grade) {
-                RuntimeObject result = getResultByContext(context);
+        return new PythonValueSetAcceptor(context) {
+            @Override
+            public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 results.put(name, result);
                 if (grade.isDone())
                     subgoalDone(name, grade);
