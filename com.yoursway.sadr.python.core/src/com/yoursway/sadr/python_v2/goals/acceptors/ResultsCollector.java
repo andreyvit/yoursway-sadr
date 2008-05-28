@@ -61,7 +61,7 @@ public abstract class ResultsCollector extends Synchronizer {
         results.put(name, null);
         return new PythonValueSetAcceptor(context) {
             @Override
-            public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 results.put(name, result);
                 if (grade.isDone())
                     subgoalDone(name, grade);

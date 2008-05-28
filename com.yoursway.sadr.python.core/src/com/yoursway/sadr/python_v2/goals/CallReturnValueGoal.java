@@ -29,7 +29,7 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
         this.acceptor = new PythonValueSetAcceptor(arguments) {
             
             @Override
-            public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 parentAcceptor.addResult(result, parentContext);
                 updateGrade(parentAcceptor, grade);
             }

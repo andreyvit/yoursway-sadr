@@ -42,7 +42,7 @@ public final class CallResolver {
                 PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor(context) {
                     
                     @Override
-                    public <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
+                    protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                         assertCallable(callable);
                         args.getArgs().add(0, receiver);
                         schedule(callFunction((FunctionObject) callable, args, acceptor, context));

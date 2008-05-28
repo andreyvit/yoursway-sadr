@@ -354,7 +354,7 @@ public abstract class AbstractTypeInferencingTestCase {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(null) {
                 
                 @Override
-                public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                     // do nothing
                 }
             };
@@ -378,7 +378,7 @@ public abstract class AbstractTypeInferencingTestCase {
                         new PythonValueSetAcceptor(null) {
                             
                             @Override
-                            public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                                 Context context = createSelfContext(func, result);
                                 IGoal goal = construct.evaluate(context, acceptor);
                                 engine.schedule(null, goal);
@@ -447,9 +447,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 }
                 
                 @Override
-                public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                    // TODO Auto-generated method stub
-                    
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 }
             };
             IGoal goal = createGoal(engine, fileC, acceptor);
@@ -474,7 +472,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 return new CreateInstanceGoal(classC, new PythonArguments(), null,
                         new PythonValueSetAcceptor(null) {
                             @Override
-                            public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                                 Context context = createSelfContext(func, result);
                                 IGoal goal = construct.evaluate(context, acceptor);
                                 engine.schedule(null, goal);
@@ -517,7 +515,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 }
                 
                 @Override
-                public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                     // TODO Auto-generated method stub
                     
                 }
@@ -649,7 +647,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(null) {
                 @Override
-                public <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 }
             };
             IGoal goal = createGoal(fileC, acceptor);

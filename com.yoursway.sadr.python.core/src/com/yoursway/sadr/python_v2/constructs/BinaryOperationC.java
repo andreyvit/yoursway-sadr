@@ -39,7 +39,7 @@ public class BinaryOperationC extends BinaryC {
                         final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor(context) {
                             
                             @Override
-                            public <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
+                            protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                                 if (callable == null) {
                                     schedule(new PassResultGoal(context, acceptor, null));
                                 } else {
@@ -51,7 +51,7 @@ public class BinaryOperationC extends BinaryC {
                         PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor(context) {
                             
                             @Override
-                            public <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
+                            protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                                 if (callable == null) {
                                     schedule(CallResolver.findMethod(right, rightOpName, rightFound, context));
                                 } else {

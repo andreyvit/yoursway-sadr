@@ -51,5 +51,10 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
         }
     }
     
-    public abstract <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade);
+    //TODO it isn't the most elegant solution - make it pretty.
+    /**
+     * Is called by the checkpoint implementation for each individual result of
+     * the result set in <code>activeContext</code>.
+     */
+    protected abstract <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade);
 }
