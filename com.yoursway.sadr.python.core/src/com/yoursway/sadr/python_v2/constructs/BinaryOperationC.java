@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import java.util.Map;
+
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -32,9 +34,9 @@ public class BinaryOperationC extends BinaryC {
             public void preRun() {
                 ResultsCollector rc = new ResultsCollector(2, context) {
                     @Override
-                    public <K> void completed(IGrade<K> grade) {
-                        final RuntimeObject left = getResults().get(LEFT);
-                        final RuntimeObject right = getResults().get(RIGHT);
+                    protected <K> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<K> grade) {
+                        final RuntimeObject left = results.get(LEFT);
+                        final RuntimeObject right = results.get(RIGHT);
                         final PythonArguments args = new PythonArguments(left, right);
                         final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor(context) {
                             

@@ -1,11 +1,17 @@
 package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.Grade;
+import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
+import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
@@ -13,13 +19,13 @@ import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class ResultsCollector extends Synchronizer {
-    private final Map<Object, RuntimeObject> results;
+    private final Map<Object, MutableValueSet> results;
     private final Context context;
     private boolean adding = true;
     
     public ResultsCollector(int capacity, Context context) {
         this.context = context;
-        results = new HashMap<Object, RuntimeObject>(capacity);
+        results = new HashMap<Object, MutableValueSet>(capacity);
     }
     
     public List<IGoal> addSubgoals(List<PythonConstruct> items) {
@@ -36,8 +42,12 @@ public abstract class ResultsCollector extends Synchronizer {
         return construct.evaluate(context, createAcceptor(name));
     }
     
-    protected Map<Object, RuntimeObject> getResults() {
-        return results;
+    private Map<Object, ValueSet> getResults() {
+        Map<Object, ValueSet> objectToValueSet = new HashMap<Object, ValueSet>(results.size());
+        for (Entry<Object, MutableValueSet> entry : results.entrySet()) {
+            objectToValueSet.put(entry.getKey(), entry.getValue().build());
+        }
+        return objectToValueSet;
     }
     
     final public <K> void subgoalCompleted(Object name, IGrade<K> grade) {
@@ -58,11 +68,12 @@ public abstract class ResultsCollector extends Synchronizer {
         if (results.containsKey(name)) {
             throw new IllegalArgumentException("Key " + name + " already found.");
         }
-        results.put(name, null);
+        if (results.get(name) == null)
+            results.put(name, new MutableValueSet());
         return new PythonValueSetAcceptor(context) {
             @Override
             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                results.put(name, result);
+                results.get(name).add(result);
                 if (grade.isDone())
                     subgoalDone(name, grade);
             }
@@ -74,5 +85,27 @@ public abstract class ResultsCollector extends Synchronizer {
         if (counter <= 0)
             completed(Grade.DONE);
     }
+    
+    private <T> void fixResult(Iterator<Entry<Object, ValueSet>> tupleElementIter,
+            Map<Object, RuntimeObject> results, IGrade<T> grade) {
+        if (!tupleElementIter.hasNext()) {
+            processResultTuple(results, grade);
+            return;
+        }
+        Entry<Object, ValueSet> entry = tupleElementIter.next();
+        Collection<Value> values = entry.getValue().containedValues();
+        for (Value value : values) {
+            results.put(entry.getKey(), (RuntimeObject) value);// XXX ugly freaky stupid cast! remove asap!
+            fixResult(tupleElementIter, results, grade);
+        }
+    }
+    
+    @Override
+    public final <T> void completed(IGrade<T> grade) {
+        Map<Object, RuntimeObject> concreteResults = new HashMap<Object, RuntimeObject>();
+        fixResult(getResults().entrySet().iterator(), concreteResults, grade);
+    }
+    
+    abstract protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade);
     
 }

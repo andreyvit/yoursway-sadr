@@ -57,8 +57,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             public void preRun() {
                 ResultsCollector rc = new ResultsCollector(args.size() + 2, context) {
                     @Override
-                    public <T> void completed(IGrade<T> grade) {
-                        Map<Object, RuntimeObject> results = getResults();
+                    protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
                         RuntimeObject method = results.get(FUNC);
                         PythonArguments real = new PythonArguments();
                         if (results.containsKey(RECEIVER)) {

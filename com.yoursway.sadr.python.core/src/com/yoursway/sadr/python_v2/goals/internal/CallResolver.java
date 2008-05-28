@@ -89,8 +89,8 @@ public final class CallResolver {
                 public void preRun() {
                     ResultsCollector rc = new ResultsCollector(0, null) {
                         @Override
-                        public <T> void completed(IGrade<T> grade) {
-                            Map<Object, RuntimeObject> results = getResults();
+                        protected <T> void processResultTuple(Map<Object, RuntimeObject> results,
+                                IGrade<T> grade) {
                             for (PythonArgument arg : realArgs) {
                                 String name = arg.getName();
                                 if (actualArguments.getActualArgument(name) == null) {
@@ -99,7 +99,6 @@ public final class CallResolver {
                                 }
                             }
                             schedule(new CallReturnValueGoal(methodDeclC, actualArguments, context, acceptor));
-                            
                         }
                     };
                     for (PythonArgument arg : realArgs) {
