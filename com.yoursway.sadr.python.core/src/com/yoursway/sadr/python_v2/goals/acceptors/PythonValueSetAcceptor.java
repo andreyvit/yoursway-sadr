@@ -24,12 +24,12 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
     }
     
     public void addResult(RuntimeObject result, Context context) {
-        if (result != null) {
-            builder.add(result.getType(), result);
-            if (contextToValues.get(context) == null)
-                contextToValues.put(context, new MutableValueSet());
-            contextToValues.get(context).add(result);
-        }
+        if (null == result)
+            throw new IllegalStateException("There should be no null items in results!");
+        builder.add(result.getType(), result);
+        if (contextToValues.get(context) == null)
+            contextToValues.put(context, new MutableValueSet());
+        contextToValues.get(context).add(result);
     }
     
     public MutableValueSet getResultByContext(Context context) {
@@ -45,9 +45,16 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
     }
     
     public <T> void checkpoint(IGrade<T> grade) {
-        for (Iterator<Value> valueIter = getResultByContext(activeContext).containedValues().iterator(); valueIter
-                .hasNext();) {
-            acceptIndividualResult((RuntimeObject) valueIter.next(), grade); //FIXME ugly cast.  Make it type safe.
+        MutableValueSet resultByContext = getResultByContext(activeContext);
+        if (null == resultByContext) {
+            acceptIndividualResult(null, grade);
+            return;
+        }
+        for (Iterator<Value> valueIter = resultByContext.containedValues().iterator(); valueIter.hasNext();) {
+            RuntimeObject item = (RuntimeObject) valueIter.next(); //FIXME ugly cast.  Make it type safe.
+            if (null == item)
+                throw new IllegalStateException("There should be no null items in results!");
+            acceptIndividualResult(item, grade);
         }
     }
     

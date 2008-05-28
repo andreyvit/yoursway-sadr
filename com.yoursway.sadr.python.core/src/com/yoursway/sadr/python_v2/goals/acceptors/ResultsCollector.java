@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.values.Value;
@@ -103,7 +104,10 @@ public abstract class ResultsCollector extends Synchronizer {
     @Override
     public final <T> void completed(IGrade<T> grade) {
         Map<Object, RuntimeObject> concreteResults = new HashMap<Object, RuntimeObject>();
-        fixResult(getResults().entrySet().iterator(), concreteResults, grade);
+        Set<Entry<Object, ValueSet>> entrySet = getResults().entrySet();
+        //TODO        if (entrySet.isEmpty())
+        //TODO            processResultTuple(concreteResults, grade);
+        fixResult(entrySet.iterator(), concreteResults, grade);
     }
     
     abstract protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade);

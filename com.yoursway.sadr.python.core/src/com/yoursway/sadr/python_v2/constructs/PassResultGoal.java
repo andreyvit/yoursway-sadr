@@ -18,7 +18,9 @@ final public class PassResultGoal extends ExpressionValueGoal {
     }
     
     public void preRun() {
-        acceptor.addResult(result, getContext());
-        updateGrade(acceptor, Grade.DONE);
+        if (result != null) {
+            acceptor.addResult(result, getContext());
+            updateGrade(acceptor, Grade.DONE);
+        }
     }
 }
