@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
@@ -9,6 +11,8 @@ import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
+import com.yoursway.sadr.python_v2.goals.sideeffects.CallF;
+import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
@@ -71,5 +75,12 @@ public class BinaryOperationC extends BinaryC {
             }
             
         };
+    }
+    
+    @Override
+    public Frog toFrog() {
+        List<Frog> argFrogs = new ArrayList<Frog>(1);
+        argFrogs.add(getRight().toFrog());
+        return new CallF(new FieldReadF(getLeft().toFrog(), leftOpName), argFrogs);
     }
 }
