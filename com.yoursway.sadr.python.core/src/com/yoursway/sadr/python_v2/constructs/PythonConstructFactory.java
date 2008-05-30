@@ -36,7 +36,6 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpressio
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonDictExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonFunctionDecorator;
-import org.eclipse.dltk.python.parser.ast.expressions.PythonImportAsExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonImportExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
@@ -74,10 +73,10 @@ public class PythonConstructFactory {
         if (node instanceof VariableReference)
             return new VariableReferenceC(scope, ((VariableReference) node));
         if (node instanceof PythonCallExpression) {
-            PythonCallExpression expression = (PythonCallExpression) node;
-            if (expression.getReceiver() == null)
-                return new ProcedureCallC(scope, (PythonCallExpression) node);
-            return new MethodCallC(scope, (PythonCallExpression) node);
+            //            PythonCallExpression expression = (PythonCallExpression) node;
+            //            if (expression.getReceiver() == null)
+            return new ProcedureCallC(scope, (PythonCallExpression) node);
+            //            return new MethodCallC(scope, (PythonCallExpression) node);
         }
         if (node instanceof PythonVariableAccessExpression)
             return new FieldAccessC(scope, (PythonVariableAccessExpression) node);
@@ -107,15 +106,18 @@ public class PythonConstructFactory {
             return wrapUnaryExpression(scope, (UnaryExpression) node);
         if (node instanceof PythonCallArgument)
             return new CallArgumentC(scope, (PythonCallArgument) node);
+        if (node instanceof PythonImportFromStatement)
+            return new ImportFromC(scope, (PythonImportFromStatement) node);
+        if (node instanceof PythonImportStatement)
+            return new ImportModuleC(scope, (PythonImportStatement) node);
         if (node instanceof PythonArgument)
             return new ArgumentC(scope, (PythonArgument) node);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
-                || node instanceof EmptyStatement || node instanceof PythonImportFromStatement
-                || node instanceof PythonAllImportExpression || node instanceof PythonArgument
-                || node instanceof PythonDelStatement || node instanceof PythonImportStatement
+                || node instanceof EmptyStatement || node instanceof PythonTestListExpression
+                || node instanceof PythonImportExpression || node instanceof PythonAllImportExpression
+                || node instanceof PythonArgument || node instanceof PythonDelStatement
                 || node instanceof PythonFunctionDecorator || node instanceof PythonWithStatement
-                || node instanceof PythonRaiseStatement || node instanceof PythonImportExpression
-                || node instanceof PythonImportAsExpression || node instanceof PythonTestListExpression
+                || node instanceof PythonRaiseStatement || node instanceof PythonTestListExpression
                 || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
                 || node instanceof PythonSubscriptExpression || node instanceof FloatNumericLiteral
                 || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement

@@ -24,11 +24,6 @@ public class BooleanValue extends AbstractValue {
         return ((BooleanValue) obj).value == this.value;
     }
     
-    @Override
-    public String toString() {
-        return value ? TRUE : FALSE;
-    }
-    
     public String describe() {
         return value ? TRUE : FALSE;
     }

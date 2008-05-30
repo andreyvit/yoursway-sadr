@@ -55,18 +55,25 @@ public class ProjectRuntime {
     private void contributeModule(ISourceModule module) {
         try {
             PythonSourceParser parser = new PythonSourceParser();
-            ModuleDeclaration moduleDecl = parser.parse(module.getElementName().toCharArray(), module
+            String path = module.getParent().getElementName();
+            if (path.length() != 0)
+                path = path + "/";
+            String moduleName = path + module.getElementName();
+            ModuleDeclaration moduleDecl = parser.parse(moduleName.toCharArray(), module
                     .getSourceAsCharArray(), null);
             
-            PythonFileC moduleObject = new PythonFileC(null, moduleDecl, module.getElementName());
+            PythonFileC moduleObject = new PythonFileC(null, moduleDecl, moduleName, this);
             //FIXME convert module names to python code form (e.g. "package.module").
-            nameToModule.put(module.getElementName(), moduleObject);
+            nameToModule.put(moduleName, moduleObject);
         } catch (ModelException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IllegalStateException("Python module parse failed. See error in log.");
+            if (e.getCause() != null) {
+                throw new IllegalStateException("Python module parse failed. See error in log.", e.getCause());
+            } else {
+                throw new IllegalStateException("Python module parse failed. See error in log.", e);
+            }
         }
     }
-    
 }

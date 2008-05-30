@@ -90,4 +90,8 @@ public class PythonObject implements RuntimeObject {
     public <T> T convertValue(RuntimeObject type) {
         return null;
     }
+    
+    public PythonConstruct getDecl() {
+        return history.sourceDeclaration();
+    }
 }

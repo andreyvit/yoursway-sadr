@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
@@ -28,6 +29,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     private static final String RECEIVER = "receiver";
     private final List<PythonConstruct> args;
     private final PythonConstruct func;
+    private PythonConstruct self;
     
     CallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
@@ -36,7 +38,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
         } else {
             args = PythonConstructFactory.wrap(node.getArgs().getChilds(), sc);
         }
-        func = PythonConstructFactory.wrap(node.getFunction(), sc);
+        func = PythonConstructFactory.wrap(node.getReceiver(), sc);
+        if (node.getReceiver() instanceof PythonVariableAccessExpression) {
+            self = wrap(node.getReceiver());
+        }
         List<PythonConstruct> childs = new ArrayList<PythonConstruct>();
         setChildConstructs(childs);
     }
@@ -107,8 +112,8 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                 
                 schedule(func.evaluate(getContext(), rc.createAcceptor(FUNC)));
                 
-                if (getReceiver() != null) { //evaluate receiver as "self"
-                    schedule(getReceiver().evaluate(getContext(), rc.createAcceptor(RECEIVER)));
+                if (self != null) {
+                    schedule(self.evaluate(getContext(), rc.createAcceptor(RECEIVER)));
                 }
                 
                 for (PythonConstruct arg : args) {

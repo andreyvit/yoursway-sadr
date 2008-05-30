@@ -14,11 +14,6 @@ public class IntegerValue extends AbstractValue{
         return value;
     }
     
-    @Override
-    public String toString() {
-        return describe();
-    }
-    
     public String describe() {
         return Long.toString(value);
     }

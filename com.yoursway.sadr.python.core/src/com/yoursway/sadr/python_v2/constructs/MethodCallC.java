@@ -20,7 +20,7 @@ public class MethodCallC extends CallC implements IndexAffector {
     
     MethodCallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
-        receiver = wrap(node.getFunction());
+        receiver = wrap(node.getReceiver());
     }
     
     public void actOnIndex(IndexRequest request) {

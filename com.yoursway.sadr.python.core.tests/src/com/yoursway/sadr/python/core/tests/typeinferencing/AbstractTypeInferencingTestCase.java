@@ -369,9 +369,9 @@ public abstract class AbstractTypeInferencingTestCase {
         public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSetAcceptor acceptor,
                 final PythonConstruct construct, final Engine engine) {
             if (construct.innerScope() instanceof MethodDeclarationC
-                    && construct.innerScope().parentScope() instanceof ClassDeclarationC) {
+                    && construct.parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
-                ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
+                ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
                 return new CreateInstanceGoal(classC, new PythonArguments(), null,
                         new PythonValueSetAcceptor() {
                             public <T> void checkpoint(IGrade<T> grade) {

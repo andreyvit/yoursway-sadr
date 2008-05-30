@@ -13,11 +13,6 @@ public class NilValue extends AbstractValue {
         return instance;
     }
     
-    @Override
-    public String toString() {
-        return describe();
-    }
-    
     public String describe() {
         return "None";
     }

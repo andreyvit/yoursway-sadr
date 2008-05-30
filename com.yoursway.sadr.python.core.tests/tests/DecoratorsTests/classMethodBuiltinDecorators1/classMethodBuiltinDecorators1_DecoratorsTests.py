@@ -7,6 +7,6 @@ class Foo():
     def q(arg):
         return arg
 
-c = foo.f() ## value c => Foo
+c = Foo.f() ## value c => Foo
 
 

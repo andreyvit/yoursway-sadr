@@ -10,11 +10,6 @@ public class StringValue extends AbstractValue {
         this.value = value;
     }
     
-    @Override
-    public String toString() {
-        return describe();
-    }
-    
     public String describe() {
         return "\'" + value + "\'";
     }

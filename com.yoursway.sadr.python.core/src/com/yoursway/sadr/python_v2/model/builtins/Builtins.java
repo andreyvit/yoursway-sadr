@@ -9,6 +9,7 @@ import com.yoursway.sadr.python.core.typeinferencing.values.NilValue;
 public class Builtins extends PythonClassType {
     
     private static PythonClassType typeType = null;
+    private static PythonValue<NilValue> pythonNone;
     
     static PythonClassType getTypeType() {
         if (null == typeType) {
@@ -18,23 +19,32 @@ public class Builtins extends PythonClassType {
         return typeType;
     }
     
-    public static PythonObject createNone() {
-        return new PythonValue<NilValue>(NONE, NilValue.instance());
+    public static PythonObject getNone() {
+        if (pythonNone == null) {
+            pythonNone = new PythonValue<NilValue>(getTypeType(), NilValue.instance());
+        }
+        return pythonNone;
     }
     
     public static PythonObject createTrue() {
-        return new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(true));
+        if (pythonTrue == null) {
+            pythonTrue = new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(true));
+        }
+        return pythonTrue;
     }
     
     public static PythonObject createFalse() {
-        return new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(false));
+        if (pythonFalse == null) {
+            pythonFalse = new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(false));
+        }
+        return pythonFalse;
     }
     
     public static final PythonClassType FUNCTION = getTypeType(); //TODO
-    public static final PythonClassType MODULE = getTypeType(); //TODO
-    public static final PythonClassType NONE = getTypeType();
     
     private static Builtins module = null;
+    private static PythonValue<BooleanValue> pythonTrue;
+    private static PythonValue<BooleanValue> pythonFalse;
     
     //---------Singleton infrastructure---------
     private Builtins() {
@@ -51,7 +61,7 @@ public class Builtins extends PythonClassType {
             module.setAttribute("list", ListType.instance());
             module.setAttribute("tuple", TupleType.instance());
             module.setAttribute("dict", DictType.instance());
-            module.setAttribute("None", createNone());
+            module.setAttribute("None", getNone());
             module.setAttribute("True", createTrue());
             module.setAttribute("False", createFalse());
             module.setAttribute(new RedirectFunctionObject("len", "__len__"));

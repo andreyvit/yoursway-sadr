@@ -7,6 +7,7 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.AssignmentC;
 import com.yoursway.sadr.python_v2.constructs.CallC;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodCallC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.ProcedureCallC;
@@ -31,6 +32,10 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         this.name = name;
         this.setAcceptor(acceptor);
         this.var = start;
+        if (this.var == null) {
+            throw new NullPointerException("Var is null");
+        }
+        
     }
     
     public ResolveNameToObjectGoal(VariableReferenceC var, PythonValueSetAcceptor acceptor, Context context) {
@@ -55,7 +60,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     
     public void preRun() {
         PythonConstruct result = null;
-        Scope scope = this.var.parentScope();
+        Scope scope = this.var.innerScope();
         //FIXME change getEnclosedConstructs to iterator allowing parallel execution
         result = findInScope(scope);
         scope = scope.parentScope();
@@ -108,6 +113,11 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
                 if (declarationC.node().getName().equals(this.name)) {
                     result = declarationC;
                 }
+            } else if (construct instanceof ImportDeclarationC) {
+                ImportDeclarationC moduleImport = (ImportDeclarationC) construct;
+                if (moduleImport.hasImport(this.name)) {
+                    result = moduleImport;
+                }
             }
         }
         return result;
@@ -121,9 +131,11 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         } else if (result instanceof MethodDeclarationC) {
             MethodDeclarationC methodDeclarationC = (MethodDeclarationC) result;
             FunctionObject obj = new FunctionObject(methodDeclarationC);
-            
             acceptor().addResult(obj, getContext());
             updateGrade(acceptor(), Grade.DONE);
+        } else if (result instanceof ImportDeclarationC) {
+            ImportDeclarationC moduleImport = (ImportDeclarationC) result;
+            schedule(new ResolveModuleImportGoal(moduleImport, this.name, acceptor, getContext()));
         } else if (result instanceof ClassDeclarationC) {
             ClassDeclarationC classDeclarationC = (ClassDeclarationC) result;
             FunctionObject obj = new FunctionObject(classDeclarationC);
@@ -143,7 +155,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     
     @Override
     public String describe() {
-        String scope = (var.parentScope()).toString();
+        String scope = (var.innerScope()).toString();
         return super.describe() + "\nfor name " + this.name + " in " + scope;
     }
     

@@ -3,11 +3,20 @@ package com.yoursway.sadr.python_v2.constructs;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.goals.ReadFieldGoal;
+import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.ResolveModuleImportGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
+import com.yoursway.sadr.python_v2.model.builtins.ModuleType;
+import com.yoursway.sadr.python_v2.model.builtins.ModuleValue;
+import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.succeeder.IGrade;
 
 public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpression> {
     
@@ -55,10 +64,6 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     //        });
     //    }
     
-    public String fieldName() {
-        return node.variable().getName();
-    }
-    
     //    @Override
     //    public Collection<MumblaWumblaThreesome> mumblaWumbla() {
     //        PythonConstruct receiver = receiver();
@@ -69,8 +74,35 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     //    }
     
     @Override
-    public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
-        return new ReadFieldGoal(context, receiver(), variable(), acceptor);
+    public IGoal evaluate(final Context context, final PythonValueSetAcceptor acceptor) {
+        return new ExpressionValueGoal(context, acceptor) {
+            public void preRun() {
+                PythonValueSetAcceptor receiverResolved = new PythonValueSetAcceptor() {
+                    public <T> void checkpoint(IGrade<T> grade) {
+                        RuntimeObject object = getResultByContext(context);
+                        if (object instanceof FunctionObject) {
+                            schedule(CallResolver.findMethod(object, ((FunctionObject) object).name(),
+                                    acceptor, context));
+                        }
+                        if (object instanceof PythonClassType) {
+                            schedule(CallResolver.findMethod(object, variable.name(), acceptor, getContext()));
+                            return;
+                        } else if (object instanceof PythonValue<?>) {
+                            if (object.getType() == ModuleType.instance()) {
+                                PythonValue<ModuleValue> value = (PythonValue<ModuleValue>) object;
+                                schedule(new ResolveModuleImportGoal(value, variable.name(), acceptor,
+                                        context));
+                            } else {
+                                schedule(CallResolver.findMethod(object, variable.name(), acceptor,
+                                        getContext()));
+                            }
+                            return;
+                        }
+                    }
+                };
+                schedule(receiver.evaluate(context, receiverResolved));
+            }
+        };
     }
     
     public PythonConstruct receiver() {
@@ -83,6 +115,6 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     
     @Override
     public Frog toFrog() {
-        return new FieldReadF(receiver.toFrog(), variable.node().getName());
+        return new FieldReadF(receiver.toFrog(), variable.name());
     }
 }

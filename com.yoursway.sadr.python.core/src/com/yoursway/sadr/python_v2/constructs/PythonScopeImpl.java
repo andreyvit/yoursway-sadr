@@ -63,7 +63,7 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     
     abstract public String name();
     
-    public Scope getFileScope() {
+    public PythonFileC getFileScope() {
         return parentScope().getFileScope();
     }
 }

@@ -36,4 +36,7 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
         return new VariableReadF(node.getName());
     }
     
+    public String name() {
+        return node.getName();
+    }
 }

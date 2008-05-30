@@ -96,7 +96,7 @@ public class CallF extends Frog {
     
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + expression + ")";
+        return "{" + expression + "(" + ")" + "}";
     }
     
     @Override

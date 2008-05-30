@@ -16,10 +16,6 @@ public class LongValue extends AbstractValue {
         return value;
     }
     
-    public String toString() {
-        return describe();
-    }
-    
     public String describe() {
         return value.toString();
     }

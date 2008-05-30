@@ -9,7 +9,7 @@ public class ObjectType extends PythonClassType {
     final InstanceRegistrarImpl registrar = new InstanceRegistrarImpl();
     
     public RuntimeObject __init__(PythonArguments args) {
-        return Builtins.createNone();
+        return Builtins.getNone();
     }
     
     public RuntimeObject __call__(PythonArguments args) {

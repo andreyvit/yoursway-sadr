@@ -24,7 +24,7 @@ public class ListType extends PythonClassType {
         setAttribute(new SyncFunctionObject("append") {
             @Override
             public RuntimeObject evaluate(PythonArguments args) {
-                return Builtins.NONE;
+                return Builtins.getNone();
             }
         });
     }
