@@ -24,25 +24,24 @@ import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     
-    private static final String FUNC = "func";
+    private static final String CALLABLE = "func";
     private static final String RECEIVER = "receiver";
+    private static final int CALLABLE_INDEX = 0;
     private final List<PythonConstruct> args;
-    private final PythonConstruct func;
+    private final PythonConstruct callable;
+    private final int ARGUMENTS_INDEX = 1;
     
     CallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
         if (node.getArgs() == null) {
             args = Collections.emptyList();
         } else {
-            args = PythonConstructFactory.wrap(node.getArgs().getChilds(), sc);
+            args = new ArrayList<PythonConstruct>(getChildConstructs().get(ARGUMENTS_INDEX)
+                    .getChildConstructs());
         }
-        func = PythonConstructFactory.wrap(node.getFunction(), sc);
+        callable = getChildConstructs().get(CALLABLE_INDEX);
         List<PythonConstruct> childs = new ArrayList<PythonConstruct>();
         setChildConstructs(childs);
-    }
-    
-    @Override
-    protected void wrapEnclosedChildren() {
     }
     
     abstract public PythonConstruct getReceiver();
@@ -58,7 +57,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                 ResultsCollector rc = new ResultsCollector(args.size() + 2, context) {
                     @Override
                     protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
-                        RuntimeObject method = results.get(FUNC);
+                        RuntimeObject method = results.get(CALLABLE);
                         PythonArguments real = new PythonArguments();
                         if (results.containsKey(RECEIVER)) {
                             real.getArgs().add(results.get(RECEIVER));
@@ -97,14 +96,14 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                             return;
                         }
                         if (method == null) {
-                            throw new IllegalStateException("Unable to find callable " + func
+                            throw new IllegalStateException("Unable to find callable " + callable
                                     + ", resolved to " + method);
                         }
                     }
                     
                 };
                 
-                schedule(func.evaluate(getContext(), rc.createAcceptor(FUNC)));
+                schedule(callable.evaluate(getContext(), rc.createAcceptor(CALLABLE)));
                 
                 if (getReceiver() != null) { //evaluate receiver as "self"
                     schedule(getReceiver().evaluate(getContext(), rc.createAcceptor(RECEIVER)));

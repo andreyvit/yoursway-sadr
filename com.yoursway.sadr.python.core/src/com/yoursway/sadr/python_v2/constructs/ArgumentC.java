@@ -15,8 +15,8 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     ArgumentC(Scope scope, PythonArgument node) {
         super(scope, node);
         Assert.isLegal(node.getName() != null, "node.getName() should be != null");
-        if (node.getInitialization() != null)
-            init = PythonConstructFactory.wrap(node.getInitialization(), scope);
+        if (getChildConstructs().size() > 0)
+            init = getChildConstructs().get(0);
         else
             init = null;
     }
