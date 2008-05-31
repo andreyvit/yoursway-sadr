@@ -58,7 +58,6 @@ public class ResolveModuleImportGoal extends Goal {
             String path = parentModule.getValue().getPath();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                acceptor.addResult(null, context);
                 updateGrade(acceptor, Grade.DONE);
             } else {
                 schedule(new ResolveNameToObjectGoal(fileC, variable, acceptor, context));
@@ -67,7 +66,6 @@ public class ResolveModuleImportGoal extends Goal {
             String path = module.getValue().getPath();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                acceptor.addResult(null, context);
                 updateGrade(acceptor, Grade.DONE);
             } else {
                 schedule(new ResolveNameToObjectGoal(fileC, module.getValue().getVar(), acceptor, context));

@@ -9,6 +9,7 @@ import com.yoursway.sadr.python_v2.constructs.ReturnC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public class CallReturnValueGoal extends ContextSensitiveGoal {
@@ -30,6 +31,9 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
             
             @Override
             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                if (result == null) {
+                    result = Builtins.getNone();
+                }
                 parentAcceptor.addResult(result, parentContext);
                 updateGrade(parentAcceptor, grade);
             }

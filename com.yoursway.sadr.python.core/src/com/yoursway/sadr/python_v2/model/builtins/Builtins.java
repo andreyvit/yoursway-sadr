@@ -26,14 +26,14 @@ public class Builtins extends PythonClassType {
         return pythonNone;
     }
     
-    public static PythonObject createTrue() {
+    public static PythonObject getTrue() {
         if (pythonTrue == null) {
             pythonTrue = new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(true));
         }
         return pythonTrue;
     }
     
-    public static PythonObject createFalse() {
+    public static PythonObject getFalse() {
         if (pythonFalse == null) {
             pythonFalse = new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(false));
         }
@@ -62,9 +62,10 @@ public class Builtins extends PythonClassType {
             module.setAttribute("tuple", TupleType.instance());
             module.setAttribute("dict", DictType.instance());
             module.setAttribute("None", getNone());
-            module.setAttribute("True", createTrue());
-            module.setAttribute("False", createFalse());
+            module.setAttribute("True", getTrue());
+            module.setAttribute("False", getFalse());
             module.setAttribute(new RedirectFunctionObject("len", "__len__"));
+            module.setAttribute(new RedirectFunctionObject("str", "__str__"));
             module.setAttribute(new RedirectFunctionObject("repr", "__repr__"));
             module.setAttribute(new RedirectFunctionObject("unicode", "__unicode__"));
             module.setAttribute(new RedirectFunctionObject("__unicode__", "__str__"));

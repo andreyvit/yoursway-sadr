@@ -29,6 +29,11 @@ public interface Context {
         public void put(String name, RuntimeObject value) {
             
         }
+        
+        @Override
+        public String toString() {
+            return "Empty context";
+        }
     };
     
     Set<String> keys();

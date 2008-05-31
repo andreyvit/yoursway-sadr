@@ -78,7 +78,7 @@ public final class CallResolver {
         if (callable == null) {
             throw new IllegalStateException("Callable is null");
         }
-        PythonConstruct declC = callable.getDecl();
+        final PythonConstruct declC = callable.getDecl();
         if (declC == null) {
             return callable.evaluateGoal(acceptor, context, args);
         } else if (declC instanceof MethodDeclarationC) {
@@ -87,7 +87,7 @@ public final class CallResolver {
             final Context actualArguments = new ContextImpl(realArgs, args);
             return new ExpressionValueGoal(actualArguments, acceptor) {
                 public void preRun() {
-                    ResultsCollector rc = new ResultsCollector(0, null) {
+                    ResultsCollector rc = new ResultsCollector(0, Context.EMPTY_CONTEXT) {
                         @Override
                         protected <T> void processResultTuple(Map<Object, RuntimeObject> results,
                                 IGrade<T> grade) {
@@ -108,7 +108,12 @@ public final class CallResolver {
                         String name = arg.getName();
                         if (actualArguments.getActualArgument(name) == null) {
                             PythonConstruct init = methodDeclC.getArgInit(name);
-                            IGoal evaluate = init.evaluate(null, rc.createAcceptor(name));
+                            if (init == null) {
+                                throw new IllegalArgumentException("weird argument " + name + "of function "
+                                        + methodDeclC.displayName());
+                            }
+                            //FIXME: change to context that was right before function call
+                            IGoal evaluate = init.evaluate(Context.EMPTY_CONTEXT, rc.createAcceptor(name));
                             schedule(evaluate);
                         }
                     }

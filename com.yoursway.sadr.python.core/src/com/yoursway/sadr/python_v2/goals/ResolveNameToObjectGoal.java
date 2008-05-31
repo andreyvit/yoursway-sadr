@@ -15,7 +15,6 @@ import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
@@ -66,17 +65,18 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         scope = scope.parentScope();
         if (null == result) {
             if (getContext() != null && getContext().contains(this.name)) {
-                acceptor().addResult(getContext().getActualArgument(this.name), getContext());
+                RuntimeObject argument = getContext().getActualArgument(this.name);
+                acceptor().addResult(argument, getContext());
                 updateGrade(acceptor(), Grade.DONE);
                 return;
             }
-            if (name.equals("self") && this.var.parentScope() instanceof MethodDeclarationC && scope != null
-                    && scope instanceof ClassDeclarationC) {
-                ClassDeclarationC classC = (ClassDeclarationC) scope;
-                //FIXME: HACK for self handling
-                schedule(new CreateInstanceGoal(classC, new PythonArguments(), null, acceptor));
-                return;
-            }
+            //            if (name.equals("self") && this.var.parentScope() instanceof MethodDeclarationC && scope != null
+            //                    && scope instanceof ClassDeclarationC) {
+            //                ClassDeclarationC classC = (ClassDeclarationC) scope;
+            //                //FIXME: HACK for self handling
+            //                schedule(new CreateInstanceGoal(classC, new PythonArguments(), null, acceptor));
+            //                return;
+            //            }
         }
         while (result == null && scope != null) {
             result = findInScope(scope);

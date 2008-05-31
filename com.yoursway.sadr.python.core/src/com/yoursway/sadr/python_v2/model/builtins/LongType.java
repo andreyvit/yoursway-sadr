@@ -60,6 +60,6 @@ public class LongType extends PythonClassType {
     
     @Override
     public String describe() {
-        return "int";
+        return "long";
     }
 }

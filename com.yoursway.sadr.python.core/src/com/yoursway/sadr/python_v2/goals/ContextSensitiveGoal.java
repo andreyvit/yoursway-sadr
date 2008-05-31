@@ -9,6 +9,9 @@ public abstract class ContextSensitiveGoal extends Goal {
     
     public ContextSensitiveGoal(Context context) {
         this.context = context;
+        if (context == null) {
+            throw new NullPointerException("Context is null");
+        }
     }
     
     public Context getContext() {

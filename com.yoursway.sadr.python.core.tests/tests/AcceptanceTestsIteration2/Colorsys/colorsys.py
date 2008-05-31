@@ -57,7 +57,7 @@ def yiq_to_rgb(y, i, q):
 
 def rgb_to_hls(r, g, b):
     maxc = max(r, g, b)
-    minc = min(r, g, b)
+    minc = mincn(r, g, b)
     # XXX Can optimize (maxc+minc) and (maxc-minc)
     l = (minc+maxc)/2.0
     if minc == maxc: return 0.0, l, 0.0

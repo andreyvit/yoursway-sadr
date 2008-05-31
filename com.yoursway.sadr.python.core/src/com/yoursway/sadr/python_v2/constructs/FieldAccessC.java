@@ -4,6 +4,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpres
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.ReadFieldGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveModuleImportGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
@@ -77,16 +78,16 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     public IGoal evaluate(final Context context, final PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                PythonValueSetAcceptor receiverResolved = new PythonValueSetAcceptor() {
-                    public <T> void checkpoint(IGrade<T> grade) {
-                        RuntimeObject object = getResultByContext(context);
+                PythonValueSetAcceptor receiverResolved = new PythonValueSetAcceptor(context) {
+                    
+                    @Override
+                    protected <T> void acceptIndividualResult(RuntimeObject object, IGrade<T> grade) {
                         if (object instanceof FunctionObject) {
                             schedule(CallResolver.findMethod(object, ((FunctionObject) object).name(),
                                     acceptor, context));
                         }
                         if (object instanceof PythonClassType) {
                             schedule(CallResolver.findMethod(object, variable.name(), acceptor, getContext()));
-                            return;
                         } else if (object instanceof PythonValue<?>) {
                             if (object.getType() == ModuleType.instance()) {
                                 PythonValue<ModuleValue> value = (PythonValue<ModuleValue>) object;
@@ -96,11 +97,12 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
                                 schedule(CallResolver.findMethod(object, variable.name(), acceptor,
                                         getContext()));
                             }
-                            return;
                         }
                     }
                 };
                 schedule(receiver.evaluate(context, receiverResolved));
+                // XXX: and run symbolic evaluation as well! ;)
+                schedule(new ReadFieldGoal(context, receiver(), variable(), acceptor));
             }
         };
     }
