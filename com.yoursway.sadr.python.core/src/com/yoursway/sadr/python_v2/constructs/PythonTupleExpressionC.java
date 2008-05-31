@@ -33,8 +33,8 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
                 List<PythonConstruct> args = getChildConstructs();
                 ResultsCollector rc = new ResultsCollector(args.size(), context) {
                     @Override
-                    public <T> void completed(IGrade<T> grade) {
-                        Map<Object, RuntimeObject> actualArguments = getResults();
+                    protected <T> void processResultTuple(Map<Object, RuntimeObject> actualArguments,
+                            IGrade<T> grade) {
                         List<RuntimeObject> arguments = new ArrayList<RuntimeObject>();
                         for (int i = 0; i < actualArguments.size(); i++) {
                             arguments.add(actualArguments.get(i));

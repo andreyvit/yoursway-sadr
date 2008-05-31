@@ -26,7 +26,7 @@ public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpress
     
     public PythonDictExpressionC(Scope sc, PythonDictExpression node) {
         super(sc, node);
-        args = PythonConstructFactory.wrap(this.node.getChilds(), parentScope());
+        args = getChildConstructs();
     }
     
     public List<PythonConstruct> getArgs() {
@@ -40,8 +40,8 @@ public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpress
                 final List<PythonConstruct> args = getArgs();
                 ResultsCollector rc = new ResultsCollector(args.size(), context) {
                     @Override
-                    public <T> void completed(IGrade<T> grade) {
-                        Map<Object, RuntimeObject> actualArguments = getResults();
+                    protected <T> void processResultTuple(Map<Object, RuntimeObject> actualArguments,
+                            IGrade<T> grade) {
                         PythonValue<DictValue> dictObject = DictType.wrap();
                         HashMap<RuntimeObject, RuntimeObject> dict = dictObject.getValue().getDict();
                         for (int i = 0; i < args.size() / 2; i++) {

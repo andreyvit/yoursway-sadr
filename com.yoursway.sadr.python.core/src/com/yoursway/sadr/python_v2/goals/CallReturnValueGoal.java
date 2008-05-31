@@ -26,9 +26,10 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
             final PythonValueSetAcceptor parentAcceptor) {
         super(arguments);
         this.methodDecl = decl;
-        this.acceptor = new PythonValueSetAcceptor() {
-            public <T> void checkpoint(IGrade<T> grade) {
-                RuntimeObject result = getResultByContext(arguments);
+        this.acceptor = new PythonValueSetAcceptor(arguments) {
+            
+            @Override
+            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 parentAcceptor.addResult(result, parentContext);
                 updateGrade(parentAcceptor, grade);
             }
@@ -52,8 +53,6 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
         //        };
         for (ReturnC item : returns) {
             schedule(item.getReturnedConstruct().evaluate(getContext(), acceptor));
-            //FIXME: returning only first return result for now.
-            break;
         }
         //        if (returns.isEmpty()) {
         //            updateGrade(acceptor, Grade.DONE);

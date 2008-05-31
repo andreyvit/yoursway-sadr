@@ -1,47 +1,67 @@
 package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
+import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IAcceptor;
+import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class PythonValueSetAcceptor implements IAcceptor {
     
-    private final Map<Context, RuntimeObject> objectToContext = new HashMap<Context, RuntimeObject>();
-    private final ValueInfoBuilder builder = new ValueInfoBuilder();
+    private final Map<Context, MutableValueSet> contextToValues = new HashMap<Context, MutableValueSet>();
+    private final ValueInfoBuilder builder = new ValueInfoBuilder(); //FIXME Build value info in getResult().
+    protected final Context activeContext;
     
-    public void addResult(RuntimeObject result, Context context) {
-        if (result != null) {
-            builder.add(result.getType(), result);
-            objectToContext.put(context, result);
-        }
+    public PythonValueSetAcceptor(Context activeContext) {
+        this.activeContext = activeContext;
     }
     
-    public RuntimeObject getResultByContext(Context context) {
-        return objectToContext.get(context);
+    public void addResult(RuntimeObject result, Context context) {
+        if (null == result)
+            throw new IllegalStateException("There should be no null items in results!");
+        builder.add(result.getType(), result);
+        if (contextToValues.get(context) == null)
+            contextToValues.put(context, new MutableValueSet());
+        contextToValues.get(context).add(result);
+    }
+    
+    public MutableValueSet getResultByContext(Context context) {
+        return contextToValues.get(context);
     }
     
     protected void setResults(PythonValueSetAcceptor other) {
-        Set<Entry<Context, RuntimeObject>> entries = other.objectToContext.entrySet();
-        for (Entry<Context, RuntimeObject> entry : entries) {
-            objectToContext.put(entry.getKey(), entry.getValue());
-        }
+        contextToValues.putAll(other.contextToValues);
     }
     
     public ValueInfo getResult() {
         return builder.build();
     }
     
-    //    public void setResult(ValueInfo result) {
-    //        throw new IllegalStateException("Don't use this method");
-    //        if (!builder.isEmpty())
-    //            throw new IllegalStateException("You can use setResult only when acceptor is empty");
-    //        builder.add(result);
-    //    }
+    public <T> void checkpoint(IGrade<T> grade) {
+        MutableValueSet resultByContext = getResultByContext(activeContext);
+        if (null == resultByContext) {
+            acceptIndividualResult(null, grade);
+            return;
+        }
+        for (Iterator<Value> valueIter = resultByContext.containedValues().iterator(); valueIter.hasNext();) {
+            RuntimeObject item = (RuntimeObject) valueIter.next(); //FIXME ugly cast.  Make it type safe.
+            if (null == item)
+                throw new IllegalStateException("There should be no null items in results!");
+            acceptIndividualResult(item, grade);
+        }
+    }
+    
+    //TODO it isn't the most elegant solution - make it pretty.
+    /**
+     * Is called by the checkpoint implementation for each individual result of
+     * the result set in <code>activeContext</code>.
+     */
+    protected abstract <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade);
 }

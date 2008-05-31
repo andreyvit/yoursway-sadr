@@ -5,6 +5,7 @@ package com.yoursway.sadr.python_v2.goals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
@@ -39,9 +40,9 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
         List<PythonConstruct> superClasses = classDeclarationC.getSuperClasses();
         ResultsCollector rc = new ResultsCollector(superClasses.size(), getContext()) {
             @Override
-            public <T> void completed(IGrade<T> grade) {
+            protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
                 List<PythonClassType> supers = new ArrayList<PythonClassType>();
-                for (RuntimeObject obj : getResults().values()) {
+                for (RuntimeObject obj : results.values()) {
                     if (obj instanceof FunctionObject) {
                         FunctionObject func = (FunctionObject) obj;
                         ClassDeclarationC decl = (ClassDeclarationC) func.getDecl();

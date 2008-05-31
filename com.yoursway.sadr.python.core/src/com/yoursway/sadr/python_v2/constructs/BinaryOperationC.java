@@ -1,5 +1,9 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -7,6 +11,8 @@ import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
+import com.yoursway.sadr.python_v2.goals.sideeffects.CallF;
+import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
@@ -32,13 +38,14 @@ public class BinaryOperationC extends BinaryC {
             public void preRun() {
                 ResultsCollector rc = new ResultsCollector(2, context) {
                     @Override
-                    public <K> void completed(IGrade<K> grade) {
-                        final RuntimeObject left = getResults().get(LEFT);
-                        final RuntimeObject right = getResults().get(RIGHT);
+                    protected <K> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<K> grade) {
+                        final RuntimeObject left = results.get(LEFT);
+                        final RuntimeObject right = results.get(RIGHT);
                         final PythonArguments args = new PythonArguments(left, right);
-                        final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor() {
-                            public <T> void checkpoint(IGrade<T> grade) {
-                                RuntimeObject callable = getResultByContext(context);
+                        final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor(context) {
+                            
+                            @Override
+                            protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                                 if (callable == null) {
                                     schedule(new PassResultGoal(context, acceptor, null));
                                 } else {
@@ -47,9 +54,10 @@ public class BinaryOperationC extends BinaryC {
                                 }
                             }
                         };
-                        PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor() {
-                            public <T> void checkpoint(IGrade<T> grade) {
-                                RuntimeObject callable = getResultByContext(context);
+                        PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor(context) {
+                            
+                            @Override
+                            protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                                 if (callable == null) {
                                     schedule(CallResolver.findMethod(right, rightOpName, rightFound, context));
                                 } else {
@@ -67,5 +75,12 @@ public class BinaryOperationC extends BinaryC {
             }
             
         };
+    }
+    
+    @Override
+    public Frog toFrog() {
+        List<Frog> argFrogs = new ArrayList<Frog>(1);
+        argFrogs.add(getRight().toFrog());
+        return new CallF(new FieldReadF(getLeft().toFrog(), leftOpName), argFrogs);
     }
 }

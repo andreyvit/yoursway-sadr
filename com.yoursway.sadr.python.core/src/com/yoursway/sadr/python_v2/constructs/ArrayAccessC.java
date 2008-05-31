@@ -62,8 +62,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
             public void preRun() {
                 ResultsCollector rc = new ResultsCollector(2, context) {
                     @Override
-                    public <T> void completed(IGrade<T> grade) {
-                        Map<Object, RuntimeObject> results = getResults();
+                    protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
                         RuntimeObject arrayObject = results.get(0);
                         PythonArguments args = new PythonArguments(results.get(1));
                         if (arrayObject.getType() instanceof PythonClassType) {

@@ -39,9 +39,10 @@ public final class CallResolver {
             final PythonArguments args, final PythonValueSetAcceptor acceptor, final Context context) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor() {
-                    public <T> void checkpoint(IGrade<T> grade) {
-                        RuntimeObject callable = getResultByContext(context);
+                PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor(context) {
+                    
+                    @Override
+                    protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                         assertCallable(callable);
                         args.getArgs().add(0, receiver);
                         schedule(callFunction((FunctionObject) callable, args, acceptor, context));
@@ -88,8 +89,8 @@ public final class CallResolver {
                 public void preRun() {
                     ResultsCollector rc = new ResultsCollector(0, null) {
                         @Override
-                        public <T> void completed(IGrade<T> grade) {
-                            Map<Object, RuntimeObject> results = getResults();
+                        protected <T> void processResultTuple(Map<Object, RuntimeObject> results,
+                                IGrade<T> grade) {
                             for (PythonArgument arg : realArgs) {
                                 String name = arg.getName();
                                 if (actualArguments.getActualArgument(name) == null) {
@@ -98,7 +99,6 @@ public final class CallResolver {
                                 }
                             }
                             schedule(new CallReturnValueGoal(methodDeclC, actualArguments, context, acceptor));
-                            
                         }
                     };
                     for (PythonArgument arg : realArgs) {

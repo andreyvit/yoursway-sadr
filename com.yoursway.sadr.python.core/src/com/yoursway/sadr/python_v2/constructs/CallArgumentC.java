@@ -21,7 +21,7 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     CallArgumentC(Scope scope, PythonCallArgument node) {
         super(scope, node);
         Assert.isLegal(node.getValue() != null, "node.getValue() should be != null");
-        value = PythonConstructFactory.wrap(node.getValue(), scope);
+        value = getChildConstructs().get(0);
     }
     
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,

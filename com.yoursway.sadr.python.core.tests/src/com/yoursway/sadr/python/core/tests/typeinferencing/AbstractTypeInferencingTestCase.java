@@ -351,9 +351,11 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
-                public <T> void checkpoint(IGrade<T> grade) {
-                    //do nothing
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                
+                @Override
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                    // do nothing
                 }
             };
             engine.run(createGoal(engine, fileC, acceptor));
@@ -373,9 +375,11 @@ public abstract class AbstractTypeInferencingTestCase {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
                 return new CreateInstanceGoal(classC, new PythonArguments(), null,
-                        new PythonValueSetAcceptor() {
-                            public <T> void checkpoint(IGrade<T> grade) {
-                                Context context = createSelfContext(func, getResultByContext(null));
+                        new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                            
+                            @Override
+                            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                                Context context = createSelfContext(func, result);
                                 IGoal goal = construct.evaluate(context, acceptor);
                                 engine.schedule(null, goal);
                             }
@@ -435,10 +439,15 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                @Override
                 public <T> void checkpoint(IGrade<T> grade) {
                     System.out.println("Done");
                     //do nothing;
+                }
+                
+                @Override
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 }
             };
             IGoal goal = createGoal(engine, fileC, acceptor);
@@ -461,9 +470,10 @@ public abstract class AbstractTypeInferencingTestCase {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
                 return new CreateInstanceGoal(classC, new PythonArguments(), null,
-                        new PythonValueSetAcceptor() {
-                            public <T> void checkpoint(IGrade<T> grade) {
-                                Context context = createSelfContext(func, getResultByContext(null));
+                        new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                            @Override
+                            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                                Context context = createSelfContext(func, result);
                                 IGoal goal = construct.evaluate(context, acceptor);
                                 engine.schedule(null, goal);
                             }
@@ -497,10 +507,17 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                @Override
                 public <T> void checkpoint(IGrade<T> grade) {
                     System.out.println("Done");
                     //do nothing;
+                }
+                
+                @Override
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                    // TODO Auto-generated method stub
+                    
                 }
             };
             IGoal goal = createGoal(fileC, acceptor);
@@ -628,8 +645,9 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
-                public <T> void checkpoint(IGrade<T> grade) {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                @Override
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 }
             };
             IGoal goal = createGoal(fileC, acceptor);

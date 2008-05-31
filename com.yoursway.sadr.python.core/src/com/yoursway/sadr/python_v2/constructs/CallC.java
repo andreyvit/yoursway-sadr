@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
-import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
@@ -25,29 +24,31 @@ import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     
-    private static final String FUNC = "func";
+    private static final String CALLABLE = "func";
     private static final String RECEIVER = "receiver";
+    private static final int CALLABLE_INDEX = 0;
     private final List<PythonConstruct> args;
-    private final PythonConstruct func;
-    private PythonConstruct self;
+    //    private final PythonConstruct func;
+    //    private PythonConstruct self;
+    private final PythonConstruct callable;
+    private final int ARGUMENTS_INDEX = 1;
     
     CallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
         if (node.getArgs() == null) {
             args = Collections.emptyList();
         } else {
-            args = PythonConstructFactory.wrap(node.getArgs().getChilds(), sc);
+            args = new ArrayList<PythonConstruct>(getChildConstructs().get(ARGUMENTS_INDEX)
+                    .getChildConstructs());
         }
-        func = PythonConstructFactory.wrap(node.getReceiver(), sc);
-        if (node.getReceiver() instanceof PythonVariableAccessExpression) {
-            self = wrap(node.getReceiver());
-        }
+        //        func = PythonConstructFactory.wrap(node.getReceiver(), sc);
+        //        if (node.getReceiver() instanceof PythonVariableAccessExpression) {
+        //            self = wrap(node.getReceiver());
+        //        }
+        callable = getChildConstructs().get(CALLABLE_INDEX);
+        
         List<PythonConstruct> childs = new ArrayList<PythonConstruct>();
         setChildConstructs(childs);
-    }
-    
-    @Override
-    protected void wrapEnclosedChildren() {
     }
     
     abstract public PythonConstruct getReceiver();
@@ -62,9 +63,8 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             public void preRun() {
                 ResultsCollector rc = new ResultsCollector(args.size() + 2, context) {
                     @Override
-                    public <T> void completed(IGrade<T> grade) {
-                        Map<Object, RuntimeObject> results = getResults();
-                        RuntimeObject method = results.get(FUNC);
+                    protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
+                        RuntimeObject method = results.get(CALLABLE);
                         PythonArguments real = new PythonArguments();
                         if (results.containsKey(RECEIVER)) {
                             real.getArgs().add(results.get(RECEIVER));
@@ -103,18 +103,18 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                             return;
                         }
                         if (method == null) {
-                            throw new IllegalStateException("Unable to find callable " + func
+                            throw new IllegalStateException("Unable to find callable " + callable
                                     + ", resolved to " + method);
                         }
                     }
                     
                 };
                 
-                schedule(func.evaluate(getContext(), rc.createAcceptor(FUNC)));
+                schedule(callable.evaluate(getContext(), rc.createAcceptor(CALLABLE)));
                 
-                if (self != null) {
-                    schedule(self.evaluate(getContext(), rc.createAcceptor(RECEIVER)));
-                }
+                //                if (self != null) {
+                //                    schedule(self.evaluate(getContext(), rc.createAcceptor(RECEIVER)));
+                //                }
                 
                 for (PythonConstruct arg : args) {
                     if (arg instanceof CallArgumentC) {
