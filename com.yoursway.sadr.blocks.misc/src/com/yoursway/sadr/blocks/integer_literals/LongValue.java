@@ -17,7 +17,7 @@ public class LongValue extends AbstractValue {
     }
     
     public String describe() {
-        return value.toString();
+        return value.toString()+"L";
     }
     
     @Override

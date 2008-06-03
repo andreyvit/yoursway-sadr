@@ -18,14 +18,6 @@ JAVA_TEST_BODY = """    @Test
     }
 """ 
 
-#def mkdir(dir):
-#    dir = dir.replace('/', os.pathsep)
-#    current_path = ''
-#    for part in dir.split(os.pathsep):
-#        current_path += part + '/'
-#        if not os.path.exists(current_path):
-#            os.mkdir(current_path)
-
 def mkdirs(newdir, mode=0777):
     if os.path.exists(newdir): return
     try: os.makedirs(newdir, mode)
@@ -34,7 +26,6 @@ def mkdirs(newdir, mode=0777):
         # Reraise the error unless it's about an already existing directory
         if err.errno != errno.EEXIST or not os.path.isdir(newdir):
             raise
-
 
 class TestPackage(object):
     def __init__(self, name, init_content=""):
@@ -52,7 +43,6 @@ class TestPackage(object):
         if self.init_content:
             last = open(path + "__init__.py", "wb")
             print >> last, self.init_content
-
         
 class TestModule(object):
     def __init__(self, full_module_name, content):
@@ -79,22 +69,23 @@ class TestModule(object):
             print >> module, self.content
 
 class TestBuilder(object):
+    JAVA_TEST_BODY = JAVA_TEST_BODY
+    JAVA_TEST_TAIL = JAVA_TEST_TAIL
     def __init__(self, suite_name, path = JUNIT_TESTS_PATH):
         self.java_tests = []
         self.suite_name = suite_name
         mkdirs(path)
         mkdirs(suite_name)
         self.java_test_file = open(path + suite_name + ".java", "wt")
-	self.JAVA_TEST_BODY = JAVA_TEST_BODY
-	self.JAVA_TEST_TAIL = JAVA_TEST_TAIL
         print >>self.java_test_file, JAVA_TEST_HEAD % suite_name
         
     def __del__(self):
 	print "Suite", self.suite_name
         for test_name in sorted(self.java_tests):
-	    print "Found test:", test_name
+	    print "Added test:", test_name
             self.java_test_file.write(self.JAVA_TEST_BODY % test_name)
-        self.java_test_file.write(self.JAVA_TEST_TAIL)
+        self.update()
+	self.java_test_file.write(self.JAVA_TEST_TAIL)
 
     def __make_python_test(self, test_name, content):
         path = self.suite_name + "/" + test_name + "/"
@@ -106,6 +97,9 @@ class TestBuilder(object):
     def addTest(self, test_name, script_content):
         self.java_tests.append(test_name)
         self.__make_python_test(test_name, script_content)
+	
+    def update(self):
+	update_test_suite(self.suite_name, self)
 
     def addModularTest(self, test_name, script_content, modules):
         script_path = self.suite_name + "/" + test_name + "/"
@@ -146,7 +140,6 @@ if __name__ == '__main__':
     elif len(sys.argv)==3:
         test_builder = TestBuilder(sys.argv[1])
         test_builder.addTest(sys.argv[2], "")
-        update_test_suite(sys.argv[1], test_builder) # add previous tests 
     else:
         print """Usage: 
         python test_gen.py <suite_name> <test_name> - to add a test
