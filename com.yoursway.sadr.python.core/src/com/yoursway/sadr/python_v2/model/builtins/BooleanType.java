@@ -32,7 +32,7 @@ public class BooleanType extends PythonClassType {
     
     private static BooleanType instance = new BooleanType();
     
-    static BooleanType instance() {
+    public static BooleanType instance() {
         return instance;
     }
     

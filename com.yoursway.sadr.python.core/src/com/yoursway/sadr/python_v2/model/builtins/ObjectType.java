@@ -23,7 +23,7 @@ public class ObjectType extends PythonClassType {
     
     private static ObjectType instance = new ObjectType();
     
-    static ObjectType instance() {
+    public static ObjectType instance() {
         return instance;
     }
     

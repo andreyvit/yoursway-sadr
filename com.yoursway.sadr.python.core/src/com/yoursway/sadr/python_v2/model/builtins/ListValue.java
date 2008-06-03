@@ -2,10 +2,11 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
-public class ListValue implements Value {
+public class ListValue extends AbstractValue implements Value {
     
     private final List<RuntimeObject> list;
     

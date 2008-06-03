@@ -4,10 +4,11 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
-public class TupleValue implements Value {
+public class TupleValue extends AbstractValue implements Value {
     
     private final List<RuntimeObject> list;
     

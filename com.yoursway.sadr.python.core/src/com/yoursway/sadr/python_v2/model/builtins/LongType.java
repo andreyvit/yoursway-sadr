@@ -42,7 +42,7 @@ public class LongType extends PythonClassType {
     
     private static LongType instance;
     
-    static LongType instance() {
+    public static LongType instance() {
         if (instance == null) {
             instance = new LongType();
         }

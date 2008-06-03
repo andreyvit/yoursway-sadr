@@ -50,7 +50,7 @@ public class PythonObject implements RuntimeObject {
     /**
      * Should be asynchronous
      */
-    public RuntimeObject getType() {
+    public PythonClassType getType() {
         return type;
     }
     

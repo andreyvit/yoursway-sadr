@@ -50,7 +50,7 @@ public class IntegerType extends PythonClassType {
     
     private static IntegerType instance;
     
-    static IntegerType instance() {
+    public static IntegerType instance() {
         if (instance == null) {
             instance = new IntegerType();
         }

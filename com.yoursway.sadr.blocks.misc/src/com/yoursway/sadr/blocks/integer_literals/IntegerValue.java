@@ -1,5 +1,6 @@
 package com.yoursway.sadr.blocks.integer_literals;
 
+import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 
 public class IntegerValue extends AbstractValue{

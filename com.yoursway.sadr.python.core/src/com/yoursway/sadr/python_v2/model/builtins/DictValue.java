@@ -5,11 +5,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
-public class DictValue implements Value {
+public class DictValue extends AbstractValue implements Value {
     
     private final HashMap<RuntimeObject, RuntimeObject> dict;
     private boolean printing;
