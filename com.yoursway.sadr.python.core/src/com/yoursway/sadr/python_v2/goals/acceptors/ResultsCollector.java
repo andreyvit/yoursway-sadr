@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.Context;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 

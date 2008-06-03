@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.constructs.AssignmentEffect;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
@@ -14,7 +15,6 @@ import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class CallF extends Frog {
     

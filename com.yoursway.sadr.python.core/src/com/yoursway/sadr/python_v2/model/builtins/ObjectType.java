@@ -1,9 +1,9 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class ObjectType extends PythonClassType {
     final InstanceRegistrarImpl registrar = new InstanceRegistrarImpl();
@@ -13,8 +13,7 @@ public class ObjectType extends PythonClassType {
     }
     
     public RuntimeObject __call__(PythonArguments args) {
-        return new PythonValue<InstanceValue>(ObjectType.instance(), new InstanceValue(ObjectType.instance(),
-                registrar));
+        return new InstanceValue(ObjectType.instance(), registrar);
     }
     
     public ObjectType() {

@@ -2,6 +2,8 @@ package com.yoursway.sadr.python_v2.model;
 
 import java.util.Set;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+
 /**
  * Lexical scopes in Python are function and module scopes. Lexical scopes
  * resolve names.

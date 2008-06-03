@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PassResultGoal;
@@ -19,7 +20,6 @@ import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;

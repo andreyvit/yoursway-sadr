@@ -2,10 +2,10 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.integer_literals.LongValue;
 import com.yoursway.sadr.python_v2.constructs.BigIntegerLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class LongType extends PythonClassType {
     public RuntimeObject __call__(PythonArguments args) {

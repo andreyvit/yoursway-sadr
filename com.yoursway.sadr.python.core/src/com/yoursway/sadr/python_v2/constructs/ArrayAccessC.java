@@ -11,6 +11,7 @@ import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 
 import com.google.common.base.Function;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.Continuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
@@ -29,7 +30,6 @@ import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;

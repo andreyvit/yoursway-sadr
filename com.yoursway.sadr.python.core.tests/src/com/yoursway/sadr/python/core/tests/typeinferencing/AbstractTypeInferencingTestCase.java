@@ -41,6 +41,7 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.junit.After;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
@@ -60,7 +61,7 @@ import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.succeeder.Engine;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
@@ -659,8 +660,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 ValueInfo result = acceptor.getResult();
                 if (result != null) {
                     Collection<Value> vals = result.getValueSet().containedValues();
-                    PythonConstruct decl = ((RuntimeObject) vals.iterator().next()).instanceHistory()
-                            .sourceDeclaration();//FIXME I am Dirty Hack! Fix me, please.
+                    PythonConstruct decl = ((PythonObject) vals.iterator().next()).getDecl();//FIXME I am Dirty Hack! Fix me, please.
                     actualLine = getLine(cu, decl.node());
                 }
                 

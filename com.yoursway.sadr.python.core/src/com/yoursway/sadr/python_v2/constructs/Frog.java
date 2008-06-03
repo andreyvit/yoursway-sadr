@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.goals.sideeffects.TransferOfControl;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public abstract class Frog {
     

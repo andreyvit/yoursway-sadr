@@ -1,8 +1,8 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 
-public class ModuleValue implements Value {
+public class ModuleValue extends AbstractValue {
     
     private final String var;
     private final String path;
@@ -21,10 +21,6 @@ public class ModuleValue implements Value {
     }
     
     @Override
-    public String toString() {
-        return describe();
-    }
-    
     public String describe() {
         String out = "";
         if (var == null)

@@ -3,8 +3,8 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.Context;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IAcceptor;
 
 public abstract class BinaryAcceptor implements IAcceptor {

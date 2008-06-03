@@ -1,10 +1,12 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeValue;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
-public class PythonValue<ValueType extends Value> extends PythonObject implements RuntimeValue<ValueType> {
+public class PythonValue<ValueType extends AbstractValue> extends PythonObject implements
+        RuntimeValue<ValueType> {
     
     private final ValueType value;
     

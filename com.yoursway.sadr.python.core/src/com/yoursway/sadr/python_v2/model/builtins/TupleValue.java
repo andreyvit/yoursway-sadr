@@ -5,10 +5,9 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 
-public class TupleValue extends AbstractValue implements Value {
+public class TupleValue extends AbstractValue {
     
     private final List<RuntimeObject> list;
     
@@ -16,6 +15,7 @@ public class TupleValue extends AbstractValue implements Value {
         this.list = newArrayList(list);
     }
     
+    @Override
     public String describe() {
         //HACK:
         String string = list.toString();

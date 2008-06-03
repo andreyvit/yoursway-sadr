@@ -7,17 +7,15 @@ import java.util.Set;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.model.InstanceHistory;
-import com.yoursway.sadr.python_v2.model.InstanceHistoryImpl;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class PythonObject implements RuntimeObject {
     
-    private final InstanceHistoryImpl history;
-    
     Map<String, RuntimeObject> attributes = new HashMap<String, RuntimeObject>();
     private PythonClassType type;
+    
+    private final PythonConstruct decl; // only if current object is made from this construct 
     
     public Map<String, RuntimeObject> getAttributes() {
         return attributes;
@@ -26,12 +24,12 @@ public class PythonObject implements RuntimeObject {
     public PythonObject(PythonClassType type) {
         //assert type != null;
         this.type = type;
-        history = new InstanceHistoryImpl(this, null);
+        this.decl = null;
     }
     
     public PythonObject(PythonClassType type, PythonConstruct declaration) {
         this.type = type;
-        history = new InstanceHistoryImpl(this, declaration);
+        this.decl = declaration;
     }
     
     public RuntimeObject getAttribute(String name) {
@@ -62,20 +60,13 @@ public class PythonObject implements RuntimeObject {
         return attributes.keySet();
     }
     
-    /**
-     * Remove?
-     */
-    public InstanceHistory instanceHistory() {
-        return history;
-    }
-    
     @Override
     public String toString() {
         return this.describe();
     }
     
     public String describe() {
-        PythonConstruct declaration = instanceHistory().sourceDeclaration();
+        PythonConstruct declaration = getDecl();
         if (declaration == null) {
             throw new IllegalStateException("No declarations found. Can't describe "
                     + this.getClass().getSimpleName() + " instance.");
@@ -92,6 +83,6 @@ public class PythonObject implements RuntimeObject {
     }
     
     public PythonConstruct getDecl() {
-        return history.sourceDeclaration();
+        return this.decl;
     }
 }

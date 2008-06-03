@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python_v2.goals.sideeffects;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.Frog;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class ValueF extends Frog {
     

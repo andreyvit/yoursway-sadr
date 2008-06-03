@@ -3,10 +3,9 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 
-public class ListValue extends AbstractValue implements Value {
+public class ListValue extends AbstractValue {
     
     private final List<RuntimeObject> list;
     
@@ -14,6 +13,7 @@ public class ListValue extends AbstractValue implements Value {
         this.list = list;
     }
     
+    @Override
     public String describe() {
         return list.toString();
     }

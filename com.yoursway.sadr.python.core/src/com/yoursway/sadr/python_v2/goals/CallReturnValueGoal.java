@@ -3,12 +3,12 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.ReturnC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.succeeder.IGrade;
 

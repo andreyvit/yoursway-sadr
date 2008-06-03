@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
@@ -17,10 +18,8 @@ import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.PythonUserClassType;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
-import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public class CreateInstanceGoal extends ContextSensitiveGoal {
@@ -52,12 +51,9 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
                     
                 }
                 PythonClassType receiverType = new PythonUserClassType(classDeclarationC, supers);
-                InstanceValue receiverValue = new InstanceValue(receiverType, instanceRegistrar);
-                PythonValue<InstanceValue> receiver = new PythonValue<InstanceValue>(receiverType,
-                        receiverValue);
+                InstanceValue receiver = new InstanceValue(receiverType, instanceRegistrar);
                 acceptor.addResult(receiver, getContext());
                 updateGrade(acceptor, grade);
-                //                schedule(CallResolver.callFunction(receiver, "__init__", args, acceptor, getContext()));
             }
         };
         schedule(rc.addSubgoals(superClasses));

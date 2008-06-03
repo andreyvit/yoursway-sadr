@@ -6,11 +6,10 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.engine.util.Strings;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
-public class DictValue extends AbstractValue implements Value {
+public class DictValue extends AbstractValue {
     
     private final HashMap<RuntimeObject, RuntimeObject> dict;
     private boolean printing;
@@ -35,6 +34,7 @@ public class DictValue extends AbstractValue implements Value {
         return "{" + Strings.join(items, ", ") + "}";
     }
     
+    @Override
     public String describe() {
         if (lockPrinting(true)) {
             String result = prettify(dict);

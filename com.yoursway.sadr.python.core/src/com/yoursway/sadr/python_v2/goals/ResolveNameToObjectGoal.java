@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.goals;
 
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.AssignmentC;
@@ -15,7 +16,6 @@ import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 

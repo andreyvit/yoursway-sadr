@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 
@@ -127,7 +129,7 @@ public class PythonArguments {
      * @param count --
      *            number of arguments to match
      */
-    public <T extends Value> List<T> castArgs(int count, PythonClassType type) {
+    public <T extends AbstractValue> List<T> castArgs(int count, PythonClassType type) {
         List<T> results = new ArrayList<T>();
         for (RuntimeObject object : this.readArgs(count)) {
             T value = object.convertValue(type);
@@ -141,7 +143,7 @@ public class PythonArguments {
      * 
      * @returns casted single argument
      */
-    public <T extends Value> T castSingle(PythonClassType type) {
+    public <T extends AbstractValue> T castSingle(PythonClassType type) {
         RuntimeObject arg = this.readArgs(1).get(0);
         T value = arg.convertValue(type);
         return value;

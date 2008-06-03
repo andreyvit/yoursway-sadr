@@ -2,12 +2,12 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public class SyncFunctionObject extends FunctionObject {

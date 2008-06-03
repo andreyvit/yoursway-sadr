@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.PythonArgumentsReader;
-import com.yoursway.sadr.python_v2.model.RuntimeObject;
 
 public class DictType extends PythonClassType {
     public RuntimeObject __call__(PythonArguments args) {
