@@ -109,8 +109,8 @@ public final class CallResolver {
                         if (actualArguments.getActualArgument(name) == null) {
                             PythonConstruct init = methodDeclC.getArgInit(name);
                             if (init == null) {
-                                throw new IllegalArgumentException("weird argument " + name + "of function "
-                                        + methodDeclC.displayName());
+                                throw new IllegalArgumentException("missing argument " + name
+                                        + " in function " + methodDeclC.displayName());
                             }
                             //FIXME: change to context that was right before function call
                             IGoal evaluate = init.evaluate(Context.EMPTY_CONTEXT, rc.createAcceptor(name));

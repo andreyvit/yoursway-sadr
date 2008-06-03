@@ -28,7 +28,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     private static final String CALLABLE = "func";
     private static final int CALLABLE_INDEX = 0;
     private static final int ARGUMENTS_INDEX = 1;
-    private static final String RECEIVER = "receiver";
+    private static final String SELF = "self";
     private List<PythonConstruct> args;
     private PythonConstruct self;
     private PythonConstruct callable;
@@ -53,6 +53,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             wrappedChildren.addAll(this.args);
         }
         callable = wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), innerScope());
+        if (callable instanceof FieldAccessC) {
+            FieldAccessC fieldAccess = (FieldAccessC) callable;
+            self = fieldAccess.receiver();
+        }
         wrappedChildren.add(callable);
         setPreChildren(wrappedChildren);
         setPostChildren(Collections.EMPTY_LIST);
@@ -67,8 +71,8 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                     protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
                         RuntimeObject method = results.get(CALLABLE);
                         PythonArguments real = new PythonArguments();
-                        if (results.containsKey(RECEIVER)) {
-                            real.getArgs().add(results.get(RECEIVER));
+                        if (results.containsKey(SELF)) {
+                            real.getArgs().add(results.get(SELF));
                         }
                         for (PythonConstruct arg : args) {
                             if (arg instanceof CallArgumentC) {
@@ -114,7 +118,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                 schedule(callable.evaluate(getContext(), rc.createAcceptor(CALLABLE)));
                 
                 if (self != null) {
-                    schedule(self.evaluate(getContext(), rc.createAcceptor(RECEIVER)));
+                    schedule(self.evaluate(getContext(), rc.createAcceptor(SELF)));
                 }
                 
                 for (PythonConstruct arg : args) {
