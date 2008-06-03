@@ -19,21 +19,16 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
         return this;
     }
     
-    @Override
-    protected void wrapEnclosedChildren() {
-        setChildConstructs(PythonConstructFactory.wrap(this.node.getChilds(), this));
-    }
-    
     public List<PythonConstruct> getEnclosedConstructs() {
         List<PythonConstruct> encloseds = new LinkedList<PythonConstruct>();
-        for (PythonConstruct construct : getChildConstructs()) {
+        for (PythonConstruct construct : getPostChildren()) {
             addChildren(construct, encloseds);
         }
         return encloseds;
     }
     
     private void addChildren(PythonConstruct construct, List<PythonConstruct> children) {
-        for (PythonConstruct child : construct.getChildConstructs()) {
+        for (PythonConstruct child : construct.getPostChildren()) {
             if (this == child.parentScope())
                 addChildren(child, children);
         }
@@ -42,7 +37,7 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     
     public List<PythonConstruct> getEnclosedConstructs2() {
         List<PythonConstruct> encloseds = new LinkedList<PythonConstruct>();
-        for (PythonConstruct construct : getChildConstructs()) {
+        for (PythonConstruct construct : getPostChildren()) {
             addChildren2(construct, encloseds);
         }
         return encloseds;
@@ -50,7 +45,7 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     
     private void addChildren2(PythonConstruct construct, List<PythonConstruct> children) {
         children.add(construct);
-        for (PythonConstruct child : construct.getChildConstructs()) {
+        for (PythonConstruct child : construct.getPostChildren()) {
             if (this == child.parentScope())
                 addChildren2(child, children);
         }

@@ -25,7 +25,7 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
     
     @Override
     protected void wrapEnclosedChildren() {
-        setChildConstructs(new ArrayList<PythonConstruct>());
+        setPostChildren(new ArrayList<PythonConstruct>());
     }
     
     public boolean hasImport(String variable) {

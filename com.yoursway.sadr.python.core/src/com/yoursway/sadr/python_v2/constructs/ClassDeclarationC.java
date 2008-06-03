@@ -4,7 +4,7 @@ import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValue
 import static com.yoursway.sadr.python_v2.constructs.Effects.NO_FROGS;
 import static java.util.Collections.singleton;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTListNode;
@@ -28,7 +28,7 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     @Override
     protected void wrapEnclosedChildren() {
         List<PythonConstruct> children = PythonConstructFactory.wrap(this.node.getStatements(), this);
-        setChildConstructs(children);
+        setPostChildren(children);
         wrapSuperclasses();
     }
     
@@ -38,8 +38,9 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
             List<ASTNode> childs = superClasses.getChilds();
             supers = PythonConstructFactory.wrap(childs, this);
         } else {
-            supers = new ArrayList<PythonConstruct>();
+            supers = Collections.EMPTY_LIST;
         }
+        setPreChildren(supers);
     }
     
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
@@ -75,7 +76,7 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     }
     
     public MethodDeclarationC findDeclaredMethod(String methodName) {
-        for (PythonConstruct construct : getChildConstructs())
+        for (PythonConstruct construct : getPostChildren())
             if (construct instanceof MethodDeclarationC) {
                 MethodDeclarationC methodC = (MethodDeclarationC) construct;
                 if (methodC.name().equals(methodName))

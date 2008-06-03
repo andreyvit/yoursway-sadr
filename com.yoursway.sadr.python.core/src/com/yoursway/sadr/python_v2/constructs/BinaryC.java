@@ -62,14 +62,14 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     
     public PythonConstruct getLeft() {
         if (node.getKind() == Expression.E_IN)
-            return getChildConstructs().get(1);
-        return getChildConstructs().get(0);
+            return getPostChildren().get(1);
+        return getPostChildren().get(0);
     }
     
     public PythonConstruct getRight() {
         if (node.getKind() == Expression.E_IN)
-            return getChildConstructs().get(0);
-        return getChildConstructs().get(1);
+            return getPostChildren().get(0);
+        return getPostChildren().get(1);
     }
     
     @Override

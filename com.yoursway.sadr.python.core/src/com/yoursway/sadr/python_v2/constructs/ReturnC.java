@@ -22,9 +22,9 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> {
     }
     
     public PythonConstruct getReturnedConstruct() {
-        if (getChildConstructs().size() != 1) {
+        if (getPostChildren().size() != 1) {
             throw new IllegalStateException("Return statement contract violated!");
         }
-        return getChildConstructs().get(0);
+        return getPostChildren().get(0);
     }
 }

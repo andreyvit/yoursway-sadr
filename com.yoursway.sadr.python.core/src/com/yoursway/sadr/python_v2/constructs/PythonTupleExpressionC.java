@@ -30,7 +30,7 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
     public IGoal evaluate(final Context context, final PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                List<PythonConstruct> args = getChildConstructs();
+                List<PythonConstruct> args = getPostChildren();
                 ResultsCollector rc = new ResultsCollector(args.size(), context) {
                     @Override
                     protected <T> void processResultTuple(Map<Object, RuntimeObject> actualArguments,

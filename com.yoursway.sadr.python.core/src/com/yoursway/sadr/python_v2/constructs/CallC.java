@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
-import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
@@ -26,34 +26,36 @@ import com.yoursway.sadr.succeeder.IGrade;
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     
     private static final String CALLABLE = "func";
-    private static final String RECEIVER = "receiver";
     private static final int CALLABLE_INDEX = 0;
     private static final int ARGUMENTS_INDEX = 1;
-    private final List<PythonConstruct> args;
-    //    private final PythonConstruct func;
+    private static final String RECEIVER = "receiver";
+    private List<PythonConstruct> args;
     private PythonConstruct self;
-    private final PythonConstruct callable;
+    private PythonConstruct callable;
     
+    @SuppressWarnings("unchecked")
     CallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
-        if (node.getArgs() == null) {
-            args = Collections.emptyList();
-        } else {
-            args = new ArrayList<PythonConstruct>(getChildConstructs().get(ARGUMENTS_INDEX)
-                    .getChildConstructs());
-        }
-        if (node.getReceiver() instanceof PythonVariableAccessExpression) {
-            self = wrap(node.getReceiver());
-        }
-        callable = getChildConstructs().get(CALLABLE_INDEX);
-        List<PythonConstruct> childs = new ArrayList<PythonConstruct>();
-        setChildConstructs(childs);
     }
     
     abstract public PythonConstruct getReceiver();
     
     public List<PythonConstruct> getArgs() {
         return args;
+    }
+    
+    @Override
+    protected void wrapEnclosedChildren() {
+        List<PythonConstruct> wrappedChildren = new ArrayList<PythonConstruct>();
+        if (node.getArgs() != null) {
+            List<ASTNode> argNodes = ((ASTNode) node.getChilds().get(ARGUMENTS_INDEX)).getChilds();
+            this.args = PythonConstructFactory.wrap(argNodes, innerScope());
+            wrappedChildren.addAll(this.args);
+        }
+        callable = wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), innerScope());
+        wrappedChildren.add(callable);
+        setPreChildren(wrappedChildren);
+        setPostChildren(Collections.EMPTY_LIST);
     }
     
     @Override

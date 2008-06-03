@@ -26,7 +26,7 @@ public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpress
     
     public PythonDictExpressionC(Scope sc, PythonDictExpression node) {
         super(sc, node);
-        args = getChildConstructs();
+        args = getPostChildren();
     }
     
     public List<PythonConstruct> getArgs() {

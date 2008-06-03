@@ -46,7 +46,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     @Override
     protected void wrapEnclosedChildren() {
         List<PythonConstruct> children = PythonConstructFactory.wrap(this.node.getStatements(), this);
-        setChildConstructs(children);
+        setPostChildren(children);
     }
     
     public PythonConstruct getArgInit(String name) {

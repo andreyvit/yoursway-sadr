@@ -38,7 +38,7 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     }
     
     public PythonConstruct getLeft() {
-        return getChildConstructs().get(0);
+        return getPostChildren().get(0);
     }
     
     @Override

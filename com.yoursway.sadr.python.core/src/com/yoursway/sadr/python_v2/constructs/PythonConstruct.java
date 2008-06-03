@@ -23,10 +23,11 @@ public interface PythonConstruct {
     
     Scope innerScope();
     
-    List<PythonConstruct> getChildConstructs();
+    List<PythonConstruct> getPostChildren();
     
     Frog toFrog();
     
     Effects getEffects();
     
+    List<PythonConstruct> getPreChildren();
 }

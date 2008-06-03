@@ -18,7 +18,7 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> {
     
     @Override
     protected void wrapEnclosedChildren() {
-        setChildConstructs(PythonConstructFactory.wrap(this.node.getStatements(), this));
+        setPostChildren(PythonConstructFactory.wrap(this.node.getStatements(), this));
     }
     
     public ProjectRuntime getProjectRuntime() {

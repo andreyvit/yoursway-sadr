@@ -3,6 +3,7 @@ package com.yoursway.sadr.python_v2.constructs;
 import static com.yoursway.sadr.python_v2.constructs.Effects.NONE;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
@@ -17,20 +18,21 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     protected final N node;
     private final Scope parentScope;
-    private List<PythonConstruct> childConstructs;
+    private List<PythonConstruct> preChildren = Collections.EMPTY_LIST;
+    private List<PythonConstruct> postChildren;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
         this.node = node;
         wrapEnclosedChildren();
-    }
-    
-    protected List getChilds() {
-        return this.node.getChilds();
+        if (postChildren == null) {
+            throw new IllegalStateException();
+        }
     }
     
     protected void wrapEnclosedChildren() {
-        setChildConstructs(PythonConstructFactory.wrap(this.node.getChilds(), parentScope()));
+        //TODO pre- & post- children.
+        setPostChildren(PythonConstructFactory.wrap(this.node.getChilds(), innerScope()));
     }
     
     public PythonConstruct staticallyEnclosingConstruct() {
@@ -61,7 +63,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (isNode(node))
             return this;
         // TODO check offset here
-        for (PythonConstruct c : childConstructs) {
+        for (PythonConstruct c : postChildren) {
             PythonConstruct sc = ((PythonConstructImpl<?>) c).innerSubsonstructFor(node);
             if (sc != null)
                 return sc;
@@ -114,15 +116,22 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return parentScope;
     }
     
-    public List<PythonConstruct> getChildConstructs() {
-        return childConstructs;
+    public List<PythonConstruct> getPostChildren() {
+        return postChildren;
     }
     
-    protected void setChildConstructs(List<PythonConstruct> constructs) {
+    protected void setPostChildren(List<PythonConstruct> constructs) {
         if (constructs == null) {
-            throw new IllegalArgumentException("setChildConstructs(null) called!");
+            throw new IllegalArgumentException("setPostChildren(null) called!");
         }
-        childConstructs = constructs;
+        postChildren = constructs;
+    }
+    
+    protected void setPreChildren(List<PythonConstruct> constructs) {
+        if (constructs == null) {
+            throw new IllegalArgumentException("setPreChildren(null) called!");
+        }
+        preChildren = constructs;
     }
     
     @Override
@@ -144,4 +153,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return NONE;
     }
     
+    public List<PythonConstruct> getPreChildren() {
+        return preChildren;
+    }
 }

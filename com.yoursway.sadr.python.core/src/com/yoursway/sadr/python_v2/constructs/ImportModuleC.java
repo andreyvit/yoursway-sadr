@@ -25,6 +25,6 @@ public class ImportModuleC extends ImportC<PythonImportStatement> {
     
     @Override
     protected void wrapEnclosedChildren() {
-        setChildConstructs(new ArrayList<PythonConstruct>());
+        setPostChildren(new ArrayList<PythonConstruct>());
     }
 }
