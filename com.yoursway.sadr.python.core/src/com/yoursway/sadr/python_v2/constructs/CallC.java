@@ -144,4 +144,15 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             }
         };
     }
+    
+    @Override
+    protected void setupPrevConstructRelation(PythonConstruct prev) {
+        for (PythonConstruct preChild : getPreChildren()) {
+            PythonConstructImpl<ASTNode> pyPreChild = (PythonConstructImpl<ASTNode>) preChild;
+            pyPreChild.setupPrevConstructRelation(prev);
+            prev = preChild;
+        }
+        this.setSintacticallyPreviousConstruct(prev);
+        assert getPostChildren().size() == 0 : "Must be no post children in CallC.";
+    }
 }

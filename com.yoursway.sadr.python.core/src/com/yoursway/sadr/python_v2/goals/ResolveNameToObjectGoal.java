@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import java.util.List;
-
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -86,14 +84,14 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     }
     
     protected PythonConstruct findInScope(Scope scope) {
-        List<PythonConstruct> children = scope.getEnclosedConstructs2();
+        PythonConstruct lastChild = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
         PythonConstruct result = null;
-        for (PythonConstruct construct : children) {
-            if (this.var == construct) {
+        do {
+            if (this.var == lastChild) {
                 break;
             }
-            if (construct instanceof AssignmentC) {
-                AssignmentC assignmentC = (AssignmentC) construct;
+            if (lastChild instanceof AssignmentC) {
+                AssignmentC assignmentC = (AssignmentC) lastChild;
                 PythonConstruct lhs = assignmentC.lhs();
                 if (lhs instanceof VariableReferenceC) {
                     VariableReferenceC reference = (VariableReferenceC) lhs;
@@ -101,25 +99,26 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
                         result = assignmentC;
                     }
                 }
-            } else if (construct instanceof MethodDeclarationC) {
+            } else if (lastChild instanceof MethodDeclarationC) {
                 //FIXME merge with previous if-statement.
-                MethodDeclarationC declarationC = (MethodDeclarationC) construct;
+                MethodDeclarationC declarationC = (MethodDeclarationC) lastChild;
                 if (declarationC.node().getName().equals(this.name)) {
                     result = declarationC;
                 }
-            } else if (construct instanceof ClassDeclarationC) {
+            } else if (lastChild instanceof ClassDeclarationC) {
                 //FIXME merge with previous if-statement.
-                ClassDeclarationC declarationC = (ClassDeclarationC) construct;
+                ClassDeclarationC declarationC = (ClassDeclarationC) lastChild;
                 if (declarationC.node().getName().equals(this.name)) {
                     result = declarationC;
                 }
-            } else if (construct instanceof ImportDeclarationC) {
-                ImportDeclarationC moduleImport = (ImportDeclarationC) construct;
+            } else if (lastChild instanceof ImportDeclarationC) {
+                ImportDeclarationC moduleImport = (ImportDeclarationC) lastChild;
                 if (moduleImport.hasImport(this.name)) {
                     result = moduleImport;
                 }
             }
-        }
+            lastChild = lastChild.getSintacticallyPreviousConstruct();//TODO goal here
+        } while (lastChild != null);
         return result;
     }
     
