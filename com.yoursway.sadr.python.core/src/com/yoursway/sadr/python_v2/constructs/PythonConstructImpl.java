@@ -20,6 +20,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     private final Scope parentScope;
     private List<PythonConstruct> preChildren = Collections.EMPTY_LIST;
     private List<PythonConstruct> postChildren;
+    private PythonConstructImpl<ASTNode> sintacticallyPreviousConstruct;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
@@ -28,6 +29,14 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (postChildren == null) {
             throw new IllegalStateException();
         }
+    }
+    
+    void setSintacticallyPreviousConstruct(PythonConstruct construct) {
+        sintacticallyPreviousConstruct = (PythonConstructImpl<ASTNode>) construct;
+    }
+    
+    public PythonConstruct getSintacticallyPreviousConstruct() {
+        return sintacticallyPreviousConstruct;
     }
     
     protected void wrapEnclosedChildren() {

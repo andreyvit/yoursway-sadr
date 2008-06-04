@@ -12,6 +12,30 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     public PythonScopeImpl(Scope sc, N node) {
         super(sc, node);
         wrapEnclosedChildren();
+        setupPrevConstructRelation();
+        //TODO get rid of this assertion
+        int nullPrevs = 0;
+        for (PythonConstruct c : getEnclosedConstructs()) {
+            if (c instanceof VariableReferenceC)
+                continue;
+            if (c.getSintacticallyPreviousConstruct() == null)
+                ++nullPrevs;
+        }
+        assert nullPrevs <= 1 : "Shit! It dosn't work! " + nullPrevs + " nulls occured.";
+    }
+    
+    /**
+     * Establishes previous-construct relation on children of the construct.
+     */
+    protected void setupPrevConstructRelation() {
+        PythonConstructImpl<ASTNode> prev = null;
+        for (PythonConstruct construct : getEnclosedConstructs()) {
+            if (construct instanceof VariableReferenceC)
+                continue;
+            PythonConstructImpl<ASTNode> pyConstruct = (PythonConstructImpl<ASTNode>) construct;
+            pyConstruct.setSintacticallyPreviousConstruct(prev);
+            prev = pyConstruct;
+        }
     }
     
     @Override
