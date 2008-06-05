@@ -4,7 +4,6 @@ import static com.yoursway.sadr.python_v2.constructs.Effects.NONE;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
@@ -160,13 +159,14 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     protected void setupPrevConstructRelation(PythonConstruct prev) {
-        setSintacticallyPreviousConstruct(prev);
-        List<PythonConstruct> children = new LinkedList<PythonConstruct>();
-        children.addAll(getPreChildren());
-        children.addAll(getPostChildren());
-        for (PythonConstruct child : children) {
+        for (PythonConstruct child : getPreChildren()) {
             PythonConstructImpl<ASTNode> pyChild = (PythonConstructImpl<ASTNode>) child;
             pyChild.setupPrevConstructRelation(prev);
+        }
+        setSintacticallyPreviousConstruct(prev);
+        for (PythonConstruct child : getPostChildren()) {
+            PythonConstructImpl<ASTNode> pyChild = (PythonConstructImpl<ASTNode>) child;
+            pyChild.setupPrevConstructRelation(this);
         }
     }
 }
