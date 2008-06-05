@@ -51,7 +51,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             this.args = PythonConstructFactory.wrap(argNodes, innerScope());
             wrappedChildren.addAll(this.args);
         }
-        callable = wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), innerScope());
+        callable = PythonConstructFactory.wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), innerScope());
         if (callable instanceof FieldAccessC) {
             FieldAccessC fieldAccess = (FieldAccessC) callable;
             self = fieldAccess.receiver();

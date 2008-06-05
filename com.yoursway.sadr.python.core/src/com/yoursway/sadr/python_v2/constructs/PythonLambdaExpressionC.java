@@ -24,7 +24,8 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
     
     @Override
     protected void wrapEnclosedChildren() {
-        ArrayList<PythonConstruct> constructs = Lists.newArrayList(wrap(node.getBodyExpression(), this));
+        ArrayList<PythonConstruct> constructs = Lists.newArrayList(PythonConstructFactory.wrap(node
+                .getBodyExpression(), this));
         setPostChildren(constructs);
     }
     

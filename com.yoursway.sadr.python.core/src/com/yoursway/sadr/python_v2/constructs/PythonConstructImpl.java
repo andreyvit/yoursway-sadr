@@ -54,11 +54,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     protected PythonConstruct wrap(ASTNode node) {
-        return PythonConstructFactory.wrap(node, parentScope);
-    }
-    
-    protected PythonConstruct wrap(ASTNode node, Scope scope) {
-        return PythonConstructFactory.wrap(node, scope);
+        throw new UnsupportedOperationException("You write crappy code.");
     }
     
     public PythonConstruct subconstructFor(ASTNode node) {
@@ -168,12 +164,12 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     protected void setupPrevConstructRelation(PythonConstruct prev) {
+        setSintacticallyPreviousConstruct(prev);
         List<PythonConstruct> children = new LinkedList<PythonConstruct>();
         children.addAll(getPreChildren());
         children.addAll(getPostChildren());
         for (PythonConstruct child : children) {
             PythonConstructImpl<ASTNode> pyChild = (PythonConstructImpl<ASTNode>) child;
-            pyChild.setSintacticallyPreviousConstruct(prev);
             pyChild.setupPrevConstructRelation(prev);
         }
     }

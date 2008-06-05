@@ -41,7 +41,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     
     FieldAccessC(Scope sc, PythonVariableAccessExpression node) {
         super(sc, node);
-        this.receiver = wrap(node.getReceiver(), sc);
+        this.receiver = PythonConstructFactory.wrap(node.getReceiver(), sc);
         this.variable = new VariableReferenceC(sc, node.variable());
     }
     

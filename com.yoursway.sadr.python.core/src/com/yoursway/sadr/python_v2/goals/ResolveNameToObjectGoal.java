@@ -84,14 +84,15 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     }
     
     protected PythonConstruct findInScope(Scope scope) {
-        PythonConstruct lastChild = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
+        PythonConstruct currentConstruct;
+        if (scope == this.var.parentScope())
+            currentConstruct = this.var;
+        else
+            currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
         PythonConstruct result = null;
-        do {
-            if (this.var == lastChild) {
-                break;
-            }
-            if (lastChild instanceof AssignmentC) {
-                AssignmentC assignmentC = (AssignmentC) lastChild;
+        while (currentConstruct != null) {
+            if (currentConstruct instanceof AssignmentC) {
+                AssignmentC assignmentC = (AssignmentC) currentConstruct;
                 PythonConstruct lhs = assignmentC.lhs();
                 if (lhs instanceof VariableReferenceC) {
                     VariableReferenceC reference = (VariableReferenceC) lhs;
@@ -99,26 +100,26 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
                         result = assignmentC;
                     }
                 }
-            } else if (lastChild instanceof MethodDeclarationC) {
+            } else if (currentConstruct instanceof MethodDeclarationC) {
                 //FIXME merge with previous if-statement.
-                MethodDeclarationC declarationC = (MethodDeclarationC) lastChild;
+                MethodDeclarationC declarationC = (MethodDeclarationC) currentConstruct;
                 if (declarationC.node().getName().equals(this.name)) {
                     result = declarationC;
                 }
-            } else if (lastChild instanceof ClassDeclarationC) {
+            } else if (currentConstruct instanceof ClassDeclarationC) {
                 //FIXME merge with previous if-statement.
-                ClassDeclarationC declarationC = (ClassDeclarationC) lastChild;
+                ClassDeclarationC declarationC = (ClassDeclarationC) currentConstruct;
                 if (declarationC.node().getName().equals(this.name)) {
                     result = declarationC;
                 }
-            } else if (lastChild instanceof ImportDeclarationC) {
-                ImportDeclarationC moduleImport = (ImportDeclarationC) lastChild;
+            } else if (currentConstruct instanceof ImportDeclarationC) {
+                ImportDeclarationC moduleImport = (ImportDeclarationC) currentConstruct;
                 if (moduleImport.hasImport(this.name)) {
                     result = moduleImport;
                 }
             }
-            lastChild = lastChild.getSintacticallyPreviousConstruct();//TODO goal here
-        } while (lastChild != null);
+            currentConstruct = currentConstruct.getSintacticallyPreviousConstruct();//TODO goal here
+        }
         return result;
     }
     
