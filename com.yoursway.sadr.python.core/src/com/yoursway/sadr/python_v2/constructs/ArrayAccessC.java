@@ -6,7 +6,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 
@@ -45,11 +44,12 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
     };
     private final PythonConstruct array;
     private final PythonConstruct index;
+    private final int ARRAY = 0, INDEX = 1;
     
     ArrayAccessC(Scope sc, PythonArrayAccessExpression node) {
         super(sc, node);
-        array = wrap(node.getArray());
-        index = wrap((ASTNode) node.getIndex().getChilds().get(0));
+        array = getPostChildren().get(ARRAY);
+        index = getPostChildren().get(INDEX);
     }
     
     public PythonConstruct array() {

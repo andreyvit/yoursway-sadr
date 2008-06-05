@@ -53,10 +53,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return node;
     }
     
-    protected PythonConstruct wrap(ASTNode node) {
-        throw new UnsupportedOperationException("You write crappy code.");
-    }
-    
     public PythonConstruct subconstructFor(ASTNode node) {
         PythonConstruct result = innerSubsonstructFor(node);
         if (result == null)

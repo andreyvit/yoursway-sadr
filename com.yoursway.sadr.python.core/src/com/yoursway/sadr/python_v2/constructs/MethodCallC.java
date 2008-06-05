@@ -14,13 +14,17 @@ import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.sideeffects.CallF;
 import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
 
+/**
+ * @deprecated
+ */
+@Deprecated
 public class MethodCallC extends CallC implements IndexAffector {
     
     private final PythonConstruct receiver;
     
     MethodCallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
-        receiver = wrap(node.getReceiver());
+        receiver = getPreChildren().get(RECEIVER);
     }
     
     public void actOnIndex(IndexRequest request) {

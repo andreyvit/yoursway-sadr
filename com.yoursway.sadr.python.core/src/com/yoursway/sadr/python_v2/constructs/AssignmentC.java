@@ -27,14 +27,15 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
     
     private final PythonConstruct leftPart;
     private final PythonConstruct rightPart;
+    private final int LEFT = 0, RIGHT = 1;
     
     AssignmentC(Scope scope, Assignment node) {
         super(scope, node);
         Assert.isLegal(node.getLeft() != null, "node.getLeft() should be != null");
         Assert.isLegal(node.getRight() != null, "node.getRight() should be != null");
         
-        leftPart = wrap(node.getLeft());
-        rightPart = wrap(node.getRight());
+        leftPart = getPostChildren().get(LEFT);
+        rightPart = getPostChildren().get(RIGHT);
     }
     
     public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,

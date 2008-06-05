@@ -27,7 +27,8 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     private static final String CALLABLE = "func";
     private static final int CALLABLE_INDEX = 0;
     private static final int ARGUMENTS_INDEX = 1;
-    private static final String SELF = "self";
+    protected static final String SELF = "self";
+    protected final int RECEIVER = CALLABLE_INDEX;//FIXME what a shit is it?!
     private List<PythonConstruct> args;
     private PythonConstruct self;
     private PythonConstruct callable;
