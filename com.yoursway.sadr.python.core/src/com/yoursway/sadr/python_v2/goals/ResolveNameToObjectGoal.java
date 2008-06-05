@@ -90,7 +90,7 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         else
             currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
         PythonConstruct result = null;
-        while (currentConstruct != null) {
+        while (currentConstruct != null && result == null) {
             if (currentConstruct instanceof AssignmentC) {
                 AssignmentC assignmentC = (AssignmentC) currentConstruct;
                 PythonConstruct lhs = assignmentC.lhs();

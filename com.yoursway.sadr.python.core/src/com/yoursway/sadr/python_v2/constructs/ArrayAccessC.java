@@ -49,7 +49,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
     ArrayAccessC(Scope sc, PythonArrayAccessExpression node) {
         super(sc, node);
         array = getPostChildren().get(ARRAY);
-        index = getPostChildren().get(INDEX);
+        index = getPostChildren().get(INDEX).getPostChildren().get(0);
     }
     
     public PythonConstruct array() {
