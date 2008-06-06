@@ -96,7 +96,7 @@ public class PythonClassType extends PythonObject {
     
     protected RuntimeObject lookupInSuperclasses(String name) {
         for (PythonClassType cls : supers) {
-            RuntimeObject object = cls.getAttributes().get(name);
+            RuntimeObject object = cls.getAttribute(name);
             if (object != null)
                 return object;
         }

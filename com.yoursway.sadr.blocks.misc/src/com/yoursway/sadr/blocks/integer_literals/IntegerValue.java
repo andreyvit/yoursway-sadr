@@ -1,9 +1,8 @@
 package com.yoursway.sadr.blocks.integer_literals;
 
-import com.yoursway.sadr.blocks.foundation.types.Type;
-import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import java.math.BigInteger;
 
-public class IntegerValue extends AbstractValue{
+public class IntegerValue extends NumericValue{
     
     private final long value;
     
@@ -41,19 +40,54 @@ public class IntegerValue extends AbstractValue{
         return true;
     }
 
-    public IntegerValue add(IntegerValue val) {
-        return new IntegerValue(this.value() + val.value());
+    private NumericValue expand(long res) {
+    	return (res >>> 32) == 0 ? new IntegerValue(res) : new LongValue(res);
     }
     
-	public IntegerValue subtract(IntegerValue value2) {
-		return new IntegerValue(this.value() - value2.value());
+    public boolean isInt(long res) {
+    	return (res >>> 32) == 0;
+    }
+    
+    public NumericValue add(NumericValue rhs) {
+    	if(rhs instanceof IntegerValue)
+			return expand(this.value() + ((IntegerValue)rhs).value());
+		else
+			return super.add(rhs);
+    }
+
+	public NumericValue subtract(NumericValue rhs) {
+    	if(rhs instanceof IntegerValue)
+    		return expand(this.value() - ((IntegerValue)rhs).value());
+		else
+			return super.subtract(rhs);
 	}
 
-	public IntegerValue multiply(IntegerValue value2) {
-		return new IntegerValue(this.value() * value2.value());
+	public NumericValue multiply(NumericValue rhs) {
+    	if(rhs instanceof IntegerValue)
+    		return expand(this.value() * ((IntegerValue)rhs).value());
+		else
+			return super.multiply(rhs);
 	}
 
-	public IntegerValue divide(IntegerValue value2) {
-		return new IntegerValue(this.value() / value2.value());
+	public NumericValue divide(NumericValue rhs) {
+    	if(rhs instanceof IntegerValue)
+    		return expand(this.value() / ((IntegerValue)rhs).value());
+		else
+			return super.divide(rhs);
+	}
+
+	@Override
+	public BigInteger coherseToLong() {
+		return BigInteger.valueOf(value());
+	}
+
+	@Override
+	public long coherseToInt() {
+		return value();
+	}
+
+	@Override
+	public boolean cohersibleToInt() {
+		return true;
 	}
 }

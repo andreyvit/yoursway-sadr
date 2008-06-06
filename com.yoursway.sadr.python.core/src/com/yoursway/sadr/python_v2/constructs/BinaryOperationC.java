@@ -41,6 +41,10 @@ public class BinaryOperationC extends BinaryC {
                     protected <K> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<K> grade) {
                         final RuntimeObject left = results.get(LEFT);
                         final RuntimeObject right = results.get(RIGHT);
+                        if (left == null || right == null) {
+                            schedule(new PassResultGoal(context, acceptor, null));
+                            return;
+                        }
                         final PythonArguments args = new PythonArguments(left, right);
                         final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor(context) {
                             

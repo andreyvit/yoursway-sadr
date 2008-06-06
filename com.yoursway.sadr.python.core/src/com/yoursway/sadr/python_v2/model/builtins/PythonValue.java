@@ -46,11 +46,11 @@ public class PythonValue<ValueType extends AbstractValue> extends PythonObject i
     
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T convertValue(RuntimeObject type) {
-        if (!(type.getClass().isInstance(getType()))) {
+    public <T extends AbstractValue> T convertValue(Class<T> type) {
+        if (!(type.isInstance(value))) {
             return null;
         }
-        Object value = getValue();
+        AbstractValue value = getValue();
         return (T) value;
     }
     

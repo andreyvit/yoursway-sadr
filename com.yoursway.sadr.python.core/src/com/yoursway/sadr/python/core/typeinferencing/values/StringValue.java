@@ -5,11 +5,23 @@ import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 public class StringValue extends AbstractValue {
     
     private final String value;
+    boolean isUnicode = false;
     
     public StringValue(String value) {
         this.value = value;
     }
     
+    public StringValue(String value, boolean isUnicode) {
+        this.value = value;
+        this.isUnicode = isUnicode;
+    }
+    
+    @Override
+    public String toString() {
+        return value;
+    }
+    
+    @Override
     public String describe() {
         return "\'" + value + "\'";
     }
@@ -48,7 +60,20 @@ public class StringValue extends AbstractValue {
     }
     
     public StringValue format(StringValue stringValue) {
-        //FIXME
         return new StringValue(this.value() + stringValue.value());
+    }
+    
+    public boolean cohersibleToInt() {
+        try {
+            Integer.valueOf(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        
+    }
+    
+    public long coherseToInt() {
+        return Integer.valueOf(value);
     }
 }
