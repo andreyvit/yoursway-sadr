@@ -38,11 +38,12 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     
     private final PythonConstruct receiver;
     private final VariableReferenceC variable;
+    private final int RECEIVER = 0, VARIABLE = 1;
     
     FieldAccessC(Scope sc, PythonVariableAccessExpression node) {
         super(sc, node);
-        this.receiver = PythonConstructFactory.wrap(node.getReceiver(), sc);
-        this.variable = new VariableReferenceC(sc, node.variable());
+        this.receiver = getPostChildren().get(RECEIVER);
+        this.variable = (VariableReferenceC) getPostChildren().get(VARIABLE);
     }
     
     //    public ContinuationRequestorCalledToken evaluateValue(final PythonDynamicContext dc,
