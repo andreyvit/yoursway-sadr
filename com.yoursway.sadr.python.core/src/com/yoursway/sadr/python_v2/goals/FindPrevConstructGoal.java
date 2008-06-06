@@ -74,7 +74,7 @@ public class FindPrevConstructGoal extends Goal {
     }
     
     private PythonConstruct findPrevConstruct(PythonConstruct current) {
-        return current.getSintacticallyPreviousConstruct();
+        return current.getSyntacticallyPreviousConstruct();
     }
     
     @Override

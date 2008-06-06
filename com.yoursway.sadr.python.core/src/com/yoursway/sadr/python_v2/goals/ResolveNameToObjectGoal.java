@@ -91,34 +91,46 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
             currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
         PythonConstruct result = null;
         while (currentConstruct != null && result == null) {
-            if (currentConstruct instanceof AssignmentC) {
-                AssignmentC assignmentC = (AssignmentC) currentConstruct;
-                PythonConstruct lhs = assignmentC.lhs();
-                if (lhs instanceof VariableReferenceC) {
-                    VariableReferenceC reference = (VariableReferenceC) lhs;
-                    if (reference.node().getName().equals(this.name)) {
-                        result = assignmentC;
-                    }
-                }
-            } else if (currentConstruct instanceof MethodDeclarationC) {
-                //FIXME merge with previous if-statement.
-                MethodDeclarationC declarationC = (MethodDeclarationC) currentConstruct;
-                if (declarationC.node().getName().equals(this.name)) {
-                    result = declarationC;
-                }
-            } else if (currentConstruct instanceof ClassDeclarationC) {
-                //FIXME merge with previous if-statement.
-                ClassDeclarationC declarationC = (ClassDeclarationC) currentConstruct;
-                if (declarationC.node().getName().equals(this.name)) {
-                    result = declarationC;
-                }
-            } else if (currentConstruct instanceof ImportDeclarationC) {
-                ImportDeclarationC moduleImport = (ImportDeclarationC) currentConstruct;
-                if (moduleImport.hasImport(this.name)) {
-                    result = moduleImport;
+            result = match(currentConstruct);
+            PythonConstruct prev = currentConstruct;
+            currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();//TODO goal here
+            if (currentConstruct instanceof Scope) {//exit from scope
+                Scope sc = (Scope) currentConstruct;
+                if (sc == prev.parentScope())
+                    break;
+            }
+        }
+        return result;
+    }
+    
+    private PythonConstruct match(PythonConstruct currentConstruct) {
+        PythonConstruct result = null;
+        if (currentConstruct instanceof AssignmentC) {
+            AssignmentC assignmentC = (AssignmentC) currentConstruct;
+            PythonConstruct lhs = assignmentC.lhs();
+            if (lhs instanceof VariableReferenceC) {
+                VariableReferenceC reference = (VariableReferenceC) lhs;
+                if (reference.node().getName().equals(this.name)) {
+                    result = assignmentC;
                 }
             }
-            currentConstruct = currentConstruct.getSintacticallyPreviousConstruct();//TODO goal here
+        } else if (currentConstruct instanceof MethodDeclarationC) {
+            //FIXME merge with previous if-statement.
+            MethodDeclarationC declarationC = (MethodDeclarationC) currentConstruct;
+            if (declarationC.node().getName().equals(this.name)) {
+                result = declarationC;
+            }
+        } else if (currentConstruct instanceof ClassDeclarationC) {
+            //FIXME merge with previous if-statement.
+            ClassDeclarationC declarationC = (ClassDeclarationC) currentConstruct;
+            if (declarationC.node().getName().equals(this.name)) {
+                result = declarationC;
+            }
+        } else if (currentConstruct instanceof ImportDeclarationC) {
+            ImportDeclarationC moduleImport = (ImportDeclarationC) currentConstruct;
+            if (moduleImport.hasImport(this.name)) {
+                result = moduleImport;
+            }
         }
         return result;
     }

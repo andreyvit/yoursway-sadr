@@ -35,7 +35,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         sintacticallyPreviousConstruct = (PythonConstructImpl<ASTNode>) construct;
     }
     
-    public PythonConstruct getSintacticallyPreviousConstruct() {
+    public PythonConstruct getSyntacticallyPreviousConstruct() {
         return sintacticallyPreviousConstruct;
     }
     
