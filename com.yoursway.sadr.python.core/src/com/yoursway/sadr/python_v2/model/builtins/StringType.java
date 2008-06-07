@@ -41,14 +41,14 @@ public class StringType extends PythonClassType {
         List<RuntimeObject> values = args.readArgs(2);
         StringValue str = values.get(0).convertValue(StringValue.class);
         NumericValue cnt = values.get(1).convertValue(NumericValue.class);
-        if (!cnt.cohersibleToInt())
+        if (!cnt.coercibleToInt())
             return null;
-        if (str.value().length() == 0 || cnt.coherseToInt() <= 0)
+        if (str.value().length() == 0 || cnt.coerceToInt() <= 0)
             return wrap("");
-        if (str.value().length() * cnt.coherseToInt() > MAX_LENGTH)
+        if (str.value().length() * cnt.coerceToInt() > MAX_LENGTH)
             return null; //OutOfMemory error
         StringBuilder bld = new StringBuilder();
-        for (long i = cnt.coherseToInt(); i > 0; i /= 2) {
+        for (long i = cnt.coerceToInt(); i > 0; i /= 2) {
             bld.append(bld);
             if (i % 2 != 0)
                 bld.append(str);

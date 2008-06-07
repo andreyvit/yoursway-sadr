@@ -59,6 +59,7 @@ public class Builtins extends PythonClassType {
             module.setAttribute("type", getTypeType());
             module.setAttribute("object", ObjectType.instance());
             module.setAttribute("int", IntegerType.instance());
+            module.setAttribute("long", LongType.instance());
             module.setAttribute("str", StringType.instance());
             module.setAttribute("bool", BooleanType.instance());
             module.setAttribute("list", ListType.instance());
@@ -76,9 +77,9 @@ public class Builtins extends PythonClassType {
                 @Override
                 public RuntimeObject evaluate(PythonArguments args) {
                     NumericValue chr = args.castSingle(NumericValue.class);
-                    if (!chr.cohersibleToInt())
+                    if (!chr.coercibleToInt())
                         return null;
-                    long code = chr.coherseToInt();
+                    long code = chr.coerceToInt();
                     if (code > 255 || code < 0)
                         return null; //ValueError
                     return StringType.wrap(String.valueOf((char) code));

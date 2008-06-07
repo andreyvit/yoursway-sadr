@@ -58,6 +58,7 @@ public final class CallResolver {
         if (receiver == null) {
             throw new IllegalStateException("Receiver is null!");
         }
+        System.out.println("Looking for: " + receiver.toString() + "." + methodName);
         RuntimeObject callable = receiver.getAttribute(methodName); // look for builtins
         if (callable == null && receiver.getType() instanceof PythonUserClassType) { // look into class definition
             PythonUserClassType userClass = (PythonUserClassType) receiver.getType();

@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
+import java.math.BigInteger;
+
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 
 public class StringValue extends AbstractValue {
@@ -73,7 +75,11 @@ public class StringValue extends AbstractValue {
         
     }
     
-    public long coherseToInt() {
+    public long coerceToInt() {
         return Integer.valueOf(value);
+    }
+    
+    public BigInteger coerceToLong() {
+        return new BigInteger(value);
     }
 }

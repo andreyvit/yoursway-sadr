@@ -7,18 +7,18 @@ import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 public abstract class NumericValue extends AbstractValue{
 	
 	public NumericValue add(NumericValue rhs){
-		return new LongValue(this.coherseToLong().add(rhs.coherseToLong()));
+		return new LongValue(this.coerceToLong().add(rhs.coerceToLong()));
 	}
 	public NumericValue subtract(NumericValue rhs){
-		return new LongValue(this.coherseToLong().subtract(rhs.coherseToLong()));
+		return new LongValue(this.coerceToLong().subtract(rhs.coerceToLong()));
 	}
 	public NumericValue multiply(NumericValue rhs){
-		return new LongValue(this.coherseToLong().multiply(rhs.coherseToLong()));
+		return new LongValue(this.coerceToLong().multiply(rhs.coerceToLong()));
 	}
 	public NumericValue divide(NumericValue rhs){
-		return new LongValue(this.coherseToLong().divide(rhs.coherseToLong()));
+		return new LongValue(this.coerceToLong().divide(rhs.coerceToLong()));
 	}
-	public abstract BigInteger coherseToLong();
-	public abstract boolean cohersibleToInt();
-	public abstract long coherseToInt();
+	public abstract BigInteger coerceToLong();
+	public abstract boolean coercibleToInt();
+	public abstract long coerceToInt();
 }

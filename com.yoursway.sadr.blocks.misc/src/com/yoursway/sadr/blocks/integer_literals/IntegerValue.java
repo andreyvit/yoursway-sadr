@@ -77,17 +77,17 @@ public class IntegerValue extends NumericValue{
 	}
 
 	@Override
-	public BigInteger coherseToLong() {
+	public BigInteger coerceToLong() {
 		return BigInteger.valueOf(value());
 	}
 
 	@Override
-	public long coherseToInt() {
+	public long coerceToInt() {
 		return value();
 	}
 
 	@Override
-	public boolean cohersibleToInt() {
+	public boolean coercibleToInt() {
 		return true;
 	}
 }

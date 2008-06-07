@@ -3,7 +3,7 @@ package com.yoursway.sadr.blocks.integer_literals;
 import java.math.BigInteger;
 
 public class LongValue extends NumericValue {
-    
+
     private final BigInteger value;
     
     public LongValue(BigInteger v) {
@@ -39,16 +39,16 @@ public class LongValue extends NumericValue {
         return (value.equals(other.value));
     }
     
-    public boolean cohersibleToInt(){
+    public boolean coercibleToInt(){
     	return value().bitLength()<32;
     }
 
-    public long coherseToInt(){
+    public long coerceToInt(){
     	return value().longValue();
     }
 
 	@Override
-	public BigInteger coherseToLong() {
+	public BigInteger coerceToLong() {
 		return value();
 	}
 }

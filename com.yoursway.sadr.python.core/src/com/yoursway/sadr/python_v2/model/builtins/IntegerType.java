@@ -15,25 +15,33 @@ public class IntegerType extends NumericType {
         if (val instanceof IntegerType)
             return wrap(0);
         else if (val instanceof PythonValue)
-            return coherse((PythonValue<?>) val);
+            return coerce((PythonValue<?>) val);
         else
             return null;
     }
     
-    private static RuntimeObject coherse(PythonValue<?> var) {
+    public RuntimeObject __long__(PythonArguments args) {
+        RuntimeObject val = args.readSingle();
+        if (val.convertValue(IntegerValue.class) != null)
+            return LongType.coerce((PythonValue<?>) val);
+        else
+            return null;
+    }
+    
+    private static RuntimeObject coerce(PythonValue<?> var) {
         AbstractValue value = var.getValue();
         if (value instanceof IntegerValue)
             return var;
         if (value instanceof LongValue) {
             LongValue longValue = (LongValue) value;
-            if (longValue.cohersibleToInt()) {
-                return wrap(longValue.coherseToInt());
+            if (longValue.coercibleToInt()) {
+                return wrap(longValue.coerceToInt());
             }
             return var;
         }
         if (value instanceof StringValue) {
             StringValue stringValue = (StringValue) value;
-            return wrap(stringValue.coherseToInt());
+            return wrap(stringValue.coerceToInt());
         }
         return null;
     }
