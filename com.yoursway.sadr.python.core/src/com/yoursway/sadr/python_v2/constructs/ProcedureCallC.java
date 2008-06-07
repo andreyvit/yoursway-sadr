@@ -44,7 +44,7 @@ public class ProcedureCallC extends CallC {
     }
     
     private PythonConstruct function() {
-        return wrap(node.getReceiver());
+        return getPreChildren().get(RECEIVER);
     }
     
     @Override

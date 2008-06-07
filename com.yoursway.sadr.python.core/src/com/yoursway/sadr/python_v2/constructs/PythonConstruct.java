@@ -30,4 +30,6 @@ public interface PythonConstruct {
     Effects getEffects();
     
     List<PythonConstruct> getPreChildren();
+    
+    PythonConstruct getSyntacticallyPreviousConstruct();
 }

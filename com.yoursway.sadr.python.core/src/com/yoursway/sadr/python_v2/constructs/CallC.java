@@ -27,7 +27,8 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     private static final String CALLABLE = "func";
     private static final int CALLABLE_INDEX = 0;
     private static final int ARGUMENTS_INDEX = 1;
-    private static final String SELF = "self";
+    protected static final String SELF = "self";
+    protected final int RECEIVER = CALLABLE_INDEX;//FIXME what a shit is it?!
     private List<PythonConstruct> args;
     private PythonConstruct self;
     private PythonConstruct callable;
@@ -51,7 +52,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             this.args = PythonConstructFactory.wrap(argNodes, innerScope());
             wrappedChildren.addAll(this.args);
         }
-        callable = wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), innerScope());
+        callable = PythonConstructFactory.wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), innerScope());
         if (callable instanceof FieldAccessC) {
             FieldAccessC fieldAccess = (FieldAccessC) callable;
             self = fieldAccess.receiver();
@@ -143,5 +144,16 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                 return super.describe() + "\nfor expression " + CallC.this.toString();
             }
         };
+    }
+    
+    @Override
+    protected void setupPrevConstructRelation(PythonConstruct prev) {
+        for (PythonConstruct preChild : getPreChildren()) {
+            PythonConstructImpl<ASTNode> pyPreChild = (PythonConstructImpl<ASTNode>) preChild;
+            pyPreChild.setupPrevConstructRelation(prev);
+            prev = preChild;
+        }
+        this.setSintacticallyPreviousConstruct(prev);
+        assert getPostChildren().size() == 0 : "Must be no post children in CallC.";
     }
 }

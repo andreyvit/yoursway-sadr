@@ -20,6 +20,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     private final Scope parentScope;
     private List<PythonConstruct> preChildren = Collections.EMPTY_LIST;
     private List<PythonConstruct> postChildren;
+    private PythonConstructImpl<ASTNode> sintacticallyPreviousConstruct;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
@@ -28,6 +29,14 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (postChildren == null) {
             throw new IllegalStateException();
         }
+    }
+    
+    protected void setSintacticallyPreviousConstruct(PythonConstruct construct) {
+        sintacticallyPreviousConstruct = (PythonConstructImpl<ASTNode>) construct;
+    }
+    
+    public PythonConstruct getSyntacticallyPreviousConstruct() {
+        return sintacticallyPreviousConstruct;
     }
     
     protected void wrapEnclosedChildren() {
@@ -41,14 +50,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     public N node() {
         return node;
-    }
-    
-    protected PythonConstruct wrap(ASTNode node) {
-        return PythonConstructFactory.wrap(node, parentScope);
-    }
-    
-    protected PythonConstruct wrap(ASTNode node, Scope scope) {
-        return PythonConstructFactory.wrap(node, scope);
     }
     
     public PythonConstruct subconstructFor(ASTNode node) {
@@ -155,5 +156,17 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     public List<PythonConstruct> getPreChildren() {
         return preChildren;
+    }
+    
+    protected void setupPrevConstructRelation(PythonConstruct prev) {
+        for (PythonConstruct child : getPreChildren()) {
+            PythonConstructImpl<ASTNode> pyChild = (PythonConstructImpl<ASTNode>) child;
+            pyChild.setupPrevConstructRelation(prev);
+        }
+        setSintacticallyPreviousConstruct(prev);
+        for (PythonConstruct child : getPostChildren()) {
+            PythonConstructImpl<ASTNode> pyChild = (PythonConstructImpl<ASTNode>) child;
+            pyChild.setupPrevConstructRelation(this);
+        }
     }
 }

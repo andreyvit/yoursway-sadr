@@ -14,6 +14,7 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> {
         super(sc, node);
         this.moduleName = name;
         this.projectRuntime = projectRuntime;
+        setupPrevConstructRelation(null);
     }
     
     @Override

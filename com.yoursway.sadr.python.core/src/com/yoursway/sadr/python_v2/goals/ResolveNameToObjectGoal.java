@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import java.util.List;
-
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
@@ -86,38 +84,52 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     }
     
     protected PythonConstruct findInScope(Scope scope) {
-        List<PythonConstruct> children = scope.getEnclosedConstructs2();
+        PythonConstruct currentConstruct;
+        if (scope == this.var.parentScope())
+            currentConstruct = this.var;
+        else
+            currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
         PythonConstruct result = null;
-        for (PythonConstruct construct : children) {
-            if (this.var == construct) {
-                break;
+        while (currentConstruct != null && result == null) {
+            result = match(currentConstruct);
+            PythonConstruct prev = currentConstruct;
+            currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();//TODO goal here
+            if (currentConstruct instanceof Scope) {//exit from scope
+                Scope sc = (Scope) currentConstruct;
+                if (sc == prev.parentScope())
+                    break;
             }
-            if (construct instanceof AssignmentC) {
-                AssignmentC assignmentC = (AssignmentC) construct;
-                PythonConstruct lhs = assignmentC.lhs();
-                if (lhs instanceof VariableReferenceC) {
-                    VariableReferenceC reference = (VariableReferenceC) lhs;
-                    if (reference.node().getName().equals(this.name)) {
-                        result = assignmentC;
-                    }
+        }
+        return result;
+    }
+    
+    private PythonConstruct match(PythonConstruct currentConstruct) {
+        PythonConstruct result = null;
+        if (currentConstruct instanceof AssignmentC) {
+            AssignmentC assignmentC = (AssignmentC) currentConstruct;
+            PythonConstruct lhs = assignmentC.lhs();
+            if (lhs instanceof VariableReferenceC) {
+                VariableReferenceC reference = (VariableReferenceC) lhs;
+                if (reference.node().getName().equals(this.name)) {
+                    result = assignmentC;
                 }
-            } else if (construct instanceof MethodDeclarationC) {
-                //FIXME merge with previous if-statement.
-                MethodDeclarationC declarationC = (MethodDeclarationC) construct;
-                if (declarationC.node().getName().equals(this.name)) {
-                    result = declarationC;
-                }
-            } else if (construct instanceof ClassDeclarationC) {
-                //FIXME merge with previous if-statement.
-                ClassDeclarationC declarationC = (ClassDeclarationC) construct;
-                if (declarationC.node().getName().equals(this.name)) {
-                    result = declarationC;
-                }
-            } else if (construct instanceof ImportDeclarationC) {
-                ImportDeclarationC moduleImport = (ImportDeclarationC) construct;
-                if (moduleImport.hasImport(this.name)) {
-                    result = moduleImport;
-                }
+            }
+        } else if (currentConstruct instanceof MethodDeclarationC) {
+            //FIXME merge with previous if-statement.
+            MethodDeclarationC declarationC = (MethodDeclarationC) currentConstruct;
+            if (declarationC.node().getName().equals(this.name)) {
+                result = declarationC;
+            }
+        } else if (currentConstruct instanceof ClassDeclarationC) {
+            //FIXME merge with previous if-statement.
+            ClassDeclarationC declarationC = (ClassDeclarationC) currentConstruct;
+            if (declarationC.node().getName().equals(this.name)) {
+                result = declarationC;
+            }
+        } else if (currentConstruct instanceof ImportDeclarationC) {
+            ImportDeclarationC moduleImport = (ImportDeclarationC) currentConstruct;
+            if (moduleImport.hasImport(this.name)) {
+                result = moduleImport;
             }
         }
         return result;

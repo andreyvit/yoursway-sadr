@@ -1,9 +1,6 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import java.util.List;
-
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
@@ -77,19 +74,7 @@ public class FindPrevConstructGoal extends Goal {
     }
     
     private PythonConstruct findPrevConstruct(PythonConstruct current) {
-        //FIXME: change to O(1) algorithm
-        Scope scope = current.parentScope();
-        List<PythonConstruct> children = scope.getEnclosedConstructs();
-        PythonConstruct result = null;
-        for (PythonConstruct construct : children) {
-            if (current.equals(construct)) {
-                break;
-            }
-            if (construct instanceof VariableReferenceC)
-                continue;
-            result = construct;
-        }
-        return result;
+        return current.getSyntacticallyPreviousConstruct();
     }
     
     @Override

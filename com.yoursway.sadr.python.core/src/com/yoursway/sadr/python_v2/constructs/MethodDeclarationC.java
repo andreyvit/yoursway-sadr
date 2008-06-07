@@ -6,6 +6,7 @@ import static com.yoursway.sadr.python_v2.constructs.Effects.NO_FROGS;
 import static java.util.Collections.singleton;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,25 +29,30 @@ import com.yoursway.sadr.succeeder.IGoal;
 
 public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     
-    private final Map<String, PythonConstruct> inits;
+    private Map<String, PythonConstruct> inits;
     
     MethodDeclarationC(Scope sc, MethodDeclaration node) {
         super(sc, node);
-        inits = new HashMap<String, PythonConstruct>();
-        for (Object arg : this.node.getArguments()) {
-            if (arg instanceof PythonArgument) {
-                PythonArgument argument = (PythonArgument) arg;
-                ASTNode init = argument.getInitialization();
-                if (init != null)
-                    inits.put(argument.getName(), wrap(init));
-            }
-        }
     }
     
     @Override
     protected void wrapEnclosedChildren() {
         List<PythonConstruct> children = PythonConstructFactory.wrap(this.node.getStatements(), this);
         setPostChildren(children);
+        this.inits = new HashMap<String, PythonConstruct>();
+        List<PythonConstruct> preChildren = new LinkedList<PythonConstruct>();
+        for (Object arg : this.node.getArguments()) {
+            if (arg instanceof PythonArgument) {
+                PythonArgument argument = (PythonArgument) arg;
+                ASTNode init = argument.getInitialization();
+                if (init != null) {
+                    PythonConstruct wrappedInitializer = PythonConstructFactory.wrap(init, innerScope());
+                    inits.put(argument.getName(), wrappedInitializer);
+                    preChildren.add(wrappedInitializer);
+                }
+            }
+        }
+        setPreChildren(preChildren);
     }
     
     public PythonConstruct getArgInit(String name) {
