@@ -25,6 +25,13 @@ public class StringType extends PythonClassType {
         return wrap(str.toString());
     }
     
+    public RuntimeObject __unicode__(PythonArguments args) {
+        RuntimeObject str = args.readSingle();
+        if (str instanceof StringType)
+            return wrap("", true);
+        return wrap(str.toString(), true);
+    }
+    
     public RuntimeObject __add__(PythonArguments args) {
         List<StringValue> values = args.castArgs(2, StringValue.class);
         StringValue result = values.get(0).add(values.get(1));
@@ -53,7 +60,7 @@ public class StringType extends PythonClassType {
             if (i % 2 != 0)
                 bld.append(str);
         }
-        return wrap(bld.toString());
+        return wrap(bld.toString(), str.isUnicode());
     }
     
     private StringType() {
@@ -67,12 +74,16 @@ public class StringType extends PythonClassType {
     }
     
     public static RuntimeObject wrap(StringLiteralC literal) {
-        StringValue value = new StringValue(literal.stringValue());
+        StringValue value = new StringValue(literal.stringValue(), literal.isUnicode());
         return new PythonValue<StringValue>(instance(), value, literal);
     }
     
     public static RuntimeObject wrap(StringValue value) {
         return new PythonValue<StringValue>(instance(), value, null);
+    }
+    
+    public static RuntimeObject wrap(String value, boolean isUnicode) {
+        return wrap(new StringValue(value, isUnicode));
     }
     
     public static RuntimeObject wrap(String value) {

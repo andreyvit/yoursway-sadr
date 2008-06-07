@@ -13,16 +13,21 @@ import com.yoursway.sadr.succeeder.IGoal;
 
 public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     
+    private final boolean isUnicode;
+    private final String value;
+    
     StringLiteralC(Scope sc, StringLiteral node) {
         super(sc, node);
-    }
-    
-    public String stringValue() {
         String v = node.getValue();
+        if (v.startsWith("u") || v.startsWith("U")) {
+            isUnicode = true;
+            v = v.substring(1);
+        } else {
+            isUnicode = false;
+        }
         v = unquote(v);
-        v = v.replaceAll("\\n", "\n");
+        value = v.replaceAll("\\n", "\n");
         //        v = v.replaceAll("<CR>", "\n");
-        return v;
     }
     
     private static String unquote(String text) {
@@ -50,8 +55,17 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
         };
     }
     
+    public String stringValue() {
+        return value;
+    }
+    
+    public boolean isUnicode() {
+        return isUnicode;
+    }
+    
     @Override
     public Frog toFrog() {
         return new ValueF(StringType.wrap(this));
     }
+    
 }

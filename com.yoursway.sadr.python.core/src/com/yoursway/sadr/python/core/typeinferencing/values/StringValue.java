@@ -25,13 +25,37 @@ public class StringValue extends AbstractValue {
     
     @Override
     public String describe() {
-        return "\'" + value + "\'";
+        String str = "\'" + value + "\'";
+        if (isUnicode) {
+            StringBuilder result = new StringBuilder();
+            for (char el : str.toCharArray()) {
+                if (el < 127 && el >= 32)
+                    result.append(el);
+                else if (el == 9)
+                    result.append("\t");
+                else if (el == 10)
+                    result.append("\n");
+                else if (el == 13)
+                    result.append("\r");
+                else if (el < 16)
+                    result.append("\\x0" + Integer.toHexString(el));
+                else if (el < 256)
+                    result.append("\\x" + Integer.toHexString(el));
+                else if (el < 4096)
+                    result.append("\\u0" + Integer.toHexString(el));
+                else if (el < 65536)
+                    result.append("\\u" + Integer.toHexString(el));
+            }
+            return "u" + result.toString();
+        } else
+            return str;
     }
     
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + (isUnicode ? 1231 : 1237);
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
@@ -44,7 +68,9 @@ public class StringValue extends AbstractValue {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final StringValue other = (StringValue) obj;
+        StringValue other = (StringValue) obj;
+        if (isUnicode != other.isUnicode)
+            return false;
         if (value == null) {
             if (other.value != null)
                 return false;
@@ -53,8 +79,12 @@ public class StringValue extends AbstractValue {
         return true;
     }
     
+    public boolean isUnicode() {
+        return isUnicode;
+    }
+    
     public StringValue add(StringValue val) {
-        return new StringValue(this.value() + val.value());
+        return new StringValue(this.value() + val.value(), this.isUnicode() || val.isUnicode());
     }
     
     public String value() {
@@ -62,7 +92,7 @@ public class StringValue extends AbstractValue {
     }
     
     public StringValue format(StringValue stringValue) {
-        return new StringValue(this.value() + stringValue.value());
+        return new StringValue(this.value(), this.isUnicode());
     }
     
     public boolean cohersibleToInt() {

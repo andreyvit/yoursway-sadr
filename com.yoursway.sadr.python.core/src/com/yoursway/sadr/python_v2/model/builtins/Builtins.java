@@ -86,6 +86,19 @@ public class Builtins extends PythonClassType {
                     
                 }
             });
+            module.setAttribute(new SyncFunctionObject("unichr") {
+                @Override
+                public RuntimeObject evaluate(PythonArguments args) {
+                    NumericValue chr = args.castSingle(NumericValue.class);
+                    if (!chr.coercibleToInt())
+                        return null;
+                    long code = chr.coerceToInt();
+                    if (code > 65535 || code < 0)
+                        return null; //ValueError
+                    return StringType.wrap(String.valueOf((char) code), true);
+                    
+                }
+            });
             
         }
         return module;
