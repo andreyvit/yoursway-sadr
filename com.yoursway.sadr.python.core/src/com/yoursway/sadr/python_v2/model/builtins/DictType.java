@@ -17,13 +17,13 @@ public class DictType extends PythonClassType {
     
     public RuntimeObject __getitem__(PythonArguments args) {
         List<RuntimeObject> list = args.readArgs(2);
-        DictValue array = list.get(0).convertValue(DictType.instance());
+        DictValue array = list.get(0).convertValue(DictValue.class);
         PythonValue<?> value = ((PythonValue<?>) list.get(1));
         return array.getDict().get(value);
     }
     
     public RuntimeObject _len(PythonArguments args) {
-        DictValue array = args.castSingle(DictType.instance());
+        DictValue array = args.castSingle(DictValue.class);
         return IntegerType.wrap(array.getDict().size());
     }
     

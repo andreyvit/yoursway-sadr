@@ -10,13 +10,13 @@ public class ListType extends PythonClassType {
     
     public RuntimeObject __getitem__(PythonArguments args) {
         List<RuntimeObject> list = args.readArgs(2);
-        ListValue array = list.get(0).convertValue(ListType.instance());
-        IntegerValue index = list.get(1).convertValue(IntegerType.instance());
+        ListValue array = list.get(0).convertValue(ListValue.class);
+        IntegerValue index = list.get(1).convertValue(IntegerValue.class);
         return array.getList().get((int) index.value());
     }
     
     public RuntimeObject __len__(PythonArguments args) {
-        ListValue list = args.castSingle(ListType.instance());
+        ListValue list = args.castSingle(ListValue.class);
         return IntegerType.wrap(list.getList().size());
     }
     

@@ -3,14 +3,17 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.blocks.integer_literals.NumericValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python_v2.constructs.StringLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
 public class StringType extends PythonClassType {
+    private static final long MAX_LENGTH = 1000000;
+    
     public RuntimeObject __int__(PythonArguments args) {
         RuntimeObject str = args.readSingle();
-        StringValue value = str.convertValue(instance());
+        StringValue value = str.convertValue(StringValue.class);
         int parsed = Integer.parseInt(value.toString());
         return IntegerType.wrap(parsed);
     }
@@ -23,15 +26,34 @@ public class StringType extends PythonClassType {
     }
     
     public RuntimeObject __add__(PythonArguments args) {
-        List<StringValue> values = args.castArgs(2, instance());
+        List<StringValue> values = args.castArgs(2, StringValue.class);
         StringValue result = values.get(0).add(values.get(1));
         return wrap(result);
     }
     
     public RuntimeObject __mod__(PythonArguments args) {
-        List<StringValue> values = args.castArgs(2, instance());
+        List<StringValue> values = args.castArgs(2, StringValue.class);
         StringValue result = values.get(0).format(values.get(1));
         return wrap(result);
+    }
+    
+    public RuntimeObject __mul__(PythonArguments args) {
+        List<RuntimeObject> values = args.readArgs(2);
+        StringValue str = values.get(0).convertValue(StringValue.class);
+        NumericValue cnt = values.get(1).convertValue(NumericValue.class);
+        if (!cnt.coercibleToInt())
+            return null;
+        if (str.value().length() == 0 || cnt.coerceToInt() <= 0)
+            return wrap("");
+        if (str.value().length() * cnt.coerceToInt() > MAX_LENGTH)
+            return null; //OutOfMemory error
+        StringBuilder bld = new StringBuilder();
+        for (long i = cnt.coerceToInt(); i > 0; i /= 2) {
+            bld.append(bld);
+            if (i % 2 != 0)
+                bld.append(str);
+        }
+        return wrap(bld.toString());
     }
     
     private StringType() {

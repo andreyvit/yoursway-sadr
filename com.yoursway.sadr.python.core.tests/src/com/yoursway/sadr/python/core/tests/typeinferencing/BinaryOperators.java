@@ -113,19 +113,11 @@ public final class BinaryOperators extends AbstractTypeInferencingTestCase {
         runTest();
     }
     @Test
-    public void __rtruediv__() throws Exception {
-        runTest();
-    }
-    @Test
     public void __rxor__() throws Exception {
         runTest();
     }
     @Test
     public void __sub__() throws Exception {
-        runTest();
-    }
-    @Test
-    public void __truediv__() throws Exception {
         runTest();
     }
     @Test

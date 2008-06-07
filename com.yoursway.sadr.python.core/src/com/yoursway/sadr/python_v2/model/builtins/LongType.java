@@ -1,43 +1,42 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import java.util.List;
+import java.math.BigInteger;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
 import com.yoursway.sadr.blocks.integer_literals.LongValue;
+import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python_v2.constructs.BigIntegerLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
 public class LongType extends PythonClassType {
-    public RuntimeObject __call__(PythonArguments args) {
-        LongValue value = args.castSingle(instance());
-        return wrap(value);
+    public RuntimeObject __long__(PythonArguments args) {
+        RuntimeObject val = args.readSingle();
+        if (val instanceof LongType)
+            return wrap(BigInteger.ZERO);
+        else if (val instanceof PythonValue)
+            return coerce((PythonValue<?>) val);
+        else
+            return null;
     }
     
-    public RuntimeObject __add__(PythonArguments args) {
-        List<LongValue> values = args.castArgs(2, instance());
-        LongValue result = values.get(0).add(values.get(1));
-        return wrap(result);
-    }
-    
-    public RuntimeObject __sub__(PythonArguments args) {
-        List<LongValue> values = args.castArgs(2, instance());
-        LongValue result = values.get(0).subtract(values.get(1));
-        return wrap(result);
-    }
-    
-    public RuntimeObject __mul__(PythonArguments args) {
-        List<LongValue> values = args.castArgs(2, instance());
-        LongValue result = values.get(0).multiply(values.get(1));
-        return wrap(result);
-    }
-    
-    public RuntimeObject __div__(PythonArguments args) {
-        List<LongValue> values = args.castArgs(2, instance());
-        LongValue result = values.get(0).divide(values.get(1));
-        return wrap(result);
+    public static RuntimeObject coerce(PythonValue<?> var) {
+        AbstractValue value = var.getValue();
+        if (value instanceof LongValue)
+            return var;
+        if (value instanceof IntegerValue) {
+            return wrap(((IntegerValue) value).coerceToLong());
+        }
+        if (value instanceof StringValue) {
+            StringValue stringValue = (StringValue) value;
+            return wrap(stringValue.coerceToLong());
+        }
+        return null;
     }
     
     private LongType() {
+        setAttribute(new RedirectFunctionObject("__call__", "__long__"));
     }
     
     private static LongType instance;
@@ -56,6 +55,10 @@ public class LongType extends PythonClassType {
     
     public static PythonValue<LongValue> wrap(LongValue value) {
         return new PythonValue<LongValue>(instance(), value);
+    }
+    
+    public static PythonValue<LongValue> wrap(BigInteger value) {
+        return new PythonValue<LongValue>(instance(), new LongValue(value));
     }
     
     @Override

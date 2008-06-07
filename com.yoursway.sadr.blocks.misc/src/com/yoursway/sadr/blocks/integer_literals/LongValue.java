@@ -2,17 +2,19 @@ package com.yoursway.sadr.blocks.integer_literals;
 
 import java.math.BigInteger;
 
-import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+public class LongValue extends NumericValue {
 
-public class LongValue extends AbstractValue {
-    
     private final BigInteger value;
     
     public LongValue(BigInteger v) {
         this.value = v;
     }
     
-    public BigInteger value() {
+    public LongValue(long val) {
+        this.value = BigInteger.valueOf(val);
+	}
+
+	public BigInteger value() {
         return value;
     }
     
@@ -36,21 +38,17 @@ public class LongValue extends AbstractValue {
         final LongValue other = (LongValue) obj;
         return (value.equals(other.value));
     }
+    
+    public boolean coercibleToInt(){
+    	return value().bitLength()<32;
+    }
 
-    public LongValue add(LongValue val) {
-    	return new LongValue(this.value().add(val.value()));
+    public long coerceToInt(){
+    	return value().longValue();
     }
-    
-    public LongValue subtract(LongValue val) {
-    	return new LongValue(this.value().subtract(val.value()));
-    }
-    
-    public LongValue multiply(LongValue val) {
-    	return new LongValue(this.value().multiply(val.value()));
-    }
-    
-    public LongValue divide(LongValue val) {
-    	return new LongValue(this.value().divide(val.value()));
-    }
-    
+
+	@Override
+	public BigInteger coerceToLong() {
+		return value();
+	}
 }

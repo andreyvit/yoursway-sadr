@@ -9,14 +9,14 @@ import com.yoursway.sadr.python_v2.model.PythonArguments;
 public class TupleType extends PythonClassType {
     public RuntimeObject __getitem__(PythonArguments args) {
         List<RuntimeObject> list = args.readArgs(2);
-        TupleValue array = list.get(0).convertValue(TupleType.instance());
-        IntegerValue index = list.get(1).convertValue(IntegerType.instance());
+        TupleValue array = list.get(0).convertValue(TupleValue.class);
+        IntegerValue index = list.get(1).convertValue(IntegerValue.class);
         List<RuntimeObject> items = array.getList();
         return items.get((int) index.value());
     }
     
     public RuntimeObject __len__(PythonArguments args) {
-        TupleValue list = args.castSingle(TupleType.instance());
+        TupleValue list = args.castSingle(TupleValue.class);
         return IntegerType.wrap(list.getList().size());
     }
     

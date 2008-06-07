@@ -1,7 +1,10 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.blocks.integer_literals.NumericValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.NilValue;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 
 /**
  * Utility and declaration class.
@@ -21,7 +24,7 @@ public class Builtins extends PythonClassType {
     
     public static PythonObject getNone() {
         if (pythonNone == null) {
-            pythonNone = new PythonValue<NilValue>(getTypeType(), NilValue.instance());
+            pythonNone = new PythonValue<NilValue>(NoneType.instance(), NilValue.instance());
         }
         return pythonNone;
     }
@@ -56,6 +59,7 @@ public class Builtins extends PythonClassType {
             module.setAttribute("type", getTypeType());
             module.setAttribute("object", ObjectType.instance());
             module.setAttribute("int", IntegerType.instance());
+            module.setAttribute("long", LongType.instance());
             module.setAttribute("str", StringType.instance());
             module.setAttribute("bool", BooleanType.instance());
             module.setAttribute("list", ListType.instance());
@@ -69,6 +73,20 @@ public class Builtins extends PythonClassType {
             module.setAttribute(new RedirectFunctionObject("repr", "__repr__"));
             module.setAttribute(new RedirectFunctionObject("unicode", "__unicode__"));
             module.setAttribute(new RedirectFunctionObject("__unicode__", "__str__"));
+            module.setAttribute(new SyncFunctionObject("chr") {
+                @Override
+                public RuntimeObject evaluate(PythonArguments args) {
+                    NumericValue chr = args.castSingle(NumericValue.class);
+                    if (!chr.coercibleToInt())
+                        return null;
+                    long code = chr.coerceToInt();
+                    if (code > 255 || code < 0)
+                        return null; //ValueError
+                    return StringType.wrap(String.valueOf((char) code));
+                    
+                }
+            });
+            
         }
         return module;
     }

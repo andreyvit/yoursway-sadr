@@ -17,5 +17,5 @@ public interface RuntimeObject extends Type, Value {
     
     Map<String, RuntimeObject> getAttributes();
     
-    public <T> T convertValue(RuntimeObject type);
+    public <T extends AbstractValue> T convertValue(Class<T> type);
 }

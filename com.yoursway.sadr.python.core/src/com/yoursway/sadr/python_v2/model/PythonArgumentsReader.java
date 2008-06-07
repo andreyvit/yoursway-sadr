@@ -10,12 +10,8 @@ import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
-import com.yoursway.sadr.python_v2.model.builtins.DictType;
 import com.yoursway.sadr.python_v2.model.builtins.DictValue;
-import com.yoursway.sadr.python_v2.model.builtins.ListType;
 import com.yoursway.sadr.python_v2.model.builtins.ListValue;
-import com.yoursway.sadr.python_v2.model.builtins.StringType;
-import com.yoursway.sadr.python_v2.model.builtins.TupleType;
 import com.yoursway.sadr.python_v2.model.builtins.TupleValue;
 
 public class PythonArgumentsReader {
@@ -57,7 +53,7 @@ public class PythonArgumentsReader {
         Set<Entry<RuntimeObject, RuntimeObject>> items = getDict(args.getLastKwarg()).entrySet();
         for (Entry<RuntimeObject, RuntimeObject> entry : items) {
             RuntimeObject keyObject = entry.getKey();
-            StringValue key = keyObject.convertValue(StringType.instance());
+            StringValue key = keyObject.convertValue(StringValue.class);
             if (key == null)
                 throw new IllegalStateException("Error: keyword name should be string");
             RuntimeObject value = entry.getValue();
@@ -68,7 +64,7 @@ public class PythonArgumentsReader {
     private HashMap<RuntimeObject, RuntimeObject> getDict(RuntimeObject dict) {
         if (dict == null)
             return newHashMap();
-        DictValue dictValue = dict.convertValue(DictType.instance());
+        DictValue dictValue = dict.convertValue(DictValue.class);
         if (dictValue != null)
             return dictValue.getDict();
         return newHashMap();
@@ -77,10 +73,10 @@ public class PythonArgumentsReader {
     private List<RuntimeObject> getList(RuntimeObject list) {
         if (list == null)
             return newArrayList();
-        ListValue listValue = list.convertValue(ListType.instance());
+        ListValue listValue = list.convertValue(ListValue.class);
         if (listValue != null)
             return listValue.getList();
-        TupleValue tupleValue = list.convertValue(TupleType.instance());
+        TupleValue tupleValue = list.convertValue(TupleValue.class);
         if (tupleValue != null)
             return tupleValue.getList();
         return newArrayList();

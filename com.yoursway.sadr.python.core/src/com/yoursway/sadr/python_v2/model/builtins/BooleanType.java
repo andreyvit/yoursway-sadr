@@ -9,19 +9,19 @@ import com.yoursway.sadr.python_v2.model.PythonArguments;
 
 public class BooleanType extends PythonClassType {
     public RuntimeObject __and__(PythonArguments args) {
-        List<BooleanValue> values = args.castArgs(2, instance());
+        List<BooleanValue> values = args.castArgs(2, BooleanValue.class);
         BooleanValue result = values.get(0).and(values.get(1));
         return wrap(result);
     }
     
     public RuntimeObject __or__(PythonArguments args) {
-        List<BooleanValue> values = args.castArgs(2, instance());
+        List<BooleanValue> values = args.castArgs(2, BooleanValue.class);
         BooleanValue result = values.get(0).or(values.get(1));
         return wrap(result);
     }
     
     public RuntimeObject __xor__(PythonArguments args) {
-        List<BooleanValue> values = args.castArgs(2, instance());
+        List<BooleanValue> values = args.castArgs(2, BooleanValue.class);
         BooleanValue result = values.get(0).xor(values.get(1));
         return wrap(result);
     }

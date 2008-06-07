@@ -7,6 +7,7 @@ import java.util.Set;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
+import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
@@ -78,7 +79,11 @@ public class PythonObject implements RuntimeObject {
             return "(unknown object)";
     }
     
-    public <T> T convertValue(RuntimeObject type) {
+    public AbstractValue cast(PythonValue<?> value) {
+        return null;
+    }
+    
+    public <T extends AbstractValue> T convertValue(Class<T> type) {
         return null;
     }
     

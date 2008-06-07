@@ -57,12 +57,13 @@ public class IntegerTypesSupportImpl extends AbstractBuildingBlock implements In
 
     public ContinuationRequestorCalledToken evaluateIntegerLiteral(RuntimeModel runtimeModel, long v,
             ContinuationScheduler requestor, ValueInfoContinuation continuation) {
-        ValueInfoBuilder builder = new ValueInfoBuilder();
-        RuntimeModelWithIntegerTypes modelWithIntegerTypes = 
-                facelet(runtimeModel);
-        SimpleType t = modelWithIntegerTypes.intType();
-        builder.add(new SimpleTypeItem(t), new IntegerValue(v));
-        return continuation.consume(builder.build(), requestor);
+//        ValueInfoBuilder builder = new ValueInfoBuilder();
+//        RuntimeModelWithIntegerTypes modelWithIntegerTypes = 
+//                facelet(runtimeModel);
+//        SimpleType t = modelWithIntegerTypes.intType();
+//        builder.add(new SimpleTypeItem(t), new IntegerValue(v));
+//        return continuation.consume(builder.build(), requestor);
+    	return null;
     }
     
 }

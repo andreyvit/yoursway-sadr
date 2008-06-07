@@ -31,6 +31,9 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
     
     AssignmentC(Scope scope, Assignment node) {
         super(scope, node);
+        if (node.getRight() == null) {
+            System.out.println("Weird construct");
+        }
         Assert.isLegal(node.getLeft() != null, "node.getLeft() should be != null");
         Assert.isLegal(node.getRight() != null, "node.getRight() should be != null");
         
