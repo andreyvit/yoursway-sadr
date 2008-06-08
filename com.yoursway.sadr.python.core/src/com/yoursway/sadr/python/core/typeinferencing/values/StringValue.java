@@ -1,8 +1,11 @@
 package com.yoursway.sadr.python.core.typeinferencing.values;
 
 import java.math.BigInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import com.yoursway.sadr.blocks.integer_literals.Complex;
 
 public class StringValue extends AbstractValue {
     
@@ -111,5 +114,42 @@ public class StringValue extends AbstractValue {
     
     public BigInteger coerceToLong() {
         return new BigInteger(value);
+    }
+    
+    public double coerceToFloat() {
+        return Double.valueOf(value);
+    }
+    
+    private Complex tryCoerceToComplex(String regex, int realPos, int imagPos) {
+        Pattern pattern = Pattern.compile("^" + regex + "$");
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            String real = realPos == 0 ? "0" : matcher.group(realPos);
+            String imag = imagPos == 0 ? "0" : matcher.group(imagPos);
+            if (imag.length() == 0 || imag.equals("+"))
+                imag = "1";
+            if (imag.equals("-"))
+                imag = "-1";
+            return new Complex(Double.valueOf(real), Double.valueOf(imag));
+        } else
+            return null;
+    }
+    
+    public Complex coerceToComplex() {
+        //TODO: Add tests for this feature
+        String FIRST = "([+-]?\\d*\\.\\d*)";
+        String SECOND = "(+-\\d*\\.\\d*)";
+        Complex complex = tryCoerceToComplex(FIRST + SECOND + "j", 1, 2);
+        if (complex == null)
+            complex = tryCoerceToComplex(FIRST + "j" + SECOND, 2, 1);
+        if (complex == null)
+            complex = tryCoerceToComplex(FIRST, 1, 0);
+        if (complex == null)
+            complex = tryCoerceToComplex(FIRST + "j", 0, 1);
+        return complex;
+    }
+    
+    public boolean coerceToBool() {
+        return value().length() != 0;
     }
 }

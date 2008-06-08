@@ -51,4 +51,15 @@ public class LongValue extends NumericValue {
 	public BigInteger coerceToLong() {
 		return value();
 	}
+
+	@Override
+	public double coerceToFloat() {
+		return value().floatValue();
+	}
+
+	@Override
+	public boolean coerceToBool() {
+		return value().signum() != 0;
+	}
+
 }

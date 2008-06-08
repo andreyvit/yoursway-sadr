@@ -1,8 +1,9 @@
-package com.yoursway.sadr.python.core.typeinferencing.values;
+package com.yoursway.sadr.blocks.integer_literals;
 
-import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
+import java.math.BigInteger;
 
-public class BooleanValue extends AbstractValue {
+
+public class BooleanValue extends NumericValue {
     
     private final boolean value;
     public static final String TRUE = "True";
@@ -24,23 +25,37 @@ public class BooleanValue extends AbstractValue {
         return ((BooleanValue) obj).value == this.value;
     }
     
+    @Override
     public String describe() {
         return value ? TRUE : FALSE;
-    }
-    
-    public BooleanValue and(BooleanValue rhs) {
-        return new BooleanValue(this.value && rhs.value);
-    }
-    
-    public BooleanValue or(BooleanValue rhs) {
-        return new BooleanValue(this.value || rhs.value);
-    }
-    
-    public BooleanValue xor(BooleanValue rhs) {
-        return new BooleanValue(this.value ^ rhs.value);
     }
     
     public BooleanValue not() {
         return new BooleanValue(!this.value);
     }
+    
+    @Override
+    public boolean coercibleToInt() {
+        return true;
+    }
+    
+    @Override
+    public long coerceToInt() {
+        return value ? 1 : 0;
+    }
+    
+    @Override
+    public BigInteger coerceToLong() {
+        return value ? BigInteger.ONE : BigInteger.ZERO;
+    }
+    
+    @Override
+    public double coerceToFloat() {
+        return value ? 1 : 0;
+    }
+
+	@Override
+	public boolean coerceToBool() {
+		return value;
+	}
 }

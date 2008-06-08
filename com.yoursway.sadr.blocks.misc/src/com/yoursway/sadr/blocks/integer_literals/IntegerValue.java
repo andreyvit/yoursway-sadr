@@ -41,11 +41,11 @@ public class IntegerValue extends NumericValue{
     }
 
     private NumericValue expand(long res) {
-    	return (res >>> 32) == 0 ? new IntegerValue(res) : new LongValue(res);
+    	return isInt(res) ? new IntegerValue(res) : new LongValue(res);
     }
     
     public boolean isInt(long res) {
-    	return (res >>> 32) == 0;
+    	return res<=Integer.MAX_VALUE && res>=Integer.MIN_VALUE;
     }
     
     public NumericValue add(NumericValue rhs) {
@@ -89,5 +89,15 @@ public class IntegerValue extends NumericValue{
 	@Override
 	public boolean coercibleToInt() {
 		return true;
+	}
+
+	@Override
+	public double coerceToFloat() {
+		return value();
+	}
+
+	@Override
+	public boolean coerceToBool() {
+		return value() != 0;
 	}
 }

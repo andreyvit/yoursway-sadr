@@ -1,8 +1,8 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.blocks.integer_literals.BooleanValue;
 import com.yoursway.sadr.blocks.integer_literals.NumericValue;
-import com.yoursway.sadr.python.core.typeinferencing.values.BooleanValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.NilValue;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
@@ -60,7 +60,10 @@ public class Builtins extends PythonClassType {
             module.setAttribute("object", ObjectType.instance());
             module.setAttribute("int", IntegerType.instance());
             module.setAttribute("long", LongType.instance());
+            module.setAttribute("float", FloatType.instance());
+            module.setAttribute("complex", ComplexType.instance());
             module.setAttribute("str", StringType.instance());
+            module.setAttribute("unicode", UnicodeType.instance());
             module.setAttribute("bool", BooleanType.instance());
             module.setAttribute("list", ListType.instance());
             module.setAttribute("tuple", TupleType.instance());

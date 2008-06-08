@@ -4,13 +4,14 @@ import java.math.BigInteger;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.blocks.integer_literals.IntegerValue;
 import com.yoursway.sadr.blocks.integer_literals.LongValue;
+import com.yoursway.sadr.blocks.integer_literals.NumericValue;
 import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python_v2.constructs.BigIntegerLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
-public class LongType extends PythonClassType {
+public class LongType extends NumericType {
+    @Override
     public RuntimeObject __long__(PythonArguments args) {
         RuntimeObject val = args.readSingle();
         if (val instanceof LongType)
@@ -25,8 +26,8 @@ public class LongType extends PythonClassType {
         AbstractValue value = var.getValue();
         if (value instanceof LongValue)
             return var;
-        if (value instanceof IntegerValue) {
-            return wrap(((IntegerValue) value).coerceToLong());
+        if (value instanceof NumericValue) {
+            return wrap(((NumericValue) value).coerceToLong());
         }
         if (value instanceof StringValue) {
             StringValue stringValue = (StringValue) value;
@@ -51,10 +52,6 @@ public class LongType extends PythonClassType {
     public static PythonValue<LongValue> wrap(BigIntegerLiteralC literal) {
         LongValue integerValue = new LongValue(literal.node().getLongValue());
         return new PythonValue<LongValue>(instance(), integerValue, literal);
-    }
-    
-    public static PythonValue<LongValue> wrap(LongValue value) {
-        return new PythonValue<LongValue>(instance(), value);
     }
     
     public static PythonValue<LongValue> wrap(BigInteger value) {
