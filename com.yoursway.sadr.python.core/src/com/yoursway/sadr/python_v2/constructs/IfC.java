@@ -46,6 +46,13 @@ public class IfC extends PythonConstructImpl<IfStatement> {
         setPreChildren(preChildren);
     }
     
+    @Override
+    protected void setupPrevConstructRelation(PythonConstruct prev) {
+        this.setSintacticallyPreviousConstruct(setPrevConstructRelation(prev, getPreChildren()));
+        setPrevConstructRelation(this, thenBlock());
+        setPrevConstructRelation(this, elseBlock());
+    }
+    
     public List<PythonConstruct> thenBlock() {
         return thenBlock;
     }

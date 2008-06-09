@@ -169,4 +169,23 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
             pyChild.setupPrevConstructRelation(this);
         }
     }
+
+    /**
+     * 
+     * @param prev
+     *            previous construct
+     * @param constructs
+     *            constructs to be sequentially arranged with <code>prev</code>
+     *            as the most previous construct.
+     * @return last construct from <code>constructs</code>.
+     */
+    protected PythonConstruct setPrevConstructRelation(PythonConstruct prev, List<PythonConstruct> constructs) {
+        for (PythonConstruct c : constructs) {
+            PythonConstructImpl<ASTNode> construct = (PythonConstructImpl<ASTNode>) c;
+            construct.setSintacticallyPreviousConstruct(prev);
+            prev = c;
+        }
+        return prev;
+        
+    }
 }
