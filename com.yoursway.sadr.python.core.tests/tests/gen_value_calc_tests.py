@@ -27,6 +27,8 @@ def make_tests(suite_name):
     builder.addTest("floatTest3", gen(5536L, 1e7+1e3+1e-2, ops))
     builder.addTest("boolTest", gen(True, False, ops))
     builder.addTest("boolTest2", gen(False, True, ops))
+    builder.addTest("boolTest3", gen(True, 5, ops))
+    builder.addTest("boolTest4", gen(5j, True, ops))
     ops = ['a+b', 'a-b', 'a*b', 'a/b', 'a&b', 'a^b', 'a%b', '-a+b', 'int(a)', 'str(int(a))', 'chr(35)']
     builder.addTest("strTest", gen('sadfv', 3, ops))
     builder.addTest("strTest2", gen('asdf', 'yoklmn', ops))

@@ -8,7 +8,7 @@ import com.yoursway.sadr.python.core.typeinferencing.values.StringValue;
 import com.yoursway.sadr.python_v2.constructs.StringLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
-public class StringType extends PythonClassType {
+public class UnicodeType extends PythonClassType {
     private static final long MAX_LENGTH = 1000000;
     
     public RuntimeObject __int__(PythonArguments args) {
@@ -20,14 +20,14 @@ public class StringType extends PythonClassType {
     
     public RuntimeObject __str__(PythonArguments args) {
         RuntimeObject str = args.readSingle();
-        if (str instanceof StringType)
+        if (str instanceof UnicodeType)
             return wrap("");
         return wrap(str.toString());
     }
     
     public RuntimeObject __unicode__(PythonArguments args) {
         RuntimeObject str = args.readSingle();
-        if (str instanceof StringType)
+        if (str instanceof UnicodeType)
             return wrap("", true);
         return wrap(str.toString(), true);
     }
@@ -63,13 +63,13 @@ public class StringType extends PythonClassType {
         return wrap(bld.toString(), str.isUnicode());
     }
     
-    private StringType() {
+    private UnicodeType() {
         setAttribute(new RedirectFunctionObject("__call__", "__str__"));
     }
     
-    private static StringType instance = new StringType();
+    private static UnicodeType instance = new UnicodeType();
     
-    public static StringType instance() {
+    public static UnicodeType instance() {
         return instance;
     }
     
@@ -92,7 +92,7 @@ public class StringType extends PythonClassType {
     
     @Override
     public String describe() {
-        return "str";
+        return "unicode";
     }
     
 }

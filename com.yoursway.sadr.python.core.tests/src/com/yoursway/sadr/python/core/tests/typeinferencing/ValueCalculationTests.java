@@ -13,6 +13,14 @@ public final class ValueCalculationTests extends AbstractTypeInferencingTestCase
         runTest();
     }
     @Test
+    public void boolTest3() throws Exception {
+        runTest();
+    }
+    @Test
+    public void boolTest4() throws Exception {
+        runTest();
+    }
+    @Test
     public void floatTest() throws Exception {
         runTest();
     }

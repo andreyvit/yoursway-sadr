@@ -64,10 +64,15 @@ public class PythonConstructFactory {
     public static PythonConstruct wrap(ASTNode node, Scope scope) {
         if (node instanceof ModuleDeclaration)
             throw new RuntimeException("ModuleDeclaration cannot be wrapped with wrap()");
-        if (node instanceof StringLiteral)
+        if (node instanceof StringLiteral) {
             return new StringLiteralC(scope, (StringLiteral) node);
+        }
         if (node instanceof NumericLiteral)
             return new IntegerLiteralC(scope, (NumericLiteral) node);
+        if (node instanceof ComplexNumericLiteral)
+            return new ComplexLiteralC(scope, (ComplexNumericLiteral) node);
+        if (node instanceof FloatNumericLiteral)
+            return new FloatLiteralC(scope, (FloatNumericLiteral) node);
         if (node instanceof BigNumericLiteral)
             return new BigIntegerLiteralC(scope, (BigNumericLiteral) node);
         if (node instanceof VariableReference)
@@ -119,9 +124,8 @@ public class PythonConstructFactory {
                 || node instanceof PythonFunctionDecorator || node instanceof PythonWithStatement
                 || node instanceof PythonRaiseStatement || node instanceof PythonTestListExpression
                 || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
-                || node instanceof PythonSubscriptExpression || node instanceof FloatNumericLiteral
-                || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement
-                || node instanceof ComplexNumericLiteral || node instanceof PythonTryStatement
+                || node instanceof PythonSubscriptExpression || node instanceof PythonWhileStatement
+                || node instanceof PythonYieldStatement || node instanceof PythonTryStatement
                 || node instanceof PythonExceptStatement) {
             System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
             return new UnhandledC(scope, node);

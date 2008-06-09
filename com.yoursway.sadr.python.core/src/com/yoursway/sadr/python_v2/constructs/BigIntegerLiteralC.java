@@ -26,7 +26,7 @@ public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
             
             @Override
             public String describe() {
-                String basic = "Evaluating integer literal";
+                String basic = "Evaluating long literal";
                 return basic + "\nfor expression " + BigIntegerLiteralC.this.toString();
             }
         };

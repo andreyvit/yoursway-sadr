@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
@@ -9,20 +10,26 @@ import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.sideeffects.ValueF;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.StringType;
+import com.yoursway.sadr.python_v2.model.builtins.UnicodeType;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     
+    private final boolean isUnicode;
+    private final String value;
+    
     StringLiteralC(Scope sc, StringLiteral node) {
         super(sc, node);
-    }
-    
-    public String stringValue() {
         String v = node.getValue();
+        if (v.startsWith("u") || v.startsWith("U")) {
+            isUnicode = true;
+            v = v.substring(1);
+        } else {
+            isUnicode = false;
+        }
         v = unquote(v);
-        v = v.replaceAll("\\n", "\n");
+        value = v.replaceAll("\\n", "\n");
         //        v = v.replaceAll("<CR>", "\n");
-        return v;
     }
     
     private static String unquote(String text) {
@@ -39,7 +46,12 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                acceptor.addResult(StringType.wrap(StringLiteralC.this), getContext());
+                RuntimeObject wrappedValue;
+                if (isUnicode)
+                    wrappedValue = UnicodeType.wrap(StringLiteralC.this);
+                else
+                    wrappedValue = StringType.wrap(StringLiteralC.this);
+                acceptor.addResult(wrappedValue, getContext());
                 updateGrade(acceptor, Grade.DONE);
             }
             
@@ -50,8 +62,17 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
         };
     }
     
+    public String stringValue() {
+        return value;
+    }
+    
+    public boolean isUnicode() {
+        return isUnicode;
+    }
+    
     @Override
     public Frog toFrog() {
         return new ValueF(StringType.wrap(this));
     }
+    
 }
