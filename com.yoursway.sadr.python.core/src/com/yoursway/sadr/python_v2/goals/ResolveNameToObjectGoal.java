@@ -61,22 +61,13 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
         //FIXME change getEnclosedConstructs to iterator allowing parallel execution
         result = findInScope(scope);
         scope = scope.parentScope();
-        if (null == result) {
+        while (result == null && scope != null) {
             if (getContext() != null && getContext().contains(this.name)) {
                 RuntimeObject argument = getContext().getActualArgument(this.name);
                 acceptor().addResult(argument, getContext());
                 updateGrade(acceptor(), Grade.DONE);
                 return;
             }
-            //            if (name.equals("self") && this.var.parentScope() instanceof MethodDeclarationC && scope != null
-            //                    && scope instanceof ClassDeclarationC) {
-            //                ClassDeclarationC classC = (ClassDeclarationC) scope;
-            //                //FIXME: HACK for self handling
-            //                schedule(new CreateInstanceGoal(classC, new PythonArguments(), null, acceptor));
-            //                return;
-            //            }
-        }
-        while (result == null && scope != null) {
             result = findInScope(scope);
             scope = scope.parentScope();
         }
