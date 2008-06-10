@@ -31,7 +31,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         }
     }
     
-    protected void setSintacticallyPreviousConstruct(PythonConstruct construct) {
+    protected void setSyntacticallyPreviousConstruct(PythonConstruct construct) {
         sintacticallyPreviousConstruct = (PythonConstructImpl<ASTNode>) construct;
     }
     
@@ -163,7 +163,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
             PythonConstructImpl<ASTNode> pyChild = (PythonConstructImpl<ASTNode>) child;
             pyChild.setupPrevConstructRelation(prev);
         }
-        setSintacticallyPreviousConstruct(prev);
+        setSyntacticallyPreviousConstruct(prev);
         for (PythonConstruct child : getPostChildren()) {
             PythonConstructImpl<ASTNode> pyChild = (PythonConstructImpl<ASTNode>) child;
             pyChild.setupPrevConstructRelation(this);
@@ -182,7 +182,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     protected PythonConstruct setPrevConstructRelation(PythonConstruct prev, List<PythonConstruct> constructs) {
         for (PythonConstruct c : constructs) {
             PythonConstructImpl<ASTNode> construct = (PythonConstructImpl<ASTNode>) c;
-            construct.setSintacticallyPreviousConstruct(prev);
+            construct.setSyntacticallyPreviousConstruct(prev);
             prev = c;
         }
         return prev;

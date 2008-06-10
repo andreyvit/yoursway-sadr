@@ -56,42 +56,37 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
     }
     
     public void preRun() {
+        PythonConstruct currentConstruct = this.var;
+        Scope scope = currentConstruct.parentScope();
         PythonConstruct result = null;
-        Scope scope = this.var.innerScope();
-        //FIXME change getEnclosedConstructs to iterator allowing parallel execution
-        result = findInScope(scope);
-        scope = scope.parentScope();
-        while (result == null && scope != null) {
-            if (getContext() != null && getContext().contains(this.name)) {
+        while (true) {
+            PythonConstruct prevConstruct = currentConstruct;
+            do {
+                result = match(currentConstruct);
+                currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();//TODO goal here
+            } while (result == null
+                    && !(currentConstruct instanceof Scope && currentConstruct == prevConstruct.parentScope()));
+            if (null != result) {
+                processResultConstruct(result);
+                break;
+            } else if (getContext() != null && getContext().contains(this.name)) {
                 RuntimeObject argument = getContext().getActualArgument(this.name);
                 acceptor().addResult(argument, getContext());
                 updateGrade(acceptor(), Grade.DONE);
-                return;
+                break;
             }
-            result = findInScope(scope);
             scope = scope.parentScope();
-        }
-        processResultConstruct(result);
-    }
-    
-    protected PythonConstruct findInScope(Scope scope) {
-        PythonConstruct currentConstruct;
-        if (scope == this.var.parentScope())
-            currentConstruct = this.var;
-        else
-            currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
-        PythonConstruct result = null;
-        while (currentConstruct != null && result == null) {
-            result = match(currentConstruct);
-            PythonConstruct prev = currentConstruct;
-            currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();//TODO goal here
-            if (currentConstruct instanceof Scope) {//exit from scope
-                Scope sc = (Scope) currentConstruct;
-                if (sc == prev.parentScope())
-                    break;
+            if (scope == null) {
+                RuntimeObject object = Builtins.instance().getAttribute(name);
+                if (object != null) {
+                    acceptor().addResult(object, getContext());
+                }
+                //TODO if result is null return IMPOSSIBLE object
+                updateGrade(acceptor(), Grade.DONE);
+                break;
             }
+            currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
         }
-        return result;
     }
     
     private PythonConstruct match(PythonConstruct currentConstruct) {
@@ -144,16 +139,8 @@ public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
             FunctionObject obj = new FunctionObject(classDeclarationC);
             acceptor().addResult(obj, getContext());
             updateGrade(acceptor(), Grade.DONE);
-        } else if (result == null) {
-            RuntimeObject object = Builtins.instance().getAttribute(name);
-            if (object != null) {
-                acceptor().addResult(object, getContext());
-            }
-            //TODO if result is null return IMPOSSIBLE object
-            updateGrade(acceptor(), Grade.DONE);
-        } else {
-            throw new IllegalStateException("should never reach this place");
-        }
+        } else
+            throw new IllegalStateException("Illegal construct occured.");
     }
     
     @Override

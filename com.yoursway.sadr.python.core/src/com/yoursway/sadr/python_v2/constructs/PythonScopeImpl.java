@@ -15,7 +15,7 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     
     @Override
     protected void setupPrevConstructRelation(PythonConstruct prev) {
-        setSintacticallyPreviousConstruct(prev);
+        setSyntacticallyPreviousConstruct(prev);
         prev = this;
         //scope prechildren are not taken into account.
         for (PythonConstruct construct : getPostChildren()) {

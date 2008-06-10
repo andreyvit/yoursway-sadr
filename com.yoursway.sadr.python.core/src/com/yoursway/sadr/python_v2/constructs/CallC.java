@@ -153,7 +153,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             pyPreChild.setupPrevConstructRelation(prev);
             prev = preChild;
         }
-        this.setSintacticallyPreviousConstruct(prev);
+        this.setSyntacticallyPreviousConstruct(prev);
         assert getPostChildren().size() == 0 : "Must be no post children in CallC.";
     }
 }
