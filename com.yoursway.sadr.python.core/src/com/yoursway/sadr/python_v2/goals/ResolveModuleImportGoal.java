@@ -60,7 +60,7 @@ public class ResolveModuleImportGoal extends Goal {
             if (fileC == null) {
                 updateGrade(acceptor, Grade.DONE);
             } else {
-                schedule(new ResolveNameToObjectGoal(fileC, variable, acceptor, context));
+                schedule(new ResolveNameToObjectGoal(variable, fileC, context, acceptor));
             }
         } else if (module.getValue().getVar() != null) { // found explicit import of var
             String path = module.getValue().getPath();
@@ -68,7 +68,7 @@ public class ResolveModuleImportGoal extends Goal {
             if (fileC == null) {
                 updateGrade(acceptor, Grade.DONE);
             } else {
-                schedule(new ResolveNameToObjectGoal(fileC, module.getValue().getVar(), acceptor, context));
+                schedule(new ResolveNameToObjectGoal(module.getValue().getVar(), fileC, context, acceptor));
             }
         } else { // found submodule
             acceptor.addResult(module, context);

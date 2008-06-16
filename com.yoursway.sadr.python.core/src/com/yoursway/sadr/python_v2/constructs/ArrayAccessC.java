@@ -71,8 +71,8 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
                         }
                     }
                 };
-                schedule(new ResolveNameToObjectGoal((VariableReferenceC) array, rc.createAcceptor(0),
-                        context));
+                schedule(new ResolveNameToObjectGoal((VariableReferenceC) array, context, rc
+                        .createAcceptor(0)));
                 schedule(rc.addSubgoal(index, 1));
                 rc.startCollecting();
             }

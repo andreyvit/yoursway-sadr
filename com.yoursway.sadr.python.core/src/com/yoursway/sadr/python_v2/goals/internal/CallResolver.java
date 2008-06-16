@@ -14,7 +14,6 @@ import com.yoursway.sadr.python_v2.constructs.PythonLambdaExpressionC;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
 import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.FindClassMethodGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -59,10 +58,11 @@ public final class CallResolver {
             throw new IllegalStateException("Receiver is null!");
         }
         System.out.println("Looking for: " + receiver.toString() + "." + methodName);
-        RuntimeObject callable = receiver.getAttribute(methodName); // look for builtins
+        RuntimeObject callable = receiver.getAttribute(methodName); // instance attributes
         if (callable == null && receiver.getType() instanceof PythonUserClassType) { // look into class definition
             PythonUserClassType userClass = (PythonUserClassType) receiver.getType();
-            return new FindClassMethodGoal(userClass.getDecl(), methodName, acceptor, context);
+            MethodDeclarationC declaredMethod = userClass.getDecl().findDeclaredMethod(methodName);
+            return declaredMethod.evaluate(context, acceptor);
         }
         return new PassResultGoal(context, acceptor, callable);
     }

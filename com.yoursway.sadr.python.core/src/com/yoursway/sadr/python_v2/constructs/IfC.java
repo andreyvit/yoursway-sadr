@@ -61,4 +61,8 @@ public class IfC extends PythonConstructImpl<IfStatement> {
     public List<PythonConstruct> elseBlock() {
         return elseBlock;
     }
+    
+    public PythonConstruct getCondition() {
+        return condition;
+    }
 }

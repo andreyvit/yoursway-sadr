@@ -4,156 +4,158 @@ import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.AssignmentC;
-import com.yoursway.sadr.python_v2.constructs.CallC;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
-import com.yoursway.sadr.python_v2.constructs.MethodCallC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
-import com.yoursway.sadr.python_v2.constructs.ProcedureCallC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
+import com.yoursway.sadr.succeeder.IGrade;
 
-public class ResolveNameToObjectGoal extends ContextSensitiveGoal {
+public class ResolveNameToObjectGoal extends IterationGoal {
     
-    private PythonValueSetAcceptor acceptor;
-    private final PythonConstruct var;
+    //    private final PythonConstruct var;
     private final String name;
+    private final PythonConstruct from;
     
-    protected ResolveNameToObjectGoal(PythonConstruct start, String name, PythonValueSetAcceptor acceptor,
-            Context context) {
-        super(context);
+    public ResolveNameToObjectGoal(String name, PythonConstruct from, Context context,
+            final PythonValueSetAcceptor acceptor) {
+        super(acceptor, context);
         this.name = name;
-        this.setAcceptor(acceptor);
-        this.var = start;
-        if (this.var == null) {
-            throw new NullPointerException("Var is null");
-        }
-        
+        this.from = from;
+        assert name != null && from != null;
     }
     
-    public ResolveNameToObjectGoal(VariableReferenceC var, PythonValueSetAcceptor acceptor, Context context) {
-        super(context);
-        this.var = var;
-        this.name = var.node().getName();
-        this.setAcceptor(acceptor);
+    public ResolveNameToObjectGoal(VariableReferenceC variable, Context context,
+            final PythonValueSetAcceptor acceptor) {
+        super(acceptor, context);
+        this.name = variable.name();
+        this.from = variable;
+        assert name != null && from != null;
     }
     
-    public ResolveNameToObjectGoal(CallC var, PythonValueSetAcceptor acceptor, Context context) {
-        super(context);
-        this.var = var;
-        if (var instanceof MethodCallC) {
-            this.name = var.node().getName();
-        } else if (var instanceof ProcedureCallC) {
-            this.name = var.node().getName();
-        } else {
-            throw new IllegalStateException("should never reach this place");
-        }
-        this.setAcceptor(acceptor);
+    private boolean scopeLeft(PythonConstruct currentConstruct, PythonConstruct prevConstruct) {
+        return currentConstruct == null && prevConstruct != null
+                || currentConstruct.parentScope() != prevConstruct.parentScope();
     }
     
-    public void preRun() {
-        PythonConstruct currentConstruct = this.var;
-        Scope scope = currentConstruct.parentScope();
-        PythonConstruct result = null;
-        while (true) {
-            PythonConstruct prevConstruct = currentConstruct;
-            do {
-                result = match(currentConstruct);
-                currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();//TODO goal here
-            } while (result == null
-                    && !(currentConstruct instanceof Scope && currentConstruct == prevConstruct.parentScope()));
-            if (null != result) {
-                processResultConstruct(result);
-                break;
-            } else if (getContext() != null && getContext().contains(this.name)) {
-                RuntimeObject argument = getContext().getActualArgument(this.name);
-                acceptor().addResult(argument, getContext());
-                updateGrade(acceptor(), Grade.DONE);
-                break;
-            }
-            scope = scope.parentScope();
-            if (scope == null) {
-                RuntimeObject object = Builtins.instance().getAttribute(name);
-                if (object != null) {
-                    acceptor().addResult(object, getContext());
-                }
-                //TODO if result is null return IMPOSSIBLE object
-                updateGrade(acceptor(), Grade.DONE);
-                break;
-            }
-            currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
-        }
-    }
-    
-    private PythonConstruct match(PythonConstruct currentConstruct) {
-        PythonConstruct result = null;
+    private boolean match(PythonConstruct currentConstruct) {
         if (currentConstruct instanceof AssignmentC) {
             AssignmentC assignmentC = (AssignmentC) currentConstruct;
             PythonConstruct lhs = assignmentC.lhs();
             if (lhs instanceof VariableReferenceC) {
                 VariableReferenceC reference = (VariableReferenceC) lhs;
                 if (reference.node().getName().equals(this.name)) {
-                    result = assignmentC;
+                    PythonConstruct subexpr = assignmentC.rhs();
+                    schedule(subexpr.evaluate(getContext(), incSync.createAcceptor(getContext())));
+                    return true;
                 }
             }
         } else if (currentConstruct instanceof MethodDeclarationC) {
             //FIXME merge with previous if-statement.
             MethodDeclarationC declarationC = (MethodDeclarationC) currentConstruct;
             if (declarationC.node().getName().equals(this.name)) {
-                result = declarationC;
+                FunctionObject obj = new FunctionObject(declarationC);
+                PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                resultAcceptor.addResult(obj, getContext());
+                updateGrade(resultAcceptor, Grade.DONE);
+                return true;
             }
         } else if (currentConstruct instanceof ClassDeclarationC) {
             //FIXME merge with previous if-statement.
             ClassDeclarationC declarationC = (ClassDeclarationC) currentConstruct;
             if (declarationC.node().getName().equals(this.name)) {
-                result = declarationC;
+                FunctionObject obj = new FunctionObject(declarationC);
+                PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                resultAcceptor.addResult(obj, getContext());
+                updateGrade(resultAcceptor, Grade.DONE);
+                return true;
             }
         } else if (currentConstruct instanceof ImportDeclarationC) {
             ImportDeclarationC moduleImport = (ImportDeclarationC) currentConstruct;
             if (moduleImport.hasImport(this.name)) {
-                result = moduleImport;
+                schedule(new ResolveModuleImportGoal(moduleImport, this.name, incSync
+                        .createAcceptor(getContext()), getContext()));
+                return true;
             }
+        } else if (currentConstruct instanceof IfC) {
+            final IfC ifc = (IfC) currentConstruct;
+            schedule(ifc.getCondition().evaluate(getContext(), new PythonValueSetAcceptor(getContext()) {
+                
+                @Override
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                    if (null == result)
+                        return;
+                    schedule(CallResolver.callMethod(result, "__nonzero__", new PythonArguments(),
+                            new PythonValueSetAcceptor(getContext()) {
+                                
+                                @Override
+                                protected <K> void acceptIndividualResult(RuntimeObject result,
+                                        IGrade<K> grade) {
+                                    if (Builtins.getTrue().equals(result)) {
+                                        schedule(new ResolveNameToObjectGoal(name, ifc.thenBlock().get(
+                                                ifc.thenBlock().size() - 1), getContext(), incSync
+                                                .createAcceptor(getContext())));
+                                    } else if (Builtins.getFalse().equals(result)) {
+                                        schedule(new ResolveNameToObjectGoal(name, ifc.elseBlock().get(
+                                                ifc.elseBlock().size() - 1), getContext(), incSync
+                                                .createAcceptor(getContext())));
+                                    } else {
+                                        //TODO schedule both
+                                    }
+                                }
+                            }, getContext()));
+                }
+            }));
+            return true;
+            
         }
-        return result;
-    }
-    
-    public void processResultConstruct(PythonConstruct result) {
-        if (result instanceof AssignmentC) {
-            AssignmentC assignmentC = (AssignmentC) result;
-            PythonConstruct subexpr = assignmentC.rhs();
-            schedule(subexpr.evaluate(getContext(), acceptor()));
-        } else if (result instanceof MethodDeclarationC) {
-            MethodDeclarationC methodDeclarationC = (MethodDeclarationC) result;
-            FunctionObject obj = new FunctionObject(methodDeclarationC);
-            acceptor().addResult(obj, getContext());
-            updateGrade(acceptor(), Grade.DONE);
-        } else if (result instanceof ImportDeclarationC) {
-            ImportDeclarationC moduleImport = (ImportDeclarationC) result;
-            schedule(new ResolveModuleImportGoal(moduleImport, this.name, acceptor, getContext()));
-        } else if (result instanceof ClassDeclarationC) {
-            ClassDeclarationC classDeclarationC = (ClassDeclarationC) result;
-            FunctionObject obj = new FunctionObject(classDeclarationC);
-            acceptor().addResult(obj, getContext());
-            updateGrade(acceptor(), Grade.DONE);
-        } else
-            throw new IllegalStateException("Illegal construct occured.");
+        return false;
     }
     
     @Override
     public String describe() {
-        String scope = (var.innerScope()).toString();
+        String scope = (from.innerScope()).toString();
         return super.describe() + "\nfor name " + this.name + " in " + scope;
     }
     
-    public void setAcceptor(PythonValueSetAcceptor acceptor) {
-        this.acceptor = acceptor;
-    }
-    
-    public PythonValueSetAcceptor acceptor() {
-        return acceptor;
+    @Override
+    protected IterationGoal iteration() {
+        PythonConstruct currentConstruct = this.from;
+        Scope scope = currentConstruct.parentScope();
+        boolean found = match(currentConstruct);
+        PythonConstruct prevConstruct = currentConstruct;
+        currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();
+        if (found)
+            return null;
+        if (scopeLeft(currentConstruct, prevConstruct)) {
+            if (getContext() != null && getContext().contains(this.name)) {
+                RuntimeObject argument = getContext().getActualArgument(this.name);
+                PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                resultAcceptor.addResult(argument, getContext());
+                updateGrade(resultAcceptor, Grade.DONE);
+                return null;
+            }
+            scope = scope.parentScope();
+            if (scope == null) {
+                //built-in name is checked
+                RuntimeObject object = Builtins.instance().getAttribute(name);
+                if (object != null) {
+                    PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                    resultAcceptor.addResult(object, getContext());
+                    updateGrade(resultAcceptor, Grade.DONE);
+                }
+                //TODO if result is empty return IMPOSSIBLE object
+                return null;
+            }
+            currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
+        }
+        return new ResolveNameToObjectGoal(name, currentConstruct, getContext(), resultsAcceptor());
     }
 }

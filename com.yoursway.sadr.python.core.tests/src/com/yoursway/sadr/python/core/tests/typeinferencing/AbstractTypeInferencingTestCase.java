@@ -676,8 +676,8 @@ public abstract class AbstractTypeInferencingTestCase {
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             if (construct instanceof VariableReferenceC) {
-                return new ResolveNameToObjectGoal((VariableReferenceC) construct, acceptor,
-                        Context.EMPTY_CONTEXT);
+                return new ResolveNameToObjectGoal((VariableReferenceC) construct, Context.EMPTY_CONTEXT,
+                        acceptor);
             } else {
                 throw new IllegalStateException("Should be VariableReferenceC, but found "
                         + construct.getClass().getSimpleName());
