@@ -86,33 +86,33 @@ public class ResolveNameToObjectGoal extends IterationGoal {
             }
         } else if (currentConstruct instanceof IfC) {
             final IfC ifc = (IfC) currentConstruct;
-            schedule(ifc.getCondition().evaluate(getContext(), new PythonValueSetAcceptor(getContext()) {
-                
-                @Override
-                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                    if (null == result)
-                        return;
-                    schedule(CallResolver.callMethod(result, "__nonzero__", new PythonArguments(),
-                            new PythonValueSetAcceptor(getContext()) {
-                                
-                                @Override
-                                protected <K> void acceptIndividualResult(RuntimeObject result,
-                                        IGrade<K> grade) {
-                                    if (Builtins.getTrue().equals(result)) {
-                                        schedule(new ResolveNameToObjectGoal(name, ifc.thenBlock().get(
-                                                ifc.thenBlock().size() - 1), getContext(), incSync
-                                                .createAcceptor(getContext())));
-                                    } else if (Builtins.getFalse().equals(result)) {
-                                        schedule(new ResolveNameToObjectGoal(name, ifc.elseBlock().get(
-                                                ifc.elseBlock().size() - 1), getContext(), incSync
-                                                .createAcceptor(getContext())));
-                                    } else {
-                                        //TODO schedule both
-                                    }
-                                }
-                            }, getContext()));
-                }
-            }));
+            schedule(ifc.getCondition().evaluate(getContext(), new PythonValueSetAcceptor(getContext()) {//TODO incSync here
+                    
+                        @Override
+                        protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                            if (null == result)
+                                return;
+                            schedule(CallResolver.callMethod(result, "__nonzero__", new PythonArguments(),
+                                    new PythonValueSetAcceptor(getContext()) {//TODO incSync here
+                                    
+                                        @Override
+                                        protected <K> void acceptIndividualResult(RuntimeObject result,
+                                                IGrade<K> grade) {
+                                            if (Builtins.getTrue().equals(result)) {
+                                                schedule(new ResolveNameToObjectGoal(name, ifc.thenBlock()
+                                                        .get(ifc.thenBlock().size() - 1), getContext(),
+                                                        incSync.createAcceptor(getContext())));
+                                            } else if (Builtins.getFalse().equals(result)) {
+                                                schedule(new ResolveNameToObjectGoal(name, ifc.elseBlock()
+                                                        .get(ifc.elseBlock().size() - 1), getContext(),
+                                                        incSync.createAcceptor(getContext())));
+                                            } else {
+                                                //TODO schedule both
+                                            }
+                                        }
+                                    }, getContext()));
+                        }
+                    }));
             return true;
             
         }

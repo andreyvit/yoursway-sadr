@@ -62,6 +62,9 @@ public final class CallResolver {
         if (callable == null && receiver.getType() instanceof PythonUserClassType) { // look into class definition
             PythonUserClassType userClass = (PythonUserClassType) receiver.getType();
             MethodDeclarationC declaredMethod = userClass.getDecl().findDeclaredMethod(methodName);
+            if (null == declaredMethod) {
+                return new PassResultGoal(context, acceptor, null);//TODO empty result
+            }
             return declaredMethod.evaluate(context, acceptor);
         }
         return new PassResultGoal(context, acceptor, callable);

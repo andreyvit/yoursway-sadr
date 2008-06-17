@@ -12,6 +12,7 @@ public abstract class IncrementableSynchronizer extends Synchronizer {
     
     private final Collection<PythonValueSetAcceptor> acceptors = new LinkedList<PythonValueSetAcceptor>();
     private final PythonValueSetAcceptor totalResultAcceptor;
+    private Object object;
     
     public IncrementableSynchronizer(PythonValueSetAcceptor totalResultAcceptor) {
         this.totalResultAcceptor = totalResultAcceptor;
@@ -36,5 +37,13 @@ public abstract class IncrementableSynchronizer extends Synchronizer {
         this.acceptors.add(res);
         counter++;
         return res;
+    }
+    
+    public void attachObject(Object object) {
+        this.object = object;
+    }
+    
+    protected Object getAttachedObject() {
+        return this.object;
     }
 }

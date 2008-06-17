@@ -13,7 +13,7 @@ import java.util.TreeMap;
 public class Engine implements IScheduler {
     
     private static final boolean DEBUG_PRINT = false;
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     
     private Map<IAcceptor, IGrade<?>> acceptors = new HashMap<IAcceptor, IGrade<?>>();
     private final Map<IAcceptor, IGrade<?>> oldAcceptors = new HashMap<IAcceptor, IGrade<?>>();

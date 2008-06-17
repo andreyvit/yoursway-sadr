@@ -19,17 +19,17 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.sideeffects.VariableReadF;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     
     private Map<String, PythonConstruct> inits;
+    private FunctionObject functionObject;
     
     MethodDeclarationC(Scope sc, MethodDeclaration node) {
         super(sc, node);
@@ -70,17 +70,9 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     
     @Override
     public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
-        return new ExpressionValueGoal(context, acceptor) {
-            
-            public void preRun() {
-                updateGrade(acceptor, Grade.DONE);
-            }
-            
-            @Override
-            public String describe() {
-                return super.describe() + "\nfor expression " + MethodDeclarationC.this.toString();
-            }
-        };
+        if (functionObject == null)
+        functionObject = new FunctionObject(this);
+        return new PassResultGoal(context, acceptor, functionObject);
     }
     
     //    public void actOnModel(ModelRequest request) {
