@@ -9,6 +9,7 @@ import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
@@ -30,6 +31,14 @@ public class ResolveNameToObjectGoal extends IterationGoal {
         this.name = name;
         this.from = from;
         assert name != null && from != null;
+    }
+    
+    public ResolveNameToObjectGoal(String name, PythonFileC from, Context context,
+            final PythonValueSetAcceptor acceptor) {
+        super(acceptor, context);
+        assert name != null && from != null;
+        this.name = name;
+        this.from = from.getPostChildren().get(from.getPostChildren().size() - 1);
     }
     
     public ResolveNameToObjectGoal(VariableReferenceC variable, Context context,
@@ -129,10 +138,10 @@ public class ResolveNameToObjectGoal extends IterationGoal {
     protected IterationGoal iteration() {
         PythonConstruct currentConstruct = this.from;
         Scope scope = currentConstruct.parentScope();
-        boolean found = match(currentConstruct);
+        boolean foundOrImported = match(currentConstruct);
         PythonConstruct prevConstruct = currentConstruct;
         currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();
-        if (found)
+        if (foundOrImported)
             return null;
         if (scopeLeft(currentConstruct, prevConstruct)) {
             if (getContext() != null && getContext().contains(this.name)) {
