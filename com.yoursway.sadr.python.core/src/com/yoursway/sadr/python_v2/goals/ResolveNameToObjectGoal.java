@@ -95,6 +95,7 @@ public class ResolveNameToObjectGoal extends IterationGoal {
             }
         } else if (currentConstruct instanceof IfC) {
             final IfC ifc = (IfC) currentConstruct;
+            incSync.increment();
             schedule(ifc.getCondition().evaluate(getContext(), new PythonValueSetAcceptor(getContext()) {//TODO incSync here
                     
                         @Override
@@ -103,7 +104,17 @@ public class ResolveNameToObjectGoal extends IterationGoal {
                                 return;
                             schedule(CallResolver.callMethod(result, "__nonzero__", new PythonArguments(),
                                     new PythonValueSetAcceptor(getContext()) {//TODO incSync here
-                                    
+                                        private boolean decremented = false;
+                                        
+                                        @Override
+                                        public <K> void checkpoint(IGrade<K> grade) {
+                                            super.checkpoint(grade);
+                                            if (!decremented) {
+                                                decremented = true;
+                                                incSync.decrement();
+                                            }
+                                        }
+                                        
                                         @Override
                                         protected <K> void acceptIndividualResult(RuntimeObject result,
                                                 IGrade<K> grade) {

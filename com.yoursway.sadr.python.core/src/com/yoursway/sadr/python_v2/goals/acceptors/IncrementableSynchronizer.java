@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -37,6 +38,18 @@ public abstract class IncrementableSynchronizer extends Synchronizer {
         this.acceptors.add(res);
         counter++;
         return res;
+    }
+    
+    //TODO replace increment-decrement mechanism with something more safe.
+    public void increment() {
+        assert counter >= 0;
+        ++counter;
+    }
+    
+    public void decrement() {
+        assert counter > 0;
+        if (--counter <= 0)
+            completed(Grade.DONE);
     }
     
     public void attachObject(Object object) {
