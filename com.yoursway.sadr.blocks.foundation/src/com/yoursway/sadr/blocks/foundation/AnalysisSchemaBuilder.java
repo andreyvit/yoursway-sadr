@@ -4,7 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.Collection;
 
-import com.yoursway.utils.facelets.GemstoneDefinitionBuilder;
+import com.yoursway.utils.gemstones.GemstoneDefinitionBuilder;
 
 public class AnalysisSchemaBuilder {
     

@@ -2,7 +2,7 @@ package com.yoursway.sadr.blocks.integer_literals;
 
 import com.yoursway.sadr.blocks.foundation.RuntimeModel;
 import com.yoursway.sadr.blocks.simple_types.SimpleType;
-import com.yoursway.utils.facelets.FaceletImpl;
+import com.yoursway.utils.gemstones.FaceletImpl;
 
 public class RuntimeModelWithIntegerTypesImpl extends FaceletImpl<RuntimeModel> implements
         RuntimeModelWithIntegerTypes {

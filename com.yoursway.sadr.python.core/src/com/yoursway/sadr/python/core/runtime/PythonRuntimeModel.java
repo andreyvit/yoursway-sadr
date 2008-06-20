@@ -25,8 +25,8 @@ import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
-import com.yoursway.utils.facelets.GemstoneDefinition;
-import com.yoursway.utils.facelets.GemstoneImpl;
+import com.yoursway.utils.gemstones.GemstoneDefinition;
+import com.yoursway.utils.gemstones.GemstoneImpl;
 
 public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements ClassLookup, VariableLookup,
         ProcedureLookup, RuntimeModel {

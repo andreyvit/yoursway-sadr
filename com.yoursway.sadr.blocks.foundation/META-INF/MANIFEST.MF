@@ -7,7 +7,9 @@ Bundle-Vendor: YourSway
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: com.google.collections;bundle-version="1.0.0",
  com.yoursway.sadr.core;bundle-version="1.0.0",
- com.yoursway.sadr.engine;bundle-version="1.0.0"
+ com.yoursway.sadr.engine;bundle-version="1.0.0",
+ com.yoursway.gemstones;bundle-version="1.0.0";visibility:=reexport,
+ com.yoursway.utils;bundle-version="1.0.0"
 Export-Package: com.yoursway.sadr.blocks.foundation,
  com.yoursway.sadr.blocks.foundation.types,
  com.yoursway.sadr.blocks.foundation.typesets,
@@ -16,5 +18,4 @@ Export-Package: com.yoursway.sadr.blocks.foundation,
  com.yoursway.sadr.blocks.foundation.values,
  com.yoursway.sadr.blocks.foundation.wildcards,
  com.yoursway.sadr.python.core.typeinferencing.valuesets,
- com.yoursway.sadr.python.core.typeinferencing.valuesets.internal,
- com.yoursway.utils.facelets
+ com.yoursway.sadr.python.core.typeinferencing.valuesets.internal

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.yoursway.sadr.blocks.foundation.RuntimeModel;
-import com.yoursway.utils.facelets.FaceletImpl;
+import com.yoursway.utils.gemstones.FaceletImpl;
 
 class RuntimeModelWithSimpleTypesImpl extends FaceletImpl<RuntimeModel> implements
         RuntimeModelWithSimpleTypes {

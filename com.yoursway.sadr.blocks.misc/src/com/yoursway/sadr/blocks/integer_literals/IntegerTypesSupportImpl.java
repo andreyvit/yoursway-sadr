@@ -10,9 +10,9 @@ import com.yoursway.sadr.blocks.simple_types.SimpleTypesSupport;
 import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.utils.facelets.FaceletFactory;
-import com.yoursway.utils.facelets.GemstoneDefinitionBuilder;
-import com.yoursway.utils.facelets.Slot;
+import com.yoursway.utils.gemstones.FaceletFactory;
+import com.yoursway.utils.gemstones.GemstoneDefinitionBuilder;
+import com.yoursway.utils.gemstones.Slot;
 
 public class IntegerTypesSupportImpl extends AbstractBuildingBlock implements IntegerTypesSupport {
     

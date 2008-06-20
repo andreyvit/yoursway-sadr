@@ -3,9 +3,9 @@ package com.yoursway.sadr.blocks.simple_types;
 import com.yoursway.sadr.blocks.foundation.AbstractBuildingBlock;
 import com.yoursway.sadr.blocks.foundation.AnalysisSchemaBuilder;
 import com.yoursway.sadr.blocks.foundation.RuntimeModel;
-import com.yoursway.utils.facelets.FaceletFactory;
-import com.yoursway.utils.facelets.GemstoneDefinitionBuilder;
-import com.yoursway.utils.facelets.Slot;
+import com.yoursway.utils.gemstones.FaceletFactory;
+import com.yoursway.utils.gemstones.GemstoneDefinitionBuilder;
+import com.yoursway.utils.gemstones.Slot;
 
 public class SimpleTypesSupportImpl extends AbstractBuildingBlock implements SimpleTypesSupport {
     
