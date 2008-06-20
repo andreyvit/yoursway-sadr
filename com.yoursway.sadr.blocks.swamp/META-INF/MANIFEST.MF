@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Swamp Plug-in
+Bundle-SymbolicName: com.yoursway.sadr.blocks.swamp
+Bundle-Version: 1.0.0
+Bundle-Vendor: YOURSWAY
+Require-Bundle: com.yoursway.sadr.blocks.foundation;bundle-version="1.0.0",
+ com.google.collections;bundle-version="1.0.0",
+ com.yoursway.sadr.core;bundle-version="1.0.0",
+ com.yoursway.sadr.engine;bundle-version="1.0.0",
+ com.yoursway.utils;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: com.yoursway.sadr.blocks.swamp,
+ com.yoursway.sadr.blocks.swamp.effects,
+ com.yoursway.sadr.blocks.swamp.formulas,
+ com.yoursway.sadr.blocks.swamp.old,
+ com.yoursway.sadr.blocks.swamp.requests

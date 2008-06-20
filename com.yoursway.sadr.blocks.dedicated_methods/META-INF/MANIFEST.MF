@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dedicated methods block
+Bundle-SymbolicName: com.yoursway.sadr.blocks.dedicated_methods
+Bundle-Version: 1.0.0
+Bundle-Vendor: YOURSWAY
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
