@@ -10,7 +10,8 @@ abstract public class Synchronizer {
     }
     
     public Synchronizer(int i) {
-        assert i > 0;
+        if (i <= 0)
+            throw new IllegalArgumentException();
         counter = i;
     }
     

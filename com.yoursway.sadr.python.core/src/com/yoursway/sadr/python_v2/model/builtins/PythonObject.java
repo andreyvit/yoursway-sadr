@@ -23,7 +23,6 @@ public class PythonObject implements RuntimeObject {
     }
     
     public PythonObject(PythonClassType type) {
-        //assert type != null;
         this.type = type;
         this.decl = null;
     }

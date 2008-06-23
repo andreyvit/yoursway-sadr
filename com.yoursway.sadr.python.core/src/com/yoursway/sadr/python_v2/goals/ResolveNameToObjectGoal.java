@@ -31,13 +31,15 @@ public class ResolveNameToObjectGoal extends IterationGoal<PythonValueSetAccepto
         super(acceptor, context);
         this.name = name;
         this.from = from;
-        assert name != null && from != null;
+        if (name == null || from == null)
+            throw new IllegalArgumentException();
     }
     
     public ResolveNameToObjectGoal(String name, PythonFileC from, Context context,
             final PythonValueSetAcceptor acceptor) {
         super(acceptor, context);
-        assert name != null && from != null;
+        if (name == null || from == null)
+            throw new IllegalArgumentException();
         this.name = name;
         this.from = from.getPostChildren().get(from.getPostChildren().size() - 1);
     }
@@ -47,7 +49,8 @@ public class ResolveNameToObjectGoal extends IterationGoal<PythonValueSetAccepto
         super(acceptor, context);
         this.name = variable.name();
         this.from = variable;
-        assert name != null && from != null;
+        if (name == null || from == null)
+            throw new IllegalArgumentException();
     }
     
     private boolean scopeLeft(PythonConstruct currentConstruct, PythonConstruct prevConstruct) {
