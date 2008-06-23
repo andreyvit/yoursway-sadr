@@ -32,4 +32,6 @@ public interface PythonConstruct {
     List<PythonConstruct> getPreChildren();
     
     PythonConstruct getSyntacticallyPreviousConstruct();
+    
+    PythonConstruct parent();
 }

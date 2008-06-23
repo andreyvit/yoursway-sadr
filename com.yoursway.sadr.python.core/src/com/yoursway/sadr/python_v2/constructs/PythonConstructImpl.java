@@ -169,7 +169,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
             pyChild.setupPrevConstructRelation(this);
         }
     }
-
+    
     /**
      * 
      * @param prev
@@ -187,5 +187,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         }
         return prev;
         
+    }
+    
+    public PythonConstruct parent() {
+        //TODO implement parent relation
+        throw new UnsupportedOperationException();
     }
 }

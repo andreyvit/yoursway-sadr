@@ -2,20 +2,19 @@ package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python_v2.goals.acceptors.IncrementableSynchronizer;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IAcceptor;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
-public abstract class IterationGoal extends ContextSensitiveGoal {
-    protected final IncrementableSynchronizer incSync;
-    private final PythonValueSetAcceptor resultsAcceptor;
+public abstract class IterationGoal<AcceptorType extends IAcceptor> extends ContextSensitiveGoal {
+    protected final IncrementableSynchronizer<AcceptorType> incSync;
+    private final AcceptorType resultsAcceptor;
     
-    public IterationGoal(final PythonValueSetAcceptor resultsAcceptor, Context context) {
+    public IterationGoal(final AcceptorType resultsAcceptor, Context context) {
         super(context);
         this.resultsAcceptor = resultsAcceptor;
-        incSync = new IncrementableSynchronizer(resultsAcceptor) {
+        incSync = new IncrementableSynchronizer<AcceptorType>(resultsAcceptor) {
             @Override
             public <T> void completed(IGrade<T> grade) {
                 IGoal iteration = (IGoal) getAttachedObject();
@@ -27,16 +26,16 @@ public abstract class IterationGoal extends ContextSensitiveGoal {
         };
     }
     
-    protected abstract IterationGoal iteration();
+    protected abstract IterationGoal<AcceptorType> iteration();
     
     public void preRun() {
-        final IterationGoal iteration = iteration();
+        final IterationGoal<AcceptorType> iteration = iteration();
         incSync.attachObject(iteration);
-        IAcceptor nextIter = incSync.createAcceptor(getContext());
-        updateGrade(nextIter, Grade.DONE);
+        incSync.increment();
+        incSync.decrement();
     }
     
-    public PythonValueSetAcceptor resultsAcceptor() {
+    public AcceptorType resultsAcceptor() {
         return resultsAcceptor;
     }
 }

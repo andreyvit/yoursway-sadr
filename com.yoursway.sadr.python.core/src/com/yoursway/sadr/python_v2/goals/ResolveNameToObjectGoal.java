@@ -11,6 +11,7 @@ import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
+import com.yoursway.sadr.python_v2.goals.acceptors.PvsaDelegate;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -19,7 +20,7 @@ import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGrade;
 
-public class ResolveNameToObjectGoal extends IterationGoal {
+public class ResolveNameToObjectGoal extends IterationGoal<PythonValueSetAcceptor> {
     
     //    private final PythonConstruct var;
     private final String name;
@@ -62,7 +63,8 @@ public class ResolveNameToObjectGoal extends IterationGoal {
                 VariableReferenceC reference = (VariableReferenceC) lhs;
                 if (reference.node().getName().equals(this.name)) {
                     PythonConstruct subexpr = assignmentC.rhs();
-                    schedule(subexpr.evaluate(getContext(), incSync.createAcceptor(getContext())));
+                    PvsaDelegate delegate = new PvsaDelegate(incSync, getContext());
+                    schedule(subexpr.evaluate(getContext(), delegate));
                     return true;
                 }
             }
@@ -71,7 +73,7 @@ public class ResolveNameToObjectGoal extends IterationGoal {
             MethodDeclarationC declarationC = (MethodDeclarationC) currentConstruct;
             if (declarationC.node().getName().equals(this.name)) {
                 FunctionObject obj = new FunctionObject(declarationC);
-                PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                PythonValueSetAcceptor resultAcceptor = new PvsaDelegate(incSync, getContext());
                 resultAcceptor.addResult(obj, getContext());
                 updateGrade(resultAcceptor, Grade.DONE);
                 return true;
@@ -81,7 +83,7 @@ public class ResolveNameToObjectGoal extends IterationGoal {
             ClassDeclarationC declarationC = (ClassDeclarationC) currentConstruct;
             if (declarationC.node().getName().equals(this.name)) {
                 FunctionObject obj = new FunctionObject(declarationC);
-                PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                PythonValueSetAcceptor resultAcceptor = new PvsaDelegate(incSync, getContext());
                 resultAcceptor.addResult(obj, getContext());
                 updateGrade(resultAcceptor, Grade.DONE);
                 return true;
@@ -89,8 +91,8 @@ public class ResolveNameToObjectGoal extends IterationGoal {
         } else if (currentConstruct instanceof ImportDeclarationC) {
             ImportDeclarationC moduleImport = (ImportDeclarationC) currentConstruct;
             if (moduleImport.hasImport(this.name)) {
-                schedule(new ResolveModuleImportGoal(moduleImport, this.name, incSync
-                        .createAcceptor(getContext()), getContext()));
+                schedule(new ResolveModuleImportGoal(moduleImport, this.name, new PvsaDelegate(incSync,
+                        getContext()), getContext()));
                 return true;
             }
         } else if (currentConstruct instanceof IfC) {
@@ -119,13 +121,17 @@ public class ResolveNameToObjectGoal extends IterationGoal {
                                         protected <K> void acceptIndividualResult(RuntimeObject result,
                                                 IGrade<K> grade) {
                                             if (Builtins.getTrue().equals(result)) {
+                                                PvsaDelegate delegate = new PvsaDelegate(incSync,
+                                                        getContext());
                                                 schedule(new ResolveNameToObjectGoal(name, ifc.thenBlock()
                                                         .get(ifc.thenBlock().size() - 1), getContext(),
-                                                        incSync.createAcceptor(getContext())));
+                                                        delegate));
                                             } else if (Builtins.getFalse().equals(result)) {
+                                                PvsaDelegate delegate = new PvsaDelegate(incSync,
+                                                        getContext());
                                                 schedule(new ResolveNameToObjectGoal(name, ifc.elseBlock()
                                                         .get(ifc.elseBlock().size() - 1), getContext(),
-                                                        incSync.createAcceptor(getContext())));
+                                                        delegate));
                                             } else {
                                                 //TODO schedule both
                                             }
@@ -146,7 +152,7 @@ public class ResolveNameToObjectGoal extends IterationGoal {
     }
     
     @Override
-    protected IterationGoal iteration() {
+    protected IterationGoal<PythonValueSetAcceptor> iteration() {
         PythonConstruct currentConstruct = this.from;
         Scope scope = currentConstruct.parentScope();
         boolean foundOrImported = match(currentConstruct);
@@ -157,7 +163,7 @@ public class ResolveNameToObjectGoal extends IterationGoal {
         if (scopeLeft(currentConstruct, prevConstruct)) {
             if (getContext() != null && getContext().contains(this.name)) {
                 RuntimeObject argument = getContext().getActualArgument(this.name);
-                PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                PythonValueSetAcceptor resultAcceptor = new PvsaDelegate(incSync, getContext());
                 resultAcceptor.addResult(argument, getContext());
                 updateGrade(resultAcceptor, Grade.DONE);
                 return null;
@@ -167,7 +173,7 @@ public class ResolveNameToObjectGoal extends IterationGoal {
                 //built-in name is checked
                 RuntimeObject object = Builtins.instance().getAttribute(name);
                 if (object != null) {
-                    PythonValueSetAcceptor resultAcceptor = incSync.createAcceptor(getContext());
+                    PythonValueSetAcceptor resultAcceptor = new PvsaDelegate(incSync, getContext());
                     resultAcceptor.addResult(object, getContext());
                     updateGrade(resultAcceptor, Grade.DONE);
                 }
