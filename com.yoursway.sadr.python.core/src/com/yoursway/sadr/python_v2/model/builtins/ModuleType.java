@@ -3,7 +3,7 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 
 public class ModuleType extends PythonClassType {
-    public ModuleType() {
+    private ModuleType() {
     }
     
     private static ModuleType instance;

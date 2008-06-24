@@ -16,7 +16,7 @@ public class PythonObject implements RuntimeObject {
     Map<String, RuntimeObject> attributes = new HashMap<String, RuntimeObject>();
     private PythonClassType type;
     
-    private final PythonConstruct decl; // only if current object is made from this construct 
+    private PythonConstruct decl; // only if current object is made from this construct 
     private final int id;//object's identity
     
     public Map<String, RuntimeObject> getAttributes() {
@@ -93,5 +93,13 @@ public class PythonObject implements RuntimeObject {
     
     public PythonConstruct getDecl() {
         return this.decl;
+    }
+    
+    public void setDecl(PythonConstruct decl) {
+        if (decl == null)
+            throw new IllegalArgumentException();
+        if (this.decl != null)
+            throw new IllegalStateException();
+        this.decl = decl;
     }
 }

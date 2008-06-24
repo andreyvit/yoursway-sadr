@@ -67,7 +67,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
                         PythonArguments args = new PythonArguments(results.get(1));
                         if (arrayObject.getType() instanceof PythonClassType) {
                             schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, acceptor,
-                                    context));
+                                    context, ArrayAccessC.this));
                         }
                     }
                 };

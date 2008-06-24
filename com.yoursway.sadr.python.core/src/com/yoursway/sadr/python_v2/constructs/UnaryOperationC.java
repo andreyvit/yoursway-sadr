@@ -33,7 +33,8 @@ public class UnaryOperationC extends UnaryC implements PythonConstruct {
                         if (callable == null) {
                             schedule(new PassResultGoal(context, acceptor, null));
                         } else {
-                            schedule(CallResolver.callFunction(callable, args, acceptor, getContext()));
+                            schedule(CallResolver.callFunction(callable, args, acceptor, getContext(),
+                                    UnaryOperationC.this));
                         }
                     }
                 };

@@ -96,10 +96,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                         
                         if (method instanceof FunctionObject) {
                             schedule(CallResolver.callFunction((FunctionObject) method, real, acceptor,
-                                    getContext()));
+                                    getContext(), CallC.this));
                         } else if (method instanceof PythonObject) {
-                            schedule(CallResolver
-                                    .callMethod(method, "__call__", real, acceptor, getContext()));
+                            schedule(CallResolver.callMethod(method, "__call__", real, acceptor,
+                                    getContext(), CallC.this));
                         } else if (method == null) {
                             return;
                             //                            throw new IllegalStateException("Unable to find callable " + callable

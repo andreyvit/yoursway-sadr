@@ -9,7 +9,9 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.succeeder.IAcceptor;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -18,14 +20,30 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
     private final Map<Context, MutableValueSet> contextToValues = new HashMap<Context, MutableValueSet>();
     private final ValueInfoBuilder builder = new ValueInfoBuilder(); //FIXME Build value info in getResult().
     protected final Context activeContext;
+    private PythonConstruct callingConstruct = null;
     
     public PythonValueSetAcceptor(Context activeContext) {
         this.activeContext = activeContext;
     }
     
+    /**
+     * Sets a most specific construct which creates the instances being added as
+     * results.
+     * 
+     * @param callingConstruct
+     */
+    public void setCallingCostruct(PythonConstruct callingConstruct) {
+        this.callingConstruct = callingConstruct;
+    }
+    
     public void addResult(RuntimeObject result, Context context) {
         if (null == result)
             throw new IllegalStateException("There should be no null items in results!");
+        
+        if (callingConstruct != null && ((PythonObject) result).getDecl() == null) {//TODO move get/set decl to PythonConstruct interface?
+            ((PythonObject) result).setDecl(callingConstruct);
+        }
+        
         builder.add(result.getType(), result);
         if (contextToValues.get(context) == null)
             contextToValues.put(context, new MutableValueSet());

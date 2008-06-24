@@ -36,7 +36,8 @@ public final class CallResolver {
     }
     
     public static IGoal callMethod(final RuntimeObject receiver, final String methodName,
-            final PythonArguments args, final PythonValueSetAcceptor acceptor, final Context context) {
+            final PythonArguments args, final PythonValueSetAcceptor acceptor, final Context context,
+            final PythonConstruct callingConstruct) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
                 PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor(context) {
@@ -45,7 +46,8 @@ public final class CallResolver {
                     protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                         assertCallable(callable);
                         args.getArgs().add(0, receiver);
-                        schedule(callFunction((FunctionObject) callable, args, acceptor, context));
+                        schedule(callFunction((FunctionObject) callable, args, acceptor, context,
+                                callingConstruct));
                     }
                 };
                 schedule(findMethod(receiver, methodName, findAcceptor, context));
@@ -76,17 +78,18 @@ public final class CallResolver {
     }
     
     public static IGoal callFunction(final RuntimeObject callable, final PythonArguments args,
-            final PythonValueSetAcceptor acceptor, final Context context) {
+            final PythonValueSetAcceptor acceptor, final Context context, PythonConstruct callingConstruct) {
         assertCallable(callable);
-        return callFunction((FunctionObject) callable, args, acceptor, context);
+        return callFunction((FunctionObject) callable, args, acceptor, context, callingConstruct);
     }
     
     @SuppressWarnings("unchecked")
     public static IGoal callFunction(final FunctionObject callable, final PythonArguments args,
-            final PythonValueSetAcceptor acceptor, final Context context) {
+            final PythonValueSetAcceptor acceptor, final Context context, PythonConstruct callingConstruct) {
         if (callable == null) {
             throw new IllegalArgumentException("Callable is null");
         }
+        acceptor.setCallingCostruct(callingConstruct);
         final PythonConstruct declC = callable.getDecl();
         if (declC == null) {
             return callable.evaluateGoal(acceptor, context, args);
@@ -132,7 +135,7 @@ public final class CallResolver {
             };
         } else if (declC instanceof ClassDeclarationC) {
             final ClassDeclarationC classDeclarationC = (ClassDeclarationC) declC;
-            return new CreateInstanceGoal(classDeclarationC, null, args, context, acceptor);//TODO instance creator
+            return new CreateInstanceGoal(classDeclarationC, callingConstruct, args, context, acceptor);//TODO instance creator
         } else if (declC instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC lambdaC = (PythonLambdaExpressionC) declC;
             List<PythonArgument> realArgs = lambdaC.node().getArguments();

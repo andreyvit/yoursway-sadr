@@ -53,8 +53,8 @@ public class BinaryOperationC extends BinaryC {
                                 if (callable == null) {
                                     schedule(new PassResultGoal(context, acceptor, null));
                                 } else {
-                                    schedule(CallResolver
-                                            .callFunction(callable, args, acceptor, getContext()));
+                                    schedule(CallResolver.callFunction(callable, args, acceptor,
+                                            getContext(), BinaryOperationC.this));
                                 }
                             }
                         };
@@ -65,8 +65,8 @@ public class BinaryOperationC extends BinaryC {
                                 if (callable == null) {
                                     schedule(CallResolver.findMethod(right, rightOpName, rightFound, context));
                                 } else {
-                                    schedule(CallResolver
-                                            .callFunction(callable, args, acceptor, getContext()));
+                                    schedule(CallResolver.callFunction(callable, args, acceptor,
+                                            getContext(), BinaryOperationC.this));
                                 }
                             }
                         };

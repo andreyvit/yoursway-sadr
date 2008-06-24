@@ -139,7 +139,7 @@ public class ResolveNameToObjectGoal extends IterationGoal<PythonValueSetAccepto
                                                 //TODO schedule both
                                             }
                                         }
-                                    }, getContext()));
+                                    }, getContext(), ifc));
                         }
                     }));
             return true;

@@ -3,7 +3,6 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.PythonLambdaExpressionC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -40,13 +39,6 @@ public class FunctionObject extends PythonObject {
         super(Builtins.FUNCTION);//XXX illegal constructor
         this.decl = classDeclarationC;
         this.name = classDeclarationC.node().getName();
-        //find/run constructor
-    }
-    
-    public FunctionObject(PythonFileC module) {//FIXME OMG! More shit! module name
-        super(Builtins.FUNCTION);//XXX illegal constructor
-        this.decl = module;
-        this.name = module.name();
         //find/run constructor
     }
     
