@@ -12,7 +12,6 @@ import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
-import com.yoursway.sadr.python_v2.goals.internal.PythonUserClassType;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
@@ -29,8 +28,8 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
             PythonArguments args, Context context, PythonValueSetAcceptor acceptor) {
         super(context);
         this.instanceCreator = instanceCreator;
-        //        if (instanceCreator == null)
-        //            throw new IllegalArgumentException();
+        if (instanceCreator == null)
+            throw new IllegalArgumentException();
         this.acceptor = acceptor;
         this.classDeclarationC = classDecl;
     }
@@ -45,13 +44,13 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
                     if (obj instanceof FunctionObject) {
                         FunctionObject func = (FunctionObject) obj;
                         ClassDeclarationC decl = (ClassDeclarationC) func.getDecl();
-                        PythonClassType superType = new PythonUserClassType(decl);
+                        PythonClassType superType = new PythonClassType(decl);
                         supers.add(superType);
                     }
                     
                 }
-                PythonClassType receiverType = new PythonUserClassType(classDeclarationC, supers);
-                PythonObject receiver = new PythonObject(receiverType);//TODO pass correct construct: this.instanceCreator
+                PythonClassType receiverType = new PythonClassType(classDeclarationC, supers);
+                PythonObject receiver = new PythonObject(receiverType, instanceCreator);//TODO pass correct construct: instanceCreator
                 acceptor.addResult(receiver, getContext());
                 updateGrade(acceptor, grade);
             }

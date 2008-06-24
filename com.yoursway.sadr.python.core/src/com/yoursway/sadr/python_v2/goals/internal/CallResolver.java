@@ -20,6 +20,7 @@ import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
+import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -59,9 +60,13 @@ public final class CallResolver {
         }
         System.out.println("Looking for: " + receiver.toString() + "." + methodName);
         RuntimeObject callable = receiver.getAttribute(methodName); // instance attributes
-        if (callable == null && receiver.getType() instanceof PythonUserClassType) { // look into class definition
-            PythonUserClassType userClass = (PythonUserClassType) receiver.getType();
-            MethodDeclarationC declaredMethod = userClass.getDecl().findDeclaredMethod(methodName);
+        // look into class definition
+        if (callable == null && receiver.getType() instanceof PythonClassType) {
+            PythonClassType klass = (PythonClassType) receiver.getType();
+            if (!(klass != null && klass.getDecl() instanceof ClassDeclarationC))
+                return new PassResultGoal(context, acceptor, null);//TODO empty result
+            MethodDeclarationC declaredMethod = ((ClassDeclarationC) klass.getDecl())
+                    .findDeclaredMethod(methodName);
             if (null == declaredMethod) {
                 return new PassResultGoal(context, acceptor, null);//TODO empty result
             }

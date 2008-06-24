@@ -8,6 +8,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
@@ -42,12 +43,28 @@ public class PythonClassType extends PythonObject {
     
     private List<PythonClassType> supers;
     
+    /**
+     * For built-ins only!
+     */
     public PythonClassType() {
         super(null);
         supers = new ArrayList<PythonClassType>(1);
         supers.add(ObjectType.instance());
         setType(this);
         addClassFunctions();
+    }
+    
+    public PythonClassType(ClassDeclarationC decl) {
+        super(Builtins.getTypeType(), decl);
+        supers = new ArrayList<PythonClassType>(1);
+        supers.add(ObjectType.instance());
+    }
+    
+    public PythonClassType(ClassDeclarationC decl, List<PythonClassType> supers) {
+        super(Builtins.getTypeType(), decl);
+        if (supers == null)
+            throw new IllegalArgumentException();
+        this.supers = supers;
     }
     
     private void addClassFunctions() {
