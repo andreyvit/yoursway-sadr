@@ -2,15 +2,12 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.runtime.PythonMethod;
-import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
@@ -118,15 +115,5 @@ public class PythonClassType extends PythonObject {
             return ((PythonClassDeclaration) node).getName();
         } else
             return "(unknown)";
-    }
-    
-    public void findMethodsByPrefix(String prefix, Collection<PythonMethod> methods) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    public void findMethod(String name, MethodRequestor requestor) {
-        // TODO Auto-generated method stub
-        
     }
 }

@@ -13,7 +13,7 @@ public class BooleanType extends NumericType {
     public RuntimeObject __nonzero__(PythonArguments args) {
         RuntimeObject val = args.readSingle();
         if (val instanceof BooleanType)
-            return wrap(false);
+            return Builtins.getFalse();
         else if (val instanceof PythonValue)
             return coerce((PythonValue<?>) val);
         else
@@ -54,8 +54,7 @@ public class BooleanType extends NumericType {
     }
     
     public static PythonValue<BooleanValue> wrap(boolean value) {
-        BooleanValue booleanValue = new BooleanValue(value);
-        return new PythonValue<BooleanValue>(instance(), booleanValue, null);
+        return (value) ? Builtins.getTrue() : Builtins.getFalse();
     }
     
     @Override

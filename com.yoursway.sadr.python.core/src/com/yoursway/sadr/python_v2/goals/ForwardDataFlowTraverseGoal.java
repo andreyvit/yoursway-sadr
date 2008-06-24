@@ -54,6 +54,7 @@ public class ForwardDataFlowTraverseGoal extends ContextSensitiveGoal {
     
     public void preRun() {
         PythonConstruct decl = ((PythonObject) instTracker.blankInstance()).getDecl();
+        //TODO what if declaration is a class declaration or method declaration
         if (decl.parent() instanceof AssignmentC) {
             processFlowPosition(((AssignmentC) decl.parent()).rhs());
         } else if (decl.parent() instanceof CallC) {

@@ -79,7 +79,7 @@ public class UnicodeType extends PythonClassType {
     }
     
     public static RuntimeObject wrap(StringValue value) {
-        return new PythonValue<StringValue>(instance(), value, null);
+        return new PythonValue<StringValue>(instance(), value);
     }
     
     public static RuntimeObject wrap(String value, boolean isUnicode) {

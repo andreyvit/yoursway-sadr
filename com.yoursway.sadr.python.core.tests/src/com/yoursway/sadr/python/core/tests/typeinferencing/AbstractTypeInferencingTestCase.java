@@ -375,8 +375,8 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
-                return new CreateInstanceGoal(classC, new PythonArguments(), Context.EMPTY_CONTEXT,
-                        new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                return new CreateInstanceGoal(classC, null, new PythonArguments(),
+                        Context.EMPTY_CONTEXT, new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                             
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
@@ -470,8 +470,8 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.innerScope().parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
-                return new CreateInstanceGoal(classC, new PythonArguments(), Context.EMPTY_CONTEXT,
-                        new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                return new CreateInstanceGoal(classC, null, new PythonArguments(),
+                        Context.EMPTY_CONTEXT, new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                                 Context context = createSelfContext(func, result);

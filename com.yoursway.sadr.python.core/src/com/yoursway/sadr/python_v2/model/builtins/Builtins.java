@@ -29,14 +29,14 @@ public class Builtins extends PythonClassType {
         return pythonNone;
     }
     
-    public static PythonObject getTrue() {
+    public static PythonValue<BooleanValue> getTrue() {
         if (pythonTrue == null) {
             pythonTrue = new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(true));
         }
         return pythonTrue;
     }
     
-    public static PythonObject getFalse() {
+    public static PythonValue<BooleanValue> getFalse() {
         if (pythonFalse == null) {
             pythonFalse = new PythonValue<BooleanValue>(BooleanType.instance(), new BooleanValue(false));
         }

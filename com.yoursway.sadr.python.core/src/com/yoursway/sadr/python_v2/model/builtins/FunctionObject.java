@@ -16,14 +16,14 @@ public class FunctionObject extends PythonObject {
     private PythonClassType boundClass = null;
     
     public FunctionObject(MethodDeclarationC decl) {
-        super(Builtins.FUNCTION);
+        super(Builtins.FUNCTION, decl);
         this.decl = decl;
         this.name = decl.node().getName();
         setAttribute("__name__", StringType.wrap(name));
     }
     
     public FunctionObject(PythonLambdaExpressionC decl) {
-        super(Builtins.FUNCTION);
+        super(Builtins.FUNCTION, decl);
         this.decl = decl;
         this.name = "<lambda>";
         setAttribute("__name__", StringType.wrap(name));
@@ -36,23 +36,22 @@ public class FunctionObject extends PythonObject {
         setAttribute("__name__", StringType.wrap(name));
     }
     
-    public FunctionObject(ClassDeclarationC classDeclarationC) {//class name
-        super(Builtins.FUNCTION);
+    public FunctionObject(ClassDeclarationC classDeclarationC) {//FIXME OMG! Shit! class name
+        super(Builtins.FUNCTION);//XXX illegal constructor
         this.decl = classDeclarationC;
         this.name = classDeclarationC.node().getName();
         //find/run constructor
     }
     
-    public FunctionObject(PythonFileC module) {//module name
-        super(Builtins.FUNCTION);
+    public FunctionObject(PythonFileC module) {//FIXME OMG! More shit! module name
+        super(Builtins.FUNCTION);//XXX illegal constructor
         this.decl = module;
         this.name = module.name();
         //find/run constructor
     }
     
     /**
-     * @return either MethodDeclarationC or PythonLambdaExpressionC or
-     *         ClassDeclarationC object
+     * @return either MethodDeclarationC or PythonLambdaExpressionC
      */
     @Override
     public PythonConstruct getDecl() {

@@ -1,14 +1,14 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import static com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
-
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrar;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 
 public class PythonObject implements RuntimeObject {
@@ -17,19 +17,33 @@ public class PythonObject implements RuntimeObject {
     private PythonClassType type;
     
     private final PythonConstruct decl; // only if current object is made from this construct 
+    private final int id;//object's identity
     
     public Map<String, RuntimeObject> getAttributes() {
         return attributes;
     }
     
+    /**
+     * This constructor is intended to be for built-ins only!
+     */
     public PythonObject(PythonClassType type) {
         this.type = type;
         this.decl = null;
+        this.id = BUILTIN_INSTANCE_ID;
     }
     
+    /**
+     * Creates object for a source code construct (<code>declaration</code>).
+     * 
+     * @param declaration
+     *            a construct that creates the object; can not be null.
+     */
     public PythonObject(PythonClassType type, PythonConstruct declaration) {
+        if (declaration == null)
+            throw new IllegalArgumentException();
         this.type = type;
         this.decl = declaration;
+        this.id = InstanceRegistrar.registerInstance(this);
     }
     
     public RuntimeObject getAttribute(String name) {
@@ -66,16 +80,7 @@ public class PythonObject implements RuntimeObject {
     }
     
     public String describe() {
-        PythonConstruct declaration = getDecl();
-        if (declaration == null) {
-            throw new IllegalStateException("No declarations found. Can't describe "
-                    + this.getClass().getSimpleName() + " instance.");
-        }
-        ASTNode node = declaration.node();
-        if (node instanceof PythonClassDeclaration) {
-            return ((PythonClassDeclaration) node).getName();
-        } else
-            return "(unknown object)";
+        return type.describe() + " " + " instance #" + id;
     }
     
     public AbstractValue cast(PythonValue<?> value) {

@@ -24,7 +24,7 @@ import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
 import com.yoursway.sadr.python.core.typeinferencing.services.ProcedureLookup;
 import com.yoursway.sadr.python.core.typeinferencing.services.VariableLookup;
-import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
+import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrar;
 import com.yoursway.utils.facelets.GemstoneDefinition;
 import com.yoursway.utils.facelets.GemstoneImpl;
 
@@ -47,7 +47,7 @@ public class PythonRuntimeModel extends GemstoneImpl<RuntimeModel> implements Cl
     
     private final StandardTypes standardTypes;
     
-    private final InstanceRegistrar instanceRegistrar = new InstanceRegistrarImpl();
+    private final InstanceRegistrar instanceRegistrar = new InstanceRegistrar();
     
     private final PythonAnalysisSchema schema;
     

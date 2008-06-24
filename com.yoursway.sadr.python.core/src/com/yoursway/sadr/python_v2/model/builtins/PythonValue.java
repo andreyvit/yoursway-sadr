@@ -10,6 +10,10 @@ public class PythonValue<ValueType extends AbstractValue> extends PythonObject i
     
     private final ValueType value;
     
+    /**
+     * @param declaration
+     *            a construct that creates the value; can not be null.
+     */
     public PythonValue(PythonClassType type, ValueType value, PythonConstruct declaration) {
         super(type, declaration);
         if (value == null) {
@@ -18,6 +22,10 @@ public class PythonValue<ValueType extends AbstractValue> extends PythonObject i
         this.value = value;
     }
     
+    /**
+     * For only instances that have no source code constructs creating them such
+     * as built-ins.
+     */
     public PythonValue(PythonClassType type, ValueType value) {
         super(type);
         if (value == null) {

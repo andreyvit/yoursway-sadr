@@ -7,14 +7,13 @@ import java.util.Collection;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.constructs.AssignmentEffect;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.Effect;
 import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 public class CallF extends Frog {
     
@@ -89,7 +88,7 @@ public class CallF extends Frog {
     public RuntimeObject compactValue() {
         if (expression instanceof UserClassF) {
             UserClassF klass = (UserClassF) expression;
-            return new InstanceValue(klass.createType(), CreateInstanceGoal.instanceRegistrar);
+            return new PythonObject(klass.createType(), klass.getConstruct());
         }
         return null;
     }

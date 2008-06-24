@@ -14,7 +14,6 @@ import com.yoursway.sadr.python.core.runtime.PythonBuiltinMethod;
 import com.yoursway.sadr.python.core.runtime.PythonCallableArgument;
 import com.yoursway.sadr.python.core.runtime.PythonMetaClass;
 import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
-import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.model.builtins.InstanceType;
 
 public final class NewMethod extends PythonBuiltinMethod {

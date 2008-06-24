@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.services.InstanceRegistrar;
-import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrarImpl;
-import com.yoursway.sadr.python.core.typeinferencing.values.InstanceValue;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
@@ -20,19 +17,22 @@ import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public class CreateInstanceGoal extends ContextSensitiveGoal {
     private final PythonValueSetAcceptor acceptor;
     private final ClassDeclarationC classDeclarationC;
+    private final PythonConstruct instanceCreator;
     
-    public static InstanceRegistrar instanceRegistrar = new InstanceRegistrarImpl();
-    
-    public CreateInstanceGoal(ClassDeclarationC decl, PythonArguments args, Context context,
-            PythonValueSetAcceptor acceptor) {
+    public CreateInstanceGoal(ClassDeclarationC classDecl, PythonConstruct instanceCreator,
+            PythonArguments args, Context context, PythonValueSetAcceptor acceptor) {
         super(context);
+        this.instanceCreator = instanceCreator;
+        //        if (instanceCreator == null)
+        //            throw new IllegalArgumentException();
         this.acceptor = acceptor;
-        this.classDeclarationC = decl;
+        this.classDeclarationC = classDecl;
     }
     
     public void preRun() {
@@ -51,7 +51,7 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
                     
                 }
                 PythonClassType receiverType = new PythonUserClassType(classDeclarationC, supers);
-                InstanceValue receiver = new InstanceValue(receiverType, instanceRegistrar);
+                PythonObject receiver = new PythonObject(receiverType);//TODO pass correct construct: this.instanceCreator
                 acceptor.addResult(receiver, getContext());
                 updateGrade(acceptor, grade);
             }

@@ -80,7 +80,7 @@ public final class CallResolver {
     public static IGoal callFunction(final FunctionObject callable, final PythonArguments args,
             final PythonValueSetAcceptor acceptor, final Context context) {
         if (callable == null) {
-            throw new IllegalStateException("Callable is null");
+            throw new IllegalArgumentException("Callable is null");
         }
         final PythonConstruct declC = callable.getDecl();
         if (declC == null) {
@@ -127,7 +127,7 @@ public final class CallResolver {
             };
         } else if (declC instanceof ClassDeclarationC) {
             final ClassDeclarationC classDeclarationC = (ClassDeclarationC) declC;
-            return new CreateInstanceGoal(classDeclarationC, args, context, acceptor);
+            return new CreateInstanceGoal(classDeclarationC, null, args, context, acceptor);//TODO instance creator
         } else if (declC instanceof PythonLambdaExpressionC) {
             PythonLambdaExpressionC lambdaC = (PythonLambdaExpressionC) declC;
             List<PythonArgument> realArgs = lambdaC.node().getArguments();
