@@ -55,6 +55,10 @@ import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 import org.eclipse.dltk.python.parser.ast.statements.TryFinallyStatement;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class PythonConstructFactory {
     
@@ -167,5 +171,56 @@ public class PythonConstructFactory {
                     + node.getOperator() + ")");
         return new UnaryC(sc, node);
     }
+    
+    /**
+     * Use this constant instead of <code>null</code> value.
+     */
+    public static PythonConstruct NULL_CONSTRUCT = new PythonConstruct() {
+        private static final String MESSAGE = "Null construct.";
+        
+        public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public List<PythonConstruct> getPostChildren() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public List<PythonConstruct> getPreChildren() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public PythonConstruct getSyntacticallyPreviousConstruct() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public Scope innerScope() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public ASTNode node() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public PythonConstruct parent() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public Scope parentScope() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public IGoal evaluate(Context context, PythonVariableAcceptor acceptor) {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public boolean match(Frog frog) {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+        
+        public Krocodile toEgg() {
+            throw new UnsupportedOperationException(MESSAGE);
+        }
+    };
     
 }

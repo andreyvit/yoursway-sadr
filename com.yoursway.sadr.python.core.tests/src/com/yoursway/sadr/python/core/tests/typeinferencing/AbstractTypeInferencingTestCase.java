@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python.core.tests.typeinferencing;
 
 import static com.yoursway.sadr.python.core.tests.TestingUtils.callerOutside;
+import static com.yoursway.sadr.python_v2.constructs.PythonConstructFactory.NULL_CONSTRUCT;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -426,7 +427,7 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
-                return new CreateInstanceGoal(classC, null, new PythonArguments(), Context.EMPTY,
+                return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Context.EMPTY,
                         new PythonValueSetAcceptor(Context.EMPTY) {
                             
                             @Override
@@ -521,7 +522,7 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.innerScope().parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
-                return new CreateInstanceGoal(classC, func, new PythonArguments(), Context.EMPTY,
+                return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Context.EMPTY,
                         new PythonValueSetAcceptor(Context.EMPTY) {
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
