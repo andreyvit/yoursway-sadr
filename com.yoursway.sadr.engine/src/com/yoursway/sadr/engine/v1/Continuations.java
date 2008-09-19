@@ -24,7 +24,7 @@ public class Continuations {
             };
             return visitor.iteration(value, requestor, cont);
         } else {
-            return continuation.run(requestor);
+            return requestor.schedule(continuation);
         }
         
     }
