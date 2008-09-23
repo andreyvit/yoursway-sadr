@@ -37,9 +37,9 @@ public class ContextRelation {
         return new GoalContext(goal, results);
     }
     
-    public void createSecondaryContext(final Goal goal, ContinuationScheduler requestor,
-            final ContextRequestor continuation) {
-        requestor.schedule(new Continuation() {
+    public ContinuationRequestorCalledToken createSecondaryContext(final Goal goal,
+            ContinuationScheduler requestor, final ContextRequestor continuation) {
+        return requestor.schedule(new Continuation() {
             
             List<Goal> newGoals = new ArrayList<Goal>(goals.size());
             
@@ -54,11 +54,11 @@ public class ContextRelation {
                     requestor.subgoal(goal);
             }
             
-            public void done(ContinuationScheduler requestor) {
+            public ContinuationRequestorCalledToken done(ContinuationScheduler requestor) {
                 Result[] results = new Result[newGoals.size()];
                 for (int i = 0; i < results.length; i++)
                     results[i] = newGoals.get(i).roughResult();
-                continuation.execute(new GoalContext(goal, results), requestor);
+                return continuation.execute(new GoalContext(goal, results), requestor);
             }
             
         });

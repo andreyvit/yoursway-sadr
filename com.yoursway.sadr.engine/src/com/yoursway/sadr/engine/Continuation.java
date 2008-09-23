@@ -18,5 +18,5 @@ public interface Continuation {
     
     void provideSubgoals(SubgoalRequestor requestor);
     
-    void done(ContinuationScheduler requestor);
+    ContinuationRequestorCalledToken done(ContinuationScheduler requestor);
 }

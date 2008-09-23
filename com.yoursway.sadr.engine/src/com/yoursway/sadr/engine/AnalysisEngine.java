@@ -88,6 +88,15 @@ public class AnalysisEngine {
         
     }
     
+    static final class SimpleContinuationMustNotCallDone extends RuntimeException {
+        
+        private static final long serialVersionUID = 1L;
+        
+        public SimpleContinuationMustNotCallDone(SimpleContinuation continuation) {
+            super(String.format("Simple continuations must not call done, but %s did", continuation));
+        }
+    }
+    
     final class SubqueryCreator implements SubgoalRequestor {
         
         private final Q parent;
@@ -144,7 +153,7 @@ public class AnalysisEngine {
             childrenCountOrState = CONTINUATION_CREATED;
         }
         
-        private boolean isContinuationCreated() {
+        protected boolean isContinuationCreated() {
             return childrenCountOrState == CONTINUATION_CREATED;
         }
         
@@ -158,7 +167,9 @@ public class AnalysisEngine {
         public void evaluate() {
             if (goal != null)
                 stats.startingEvaluation(goal);
-            pleaseEvaluate();
+            ContinuationRequestorCalledToken token = pleaseEvaluate();
+            if (token == null)
+                signalContinueOrDoneViolation();
             maybeDone(); // TODO wrap in finally
             if (goal != null)
                 stats.finishedEvaluation(goal);
@@ -214,7 +225,8 @@ public class AnalysisEngine {
         }
         
         public ContinuationRequestorCalledToken schedule(SimpleContinuation cont) {
-            queue.enqueue(new ContinuationQuery(cont));
+            queue.enqueue(new QQQQ(this, cont));
+            continuationCreated();
             return DumbReturnValue.instance();
         }
         
@@ -242,7 +254,7 @@ public class AnalysisEngine {
             return this;
         }
         
-        protected abstract void pleaseEvaluate();
+        protected abstract ContinuationRequestorCalledToken pleaseEvaluate();
         
         @Override
         public Goal goal() {
@@ -294,30 +306,32 @@ public class AnalysisEngine {
         }
         
         @Override
-        protected void pleaseEvaluate() {
+        protected ContinuationRequestorCalledToken pleaseEvaluate() {
             ContextRelation contextRelation = contextRelationsCache.get(goal);
             ContinuationScheduler requestor = this;
-            evaluateWithRequestorAndContextRelation(contextRelation, requestor);
+            return evaluateWithRequestorAndContextRelation(contextRelation, requestor);
         }
         
-        private void evaluateWithRequestorAndContextRelation(final ContextRelation contextRelation,
-                ContinuationScheduler requestor) {
+        private ContinuationRequestorCalledToken evaluateWithRequestorAndContextRelation(
+                final ContextRelation contextRelation, ContinuationScheduler requestor) {
             if (contextRelation != null) {
-                contextRelation.createSecondaryContext(goal, requestor, new ContextRequestor() {
+                return contextRelation.createSecondaryContext(goal, requestor, new ContextRequestor() {
                     
-                    public void execute(GoalContext context, ContinuationScheduler requestor) {
+                    public ContinuationRequestorCalledToken execute(GoalContext context,
+                            ContinuationScheduler requestor) {
                         Result result = contextSensitiveCache.get(context);
                         if (result != null) {
                             goal.copyAnswerFrom(result);
                             contextRelation.addTo(goal);
+                            return DumbReturnValue.instance();
                         } else {
-                            evaluateWithRequestor(requestor);
+                            return evaluateWithRequestor(requestor);
                         }
                     }
                     
                 });
             } else {
-                evaluateWithRequestor(requestor);
+                return evaluateWithRequestor(requestor);
             }
         }
         
@@ -338,13 +352,12 @@ public class AnalysisEngine {
         public QQQ(Q continuationOf, Continuation continuation) {
             super(continuationOf);
             Assert.isNotNull(continuation);
-            //            Assert.isNotNull(goal);
             this.continuation = continuation;
         }
         
         @Override
-        protected void pleaseEvaluate() {
-            continuation.done(this);
+        protected ContinuationRequestorCalledToken pleaseEvaluate() {
+            return continuation.done(this);
         }
         
         @Override
@@ -354,19 +367,37 @@ public class AnalysisEngine {
         
     }
     
-    /**
-     * FIXME: remove this НАХРЕН
-     * 
-     * @author mag
-     * 
-     */
-    final class ContinuationQuery extends Q {
+    final class QQQQ extends QWithContextDependence {
         
         private final SimpleContinuation continuation;
         
-        public ContinuationQuery(SimpleContinuation continuation) {
-            //            super(new DummyGoal());
+        public QQQQ(Q continuationOf, SimpleContinuation continuation) {
+            super(continuationOf);
+            if (continuation == null)
+                throw new NullPointerException("continuation is null");
+            this.continuation = continuation;
+        }
+        
+        @Override
+        public ContinuationRequestorCalledToken pleaseEvaluate() {
+            return continuation.run(this);
+        }
+        
+        @Override
+        protected void signalContinueOrDoneViolation() {
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()", goal);
+        }
+        
+    }
+    
+    final class QQQQ_ extends Q {
+        
+        private final SimpleContinuation continuation;
+        
+        public QQQQ_(SimpleContinuation continuation) {
             super((Goal) null);
+            if (continuation == null)
+                throw new NullPointerException("continuation is null");
             this.continuation = continuation;
         }
         
@@ -376,16 +407,13 @@ public class AnalysisEngine {
         }
         
         @Override
-        public void recursive() {
+        public ContinuationRequestorCalledToken pleaseEvaluate() {
+            return continuation.run(this);
         }
         
         @Override
         public void evaluate() {
-            ContinuationRequestorCalledToken run = continuation.run(this);
-            if (run == null) {
-                throw new AssertionError("Run should be not null for continuation "
-                        + continuation.getClass().getSimpleName());
-            }
+            super.evaluate();
         }
         
         @Override
@@ -395,11 +423,6 @@ public class AnalysisEngine {
         
         @Override
         protected void storeIntoCache() {
-        }
-        
-        @Override
-        protected void pleaseEvaluate() {
-            throw new UnsupportedOperationException();
         }
         
     }
@@ -523,7 +546,7 @@ public class AnalysisEngine {
     }
     
     public void execute(SimpleContinuation continuation) {
-        queue.enqueue(new ContinuationQuery(continuation));
+        queue.enqueue(new QQQQ_(continuation));
         executeQueue();
     }
 }
