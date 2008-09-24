@@ -21,13 +21,13 @@ public class AnalysisEngine {
         
         public abstract boolean shouldCreateQuery();
         
-        public abstract void register(QQ qq, Q parent);
+        public abstract void register(InitialGoalQuery qq, QueryImpl parent);
         
     }
     
     final class DontAddAddition extends Addition {
         @Override
-        public void register(QQ qq, Q parent) {
+        public void register(InitialGoalQuery qq, QueryImpl parent) {
             throw new UnsupportedOperationException();
         }
         
@@ -39,9 +39,9 @@ public class AnalysisEngine {
     
     final class AddAddition extends Addition {
         @Override
-        public void register(QQ qq, Q parent) {
-            System.out.println("START of:           " + qq.goal());
-            System.out.println("    ^-- because of: " + parent.goal());
+        public void register(InitialGoalQuery qq, QueryImpl parent) {
+            //            System.out.println("START of:           " + qq.goal());
+            //            System.out.println("    ^-- because of: " + parent.goal());
             queue.enqueue(qq);
         }
         
@@ -60,10 +60,10 @@ public class AnalysisEngine {
         }
         
         @Override
-        public void register(QQ qq, Q parent) {
-            System.out.println("WAITING:            " + qq.goal());
-            System.out.println("    ^-- because of: " + parent.goal());
-            sameGoals.put(activeGoal, qq);
+        public void register(InitialGoalQuery qq, QueryImpl parent) {
+            //            System.out.println("WAITING:            " + qq.goal());
+            //            System.out.println("    ^-- because of: " + parent.goal());
+            sameGoals.put(activeGoal, qq.goal);
         }
         
         @Override
@@ -72,10 +72,6 @@ public class AnalysisEngine {
         }
         
     }
-    
-    private static final int CONTINUATION_CREATED = -1;
-    
-    private static final int DONE_CALLED = -2;
     
     static final class GoalContinuationContractViolation extends RuntimeException {
         
@@ -97,157 +93,211 @@ public class AnalysisEngine {
         }
     }
     
-    final class SubqueryCreator implements SubgoalRequestor {
+    final class SubqueryCreator implements PossibleSubgoalsAdder, SubgoalRequestor {
         
-        private final Q parent;
-        private final QQQ whenDone;
-        private boolean anyChildrenCreated = false;
+        private final QueryImpl oldQuery;
+        private final SubgoalsProvider provider;
+        private GoalState writableGoalState;
         
-        public SubqueryCreator(Q parent, QQQ whenDone) {
-            this.parent = parent;
-            this.whenDone = whenDone;
+        public SubqueryCreator(SubgoalsProvider provider, QueryImpl oldQuery) {
+            this.provider = provider;
+            this.oldQuery = oldQuery;
         }
         
         public void subgoal(Goal goal) {
-            Addition addition = start(goal, parent);
+            Addition addition = start(goal, oldQuery);
             if (addition.shouldCreateQuery()) {
-                QQ qq = new QQ(goal);
-                qq.setParent(whenDone);
-                whenDone.incrementChildrenCount();
-                anyChildrenCreated = true;
-                addition.register(qq, parent);
+                GoalState newState = new GoalState(writableGoalState, goal);
+                addition.register(new InitialGoalQuery(newState), oldQuery);
             }
         }
         
-        public void done() {
-            if (!anyChildrenCreated) {
-                System.out.println("ENQUEUE of:         " + whenDone.goal());
-                System.out.println("    ^-- because no children were created");
-                queue.enqueue(whenDone);
-            }
+        public void runAndPossiblyAddSubgoals(GoalState writableGoalState) {
+            this.writableGoalState = writableGoalState;
+            provider.provideSubgoals(this);
         }
         
     }
     
-    abstract class Q extends Query implements ContinuationScheduler {
+    interface PossibleSubgoalsAdder {
         
-        protected final Goal goal;
+        void runAndPossiblyAddSubgoals(GoalState writableGoalState);
         
-        private Query parent = null;
+    }
+    
+    class GoalState {
         
-        private int childrenCountOrState = 0;
+        private static final int DONE_COUNT = -1;
         
-        public Q(Goal goal) {
+        private static final int ADDING_SUBGOALS = 1000000;
+        
+        private final GoalState parentGoal;
+        
+        private final Goal goal;
+        
+        /**
+         * Either a count of subgoals, or <code>DONE_COUNT</code> when this goal
+         * is done, or <code>ADDING_SUBGOALS</code> plus a count of subgoals
+         * during execution of <code>allowStateChangeAndRun</code>.
+         */
+        private int subgoalCount = 0;
+        
+        private Query allChildrenFinishedCallback;
+        
+        // (subgoalCount > 0) <=> (job != null)
+        
+        public GoalState(Goal goal) {
+            if (goal == null)
+                throw new NullPointerException("goal is null");
+            this.parentGoal = null;
             this.goal = goal;
         }
         
-        public Q(Q continuationOf) {
-            this(continuationOf.goal);
-            this.parent = continuationOf.parent;
-            continuationOf.continuationCreated();
+        public GoalState(GoalState parentGoal, Goal goal) {
+            if (parentGoal == null)
+                throw new NullPointerException("parentGoal is null");
+            if (goal == null)
+                throw new NullPointerException("goal is null");
+            this.parentGoal = parentGoal;
+            this.goal = goal;
+            parentGoal.subgoalAdded();
         }
         
-        private void continuationCreated() {
-            if (childrenCountOrState > 0)
-                throw new IllegalStateException("continuationCreated with childrenCount > 0");
-            childrenCountOrState = CONTINUATION_CREATED;
+        public void allowStateChangeAndRun(PossibleSubgoalsAdder adder, Query allChildrenFinishedCallback) {
+            if (allChildrenFinishedCallback == null)
+                throw new NullPointerException("allChildrenFinishedCallback is null");
+            
+            if (subgoalCount != 0)
+                if (subgoalCount == DONE_COUNT)
+                    throw new IllegalStateException(
+                            "Cannot allow changing state when the goal is already done");
+                else if (subgoalCount >= ADDING_SUBGOALS)
+                    throw new IllegalStateException(
+                            "Recursive calls to allowStateChangeAndRun are not allowed");
+                else if (subgoalCount > 0)
+                    throw new IllegalStateException(
+                            "Cannot allow changing state when there are pending subgoals");
+                else
+                    throw new AssertionError("Invalid value of the internal subgoal count");
+            subgoalCount = ADDING_SUBGOALS;
+            try {
+                adder.runAndPossiblyAddSubgoals(this);
+            } finally {
+                if (subgoalCount >= ADDING_SUBGOALS)
+                    subgoalCount -= ADDING_SUBGOALS;
+                if (subgoalCount == 0)
+                    queue.enqueue(allChildrenFinishedCallback);
+                else if (subgoalCount > 0)
+                    this.allChildrenFinishedCallback = allChildrenFinishedCallback;
+                else
+                    throw new AssertionError(
+                            "Invalid value of the internal subgoal count (after runAndPossiblyAddSubgoals)");
+            }
+            
         }
         
-        protected boolean isContinuationCreated() {
-            return childrenCountOrState == CONTINUATION_CREATED;
+        public void runOnBehalfOfThisGoal(Runnable runnable) {
+            stats.startingEvaluation(goal);
+            runnable.run();
+            stats.finishedEvaluation(goal);
         }
         
-        void setParent(Query parent) {
-            if (this.parent != null)
-                throw new IllegalStateException("setWhenDone can oly be called once");
-            this.parent = parent;
+        public void markAsDone() {
+            if (subgoalCount >= ADDING_SUBGOALS)
+                throw new IllegalStateException(
+                        "Cannot mark the goal as done from inside allowStateChangeAndRun");
+            if (subgoalCount > 0)
+                throw new IllegalStateException(
+                        "Cannot mark the goal as done when there are pending subgoals");
+            subgoalCount = DONE_COUNT;
+            goalFinished();
+        }
+        
+        private void goalFinished() {
+            //            System.out.println("FINISHED " + goal);
+            if (parentGoal != null)
+                parentGoal.subgoalFinished(goal);
+            try {
+                goal.done();
+            } finally {
+                finished(goal);
+            }
+        }
+        
+        void subgoalAdded() {
+            if (subgoalCount < ADDING_SUBGOALS)
+                if (subgoalCount == DONE_COUNT)
+                    throw new IllegalStateException("Cannot add subgoals when the goal is done");
+                else
+                    throw new IllegalStateException("Cannot add subgoals from outside allowStateChangeAndRun");
+            ++subgoalCount;
+        }
+        
+        void subgoalFinished(Goal subgoal) {
+            if (subgoalCount == DONE_COUNT)
+                throw new IllegalStateException("Subgoal cannot be finished when the goal is already done");
+            if (subgoalCount == 0)
+                throw new IllegalStateException("This goal has no subgoals");
+            if (--subgoalCount == 0) {
+                try {
+                    queue.enqueue(allChildrenFinishedCallback);
+                } finally {
+                    allChildrenFinishedCallback = null;
+                }
+            }
+        }
+        
+        @Override
+        public String toString() {
+            return "<" + subgoalCount + ">" + goal;
+        }
+        
+    }
+    
+    /**
+     * R.I.P., Q
+     */
+    abstract class QueryImpl extends Query implements ContinuationScheduler, Runnable {
+        
+        protected final GoalState goal;
+        
+        public QueryImpl(GoalState goal) {
+            if (goal == null)
+                throw new NullPointerException("goal is null");
+            this.goal = goal;
         }
         
         @Override
         public void evaluate() {
-            if (goal != null)
-                stats.startingEvaluation(goal);
+            goal.runOnBehalfOfThisGoal(this);
+        }
+        
+        public void run() {
             ContinuationRequestorCalledToken token = pleaseEvaluate();
             if (token == null)
                 signalContinueOrDoneViolation();
-            maybeDone(); // TODO wrap in finally
-            if (goal != null)
-                stats.finishedEvaluation(goal);
-        }
-        
-        protected void maybeDone() {
-            if (!isContinuationCreated()) {
-                if (childrenCountOrState != DONE_CALLED)
-                    signalContinueOrDoneViolation();
-                handleFinished();
-            }
-        }
-        
-        public void handleFinished() {
-            if (goal != null) {
-                goal.done();
-                storeIntoCache();
-                finished(goal, (parent == null ? null : parent.goal()));
-            }
-            signalFinishedToParent();
-            if (goal != null)
-                for (QQ qq : sameGoals.get(goal)) {
-                    qq.goal().copyAnswerFrom(goal);
-                    qq.handleFinished();
-                }
-        }
-        
-        protected void signalFinishedToParent() {
-            if (parent != null)
-                ((Q) parent).decrementChildrenCount(goal);
         }
         
         protected abstract void signalContinueOrDoneViolation();
         
-        protected abstract void storeIntoCache();
-        
-        private void decrementChildrenCount(Goal reason) {
-            if (childrenCountOrState <= 0)
-                throw new IllegalStateException("childrenCount should be greater than zero");
-            if (--childrenCountOrState == 0) {
-                System.out.println("ENQUEUE of:         " + goal);
-                System.out.println("    ^-- because of: " + reason);
-                queue.enqueue(this);
-            }
-        }
-        
         public ContinuationRequestorCalledToken schedule(Continuation cont) {
-            QQQ qqq = new QQQ(this, cont);
-            SubqueryCreator creator = new SubqueryCreator(this, qqq);
-            cont.provideSubgoals(creator);
-            creator.done();
+            goal.allowStateChangeAndRun(new SubqueryCreator(cont, this), new ContinuationQuery(goal, cont));
             return DumbReturnValue.instance();
         }
         
         public ContinuationRequestorCalledToken schedule(SimpleContinuation cont) {
-            queue.enqueue(new QQQQ(this, cont));
-            continuationCreated();
+            queue.enqueue(new SimpleContinuationQuery(goal, cont));
             return DumbReturnValue.instance();
         }
         
         public ContinuationRequestorCalledToken done() {
-            if (isContinuationCreated())
-                throw new IllegalStateException(
-                        "ContinuationRequestor.done() called after creating a continuation");
-            if (childrenCountOrState != 0)
-                throw new AssertionError("ContinuationRequestor.done() called when childrenCount > 0");
-            childrenCountOrState = DONE_CALLED;
+            goal.markAsDone();
             return DumbReturnValue.instance();
         }
         
         @Override
         public void recursive() {
-            maybeDone();
-        }
-        
-        @Override
-        public Q parent() {
-            return (Q) parent;
+            goal.markAsDone();
         }
         
         public Query currentQuery() {
@@ -258,99 +308,46 @@ public class AnalysisEngine {
         
         @Override
         public Goal goal() {
-            return goal;
-        }
-        
-        public void incrementChildrenCount() {
-            ++childrenCountOrState;
-        }
-        
-    }
-    
-    abstract class QWithContextDependence extends Q {
-        
-        public QWithContextDependence(Goal goal) {
-            super(goal);
-        }
-        
-        public QWithContextDependence(Q continuationOf) {
-            super(continuationOf);
-        }
-        
-        @Override
-        protected void storeIntoCache() {
-            if (!goal.cachable())
-                return;
-            if (goal.isContextFree())
-                contextFreeCache.put(goal, goal.roughResult());
-            else {
-                ContextRelation relation = goal.contextRelation();
-                
-                ContextRelation existingRelation = contextRelationsCache.get(goal);
-                if (existingRelation == null)
-                    contextRelationsCache.put(goal, relation);
-                else if (!existingRelation.equals(relation))
-                    contextRelationsCache.put(goal, existingRelation.extend(relation));
-                
-                GoalContext context = relation.createPrimaryContext(goal);
-                contextSensitiveCache.put(context, goal.roughResult());
-            }
+            return goal.goal;
         }
     }
     
-    final class QQ extends QWithContextDependence {
+    /**
+     * R.I.P., QQ
+     */
+    final class InitialGoalQuery extends QueryImpl {
         
-        public QQ(Goal goal) {
+        public InitialGoalQuery(GoalState goal) {
             super(goal);
-            Assert.isNotNull(goal);
         }
         
         @Override
         protected ContinuationRequestorCalledToken pleaseEvaluate() {
-            ContextRelation contextRelation = contextRelationsCache.get(goal);
-            ContinuationScheduler requestor = this;
-            return evaluateWithRequestorAndContextRelation(contextRelation, requestor);
-        }
-        
-        private ContinuationRequestorCalledToken evaluateWithRequestorAndContextRelation(
-                final ContextRelation contextRelation, ContinuationScheduler requestor) {
-            if (contextRelation != null) {
-                return contextRelation.createSecondaryContext(goal, requestor, new ContextRequestor() {
-                    
-                    public ContinuationRequestorCalledToken execute(GoalContext context,
-                            ContinuationScheduler requestor) {
-                        Result result = contextSensitiveCache.get(context);
-                        if (result != null) {
-                            goal.copyAnswerFrom(result);
-                            contextRelation.addTo(goal);
-                            return DumbReturnValue.instance();
-                        } else {
-                            return evaluateWithRequestor(requestor);
-                        }
-                    }
-                    
-                });
-            } else {
-                return evaluateWithRequestor(requestor);
-            }
-        }
-        
-        private ContinuationRequestorCalledToken evaluateWithRequestor(ContinuationScheduler rq) {
-            return goal.evaluate(rq);
+            return goal.goal.evaluate(this);
         }
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(goal.getClass().getName() + ".evaluate()", goal);
+            throw new GoalContinuationContractViolation(goal.goal.getClass().getName() + ".evaluate()",
+                    goal.goal);
         }
+        
+        @Override
+        public String toString() {
+            return "IGQ() with " + goal;
+        }
+        
     }
     
-    final class QQQ extends QWithContextDependence {
+    /**
+     * R.I.P., QQQ
+     */
+    final class ContinuationQuery extends QueryImpl {
         
         private final Continuation continuation;
         
-        public QQQ(Q continuationOf, Continuation continuation) {
-            super(continuationOf);
+        public ContinuationQuery(GoalState goal, Continuation continuation) {
+            super(goal);
             Assert.isNotNull(continuation);
             this.continuation = continuation;
         }
@@ -362,17 +359,26 @@ public class AnalysisEngine {
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".done()", goal);
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".done()",
+                    goal.goal);
+        }
+        
+        @Override
+        public String toString() {
+            return "CQ(" + continuation.getClass().getName() + ") with " + goal;
         }
         
     }
     
-    final class QQQQ extends QWithContextDependence {
+    /**
+     * R.I.P., QQQQ
+     */
+    final class SimpleContinuationQuery extends QueryImpl {
         
         private final SimpleContinuation continuation;
         
-        public QQQQ(Q continuationOf, SimpleContinuation continuation) {
-            super(continuationOf);
+        public SimpleContinuationQuery(GoalState goal, SimpleContinuation continuation) {
+            super(goal);
             if (continuation == null)
                 throw new NullPointerException("continuation is null");
             this.continuation = continuation;
@@ -385,47 +391,20 @@ public class AnalysisEngine {
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()", goal);
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()",
+                    goal.goal);
+        }
+        
+        @Override
+        public String toString() {
+            return "SCQ(" + continuation.getClass().getName() + ") with " + goal;
         }
         
     }
     
-    final class QQQQ_ extends Q {
-        
-        private final SimpleContinuation continuation;
-        
-        public QQQQ_(SimpleContinuation continuation) {
-            super((Goal) null);
-            if (continuation == null)
-                throw new NullPointerException("continuation is null");
-            this.continuation = continuation;
-        }
-        
-        @Override
-        public Q parent() {
-            return null;
-        }
-        
-        @Override
-        public ContinuationRequestorCalledToken pleaseEvaluate() {
-            return continuation.run(this);
-        }
-        
-        @Override
-        public void evaluate() {
-            super.evaluate();
-        }
-        
-        @Override
-        protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()", goal);
-        }
-        
-        @Override
-        protected void storeIntoCache() {
-        }
-        
-    }
+    /**
+     * R.I.P., QQQQ_
+     */
     
     private final QueryQueue queue = new QueryQueue();
     
@@ -439,7 +418,7 @@ public class AnalysisEngine {
     
     private final Map<GoalContext, Result> contextSensitiveCache = new HashMap<GoalContext, Result>();
     
-    private final AbstractMultiMap<Goal, QQ> sameGoals = new IdentityArrayListHashMultiMap<Goal, QQ>();
+    private final AbstractMultiMap<Goal, GoalState> sameGoals = new IdentityArrayListHashMultiMap<Goal, GoalState>();
     
     private AnalysisStats stats = new AnalysisStats();
     
@@ -449,7 +428,7 @@ public class AnalysisEngine {
         return old;
     }
     
-    private Addition start(Goal goal, Q parent) {
+    private Addition start(Goal goal, QueryImpl parent) {
         Goal parentGoal = parent == null ? null : parent.goal();
         Result cachedResult = contextFreeCache.get(goal);
         stats.starting(goal);
@@ -477,31 +456,37 @@ public class AnalysisEngine {
         }
     }
     
-    private boolean isRecursive(Goal goal, Q parent) {
-        for (Q q = parent; q != null; q = q.parent()) {
-            Goal activeGoal = q.goal();
-            if (goal.hashCode() == activeGoal.hashCode())
+    private boolean isRecursive(Goal goal, QueryImpl parent) {
+        for (GoalState q = parent.goal; q != null; q = q.parentGoal) {
+            Goal activeGoal = q.goal;
+            if (activeGoal != null && goal.hashCode() == activeGoal.hashCode())
                 if (goal.equals(activeGoal))
                     return true;
         }
         return false;
     }
     
-    private int recursionDepth(Goal goal, Q parent) {
+    private int recursionDepth(Goal goal, QueryImpl parent) {
         int depth = 0;
-        for (Q q = parent; q != null; q = q.parent()) {
-            Goal activeGoal = q.goal();
-            if (goal.hashCode() == activeGoal.hashCode())
+        for (GoalState q = parent.goal; q != null; q = q.parentGoal) {
+            Goal activeGoal = q.goal;
+            if (activeGoal != null && goal.hashCode() == activeGoal.hashCode())
                 if (goal.equals(activeGoal))
                     ++depth;
         }
         return depth;
     }
     
-    public void finished(Goal goal, Goal parent) {
+    public void finished(Goal goal) {
+        storeIntoCache(goal);
         stats.calculatedGoal(goal);
         activeGoals.remove(goal);
-        debug.finished(goal, parent);
+        debug.finished(goal);
+        
+        for (GoalState qq : sameGoals.get(goal)) {
+            qq.goal.copyAnswerFrom(goal);
+            qq.markAsDone();
+        }
     }
     
     //    public void evaluate(Continuation continuation) {
@@ -520,13 +505,14 @@ public class AnalysisEngine {
         Addition addition = start(goal, null);
         if (!addition.shouldCreateQuery())
             return;
-        queue.enqueue(new QQ(goal));
+        queue.enqueue(new InitialGoalQuery(new GoalState(goal)));
         executeQueue();
     }
     
     public void executeQueue() {
         Query current;
         while ((current = queue.poll()) != null) {
+            //            System.out.println("RUNNING " + current);
             current.evaluate();
             Goal goal = current.goal();
             if (goal != null)
@@ -545,8 +531,23 @@ public class AnalysisEngine {
         return res.toString();
     }
     
-    public void execute(SimpleContinuation continuation) {
-        queue.enqueue(new QQQQ_(continuation));
-        executeQueue();
+    void storeIntoCache(Goal goal) {
+        if (!goal.cachable())
+            return;
+        if (goal.isContextFree())
+            contextFreeCache.put(goal, goal.roughResult());
+        else {
+            ContextRelation relation = goal.contextRelation();
+            
+            ContextRelation existingRelation = contextRelationsCache.get(goal);
+            if (existingRelation == null)
+                contextRelationsCache.put(goal, relation);
+            else if (!existingRelation.equals(relation))
+                contextRelationsCache.put(goal, existingRelation.extend(relation));
+            
+            GoalContext context = relation.createPrimaryContext(goal);
+            contextSensitiveCache.put(context, goal.roughResult());
+        }
     }
+    
 }

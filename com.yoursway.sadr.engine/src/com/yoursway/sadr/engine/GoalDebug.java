@@ -22,7 +22,7 @@ public class GoalDebug {
             System.out.println(indent() + "RECUR " + goal);
     }
     
-    public void finished(Goal goal, Goal parent) {
+    public void finished(Goal goal) {
         --indent;
         if (TRACE_GOALS)
             System.out.println(indent() + "FIN   " + goal);

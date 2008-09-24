@@ -3,9 +3,9 @@ package com.yoursway.sadr.engine;
 /**
  * @author buriy
  * 
- * Real objects to schedule
+ *         Real objects to schedule
  * 
- * Parent is required for Backward Propagation
+ *         Parent is required for Backward Propagation
  */
 public abstract class Query {
     
@@ -14,7 +14,5 @@ public abstract class Query {
     public abstract Goal goal();
     
     public abstract void recursive();
-    
-    public abstract Query parent();
     
 }

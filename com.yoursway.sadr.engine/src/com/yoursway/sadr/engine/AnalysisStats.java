@@ -9,7 +9,7 @@ public class AnalysisStats {
     
     private int goalCacheHits = 0, goalCacheMisses = 0;
     
-    private final GoalTypeStats[] slots = new GoalTypeStats[7];
+    private final GoalTypeStats[] slots = new GoalTypeStats[8];
     
     private final Map<Goal, Long> startTimes = new HashMap<Goal, Long>();
     
