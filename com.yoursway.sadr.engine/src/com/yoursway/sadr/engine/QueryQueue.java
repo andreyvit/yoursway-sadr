@@ -3,16 +3,18 @@ package com.yoursway.sadr.engine;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class QueryQueue implements QueryEnqueuer {
+import com.yoursway.sadr.engine.spi.AnalysisComputer;
+
+public class QueryQueue implements AnalysisComputer {
     
     private final Queue<Query> queue = new LinkedList<Query>();
     
-    public void enqueue(Query query) {
-        queue.add(query);
-    }
-    
     public Query poll() {
         return queue.poll();
+    }
+    
+    public void enqueueComputation(Query query) {
+        queue.add(query);
     }
     
 }
