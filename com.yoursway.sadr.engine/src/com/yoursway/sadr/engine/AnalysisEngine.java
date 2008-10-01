@@ -1,12 +1,15 @@
 package com.yoursway.sadr.engine;
 
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-
-import com.yoursway.sadr.engine.util.AbstractMultiMap;
-import com.yoursway.sadr.engine.util.IdentityArrayListHashMultiMap;
 
 /**
  * Continuations evaluator. Just invoke new
@@ -14,64 +17,6 @@ import com.yoursway.sadr.engine.util.IdentityArrayListHashMultiMap;
  * scheduler for this continuation and all tasks scheduled by it.
  */
 public class AnalysisEngine {
-    
-    private static final int MAX_ITERATIONS = 1000;
-    
-    abstract class Addition {
-        
-        public abstract boolean shouldCreateQuery();
-        
-        public abstract void register(InitialGoalQuery qq, QueryImpl parent);
-        
-    }
-    
-    final class DontAddAddition extends Addition {
-        @Override
-        public void register(InitialGoalQuery qq, QueryImpl parent) {
-            throw new UnsupportedOperationException();
-        }
-        
-        @Override
-        public boolean shouldCreateQuery() {
-            return false;
-        }
-    }
-    
-    final class AddAddition extends Addition {
-        @Override
-        public void register(InitialGoalQuery qq, QueryImpl parent) {
-            //            System.out.println("START of:           " + qq.goal());
-            //            System.out.println("    ^-- because of: " + parent.goal());
-            queue.enqueue(qq);
-        }
-        
-        @Override
-        public boolean shouldCreateQuery() {
-            return true;
-        }
-    }
-    
-    public final class SameExistsAddition extends Addition {
-        
-        private final Goal activeGoal;
-        
-        public SameExistsAddition(Goal activeGoal) {
-            this.activeGoal = activeGoal;
-        }
-        
-        @Override
-        public void register(InitialGoalQuery qq, QueryImpl parent) {
-            //            System.out.println("WAITING:            " + qq.goal());
-            //            System.out.println("    ^-- because of: " + parent.goal());
-            sameGoals.put(activeGoal, qq.goal);
-        }
-        
-        @Override
-        public boolean shouldCreateQuery() {
-            return true;
-        }
-        
-    }
     
     static final class GoalContinuationContractViolation extends RuntimeException {
         
@@ -95,21 +40,24 @@ public class AnalysisEngine {
     
     final class SubqueryCreator implements PossibleSubgoalsAdder, SubgoalRequestor {
         
-        private final QueryImpl oldQuery;
         private final SubgoalsProvider provider;
         private GoalState writableGoalState;
         
-        public SubqueryCreator(SubgoalsProvider provider, QueryImpl oldQuery) {
+        public SubqueryCreator(SubgoalsProvider provider) {
             this.provider = provider;
-            this.oldQuery = oldQuery;
         }
         
         public void subgoal(Goal goal) {
-            Addition addition = start(goal, oldQuery);
-            if (addition.shouldCreateQuery()) {
-                GoalState newState = new GoalState(writableGoalState, goal);
-                addition.register(new InitialGoalQuery(newState), oldQuery);
+            if (writableGoalState.findGoalStateByGoal(goal) != null) {
+                goal.causesRecursion();
+                debug.recursive(goal);
+                stats.recursiveGoal(goal);
+                return;
             }
+            GoalState state = createGoalState(goal);
+            if (state == null)
+                return;
+            state.addParentAndGoal(writableGoalState, goal);
         }
         
         public void runAndPossiblyAddSubgoals(GoalState writableGoalState) {
@@ -125,15 +73,36 @@ public class AnalysisEngine {
         
     }
     
+    public Set<GoalState> toBeDone = new HashSet<GoalState>();
+    public Set<GoalState> leaves = new HashSet<GoalState>();
+    
+    public Set<GoalState> secondMagicSet = new HashSet<GoalState>();
+    
+    enum GoalSource {
+        
+        ROOT,
+
+        CONTINUATION,
+
+        DUPLICATE
+        
+    }
+    
     class GoalState {
         
         private static final int DONE_COUNT = -1;
         
         private static final int ADDING_SUBGOALS = 1000000;
         
-        private final GoalState parentGoal;
+        private final List<Goal> goals = newArrayList();
         
-        private final Goal goal;
+        private final Collection<GoalState> parentStates = newArrayList();
+        
+        private final Collection<GoalState> children = newArrayList();
+        
+        private final Collection<GoalState> doneChildren = newArrayList();
+        
+        GoalSource source;
         
         /**
          * Either a count of subgoals, or <code>DONE_COUNT</code> when this goal
@@ -142,25 +111,38 @@ public class AnalysisEngine {
          */
         private int subgoalCount = 0;
         
+        private int evalCount = 0;
+        
         private Query allChildrenFinishedCallback;
         
-        // (subgoalCount > 0) <=> (job != null)
+        private int monotonicallyIncreasingSubgoalCount = 0;
         
-        public GoalState(Goal goal) {
-            if (goal == null)
-                throw new NullPointerException("goal is null");
-            this.parentGoal = null;
-            this.goal = goal;
+        public GoalState() {
+            this.source = GoalSource.ROOT;
+            ++magicNumber;
+            ++secondMagicNumber;
+            secondMagicSet.add(this);
         }
         
-        public GoalState(GoalState parentGoal, Goal goal) {
-            if (parentGoal == null)
-                throw new NullPointerException("parentGoal is null");
+        public void addParentAndGoal(GoalState parentState, Goal goal) {
+            if (parentState == null)
+                throw new NullPointerException("parentState is null");
+            parentStates.add(parentState);
+            parentState.subgoalAdded(this);
+            addGoal(goal);
+        }
+        
+        public void addGoal(Goal goal) {
             if (goal == null)
                 throw new NullPointerException("goal is null");
-            this.parentGoal = parentGoal;
-            this.goal = goal;
-            parentGoal.subgoalAdded();
+            boolean isFirstParent = goals.isEmpty();
+            if (isFirstParent) {
+                activeGoalStates.put(goal, this);
+            } else if (!goal.equals(mainGoal()))
+                throw new IllegalArgumentException("Can only add equal goals to GoalState");
+            goals.add(goal);
+            if (isFirstParent)
+                queue.enqueue(new InitialGoalQuery(this));
         }
         
         public void allowStateChangeAndRun(PossibleSubgoalsAdder adder, Query allChildrenFinishedCallback) {
@@ -185,9 +167,10 @@ public class AnalysisEngine {
             } finally {
                 if (subgoalCount >= ADDING_SUBGOALS)
                     subgoalCount -= ADDING_SUBGOALS;
-                if (subgoalCount == 0)
+                if (subgoalCount == 0) {
+                    toBeDone.add(((ContinuationQuery) allChildrenFinishedCallback).goal);
                     queue.enqueue(allChildrenFinishedCallback);
-                else if (subgoalCount > 0)
+                } else if (subgoalCount > 0)
                     this.allChildrenFinishedCallback = allChildrenFinishedCallback;
                 else
                     throw new AssertionError(
@@ -197,12 +180,30 @@ public class AnalysisEngine {
         }
         
         public void runOnBehalfOfThisGoal(Runnable runnable) {
+            if (goals.isEmpty())
+                throw new IllegalStateException("Cannot run on behalf of an empty GoalState");
+            Goal goal = mainGoal();
             stats.startingEvaluation(goal);
+            ++evalCount;
             runnable.run();
             stats.finishedEvaluation(goal);
         }
         
+        public GoalState findGoalStateByGoal(Goal goal) {
+            for (Goal myGoal : goals)
+                if (goal.equals(myGoal))
+                    return this;
+            for (GoalState parent : parentStates) {
+                GoalState result = parent.findGoalStateByGoal(goal);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+        
         public void markAsDone() {
+            if (source == GoalSource.DUPLICATE)
+                System.out.println("GoalState.markAsDone(" + this + ")");
             if (subgoalCount >= ADDING_SUBGOALS)
                 throw new IllegalStateException(
                         "Cannot mark the goal as done from inside allowStateChangeAndRun");
@@ -215,29 +216,41 @@ public class AnalysisEngine {
         
         private void goalFinished() {
             //            System.out.println("FINISHED " + goal);
-            if (parentGoal != null)
-                parentGoal.subgoalFinished(goal);
+            --secondMagicNumber;
+            secondMagicSet.remove(this);
+            activeGoalStates.remove(mainGoal());
+            for (GoalState parent : parentStates)
+                parent.subgoalFinished(this);
             try {
-                goal.done();
+                Goal mainGoal = mainGoal();
+                for (Goal goal : goals) {
+                    if (goal != mainGoal)
+                        goal.copyAnswerFrom(mainGoal);
+                    goal.done();
+                }
             } finally {
-                finished(goal);
+                finished(this);
             }
         }
         
-        void subgoalAdded() {
+        void subgoalAdded(GoalState state) {
             if (subgoalCount < ADDING_SUBGOALS)
                 if (subgoalCount == DONE_COUNT)
                     throw new IllegalStateException("Cannot add subgoals when the goal is done");
                 else
                     throw new IllegalStateException("Cannot add subgoals from outside allowStateChangeAndRun");
             ++subgoalCount;
+            ++monotonicallyIncreasingSubgoalCount;
+            children.add(state);
         }
         
-        void subgoalFinished(Goal subgoal) {
+        void subgoalFinished(GoalState state) {
             if (subgoalCount == DONE_COUNT)
                 throw new IllegalStateException("Subgoal cannot be finished when the goal is already done");
             if (subgoalCount == 0)
                 throw new IllegalStateException("This goal has no subgoals");
+            children.remove(state);
+            doneChildren.add(state);
             if (--subgoalCount == 0) {
                 try {
                     queue.enqueue(allChildrenFinishedCallback);
@@ -249,7 +262,13 @@ public class AnalysisEngine {
         
         @Override
         public String toString() {
-            return "<" + subgoalCount + ">" + goal;
+            if (goals.isEmpty())
+                return "<<empty-state>>";
+            return "<" + subgoalCount + "," + goals.size() + ">" + mainGoal();
+        }
+        
+        public Goal mainGoal() {
+            return goals.get(0);
         }
         
     }
@@ -281,7 +300,7 @@ public class AnalysisEngine {
         protected abstract void signalContinueOrDoneViolation();
         
         public ContinuationRequestorCalledToken schedule(Continuation cont) {
-            goal.allowStateChangeAndRun(new SubqueryCreator(cont, this), new ContinuationQuery(goal, cont));
+            goal.allowStateChangeAndRun(new SubqueryCreator(cont), new ContinuationQuery(goal, cont));
             return DumbReturnValue.instance();
         }
         
@@ -308,7 +327,7 @@ public class AnalysisEngine {
         
         @Override
         public Goal goal() {
-            return goal.goal;
+            return goal.mainGoal();
         }
     }
     
@@ -323,13 +342,13 @@ public class AnalysisEngine {
         
         @Override
         protected ContinuationRequestorCalledToken pleaseEvaluate() {
-            return goal.goal.evaluate(this);
+            return goal.mainGoal().evaluate(this);
         }
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(goal.goal.getClass().getName() + ".evaluate()",
-                    goal.goal);
+            throw new GoalContinuationContractViolation(goal.mainGoal().getClass().getName() + ".evaluate()",
+                    goal.mainGoal());
         }
         
         @Override
@@ -354,13 +373,14 @@ public class AnalysisEngine {
         
         @Override
         protected ContinuationRequestorCalledToken pleaseEvaluate() {
+            toBeDone.remove(continuation);
             return continuation.done(this);
         }
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".done()",
-                    goal.goal);
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".done()", goal
+                    .mainGoal());
         }
         
         @Override
@@ -391,8 +411,8 @@ public class AnalysisEngine {
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()",
-                    goal.goal);
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()", goal
+                    .mainGoal());
         }
         
         @Override
@@ -408,7 +428,7 @@ public class AnalysisEngine {
     
     private final QueryQueue queue = new QueryQueue();
     
-    private final Map<Goal, Goal> activeGoals = new HashMap<Goal, Goal>();
+    private final Map<Goal, GoalState> activeGoalStates = new HashMap<Goal, GoalState>();
     
     private final GoalDebug debug = new GoalDebug();
     
@@ -418,9 +438,11 @@ public class AnalysisEngine {
     
     private final Map<GoalContext, Result> contextSensitiveCache = new HashMap<GoalContext, Result>();
     
-    private final AbstractMultiMap<Goal, GoalState> sameGoals = new IdentityArrayListHashMultiMap<Goal, GoalState>();
-    
     private AnalysisStats stats = new AnalysisStats();
+    
+    private int magicNumber;
+    
+    private int secondMagicNumber;
     
     public AnalysisStats clearStats() {
         AnalysisStats old = stats;
@@ -428,65 +450,25 @@ public class AnalysisEngine {
         return old;
     }
     
-    private Addition start(Goal goal, QueryImpl parent) {
-        Goal parentGoal = parent == null ? null : parent.goal();
+    GoalState createGoalState(Goal goal) {
         Result cachedResult = contextFreeCache.get(goal);
         stats.starting(goal);
         if (cachedResult != null) {
             goal.copyAnswerFrom(cachedResult);
             stats.cacheHit(goal);
-            return new DontAddAddition();
+            return null;
         }
-        Goal activeGoal = activeGoals.get(goal);
-        if (activeGoal != null
-                && !(contextRelationsCache.containsKey(goal))
-                && (!goal.hasComplexUnnaturalRelationshipWithRecursion() || recursionDepth(goal, parent) > MAX_ITERATIONS)) {
-            if (isRecursive(goal, parent)) {
-                goal.causesRecursion();
-                debug.recursive(goal, parentGoal);
-                stats.recursiveGoal(goal);
-                return new DontAddAddition();
-            } else {
-                return new SameExistsAddition(activeGoal);
-            }
-        } else {
-            activeGoals.put(goal, goal);
-            debug.starting(goal, parentGoal);
-            return new AddAddition();
-        }
+        GoalState activeGoalState = activeGoalStates.get(goal);
+        if (activeGoalState != null)
+            return activeGoalState;
+        return new GoalState();
     }
     
-    private boolean isRecursive(Goal goal, QueryImpl parent) {
-        for (GoalState q = parent.goal; q != null; q = q.parentGoal) {
-            Goal activeGoal = q.goal;
-            if (activeGoal != null && goal.hashCode() == activeGoal.hashCode())
-                if (goal.equals(activeGoal))
-                    return true;
-        }
-        return false;
-    }
-    
-    private int recursionDepth(Goal goal, QueryImpl parent) {
-        int depth = 0;
-        for (GoalState q = parent.goal; q != null; q = q.parentGoal) {
-            Goal activeGoal = q.goal;
-            if (activeGoal != null && goal.hashCode() == activeGoal.hashCode())
-                if (goal.equals(activeGoal))
-                    ++depth;
-        }
-        return depth;
-    }
-    
-    public void finished(Goal goal) {
+    public void finished(GoalState state) {
+        Goal goal = state.mainGoal();
         storeIntoCache(goal);
         stats.calculatedGoal(goal);
-        activeGoals.remove(goal);
         debug.finished(goal);
-        
-        for (GoalState qq : sameGoals.get(goal)) {
-            qq.goal.copyAnswerFrom(goal);
-            qq.markAsDone();
-        }
     }
     
     //    public void evaluate(Continuation continuation) {
@@ -502,11 +484,32 @@ public class AnalysisEngine {
     //    }
     
     public void evaluate(Goal goal) {
-        Addition addition = start(goal, null);
-        if (!addition.shouldCreateQuery())
+        queue.clear();
+        magicNumber = 0;
+        secondMagicNumber = 0;
+        secondMagicSet.clear();
+        activeGoalStates.clear();
+        toBeDone.clear();
+        leaves.clear();
+        GoalState state = createGoalState(goal);
+        if (state == null)
             return;
-        queue.enqueue(new InitialGoalQuery(new GoalState(goal)));
+        state.addGoal(goal);
         executeQueue();
+        for (GoalState g : secondMagicSet) {
+            if (g.subgoalCount == 0) {
+                System.out.println(g.monotonicallyIncreasingSubgoalCount + " " + g.evalCount + " " + g.source
+                        + " " + g);
+            } else {
+            }
+        }
+        if (secondMagicNumber > 0)
+            try {
+                throw new AssertionError(secondMagicNumber
+                        + " goals have not been finalized when calculating " + goal);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
     }
     
     public void executeQueue() {

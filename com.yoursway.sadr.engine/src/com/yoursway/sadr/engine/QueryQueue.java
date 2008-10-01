@@ -15,4 +15,8 @@ public class QueryQueue implements QueryEnqueuer {
         return queue.poll();
     }
     
+    public void clear() {
+        queue.clear();
+    }
+    
 }

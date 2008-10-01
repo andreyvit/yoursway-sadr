@@ -11,13 +11,13 @@ public class GoalDebug {
     
     private int indent = 0;
     
-    public void starting(Goal goal, Goal parent) {
+    public void starting(Goal goal) {
         if (TRACE_GOALS)
             System.out.println(indent() + "BEGIN " + goal);
         ++indent;
     }
     
-    public void recursive(Goal goal, Goal parent) {
+    public void recursive(Goal goal) {
         if (TRACE_GOALS)
             System.out.println(indent() + "RECUR " + goal);
     }
