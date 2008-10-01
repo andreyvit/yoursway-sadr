@@ -73,7 +73,11 @@ public abstract class AbstractMultiMap<K, V> {
     }
     
     public Collection<V> remove(K key) {
-        return data.remove(key);
+        Collection<V> coll = data.remove(key);
+        if (coll == null)
+            return Collections.emptySet();
+        else
+            return coll;
     }
     
     public int valuesCount() {
