@@ -5,6 +5,7 @@ import com.yoursway.sadr.engine.Goal;
 
 public interface BackwardPropagationEntryPoint {
     
-    boolean backwardPropagation(Goal goal, ContinuationScheduler requestor, ValueInfoContinuation continuation);
+    boolean backwardPropagation(Goal<?> goal, ContinuationScheduler requestor,
+            ValueInfoContinuation continuation);
     
 }

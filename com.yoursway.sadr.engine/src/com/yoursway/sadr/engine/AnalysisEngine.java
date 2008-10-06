@@ -5,7 +5,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ public class AnalysisEngine {
         
         private static final long serialVersionUID = 1L;
         
-        public GoalContinuationContractViolation(String methodName, Goal goal) {
+        public GoalContinuationContractViolation(String methodName, Goal<?> goal) {
             super(String.format("%s did not create a continuation or call done, goal %s", methodName, String
                     .valueOf(goal)));
         }
@@ -47,17 +46,22 @@ public class AnalysisEngine {
             this.provider = provider;
         }
         
-        public void subgoal(Goal goal) {
+        @SuppressWarnings("unchecked")
+        public <R extends Result> Slot<R> subgoal(Goal<R> goal) {
+            Result cachedResult = cache.get(goal);
+            if (cachedResult != null) {
+                stats.cacheHit(goal);
+                return new SlotImpl<R>((R) cachedResult);
+            }
             if (writableGoalState.findGoalStateByGoal(goal) != null) {
-                goal.causesRecursion();
                 debug.recursive(goal);
                 stats.recursiveGoal(goal);
-                return;
+                return new SlotImpl<R>(goal.createRecursiveResult());
             }
+            stats.starting(goal);
             GoalState state = createGoalState(goal);
-            if (state == null)
-                return;
-            state.addParentAndGoal(writableGoalState, goal);
+            state.addParent(writableGoalState);
+            return (Slot<R>) state.slot;
         }
         
         public void runAndPossiblyAddSubgoals(GoalState writableGoalState) {
@@ -94,8 +98,6 @@ public class AnalysisEngine {
         
         private static final int ADDING_SUBGOALS = 1000000;
         
-        private final List<Goal> goals = newArrayList();
-        
         private final Collection<GoalState> parentStates = newArrayList();
         
         private final Collection<GoalState> children = newArrayList();
@@ -117,32 +119,27 @@ public class AnalysisEngine {
         
         private int monotonicallyIncreasingSubgoalCount = 0;
         
-        public GoalState() {
+        private final Goal<?> goal;
+        
+        private final SlotImpl<?> slot;
+        
+        public <R extends Result> GoalState(Goal<R> goal) {
+            if (goal == null)
+                throw new NullPointerException("goal is null");
             this.source = GoalSource.ROOT;
+            this.goal = goal;
             ++magicNumber;
             ++secondMagicNumber;
             secondMagicSet.add(this);
+            queue.enqueue(new InitialGoalQuery(this));
+            slot = new SlotImpl<R>();
         }
         
-        public void addParentAndGoal(GoalState parentState, Goal goal) {
+        public void addParent(GoalState parentState) {
             if (parentState == null)
                 throw new NullPointerException("parentState is null");
             parentStates.add(parentState);
             parentState.subgoalAdded(this);
-            addGoal(goal);
-        }
-        
-        public void addGoal(Goal goal) {
-            if (goal == null)
-                throw new NullPointerException("goal is null");
-            boolean isFirstParent = goals.isEmpty();
-            if (isFirstParent) {
-                activeGoalStates.put(goal, this);
-            } else if (!goal.equals(mainGoal()))
-                throw new IllegalArgumentException("Can only add equal goals to GoalState");
-            goals.add(goal);
-            if (isFirstParent)
-                queue.enqueue(new InitialGoalQuery(this));
         }
         
         public void allowStateChangeAndRun(PossibleSubgoalsAdder adder, Query allChildrenFinishedCallback) {
@@ -180,19 +177,16 @@ public class AnalysisEngine {
         }
         
         public void runOnBehalfOfThisGoal(Runnable runnable) {
-            if (goals.isEmpty())
-                throw new IllegalStateException("Cannot run on behalf of an empty GoalState");
-            Goal goal = mainGoal();
             stats.startingEvaluation(goal);
             ++evalCount;
             runnable.run();
             stats.finishedEvaluation(goal);
+            stats.finishedQuery(goal);
         }
         
-        public GoalState findGoalStateByGoal(Goal goal) {
-            for (Goal myGoal : goals)
-                if (goal.equals(myGoal))
-                    return this;
+        public GoalState findGoalStateByGoal(Goal<?> goal) {
+            if (this.goal.hashCode() == goal.hashCode() && this.goal.equals(goal))
+                return this;
             for (GoalState parent : parentStates) {
                 GoalState result = parent.findGoalStateByGoal(goal);
                 if (result != null)
@@ -201,7 +195,8 @@ public class AnalysisEngine {
             return null;
         }
         
-        public void markAsDone() {
+        @SuppressWarnings("unchecked")
+        public void markAsDone(Result result) {
             if (source == GoalSource.DUPLICATE)
                 System.out.println("GoalState.markAsDone(" + this + ")");
             if (subgoalCount >= ADDING_SUBGOALS)
@@ -211,6 +206,7 @@ public class AnalysisEngine {
                 throw new IllegalStateException(
                         "Cannot mark the goal as done when there are pending subgoals");
             subgoalCount = DONE_COUNT;
+            ((SlotImpl<Result>) slot).setResult(result);
             goalFinished();
         }
         
@@ -218,19 +214,10 @@ public class AnalysisEngine {
             //            System.out.println("FINISHED " + goal);
             --secondMagicNumber;
             secondMagicSet.remove(this);
-            activeGoalStates.remove(mainGoal());
+            activeGoalStates.remove(goal);
             for (GoalState parent : parentStates)
                 parent.subgoalFinished(this);
-            try {
-                Goal mainGoal = mainGoal();
-                for (Goal goal : goals) {
-                    if (goal != mainGoal)
-                        goal.copyAnswerFrom(mainGoal);
-                    goal.done();
-                }
-            } finally {
-                finished(this);
-            }
+            finished(this);
         }
         
         void subgoalAdded(GoalState state) {
@@ -262,13 +249,7 @@ public class AnalysisEngine {
         
         @Override
         public String toString() {
-            if (goals.isEmpty())
-                return "<<empty-state>>";
-            return "<" + subgoalCount + "," + goals.size() + ">" + mainGoal();
-        }
-        
-        public Goal mainGoal() {
-            return goals.get(0);
+            return "<" + subgoalCount + "," + parentStates.size() + ">" + goal;
         }
         
     }
@@ -309,14 +290,9 @@ public class AnalysisEngine {
             return DumbReturnValue.instance();
         }
         
-        public ContinuationRequestorCalledToken done() {
-            goal.markAsDone();
+        public ContinuationRequestorCalledToken done(Result result) {
+            goal.markAsDone(result);
             return DumbReturnValue.instance();
-        }
-        
-        @Override
-        public void recursive() {
-            goal.markAsDone();
         }
         
         public Query currentQuery() {
@@ -325,10 +301,6 @@ public class AnalysisEngine {
         
         protected abstract ContinuationRequestorCalledToken pleaseEvaluate();
         
-        @Override
-        public Goal goal() {
-            return goal.mainGoal();
-        }
     }
     
     /**
@@ -342,13 +314,13 @@ public class AnalysisEngine {
         
         @Override
         protected ContinuationRequestorCalledToken pleaseEvaluate() {
-            return goal.mainGoal().evaluate(this);
+            return goal.goal.evaluate(this);
         }
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(goal.mainGoal().getClass().getName() + ".evaluate()",
-                    goal.mainGoal());
+            throw new GoalContinuationContractViolation(goal.goal.getClass().getName() + ".evaluate()",
+                    goal.goal);
         }
         
         @Override
@@ -379,8 +351,8 @@ public class AnalysisEngine {
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".done()", goal
-                    .mainGoal());
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".done()",
+                    goal.goal);
         }
         
         @Override
@@ -411,8 +383,8 @@ public class AnalysisEngine {
         
         @Override
         protected void signalContinueOrDoneViolation() {
-            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()", goal
-                    .mainGoal());
+            throw new GoalContinuationContractViolation(continuation.getClass().getName() + ".run()",
+                    goal.goal);
         }
         
         @Override
@@ -428,15 +400,11 @@ public class AnalysisEngine {
     
     private final QueryQueue queue = new QueryQueue();
     
-    private final Map<Goal, GoalState> activeGoalStates = new HashMap<Goal, GoalState>();
+    private final Map<Goal<?>, GoalState> activeGoalStates = new HashMap<Goal<?>, GoalState>();
     
     private final GoalDebug debug = new GoalDebug();
     
-    private final Map<Goal, Result> contextFreeCache = new HashMap<Goal, Result>();
-    
-    private final Map<Goal, ContextRelation> contextRelationsCache = new HashMap<Goal, ContextRelation>();
-    
-    private final Map<GoalContext, Result> contextSensitiveCache = new HashMap<GoalContext, Result>();
+    private final Map<Goal<?>, Result> cache = new HashMap<Goal<?>, Result>();
     
     private AnalysisStats stats = new AnalysisStats();
     
@@ -444,29 +412,24 @@ public class AnalysisEngine {
     
     private int secondMagicNumber;
     
+    <R extends Result> GoalState createGoalState(Goal<R> goal) {
+        GoalState state = activeGoalStates.get(goal);
+        if (state == null) {
+            state = new GoalState(goal);
+            activeGoalStates.put(goal, state);
+        }
+        return state;
+    }
+    
     public AnalysisStats clearStats() {
         AnalysisStats old = stats;
         stats = new AnalysisStats();
         return old;
     }
     
-    GoalState createGoalState(Goal goal) {
-        Result cachedResult = contextFreeCache.get(goal);
-        stats.starting(goal);
-        if (cachedResult != null) {
-            goal.copyAnswerFrom(cachedResult);
-            stats.cacheHit(goal);
-            return null;
-        }
-        GoalState activeGoalState = activeGoalStates.get(goal);
-        if (activeGoalState != null)
-            return activeGoalState;
-        return new GoalState();
-    }
-    
     public void finished(GoalState state) {
-        Goal goal = state.mainGoal();
-        storeIntoCache(goal);
+        Goal<?> goal = state.goal;
+        storeIntoCache(goal, state.slot.result());
         stats.calculatedGoal(goal);
         debug.finished(goal);
     }
@@ -483,7 +446,8 @@ public class AnalysisEngine {
     //        });
     //    }
     
-    public void evaluate(Goal goal) {
+    @SuppressWarnings("unchecked")
+    public <R extends Result> R evaluate(Goal<R> goal) {
         queue.clear();
         magicNumber = 0;
         secondMagicNumber = 0;
@@ -491,10 +455,8 @@ public class AnalysisEngine {
         activeGoalStates.clear();
         toBeDone.clear();
         leaves.clear();
+        // TODO: check cache
         GoalState state = createGoalState(goal);
-        if (state == null)
-            return;
-        state.addGoal(goal);
         executeQueue();
         for (GoalState g : secondMagicSet) {
             if (g.subgoalCount == 0) {
@@ -510,6 +472,7 @@ public class AnalysisEngine {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
+        return (R) state.slot.result();
     }
     
     public void executeQueue() {
@@ -517,14 +480,11 @@ public class AnalysisEngine {
         while ((current = queue.poll()) != null) {
             //            System.out.println("RUNNING " + current);
             current.evaluate();
-            Goal goal = current.goal();
-            if (goal != null)
-                stats.finishedQuery(goal);
         }
     }
     
-    public boolean isCached(Goal goal) {
-        return contextFreeCache.containsKey(goal);
+    public boolean isCached(Goal<?> goal) {
+        return cache.containsKey(goal);
     }
     
     @Override
@@ -534,23 +494,10 @@ public class AnalysisEngine {
         return res.toString();
     }
     
-    void storeIntoCache(Goal goal) {
+    void storeIntoCache(Goal<?> goal, Result result) {
         if (!goal.cachable())
             return;
-        if (goal.isContextFree())
-            contextFreeCache.put(goal, goal.roughResult());
-        else {
-            ContextRelation relation = goal.contextRelation();
-            
-            ContextRelation existingRelation = contextRelationsCache.get(goal);
-            if (existingRelation == null)
-                contextRelationsCache.put(goal, relation);
-            else if (!existingRelation.equals(relation))
-                contextRelationsCache.put(goal, existingRelation.extend(relation));
-            
-            GoalContext context = relation.createPrimaryContext(goal);
-            contextSensitiveCache.put(context, goal.roughResult());
-        }
+        cache.put(goal, result);
     }
     
 }

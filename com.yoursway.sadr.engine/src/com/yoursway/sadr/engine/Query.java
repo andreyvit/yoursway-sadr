@@ -11,8 +11,4 @@ public abstract class Query {
     
     public abstract void evaluate();
     
-    public abstract Goal goal();
-    
-    public abstract void recursive();
-    
 }
