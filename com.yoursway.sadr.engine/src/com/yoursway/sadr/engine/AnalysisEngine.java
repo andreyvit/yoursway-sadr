@@ -500,4 +500,8 @@ public class AnalysisEngine {
         cache.put(goal, result);
     }
     
+    public void clearCache() {
+        cache.clear();
+    }
+    
 }
