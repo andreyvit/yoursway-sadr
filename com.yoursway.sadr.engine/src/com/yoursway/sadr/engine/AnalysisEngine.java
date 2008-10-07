@@ -1,10 +1,12 @@
 package com.yoursway.sadr.engine;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newArrayListWithCapacity;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,16 +55,21 @@ public class AnalysisEngine {
                 stats.cacheHit(goal);
                 return new SlotImpl<R>((R) cachedResult);
             }
-            long start = System.currentTimeMillis();
-            if (writableGoalState.findGoalStateByGoal(goal) != null) {
-                debug.recursive(goal);
-                stats.recursiveGoal(goal);
-                return new SlotImpl<R>(goal.createRecursiveResult());
+            GoalState state = activeGoalStates.get(goal);
+            if (state == null) {
+                state = new GoalState(goal);
+                activeGoalStates.put(goal, state);
+            } else {
+                long start = System.currentTimeMillis();
+                if (writableGoalState.findGoalStateByGoal(goal) != null) {
+                    debug.recursive(goal);
+                    stats.recursiveGoal(goal);
+                    return new SlotImpl<R>(goal.createRecursiveResult());
+                }
+                long span = System.currentTimeMillis() - start;
+                if (span > 50)
+                    System.out.println("SubqueryCreator.subgoal() - findGoalStateByGoal took " + span);
             }
-            long span = System.currentTimeMillis() - start;
-            if (span > 50)
-                System.out.println("SubqueryCreator.subgoal() - findGoalStateByGoal took " + span);
-            GoalState state = createGoalState(goal);
             state.addParent(writableGoalState);
             return (Slot<R>) state.slot;
         }
@@ -94,6 +101,8 @@ public class AnalysisEngine {
         DUPLICATE
         
     }
+    
+    int nextVisitationMark = 1;
     
     class GoalState {
         
@@ -131,6 +140,8 @@ public class AnalysisEngine {
         private int runs = 0;
         
         private int totalSubgoals = 0;
+        
+        private int visitationMark = 0;
         
         public <R extends Result> GoalState(Goal<R> goal) {
             if (goal == null)
@@ -197,13 +208,24 @@ public class AnalysisEngine {
             }
         }
         
+        /**
+         * DFS over all parent states to find a match.
+         */
         public GoalState findGoalStateByGoal(Goal<?> goal) {
-            if (this.goal.hashCode() == goal.hashCode() && this.goal.equals(goal))
-                return this;
-            for (GoalState parent : parentStates) {
-                GoalState result = parent.findGoalStateByGoal(goal);
-                if (result != null)
-                    return result;
+            // TODO: handle wrap-around (though it's not likely to occur anyway)
+            int mark = nextVisitationMark++;
+            List<GoalState> stack = newArrayListWithCapacity(activeGoalStates.size());
+            stack.add(this);
+            this.visitationMark = mark;
+            while (!stack.isEmpty()) {
+                GoalState state = stack.remove(stack.size() - 1);
+                if (state.goal.hashCode() == goal.hashCode() && state.goal.equals(goal))
+                    return state;
+                for (GoalState parent : state.parentStates)
+                    if (parent.visitationMark < mark) {
+                        parent.visitationMark = mark;
+                        stack.add(parent);
+                    }
             }
             return null;
         }
