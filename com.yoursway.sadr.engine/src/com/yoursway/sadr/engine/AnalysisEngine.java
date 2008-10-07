@@ -53,12 +53,15 @@ public class AnalysisEngine {
                 stats.cacheHit(goal);
                 return new SlotImpl<R>((R) cachedResult);
             }
+            long start = System.currentTimeMillis();
             if (writableGoalState.findGoalStateByGoal(goal) != null) {
                 debug.recursive(goal);
                 stats.recursiveGoal(goal);
                 return new SlotImpl<R>(goal.createRecursiveResult());
             }
-            stats.starting(goal);
+            long span = System.currentTimeMillis() - start;
+            if (span > 50)
+                System.out.println("SubqueryCreator.subgoal() - findGoalStateByGoal took " + span);
             GoalState state = createGoalState(goal);
             state.addParent(writableGoalState);
             return (Slot<R>) state.slot;
@@ -123,6 +126,12 @@ public class AnalysisEngine {
         
         private final SlotImpl<?> slot;
         
+        private long duration = 0;
+        
+        private int runs = 0;
+        
+        private int totalSubgoals = 0;
+        
         public <R extends Result> GoalState(Goal<R> goal) {
             if (goal == null)
                 throw new NullPointerException("goal is null");
@@ -177,11 +186,15 @@ public class AnalysisEngine {
         }
         
         public void runOnBehalfOfThisGoal(Runnable runnable) {
-            stats.startingEvaluation(goal);
             ++evalCount;
-            runnable.run();
-            stats.finishedEvaluation(goal);
-            stats.finishedQuery(goal);
+            ++runs;
+            long start = System.currentTimeMillis();
+            try {
+                runnable.run();
+            } finally {
+                long end = System.currentTimeMillis();
+                duration += (end - start);
+            }
         }
         
         public GoalState findGoalStateByGoal(Goal<?> goal) {
@@ -218,6 +231,7 @@ public class AnalysisEngine {
             for (GoalState parent : parentStates)
                 parent.subgoalFinished(this);
             finished(this);
+            stats.finishedGoal(goal, runs, duration);
         }
         
         void subgoalAdded(GoalState state) {
@@ -227,6 +241,7 @@ public class AnalysisEngine {
                 else
                     throw new IllegalStateException("Cannot add subgoals from outside allowStateChangeAndRun");
             ++subgoalCount;
+            ++totalSubgoals;
             ++monotonicallyIncreasingSubgoalCount;
             children.add(state);
         }
@@ -430,7 +445,6 @@ public class AnalysisEngine {
     public void finished(GoalState state) {
         Goal<?> goal = state.goal;
         storeIntoCache(goal, state.slot.result());
-        stats.calculatedGoal(goal);
         debug.finished(goal);
     }
     
