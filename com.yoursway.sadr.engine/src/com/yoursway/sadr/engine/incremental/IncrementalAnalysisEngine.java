@@ -11,6 +11,7 @@ import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.GoalResultCacheCleaner;
 import com.yoursway.sadr.engine.Result;
+import com.yoursway.sadr.engine.incremental.index.DependencyContributor;
 
 /**
  * TODO Validate cached results instead of throwing them out.
@@ -64,9 +65,11 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         return result;
     }
     
-    protected class IncrementalGoalState extends GoalState {
+    public class IncrementalGoalState extends GoalState {
         
         private final Set<SourceUnit> sourceUnitDependencies = newHashSet();
+        
+        private final Set<DependencyContributor> dependencyContributors = newHashSet();
         
         public <R extends Result> IncrementalGoalState(Goal<R> goal) {
             super(goal);
@@ -81,7 +84,11 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         @Override
         protected void subgoalFinished(GoalState state) {
             super.subgoalFinished(state);
-            sourceUnitDependencies.addAll(((IncrementalGoalState) state).sourceUnitDependencies);
+            IncrementalGoalState igs = (IncrementalGoalState) state;
+            sourceUnitDependencies.addAll(igs.sourceUnitDependencies);
+            dependencyContributors.addAll(igs.dependencyContributors);
+            for (DependencyContributor contributor : dependencyContributors)
+                contributor.contributeDependenciesTo(goal);
         }
         
         @Override
@@ -89,6 +96,11 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             super.goalFinished();
             for (SourceUnit sourceUnit : sourceUnitDependencies)
                 lookupSourceUnitData(sourceUnit).addDependentGoal(goal);
+        }
+        
+        public void contributeDependecyContributor(DependencyContributor contributor) {
+            contributor.contributeDependenciesTo(goal);
+            dependencyContributors.add(contributor);
         }
         
     }

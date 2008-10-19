@@ -332,8 +332,8 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
             return DumbReturnValue.instance();
         }
         
-        public Query currentQuery() {
-            return this;
+        public Object getGoalState() {
+            return goal;
         }
         
         protected abstract ContinuationRequestorCalledToken pleaseEvaluate();
@@ -495,7 +495,11 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
         activeGoalStates.clear();
         toBeDone.clear();
         leaves.clear();
-        // TODO: check cache
+        Result cachedResult = cache.get(goal);
+        if (cachedResult != null) {
+            stats.cacheHit(goal);
+            return (R) cachedResult;
+        }
         GoalState state = lookupGoalState(goal);
         executeQueue();
         for (GoalState g : secondMagicSet) {
@@ -550,6 +554,9 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
                 throw new NullPointerException("goal is null");
             cache.remove(goal);
         }
+    }
+    
+    public AnalysisEngine() {
     }
     
 }

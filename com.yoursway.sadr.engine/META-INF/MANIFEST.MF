@@ -11,5 +11,6 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-LazyStart: true
 Export-Package: com.yoursway.sadr.engine,
  com.yoursway.sadr.engine.incremental,
+ com.yoursway.sadr.engine.incremental.index,
  com.yoursway.sadr.engine.util
 Bundle-ActivationPolicy: lazy

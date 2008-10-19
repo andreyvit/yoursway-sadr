@@ -11,5 +11,6 @@ public interface ContinuationScheduler {
     
     ContinuationRequestorCalledToken done(Result result);
     
-    Query currentQuery();
+    Object getGoalState();
+    
 }
