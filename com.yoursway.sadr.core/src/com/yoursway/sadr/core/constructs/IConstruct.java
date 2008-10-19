@@ -5,8 +5,8 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 
 public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N> {
@@ -17,6 +17,10 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     
     C staticallyEnclosingConstruct();
     
+    /**
+     * WARNING: this method has O(N) complexity (where N is the number of
+     * nodes), so use sparingly.
+     */
     C subconstructFor(ASTNode node);
     
     C parent();
