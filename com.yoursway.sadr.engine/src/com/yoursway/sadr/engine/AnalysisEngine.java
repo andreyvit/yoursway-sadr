@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Assert;
  * AnalysisEngine().execute(yourSimpleContinuation) and it will provide
  * scheduler for this continuation and all tasks scheduled by it.
  */
-public class AnalysisEngine {
+public class AnalysisEngine implements GoalResultCacheCleaner {
     
     static final class GoalContinuationContractViolation extends RuntimeException {
         
@@ -57,7 +57,7 @@ public class AnalysisEngine {
             }
             GoalState state = activeGoalStates.get(goal);
             if (state == null) {
-                state = new GoalState(goal);
+                state = createGoalState(goal);
                 activeGoalStates.put(goal, state);
             } else {
                 long start = System.currentTimeMillis();
@@ -104,7 +104,7 @@ public class AnalysisEngine {
     
     int nextVisitationMark = 1;
     
-    class GoalState {
+    protected class GoalState {
         
         private static final int DONE_COUNT = -1;
         
@@ -131,7 +131,7 @@ public class AnalysisEngine {
         
         private int monotonicallyIncreasingSubgoalCount = 0;
         
-        private final Goal<?> goal;
+        protected final Goal<?> goal;
         
         private final SlotImpl<?> slot;
         
@@ -245,7 +245,7 @@ public class AnalysisEngine {
             goalFinished();
         }
         
-        private void goalFinished() {
+        protected void goalFinished() {
             //            System.out.println("FINISHED " + goal);
             --secondMagicNumber;
             secondMagicSet.remove(this);
@@ -268,7 +268,7 @@ public class AnalysisEngine {
             children.add(state);
         }
         
-        void subgoalFinished(GoalState state) {
+        protected void subgoalFinished(GoalState state) {
             if (subgoalCount == DONE_COUNT)
                 throw new IllegalStateException("Subgoal cannot be finished when the goal is already done");
             if (subgoalCount == 0)
@@ -449,13 +449,17 @@ public class AnalysisEngine {
     
     private int secondMagicNumber;
     
-    <R extends Result> GoalState createGoalState(Goal<R> goal) {
+    <R extends Result> GoalState lookupGoalState(Goal<R> goal) {
         GoalState state = activeGoalStates.get(goal);
         if (state == null) {
-            state = new GoalState(goal);
+            state = createGoalState(goal);
             activeGoalStates.put(goal, state);
         }
         return state;
+    }
+    
+    protected <R extends Result> GoalState createGoalState(Goal<R> goal) {
+        return new GoalState(goal);
     }
     
     public AnalysisStats clearStats() {
@@ -492,7 +496,7 @@ public class AnalysisEngine {
         toBeDone.clear();
         leaves.clear();
         // TODO: check cache
-        GoalState state = createGoalState(goal);
+        GoalState state = lookupGoalState(goal);
         executeQueue();
         for (GoalState g : secondMagicSet) {
             if (g.subgoalCount == 0) {
@@ -538,6 +542,14 @@ public class AnalysisEngine {
     
     public void clearCache() {
         cache.clear();
+    }
+    
+    public void removeCachedResultsOf(Collection<Goal<?>> goals) {
+        for (Goal<?> goal : goals) {
+            if (goal == null)
+                throw new NullPointerException("goal is null");
+            cache.remove(goal);
+        }
     }
     
 }
