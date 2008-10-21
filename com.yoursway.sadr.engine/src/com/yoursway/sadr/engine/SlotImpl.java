@@ -1,6 +1,6 @@
 package com.yoursway.sadr.engine;
 
-class SlotImpl<R extends Result> implements Slot<R> {
+public class SlotImpl<R extends Result> implements Slot<R> {
     
     private R result;
     

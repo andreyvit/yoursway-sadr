@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Assert;
  * AnalysisEngine().execute(yourSimpleContinuation) and it will provide
  * scheduler for this continuation and all tasks scheduled by it.
  */
-public class AnalysisEngine implements GoalResultCacheCleaner {
+public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     static final class GoalContinuationContractViolation extends RuntimeException {
         
@@ -50,7 +50,7 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
         
         @SuppressWarnings("unchecked")
         public <R extends Result> Slot<R> subgoal(Goal<R> goal) {
-            Result cachedResult = cache.get(goal);
+            Result cachedResult = lookupResultInCache(goal, writableGoalState);
             if (cachedResult != null) {
                 stats.cacheHit(goal);
                 return new SlotImpl<R>((R) cachedResult);
@@ -133,7 +133,7 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
         
         protected final Goal<?> goal;
         
-        private final SlotImpl<?> slot;
+        protected final SlotImpl<? extends Result> slot;
         
         private long duration = 0;
         
@@ -441,8 +441,6 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
     
     private final GoalDebug debug = new GoalDebug();
     
-    private final Map<Goal<?>, Result> cache = new HashMap<Goal<?>, Result>();
-    
     private AnalysisStats stats = new AnalysisStats();
     
     private int magicNumber;
@@ -470,7 +468,6 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
     
     public void finished(GoalState state) {
         Goal<?> goal = state.goal;
-        storeIntoCache(goal, state.slot.result());
         debug.finished(goal);
     }
     
@@ -495,7 +492,7 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
         activeGoalStates.clear();
         toBeDone.clear();
         leaves.clear();
-        Result cachedResult = cache.get(goal);
+        Result cachedResult = lookupResultInCache(goal, null);
         if (cachedResult != null) {
             stats.cacheHit(goal);
             return (R) cachedResult;
@@ -527,9 +524,7 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
         }
     }
     
-    public boolean isCached(Goal<?> goal) {
-        return cache.containsKey(goal);
-    }
+    public abstract boolean isCached(Goal<?> goal);
     
     @Override
     public String toString() {
@@ -538,25 +533,6 @@ public class AnalysisEngine implements GoalResultCacheCleaner {
         return res.toString();
     }
     
-    void storeIntoCache(Goal<?> goal, Result result) {
-        if (!goal.cachable())
-            return;
-        cache.put(goal, result);
-    }
-    
-    public void clearCache() {
-        cache.clear();
-    }
-    
-    public void removeCachedResultsOf(Collection<Goal<?>> goals) {
-        for (Goal<?> goal : goals) {
-            if (goal == null)
-                throw new NullPointerException("goal is null");
-            cache.remove(goal);
-        }
-    }
-    
-    public AnalysisEngine() {
-    }
+    protected abstract Result lookupResultInCache(Goal<?> goal, GoalState parentState);
     
 }

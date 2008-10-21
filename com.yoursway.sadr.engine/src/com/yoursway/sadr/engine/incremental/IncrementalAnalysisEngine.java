@@ -2,6 +2,7 @@ package com.yoursway.sadr.engine.incremental;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
 
 import java.util.Collection;
 import java.util.Map;
@@ -52,7 +53,34 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         
     }
     
-    Map<SourceUnit, SourceUnitData> sourceUnitDataMap = newHashMap();
+    static class CachedGoalData {
+        
+        final Goal<?> goal;
+        final Result result;
+        final SourceUnit[] sourceUnits;
+        final DependencyContributor[] dependencyContributors;
+        
+        public CachedGoalData(Goal<?> goal, Result result, SourceUnit[] sourceUnits,
+                DependencyContributor[] dependencyContributors) {
+            if (goal == null)
+                throw new NullPointerException("goal is null");
+            if (result == null)
+                throw new NullPointerException("result is null");
+            if (sourceUnits == null)
+                throw new NullPointerException("sourceUnits is null");
+            if (dependencyContributors == null)
+                throw new NullPointerException("dependencyContributors is null");
+            this.goal = goal;
+            this.result = result;
+            this.sourceUnits = sourceUnits;
+            this.dependencyContributors = dependencyContributors;
+        }
+        
+    }
+    
+    final Map<SourceUnit, SourceUnitData> sourceUnitDataMap = newHashMap();
+    
+    final Map<Goal<?>, CachedGoalData> cache = newHashMap();
     
     SourceUnitData lookupSourceUnitData(SourceUnit sourceUnit) {
         if (sourceUnit == null)
@@ -87,8 +115,6 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             IncrementalGoalState igs = (IncrementalGoalState) state;
             sourceUnitDependencies.addAll(igs.sourceUnitDependencies);
             dependencyContributors.addAll(igs.dependencyContributors);
-            for (DependencyContributor contributor : dependencyContributors)
-                contributor.contributeDependenciesTo(goal);
         }
         
         @Override
@@ -96,10 +122,20 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             super.goalFinished();
             for (SourceUnit sourceUnit : sourceUnitDependencies)
                 lookupSourceUnitData(sourceUnit).addDependentGoal(goal);
+            for (DependencyContributor contributor : dependencyContributors)
+                contributor.contributeDependenciesTo(goal);
+            storeIntoCache();
+        }
+        
+        void storeIntoCache() {
+            if (!goal.cachable())
+                return;
+            cache.put(goal, new CachedGoalData(goal, slot.result(), sourceUnitDependencies
+                    .toArray(new SourceUnit[sourceUnitDependencies.size()]), dependencyContributors
+                    .toArray(new DependencyContributor[dependencyContributors.size()])));
         }
         
         public void contributeDependecyContributor(DependencyContributor contributor) {
-            contributor.contributeDependenciesTo(goal);
             dependencyContributors.add(contributor);
         }
         
@@ -116,6 +152,36 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         SourceUnitData data = sourceUnitDataMap.remove(sourceUnit);
         if (data != null)
             data.removeAllDependentResultsFromCache(this);
+    }
+    
+    public void removeCachedResultsOf(Collection<Goal<?>> goals) {
+        for (Goal<?> goal : goals) {
+            if (goal == null)
+                throw new NullPointerException("goal is null");
+            cache.remove(goal);
+        }
+    }
+    
+    public void clearCache() {
+        cache.clear();
+    }
+    
+    @Override
+    public boolean isCached(Goal<?> goal) {
+        return cache.containsKey(goal);
+    }
+    
+    @Override
+    protected Result lookupResultInCache(Goal<?> goal, GoalState parentState) {
+        CachedGoalData data = cache.get(goal);
+        if (data == null)
+            return null;
+        if (parentState != null) {
+            IncrementalGoalState igs = (IncrementalGoalState) parentState;
+            igs.sourceUnitDependencies.addAll(asList(data.sourceUnits));
+            igs.dependencyContributors.addAll(asList(data.dependencyContributors));
+        }
+        return data.result;
     }
     
 }
