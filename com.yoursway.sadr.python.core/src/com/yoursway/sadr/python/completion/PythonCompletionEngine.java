@@ -26,7 +26,6 @@ import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.runtime.PythonBasicClass;
 import com.yoursway.sadr.python.core.runtime.PythonMethod;
 import com.yoursway.sadr.python.core.runtime.PythonProcedure;
-import com.yoursway.sadr.python.core.runtime.PythonRuntimeModel;
 import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoUtils;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.MethodScope;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
@@ -49,8 +48,6 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
     //    private MixinModel model;
     private final HashSet<String> completedNames = new HashSet<String>();
     private final WeakHashSet intresting = new WeakHashSet();
-    
-    private PythonRuntimeModel runtimeModel;
     
     private Engine engine;
     
@@ -205,6 +202,7 @@ public class PythonCompletionEngine extends ScriptCompletionEngine {
         
         final ValueInfo values[] = new ValueInfo[] { null };
         PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+            @Override
             public <T> void checkpoint(IGrade<T> grade) {
                 values[0] = getResult();
             }

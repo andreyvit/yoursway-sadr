@@ -5,6 +5,8 @@ import static java.util.Collections.emptyList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
@@ -18,16 +20,12 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
-import com.yoursway.sadr.blocks.foundation.types.AbstractType;
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
 import com.yoursway.sadr.blocks.foundation.typesets.TypeSetBuilder;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python.core.typeinferencing.services.ClassLookup;
 import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
-import com.yoursway.sadr.python.core.typeinferencing.types.MetaClassType;
 import com.yoursway.sadr.python.core.typeinferencing.types.StubType;
-import com.yoursway.sadr.python_v2.model.builtins.InstanceType;
 
 public class PythonUtils {
     
@@ -114,19 +112,6 @@ public class PythonUtils {
     //        return null;
     //    }
     //    
-    public static PythonMetaClass resolveStaticClassReference(ClassLookup lookup, ASTNode receiver) {
-        if (receiver instanceof SimpleReference)
-            return resolveStaticClassReference(lookup, (SimpleReference) receiver);
-        else
-            System.out.println("resolveStaticClassReference: " + receiver);
-        return null;
-    }
-    
-    public static PythonMetaClass resolveStaticClassReference(ClassLookup lookup, SimpleReference receiver) {
-        PythonMetaType klass = lookup.findClass(receiver.getName());
-        return klass == null ? null : klass.metaClass();
-    }
-    
     static class ScopeRequestor {
         
         private final List<Scope> scopes = new ArrayList<Scope>();
@@ -177,34 +162,40 @@ public class PythonUtils {
     //        return Pattern.compile("\\b" + Pattern.quote(fieldName) + "\\b", Pattern.CASE_INSENSITIVE);
     //    }
     
-    public static AbstractType createType(PythonBasicClass klass) {
-        return klass instanceof PythonMetaType ? new InstanceType((PythonMetaType) klass)
-                : new MetaClassType((PythonMetaClass) klass);
-    }
-    
-    public static PythonBasicClass unwrapType(Type type) {
-        if (type instanceof InstanceType)
-            return ((InstanceType) type).runtimeClass();
-        if (type instanceof MetaClassType)
-            return ((MetaClassType) type).runtimeMetaClass();
-        return null;
-    }
-    
     public static boolean containsMetaclassWithName(TypeSet set, String name) {
-        for (Type t : set.containedTypes()) {
-            if (t instanceof MetaClassType) {
-                MetaClassType metaClassType = (MetaClassType) t;
-                if (metaClassType.describe().equalsIgnoreCase(name))
-                    return true;
-            }
-            
-        }
+        //        for (Type t : set.containedTypes()) {
+        //            if (t instanceof MetaClassType) {
+        //                MetaClassType metaClassType = (MetaClassType) t;
+        //                if (metaClassType.describe().equalsIgnoreCase(name))
+        //                    return true;
+        //            }
+        //            
+        //        }
         return false;
     }
     
-    public static void findSourceModules(IParent element, List<ISourceModule> list) {
+    public static FileSourceUnit createFileSourceUnit(ISourceModule element) {
+        IResource resource;
+        try {
+            resource = element.getCorrespondingResource();
+        } catch (ModelException e) {
+            e.printStackTrace();
+            return null;
+        }
+        if (resource instanceof IFile) {
+            IFile file = (IFile) resource;
+            String path = element.getParent().getPath().toString() + "/" + element.getElementName();
+            return new FileSourceUnit(file.getLocation().toFile(), path);
+        }
+        return null;
+    }
+    
+    public static void findSourceModules(IParent element, List<FileSourceUnit> list) {
         if (element instanceof ISourceModule) {
-            list.add((ISourceModule) element);
+            FileSourceUnit fsu = createFileSourceUnit((ISourceModule) element);
+            if (fsu != null) {
+                list.add(fsu);
+            }
             return;
         }
         IModelElement[] children;
@@ -224,15 +215,15 @@ public class PythonUtils {
         return evr.getExpressions();
     }
     
-    public static boolean isXDerivedFromY(PythonBasicClass candidateKlass, PythonBasicClass klass) {
-        if (candidateKlass.equals(klass))
-            return true;
-        PythonBasicClass superclass = candidateKlass.superclassOfTheSameKind();
-        if (superclass == null)
-            return false;
-        else
-            return isXDerivedFromY(superclass, klass);
-    }
+    //    public static boolean isXDerivedFromY(PythonBasicClass candidateKlass, PythonBasicClass klass) {
+    //        if (candidateKlass.equals(klass))
+    //            return true;
+    //        PythonBasicClass superclass = candidateKlass.superclassOfTheSameKind();
+    //        if (superclass == null)
+    //            return false;
+    //        else
+    //            return isXDerivedFromY(superclass, klass);
+    //    }
     
     //    public static IModelElement[] dtlClassToIType(RubyClass klass) {
     //        List<IModelElement> result = new ArrayList<IModelElement>();

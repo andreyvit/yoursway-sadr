@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -47,12 +46,13 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
     }
     
     public PythonFileC resolvePath(String path) {
-        String realPath = path.replace(".", "/");
-        ProjectRuntime runtime = innerScope().getFileScope().getProjectRuntime();
-        PythonFileC module = runtime.getModule(realPath + "/__init__.py");
-        if (module == null)
-            module = runtime.getModule(realPath + ".py");
-        return module;
+        //        String realPath = path.replace(".", "/");
+        //        ProjectRuntime runtime = innerScope().getFileScope().getProjectRuntime();
+        //        PythonFileC module = runtime.getModule(realPath + "/__init__.py");
+        //        if (module == null)
+        //            module = runtime.getModule(realPath + ".py");
+        //        return module;
+        return null;
     }
     
     public PythonValue<ModuleValue> resolveAlias(String alias) {

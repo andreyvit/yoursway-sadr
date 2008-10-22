@@ -1,15 +1,16 @@
 package com.yoursway.sadr.python.core.runtime;
 
+import static com.google.common.collect.Maps.newHashMap;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
@@ -18,55 +19,64 @@ import com.yoursway.sadr.succeeder.Engine;
 
 public class ProjectRuntime {
     
-    private final Collection<ISourceModule> modules;
-    private final Map<String, PythonFileC> nameToModule = new HashMap<String, PythonFileC>();
+    private final Collection<FileSourceUnit> modules;
+    private final Map<File, PythonFileC> nameToModule = newHashMap();
     private final Engine engine;
     
-    public ProjectRuntime(IScriptProject project) {
+    public ProjectRuntime(ProjectUnit project) {
         this.engine = new Engine(new DefaultSchedulingStrategy());
         
-        this.modules = findSourceModules(project);
-        for (ISourceModule module : this.modules)
+        this.modules = project.getModules();
+        for (FileSourceUnit module : this.modules)
             contributeModule(module);
     }
     
-    public PythonFileC getModule(String name) {
-        return nameToModule.get(name);
+    public ProjectRuntime(IScriptProject project) {
+        this(new ProjectUnit(findSourceModules(project)));
     }
     
-    public Collection<String> getModuleNames() {
-        return nameToModule.keySet();
+    private static Collection<FileSourceUnit> findSourceModules(IScriptProject project) {
+        List<FileSourceUnit> modules = new ArrayList<FileSourceUnit>();
+        PythonUtils.findSourceModules(project, modules);
+        return modules;
+    }
+    
+    public PythonFileC getModule(File file) {
+        try {
+            return nameToModule.get(file.getCanonicalFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public PythonFileC getModule(FileSourceUnit fsu) {
+        try {
+            return nameToModule.get(fsu.getFile().getCanonicalFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     public Engine getEngine() {
         return this.engine;
     }
     
-    public Collection<ISourceModule> getModules() {
+    public Collection<FileSourceUnit> getModules() {
         return modules;
     }
     
-    private List<ISourceModule> findSourceModules(IScriptProject project) {
-        List<ISourceModule> modules = new ArrayList<ISourceModule>();
-        PythonUtils.findSourceModules(project, modules);
-        return modules;
-    }
-    
-    private void contributeModule(ISourceModule module) {
+    private void contributeModule(FileSourceUnit module) {
         try {
             PythonSourceParser parser = new PythonSourceParser();
-            String path = module.getParent().getElementName();
-            if (path.length() != 0)
-                path = path + "/";
-            String moduleName = path + module.getElementName();
+            String moduleName = module.getPathName();
             ModuleDeclaration moduleDecl = parser.parse(moduleName.toCharArray(), module
                     .getSourceAsCharArray(), null);
             
             PythonFileC moduleObject = new PythonFileC(null, moduleDecl, moduleName, this);
             //FIXME convert module names to python code form (e.g. "package.module").
-            nameToModule.put(moduleName, moduleObject);
-        } catch (ModelException e) {
-            e.printStackTrace();
+            nameToModule.put(module.getFile().getCanonicalFile(), moduleObject);
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getCause() != null) {

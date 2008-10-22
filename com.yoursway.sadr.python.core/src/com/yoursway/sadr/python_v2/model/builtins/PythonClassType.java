@@ -8,7 +8,11 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+<<<<<<< HEAD:com.yoursway.sadr.python.core/src/com/yoursway/sadr/python_v2/model/builtins/PythonClassType.java
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
+=======
+import com.yoursway.sadr.python.core.runtime.requestors.methods.MethodRequestor;
+>>>>>>> Python: Introduced SourceUnit. Removed tons of unneeded code.:com.yoursway.sadr.python.core/src/com/yoursway/sadr/python_v2/model/builtins/PythonClassType.java
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 

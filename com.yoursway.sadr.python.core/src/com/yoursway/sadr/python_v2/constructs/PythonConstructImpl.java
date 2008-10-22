@@ -2,13 +2,11 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import static com.yoursway.sadr.python_v2.constructs.Effects.NONE;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -84,10 +82,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     //                new ControlFlowGraph<PythonConstruct, Scope, PythonDynamicContext, ASTNode>(
     //                        constructs), requestor);
     //    }
-    
-    public Collection<MumblaWumblaThreesome> mumblaWumbla() {
-        return null;
-    }
     
     @Override
     public int hashCode() {

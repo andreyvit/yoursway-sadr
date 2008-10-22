@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.core.PythonNature;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
@@ -45,17 +44,18 @@ import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
+import com.yoursway.sadr.python.core.runtime.FileSourceUnit;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
-import com.yoursway.sadr.python.core.typeinferencing.goals.CreateSwampGoal;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
+import com.yoursway.sadr.python_v2.goals.CreateSwampGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -121,8 +121,8 @@ public abstract class AbstractTypeInferencingTestCase {
         
         System.out.println("Running test " + basePath);
         
-        for (ISourceModule sourceModule : projectRuntime.getModules()) {
-            String headline = "==== " + sourceModule.getElementName() + " ====\n";
+        for (FileSourceUnit sourceModule : projectRuntime.getModules()) {
+            String headline = "==== " + sourceModule.getPathName() + " ====\n";
             expected.append(headline);
             actual.append(headline);
             checkFile(sourceModule, projectRuntime, engine, expected, actual);
@@ -131,7 +131,7 @@ public abstract class AbstractTypeInferencingTestCase {
         Assert.assertEquals("Items should match:", expected.toString(), actual.toString());
     }
     
-    private void checkFile(ISourceModule sourceModule, ProjectRuntime projectRuntime, Engine engine,
+    private void checkFile(FileSourceUnit sourceModule, ProjectRuntime projectRuntime, Engine engine,
             StringBuilder expected, StringBuilder actual) throws ModelException, Exception {
         Collection<IAssertion> assertions = new ArrayList<IAssertion>();
         
@@ -155,7 +155,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         if (assertions.size() == 0)
             return;
-        PythonFileC fileC = projectRuntime.getModule(sourceModule.getElementName());
+        PythonFileC fileC = projectRuntime.getModule(sourceModule);
         for (IAssertion assertion : assertions)
             assertion.check(fileC, sourceModule, engine, expected, actual);
     }
@@ -332,7 +332,7 @@ public abstract class AbstractTypeInferencingTestCase {
     
     public interface IAssertion {
         
-        void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+        void check(PythonFileC fileC, FileSourceUnit sourceModule, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception;
     }
     
@@ -350,7 +350,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = correctClassRef;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                 
@@ -438,7 +438,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = ClassRecorrectClassReff;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                 @Override
@@ -506,7 +506,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = ClassRecorrectClassReff;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                 @Override
@@ -615,11 +615,11 @@ public abstract class AbstractTypeInferencingTestCase {
     //        
     //    }
     
-    private static int getLine(ISourceModule module, ASTNode node) {
+    private static int getLine(FileSourceUnit module, ASTNode node) {
         String source;
         try {
             source = module.getSource();
-        } catch (ModelException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return -1;
         }
@@ -644,7 +644,7 @@ public abstract class AbstractTypeInferencingTestCase {
             this.namePos = namePos;
         }
         
-        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
+        public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
             PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                 @Override

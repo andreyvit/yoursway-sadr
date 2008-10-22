@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.collections,
  org.eclipse.dltk.python.core,
  com.yoursway.sadr.blocks.foundation;bundle-version="1.0.0",
- com.yoursway.sadr.blocks.misc;bundle-version="1.0.0"
+ com.yoursway.sadr.blocks.misc;bundle-version="1.0.0",
+ com.yoursway.utils;bundle-version="1.0.0"
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Export-Package: com.yoursway.sadr.python,
@@ -21,10 +22,7 @@ Export-Package: com.yoursway.sadr.python,
  com.yoursway.sadr.python.core.runtime,
  com.yoursway.sadr.python.core.runtime.contributions,
  com.yoursway.sadr.python.core.runtime.requestors.methods,
- com.yoursway.sadr.python.core.runtime.std,
  com.yoursway.sadr.python.core.typeannotations,
- com.yoursway.sadr.python.core.typeinferencing.constructs.requests,
- com.yoursway.sadr.python.core.typeinferencing.goals,
  com.yoursway.sadr.python.core.typeinferencing.keys.wildcards,
  com.yoursway.sadr.python.core.typeinferencing.scopes,
  com.yoursway.sadr.python.core.typeinferencing.services,

@@ -3,8 +3,6 @@ package com.yoursway.sadr.python_v2.constructs;
 import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
 import static java.util.Collections.singletonList;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Statement;
@@ -14,10 +12,6 @@ import com.yoursway.sadr.core.ValueInfoContinuation;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
 import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.AssignmentInfoRequestor;
-import com.yoursway.sadr.python.core.typeinferencing.constructs.requests.IndexRequest;
-import com.yoursway.sadr.python.core.typeinferencing.goals.AssignmentInfo;
-import com.yoursway.sadr.python.core.typeinferencing.goals.MumblaWumblaThreesome;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -54,25 +48,9 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
         return rightPart;
     }
     
-    public void actOnVariable(AssignmentInfoRequestor request) {
-        provideAssignmentInfo(request);
-    }
-    
-    public void actOnIndex(IndexRequest request) {
-        provideAssignmentInfo(request);
-    }
-    
     @Override
     public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
         return rightPart.evaluate(context, acceptor);
-    }
-    
-    private void provideAssignmentInfo(AssignmentInfoRequestor request) {
-        PythonConstruct lhs = lhs();
-        PythonConstruct rhs = rhs();
-        Collection<MumblaWumblaThreesome> swingerParty = lhs.mumblaWumbla();
-        for (MumblaWumblaThreesome threesome : swingerParty)
-            request.accept(new AssignmentInfo(threesome, rhs));
     }
     
     public String getName() {
