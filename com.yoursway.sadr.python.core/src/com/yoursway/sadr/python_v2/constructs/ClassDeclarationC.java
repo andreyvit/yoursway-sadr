@@ -1,8 +1,6 @@
 package com.yoursway.sadr.python_v2.constructs;
 
 import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
-import static com.yoursway.sadr.python_v2.constructs.Effects.NO_FROGS;
-import static java.util.Collections.singleton;
 
 import java.util.Collections;
 import java.util.List;
@@ -66,13 +64,13 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     }
     
     @Override
-    public Effects getEffects() {
-        return new Effects(singleton(new ClassDeclarationEffect(this)), NO_FROGS);
+    public String name() {
+        return node.getName();
     }
     
     @Override
-    public String name() {
-        return node.getName();
+    public boolean match(Frog frog) {
+        return name().equals(frog.getAccessor());
     }
     
     public MethodDeclarationC findDeclaredMethod(String methodName) {

@@ -107,6 +107,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                         }
                     }
                     
+                    @Override
+                    public <T> void allResultsProcessed(IGrade<T> grade) {
+                        updateGrade(acceptor, grade);
+                    }
                 };
                 
                 schedule(callable.evaluate(getContext(), rc.createAcceptor(CALLABLE)));

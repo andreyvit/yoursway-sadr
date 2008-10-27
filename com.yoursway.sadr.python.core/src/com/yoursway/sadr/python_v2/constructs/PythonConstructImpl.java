@@ -1,13 +1,13 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import static com.yoursway.sadr.python_v2.constructs.Effects.NONE;
-
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Egg;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -19,6 +19,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     private List<PythonConstruct> preChildren = Collections.EMPTY_LIST;
     private List<PythonConstruct> postChildren;
     private PythonConstructImpl<ASTNode> sintacticallyPreviousConstruct;
+    private Egg egg;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
@@ -139,15 +140,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
                 + this.node.getClass().getSimpleName());
     }
     
-    public Frog toFrog() {
-        throw new UnsupportedOperationException("All frogs gone to heaven, except "
-                + this.getClass().getSimpleName() + " of " + this.node.getClass().getSimpleName());
-    }
-    
-    public Effects getEffects() {
-        return NONE;
-    }
-    
     public List<PythonConstruct> getPreChildren() {
         return preChildren;
     }
@@ -180,11 +172,21 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
             prev = c;
         }
         return prev;
-        
+    }
+    
+    public boolean match(Frog frog) {
+        return false;
     }
     
     public PythonConstruct parent() {
         //TODO implement parent relation
         throw new UnsupportedOperationException();
+    }
+    
+    public Krocodile toEgg() {
+        if (egg == null) {
+            egg = new Egg(this);
+        }
+        return egg;
     }
 }

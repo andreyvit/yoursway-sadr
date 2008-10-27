@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python_v2.constructs.Frog;
+import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 
 //FIXME make real context or settle crocodiles here. 
 /**
@@ -12,16 +14,15 @@ import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 public interface Context {
     RuntimeObject getActualArgument(String name);
     
-    boolean contains(String name);
+    public void getMatchingArguments(Frog name, PythonVariableAcceptor va);
     
     static final Context EMPTY_CONTEXT = new Context() {
         
-        public boolean contains(String name) {
-            return false;
-        }
-        
         public RuntimeObject getActualArgument(String name) {
             return null;
+        }
+        
+        public void getMatchingArguments(Frog name, PythonVariableAcceptor va) {
         }
         
         public Set<String> keys() {

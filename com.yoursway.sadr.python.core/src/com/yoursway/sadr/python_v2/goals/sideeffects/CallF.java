@@ -7,9 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python_v2.constructs.AssignmentEffect;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python_v2.constructs.Effect;
 import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;

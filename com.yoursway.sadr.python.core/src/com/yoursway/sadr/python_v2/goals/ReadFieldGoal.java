@@ -2,22 +2,15 @@ package com.yoursway.sadr.python_v2.goals;
 
 import java.util.List;
 
-import com.yoursway.sadr.python_v2.constructs.Effect;
-import com.yoursway.sadr.python_v2.constructs.Effects;
 import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonConstructAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
-import com.yoursway.sadr.python_v2.goals.sideeffects.Request;
-import com.yoursway.sadr.python_v2.goals.sideeffects.SideEffectRequest;
-import com.yoursway.sadr.python_v2.goals.sideeffects.Swamp;
-import com.yoursway.sadr.python_v2.goals.sideeffects.ValueRequest;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGrade;
 
-public class ReadFieldGoal extends ContextSensitiveGoal implements Swamp {
+public class ReadFieldGoal extends ContextSensitiveGoal {
     
     private final PythonValueSetAcceptor acceptor;
     private final PythonConstruct receiver;

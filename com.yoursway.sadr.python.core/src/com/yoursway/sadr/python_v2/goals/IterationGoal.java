@@ -10,6 +10,7 @@ import com.yoursway.sadr.succeeder.IGrade;
 public abstract class IterationGoal<AcceptorType extends IAcceptor> extends ContextSensitiveGoal {
     protected final IncrementableSynchronizer<AcceptorType> incSync;
     private final AcceptorType resultsAcceptor;
+    private IGoal firstIteration;
     
     public IterationGoal(final AcceptorType resultsAcceptor, Context context) {
         super(context);
@@ -17,7 +18,7 @@ public abstract class IterationGoal<AcceptorType extends IAcceptor> extends Cont
         incSync = new IncrementableSynchronizer<AcceptorType>(resultsAcceptor) {
             @Override
             public <T> void completed(IGrade<T> grade) {
-                IGoal iteration = (IGoal) getAttachedObject();
+                IGoal iteration = IterationGoal.this.firstIteration;
                 if (null != iteration)
                     schedule(iteration);
                 else
@@ -29,10 +30,8 @@ public abstract class IterationGoal<AcceptorType extends IAcceptor> extends Cont
     protected abstract IterationGoal<AcceptorType> iteration();
     
     public void preRun() {
-        final IterationGoal<AcceptorType> iteration = iteration();
-        incSync.attachObject(iteration);
-        incSync.increment();
-        incSync.decrement();
+        this.firstIteration = iteration();
+        incSync.checkCompleted();
     }
     
     public AcceptorType resultsAcceptor() {

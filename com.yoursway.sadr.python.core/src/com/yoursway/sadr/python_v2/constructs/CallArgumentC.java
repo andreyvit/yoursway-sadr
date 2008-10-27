@@ -41,9 +41,4 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
         return value.evaluate(context, acceptor);
     }
-    
-    @Override
-    public Frog toFrog() {
-        return value.toFrog();
-    }
 }

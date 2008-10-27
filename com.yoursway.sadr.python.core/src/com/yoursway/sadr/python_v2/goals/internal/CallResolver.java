@@ -112,6 +112,12 @@ public final class CallResolver {
                             }
                             schedule(new CallReturnValueGoal(methodDeclC, actualArguments, context, acceptor));
                         }
+                        
+                        @Override
+                        public <T> void allResultsProcessed(IGrade<T> grade) {
+                            // TODO Auto-generated method stub
+                            
+                        }
                     };
                     for (PythonArgument arg : realArgs) {
                         if (arg == null || arg.getRef() == null) {

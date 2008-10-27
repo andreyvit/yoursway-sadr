@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
+import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
@@ -61,6 +62,13 @@ public class ProjectRuntime {
     
     public Engine getEngine() {
         return this.engine;
+    }
+    
+    List<VariableReference> findVariables(String prefix) {
+        List<VariableReference> list = new ArrayList<VariableReference>();
+        
+        return list;
+        
     }
     
     public Collection<FileSourceUnit> getModules() {

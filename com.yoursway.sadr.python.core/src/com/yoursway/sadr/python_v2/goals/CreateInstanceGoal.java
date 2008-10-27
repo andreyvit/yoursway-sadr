@@ -52,6 +52,10 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
                 PythonClassType receiverType = new PythonClassType(classDeclarationC, supers);
                 PythonObject receiver = new PythonObject(receiverType, instanceCreator);
                 acceptor.addResult(receiver, getContext());
+            }
+            
+            @Override
+            public <T> void allResultsProcessed(IGrade<T> grade) {
                 updateGrade(acceptor, grade);
             }
         };

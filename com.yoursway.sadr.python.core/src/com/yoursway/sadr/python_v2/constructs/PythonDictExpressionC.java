@@ -50,6 +50,10 @@ public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpress
                             dict.put(key, value);
                         }
                         acceptor.addResult(dictObject, context);
+                    }
+                    
+                    @Override
+                    public <T> void allResultsProcessed(IGrade<T> grade) {
                         updateGrade(acceptor, Grade.DONE);
                     }
                 };

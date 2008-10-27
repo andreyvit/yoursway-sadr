@@ -8,7 +8,7 @@ import com.yoursway.sadr.succeeder.IGrade;
 /**
  * Used to collect results from multiple acceptors.
  */
-public class PvsaDelegate extends PythonValueSetAcceptor {
+public class PvsaDelegate<Acceptor extends PythonValueSetAcceptor> extends PythonValueSetAcceptor {
     
     private final IncrementableSynchronizer<PythonValueSetAcceptor> incSync;
     

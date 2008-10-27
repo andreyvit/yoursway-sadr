@@ -9,7 +9,6 @@ import com.yoursway.sadr.python_v2.goals.ReadFieldGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveModuleImportGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.goals.sideeffects.FieldReadF;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.ModuleType;
@@ -110,10 +109,5 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     
     public VariableReferenceC variable() {
         return variable;
-    }
-    
-    @Override
-    public Frog toFrog() {
-        return new FieldReadF(receiver.toFrog(), variable.name());
     }
 }

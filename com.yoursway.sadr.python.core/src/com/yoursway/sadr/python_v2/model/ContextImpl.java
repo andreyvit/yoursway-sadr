@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python_v2.constructs.Frog;
+import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.model.builtins.DictType;
 import com.yoursway.sadr.python_v2.model.builtins.DictValue;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
@@ -47,10 +50,6 @@ public class ContextImpl implements Context {
         return args.keySet();
     }
     
-    public boolean contains(String name) {
-        return args.containsKey(name);
-    }
-    
     public void put(String name, RuntimeObject value) {
         args.put(name, value);
     }
@@ -62,5 +61,13 @@ public class ContextImpl implements Context {
     @Override
     public String toString() {
         return args.toString();
+    }
+    
+    public void getMatchingArguments(Frog name, PythonVariableAcceptor acceptor) {
+        for (Entry<String, RuntimeObject> entry : args.entrySet()) {
+            if (name.match(entry.getKey())) {
+                acceptor.addResult(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

@@ -108,7 +108,10 @@ public abstract class ResultsCollector extends Synchronizer {
         //TODO        if (entrySet.isEmpty())
         //TODO            processResultTuple(concreteResults, grade);
         fixResult(entrySet.iterator(), concreteResults, grade);
+        allResultsProcessed(grade);
     }
+    
+    abstract public <T> void allResultsProcessed(IGrade<T> grade);
     
     abstract protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade);
     

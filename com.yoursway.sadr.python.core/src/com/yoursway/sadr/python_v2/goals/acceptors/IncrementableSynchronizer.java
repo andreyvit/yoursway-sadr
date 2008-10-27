@@ -10,7 +10,6 @@ public abstract class IncrementableSynchronizer<AcceptorType extends IAcceptor> 
     
     private final Collection<AcceptorType> acceptors = new LinkedList<AcceptorType>();
     private final AcceptorType totalResultAcceptor;
-    private Object object;
     
     public IncrementableSynchronizer(AcceptorType totalResultAcceptor) {
         this.totalResultAcceptor = totalResultAcceptor;
@@ -31,19 +30,18 @@ public abstract class IncrementableSynchronizer<AcceptorType extends IAcceptor> 
     public void decrement() {
         if (counter <= 0)
             throw new IllegalArgumentException();
-        if (--counter <= 0)
-            completed(Grade.DONE);
-    }
-    
-    public void attachObject(Object object) {
-        this.object = object;
-    }
-    
-    protected Object getAttachedObject() {
-        return this.object;
+        --counter;
+        checkCompleted();
     }
     
     AcceptorType getTotalResultAcceptor() {
         return totalResultAcceptor;
+    }
+    
+    public void checkCompleted() {
+        if (counter == 0) {
+            completed(Grade.DONE);
+            counter = -1;
+        }
     }
 }

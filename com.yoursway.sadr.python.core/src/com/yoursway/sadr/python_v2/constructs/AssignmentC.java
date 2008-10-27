@@ -1,17 +1,10 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
-import static java.util.Collections.singletonList;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -35,17 +28,21 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
         rightPart = getPostChildren().get(RIGHT);
     }
     
-    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
-        return continuation.consume(emptyValueInfo(), requestor);
-    }
-    
     public PythonConstruct lhs() {
         return leftPart;
     }
     
     public PythonConstruct rhs() {
         return rightPart;
+    }
+    
+    @Override
+    public boolean match(Frog frog) {
+        PythonConstruct lhs = this.lhs();
+        if (lhs instanceof VariableReferenceC) {
+            return lhs.match(frog);
+        }
+        return false;
     }
     
     @Override
@@ -60,12 +57,6 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
             return reference.getName();
         }
         return null;
-    }
-    
-    @Override
-    public Effects getEffects() {
-        Effect effect = new AssignmentEffect(lhs().toFrog(), rhs().toFrog());
-        return new Effects(singletonList(effect), Effects.NO_FROGS);
     }
     
     //    public void actOnModel(ModelRequest request) {

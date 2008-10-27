@@ -3,8 +3,6 @@ package com.yoursway.sadr.python.core.runtime.requestors.methods;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.yoursway.sadr.python.core.runtime.PythonMethod;
-
 public class CollectingMethodRequestor implements MethodRequestor {
     
     private final Collection<PythonMethod> results = new ArrayList<PythonMethod>();

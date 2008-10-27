@@ -1,5 +1,5 @@
 class Aaa():
-    def foo(self, z):
+    def foo(self):
         self.x = 42
 
 def xxx():

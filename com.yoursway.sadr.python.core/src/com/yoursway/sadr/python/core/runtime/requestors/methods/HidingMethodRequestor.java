@@ -3,8 +3,6 @@ package com.yoursway.sadr.python.core.runtime.requestors.methods;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.yoursway.sadr.python.core.runtime.PythonMethod;
-
 public class HidingMethodRequestor implements MethodRequestor {
     
     private final Set<String> hiddenMethods = new HashSet<String>();

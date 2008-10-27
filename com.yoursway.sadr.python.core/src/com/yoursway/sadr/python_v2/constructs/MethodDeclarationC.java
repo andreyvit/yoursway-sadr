@@ -1,27 +1,16 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
-import static com.yoursway.sadr.python_v2.constructs.Effects.NO_FROGS;
-import static java.util.Collections.singleton;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.Argument;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.sideeffects.VariableReadF;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -59,11 +48,6 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
         return inits.get(name);
     }
     
-    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
-        return continuation.consume(emptyValueInfo(), requestor);
-    }
-    
     public String displayName() {
         return "Method " + this.node.getName();
     }
@@ -71,7 +55,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     @Override
     public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
         if (functionObject == null)
-        functionObject = new FunctionObject(this);
+            functionObject = new FunctionObject(this);
         return new PassResultGoal(context, acceptor, functionObject);
     }
     
@@ -92,14 +76,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     }
     
     @Override
-    public Effects getEffects() {
-        return new Effects(singleton(new MethodDeclarationEffect(this)), NO_FROGS);
-    }
-    
-    public List<Frog> getArgumentFrogs() {
-        List<Frog> result = newArrayList();
-        for (Argument arg : (List<Argument>) node.getArguments())
-            result.add(new VariableReadF(arg.getName()));
-        return result;
+    public boolean match(Frog frog) {
+        return node.equals(frog.getAccessor());
     }
 }
