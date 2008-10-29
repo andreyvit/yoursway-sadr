@@ -62,7 +62,6 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             } else {
                 long start = System.currentTimeMillis();
                 if (writableGoalState.findGoalStateByGoal(goal) != null) {
-                    debug.recursive(goal);
                     stats.recursiveGoal(goal);
                     return new SlotImpl<R>(createRecursiveResult(writableGoalState, goal));
                 }
@@ -110,7 +109,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         
         private static final int ADDING_SUBGOALS = 1000000;
         
-        private final Collection<GoalState> parentStates = newArrayList();
+        protected final Collection<GoalState> parentStates = newArrayList();
         
         private final Collection<GoalState> children = newArrayList();
         
@@ -252,7 +251,6 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             activeGoalStates.remove(goal);
             for (GoalState parent : parentStates)
                 parent.subgoalFinished(this);
-            finished(this);
             stats.finishedGoal(goal, runs, duration);
         }
         
@@ -439,8 +437,6 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     protected final Map<Goal<?>, GoalState> activeGoalStates = new HashMap<Goal<?>, GoalState>();
     
-    private final GoalDebug debug = new GoalDebug();
-    
     private AnalysisStats stats = new AnalysisStats();
     
     private int magicNumber;
@@ -464,11 +460,6 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         AnalysisStats old = stats;
         stats = new AnalysisStats();
         return old;
-    }
-    
-    public void finished(GoalState state) {
-        Goal<?> goal = state.goal;
-        debug.finished(goal);
     }
     
     //    public void evaluate(Continuation continuation) {

@@ -15,6 +15,8 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.GoalResultCacheCleaner;
 import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.engine.incremental.index.DependencyContributor;
+import com.yoursway.utils.broadcaster.Broadcaster;
+import com.yoursway.utils.broadcaster.BroadcasterFactory;
 
 /**
  * TODO Validate cached results instead of throwing them out.
@@ -118,6 +120,8 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
     
     final Map<Goal<?>, CachedGoalData> cache = newHashMap();
     
+    final Broadcaster<EngineListener> broadcaster = BroadcasterFactory.newBroadcaster(EngineListener.class);
+    
     SourceUnitData lookupSourceUnitData(SourceUnit sourceUnit) {
         if (sourceUnit == null)
             throw new NullPointerException("sourceUnit is null");
@@ -147,6 +151,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
                 if (unit != null)
                     sourceUnitDependencies.add(unit);
             }
+            broadcaster.fire().goalScheduled(goal);
         }
         
         @Override
@@ -158,18 +163,39 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         }
         
         @Override
+        public void addParent(GoalState parentState) {
+            super.addParent(parentState);
+            broadcaster.fire().goalParentAdded(goal, ((IncrementalGoalState) parentState).goal);
+        }
+        
+        @Override
+        public void runOnBehalfOfThisGoal(Runnable runnable) {
+            broadcaster.fire().goalExecutionStarting(goal);
+            try {
+                super.runOnBehalfOfThisGoal(runnable);
+            } finally {
+                //
+            }
+        }
+        
+        @Override
         protected void goalFinished() {
             super.goalFinished();
+            broadcaster.fire().goalFinished(goal, dependentOnRecursiveResult, slot.result());
             for (SourceUnit sourceUnit : sourceUnitDependencies)
                 lookupSourceUnitData(sourceUnit).addDependentGoal(goal);
             for (DependencyContributor contributor : dependencyContributors)
                 contributor.contributeDependenciesTo(goal);
-            storeIntoCache();
+            CachedGoalData data = storeIntoCache();
+            if (dependentOnRecursiveResult && data != null)
+                for (GoalState parent : parentStates) {
+                    ((IncrementalGoalState) parent).setDependentOnRecursiveResult(data);
+                }
         }
         
-        void storeIntoCache() {
+        CachedGoalData storeIntoCache() {
             if (!goal.cachable())
-                return;
+                return null;
             SourceUnit[] sourceDeps = sourceUnitDependencies.toArray(new SourceUnit[sourceUnitDependencies
                     .size()]);
             DependencyContributor[] deps = dependencyContributors
@@ -193,6 +219,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
                     enqueueRecursiveRecalculation(goalToRecalculate, lookupCachedData(goalToRecalculate));
                 }
             }
+            return data;
         }
         
         public void contributeDependecyContributor(DependencyContributor contributor) {
@@ -203,6 +230,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             if (data == null)
                 throw new NullPointerException("data is null");
             data.addRecursiveDependency(goal);
+            broadcaster.fire().goalRecursiveDependencyAdded(goal, data.goal);
             dependentOnRecursiveResult = true;
         }
         
@@ -297,6 +325,19 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             ((IncrementalGoalState) state)
                     .setNeedsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged();
         }
+    }
+    
+    @Override
+    public <R extends Result> R evaluate(Goal<R> goal) {
+        R result = super.evaluate(goal);
+        broadcaster.fire().rootGoalFinished(goal);
+        return result;
+    }
+    
+    public void addListener(EngineListener listener) {
+        if (listener == null)
+            throw new NullPointerException("listener is null");
+        broadcaster.addListener(listener);
     }
     
 }
