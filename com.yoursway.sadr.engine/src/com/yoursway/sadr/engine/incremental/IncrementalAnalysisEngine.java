@@ -1,8 +1,10 @@
 package com.yoursway.sadr.engine.incremental;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 import java.util.Collection;
 import java.util.Map;
@@ -55,28 +57,62 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
     
     static class CachedGoalData {
         
-        final Goal<?> goal;
-        final Result result;
-        final SourceUnit[] sourceUnits;
-        final DependencyContributor[] dependencyContributors;
+        public static final int NON_RECURSIVE = -1;
         
-        public CachedGoalData(Goal<?> goal, Result result, SourceUnit[] sourceUnits,
-                DependencyContributor[] dependencyContributors) {
+        final Goal<?> goal;
+        Result result;
+        SourceUnit[] sourceUnits;
+        DependencyContributor[] dependencyContributors;
+        int recursiveAttemps;
+        final Collection<Goal<?>> recursiveDependencies = newArrayList();
+        
+        public CachedGoalData(Goal<?> goal) {
             if (goal == null)
                 throw new NullPointerException("goal is null");
+            this.goal = goal;
+        }
+        
+        public void update(Result result, SourceUnit[] sourceUnits,
+                DependencyContributor[] dependencyContributors, int recursiveAttemps) {
             if (result == null)
                 throw new NullPointerException("result is null");
             if (sourceUnits == null)
                 throw new NullPointerException("sourceUnits is null");
             if (dependencyContributors == null)
                 throw new NullPointerException("dependencyContributors is null");
-            this.goal = goal;
             this.result = result;
             this.sourceUnits = sourceUnits;
             this.dependencyContributors = dependencyContributors;
+            this.recursiveAttemps = recursiveAttemps;
         }
         
+        public void addRecursiveDependency(Goal<?> goal) {
+            if (goal == null)
+                throw new NullPointerException("goal is null");
+            recursiveDependencies.add(goal);
+        }
+        
+        public boolean isRecursiveResult() {
+            return recursiveAttemps != NON_RECURSIVE;
+        }
+        
+        public boolean resultChanged(Result result) {
+            return this.result == null || !this.result.equals(result);
+        }
+        
+        public Collection<Goal<?>> recursiveDependencies() {
+            return newArrayList(recursiveDependencies);
+        }
+        
+        public int incrementRecursiveAttempts() {
+            if (recursiveAttemps == NON_RECURSIVE)
+                throw new IllegalStateException(
+                        "Attemp to increment recursive attemps for a non-recursively-dependent goal " + goal);
+            return ++recursiveAttemps;
+        }
     }
+    
+    private static final int MAX_RECURSIVE_ATTEMPS = 5;
     
     final Map<SourceUnit, SourceUnitData> sourceUnitDataMap = newHashMap();
     
@@ -98,6 +134,10 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         private final Set<SourceUnit> sourceUnitDependencies = newHashSet();
         
         private final Set<DependencyContributor> dependencyContributors = newHashSet();
+        
+        private boolean dependentOnRecursiveResult = false;
+        
+        private boolean needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged;
         
         public <R extends Result> IncrementalGoalState(Goal<R> goal) {
             super(goal);
@@ -130,13 +170,44 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         void storeIntoCache() {
             if (!goal.cachable())
                 return;
-            cache.put(goal, new CachedGoalData(goal, slot.result(), sourceUnitDependencies
-                    .toArray(new SourceUnit[sourceUnitDependencies.size()]), dependencyContributors
-                    .toArray(new DependencyContributor[dependencyContributors.size()])));
+            SourceUnit[] sourceDeps = sourceUnitDependencies.toArray(new SourceUnit[sourceUnitDependencies
+                    .size()]);
+            DependencyContributor[] deps = dependencyContributors
+                    .toArray(new DependencyContributor[dependencyContributors.size()]);
+            CachedGoalData data = lookupCachedData(goal);
+            Result result = slot.result();
+            Collection<Goal<?>> goalsToRecalculate = emptyList();
+            if (data.resultChanged(result)) {
+                goalsToRecalculate = data.recursiveDependencies();
+                if (!goalsToRecalculate.isEmpty())
+                    System.out.println("IncrementalGoalState.storeIntoCache()");
+            }
+            data.update(result, sourceDeps, deps, (dependentOnRecursiveResult ? 1
+                    : CachedGoalData.NON_RECURSIVE));
+            if (needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged)
+                // TODO: ideally we want to delay parent notification in this case 
+                enqueueRecursiveRecalculation(goal, data);
+            else {
+                // TODO: ideally we want to delay parent notification in this case 
+                for (Goal<?> goalToRecalculate : goalsToRecalculate) {
+                    enqueueRecursiveRecalculation(goalToRecalculate, lookupCachedData(goalToRecalculate));
+                }
+            }
         }
         
         public void contributeDependecyContributor(DependencyContributor contributor) {
             dependencyContributors.add(contributor);
+        }
+        
+        public void setDependentOnRecursiveResult(CachedGoalData data) {
+            if (data == null)
+                throw new NullPointerException("data is null");
+            data.addRecursiveDependency(goal);
+            dependentOnRecursiveResult = true;
+        }
+        
+        public void setNeedsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged() {
+            needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged = true;
         }
         
     }
@@ -177,11 +248,55 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         if (data == null)
             return null;
         if (parentState != null) {
+            if (data.isRecursiveResult())
+                ((IncrementalGoalState) parentState).setDependentOnRecursiveResult(data);
             IncrementalGoalState igs = (IncrementalGoalState) parentState;
             igs.sourceUnitDependencies.addAll(asList(data.sourceUnits));
             igs.dependencyContributors.addAll(asList(data.dependencyContributors));
         }
         return data.result;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    protected <R extends Result> R createRecursiveResult(GoalState parentState, Goal<R> goal) {
+        CachedGoalData data = cache.get(goal);
+        if (data == null) {
+            data = new CachedGoalData(goal);
+            data.update(super.createRecursiveResult(parentState, goal), new SourceUnit[0],
+                    new DependencyContributor[0], 1);
+            cache.put(goal, data);
+        }
+        ((IncrementalGoalState) parentState).setDependentOnRecursiveResult(data);
+        return (R) data.result;
+    }
+    
+    CachedGoalData lookupCachedData(Goal<?> goal) {
+        CachedGoalData data = cache.get(goal);
+        if (data == null) {
+            data = new CachedGoalData(goal);
+            cache.put(goal, data);
+        }
+        return data;
+    }
+    
+    void enqueueRecursiveRecalculation(Goal<?> goal, CachedGoalData data) {
+        if (goal == null)
+            throw new NullPointerException("goal is null");
+        if (data == null)
+            throw new NullPointerException("data is null");
+        System.out.println("IncrementalAnalysisEngine.enqueueRecursiveRecalculation(" + goal + ")");
+        
+        if (data.incrementRecursiveAttempts() > MAX_RECURSIVE_ATTEMPS)
+            return;
+        GoalState state = activeGoalStates.get(goal);
+        if (state == null) {
+            state = createGoalState(goal);
+            activeGoalStates.put(goal, state);
+        } else {
+            ((IncrementalGoalState) state)
+                    .setNeedsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged();
+        }
     }
     
 }

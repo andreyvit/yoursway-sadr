@@ -64,7 +64,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
                 if (writableGoalState.findGoalStateByGoal(goal) != null) {
                     debug.recursive(goal);
                     stats.recursiveGoal(goal);
-                    return new SlotImpl<R>(goal.createRecursiveResult());
+                    return new SlotImpl<R>(createRecursiveResult(writableGoalState, goal));
                 }
                 long span = System.currentTimeMillis() - start;
                 if (span > 50)
@@ -437,7 +437,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     private final QueryQueue queue = new QueryQueue();
     
-    private final Map<Goal<?>, GoalState> activeGoalStates = new HashMap<Goal<?>, GoalState>();
+    protected final Map<Goal<?>, GoalState> activeGoalStates = new HashMap<Goal<?>, GoalState>();
     
     private final GoalDebug debug = new GoalDebug();
     
@@ -534,5 +534,9 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     }
     
     protected abstract Result lookupResultInCache(Goal<?> goal, GoalState parentState);
+    
+    protected <R extends Result> R createRecursiveResult(GoalState parentState, Goal<R> goal) {
+        return goal.createRecursiveResult();
+    }
     
 }
