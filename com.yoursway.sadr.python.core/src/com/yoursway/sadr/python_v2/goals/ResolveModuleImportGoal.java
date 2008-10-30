@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
@@ -59,22 +58,22 @@ public class ResolveModuleImportGoal extends Goal {
             String path = parentModule.getValue().getPath();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                updateGrade(acceptor, Grade.DONE);
+                //                updateGrade(acceptor, Grade.DONE);
             } else {
                 schedule(new ResolveNameToObjectGoal(variable, fileC, context, acceptor));
             }
         } else if (module.getValue().getVar() != null) { // found explicit import of var
             String path = module.getValue().getPath();
+            String alias = module.getValue().getAlias();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                updateGrade(acceptor, Grade.DONE);
+                //                updateGrade(acceptor, Grade.DONE);
             } else {
-                String var = module.getValue().getVar();
-                schedule(new ResolveNameToObjectGoal(new Frog(var), fileC, context, acceptor));
+                schedule(new ResolveNameToObjectGoal(new Frog(alias), fileC, context, acceptor));
             }
         } else { // found submodule
-            acceptor.addResult(parentModule.getValue().getVar(), module);
-            updateGrade(acceptor, Grade.DONE);
+            String alias = module.getValue().getAlias();
+            acceptor.addResult(alias, module);
         }
     }
 }

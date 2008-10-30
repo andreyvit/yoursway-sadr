@@ -62,6 +62,8 @@ public class ResolveNameToObjectGoal extends IterationGoal<PythonVariableAccepto
     
     @Override
     protected IterationGoal<PythonVariableAcceptor> iteration() {
+        if (this.from == null)
+            throw new NullPointerException("this.from is null");
         PythonConstruct currentConstruct = this.from;
         Scope scope = currentConstruct.parentScope();
         if (currentConstruct instanceof IfC) {
@@ -79,7 +81,7 @@ public class ResolveNameToObjectGoal extends IterationGoal<PythonVariableAccepto
                     schedule(subgoal);
                 }
             }
-            return null;
+            //return null;
         }
         
         PythonConstruct prevConstruct = currentConstruct;

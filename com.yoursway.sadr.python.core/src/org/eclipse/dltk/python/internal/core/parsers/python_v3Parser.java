@@ -3968,12 +3968,12 @@ public class python_v3Parser extends Parser {
                 
             }
             
-        }
-
-        catch (RecognitionException re) {
-            if (reporter != null)
-                reporter.reportError(re);
-            recover(input, re);
+            //        }
+            //
+            //        catch (RecognitionException re) {
+            //            if (reporter != null)
+            //                reporter.reportError(re);
+            //            recover(input, re);
         } catch (Throwable extre) {
             //System.err.println(t);
             if (reporter != null)

@@ -32,6 +32,10 @@ public class ModuleValue extends AbstractValue {
         return out;
     }
     
+    public String getAlias() {
+        return alias;
+    }
+    
     public String getPath() {
         return path;
     }

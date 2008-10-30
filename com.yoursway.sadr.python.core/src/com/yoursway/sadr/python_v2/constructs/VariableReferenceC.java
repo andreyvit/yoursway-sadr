@@ -22,7 +22,8 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     
     @Override
     public IGoal evaluate(final Context context, final PythonVariableAcceptor acceptor) {
-        return new ResolveNameToObjectGoal(this, context, acceptor);
+        return null;
+        //return new ResolveNameToObjectGoal(this, context, acceptor);
     }
     
     @Override
