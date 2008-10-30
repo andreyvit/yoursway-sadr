@@ -16,7 +16,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +28,7 @@ import junit.framework.Assert;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -33,19 +37,24 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.core.DLTKCore;
+import org.eclipse.dltk.core.IModelElement;
+import org.eclipse.dltk.core.IParent;
 import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.core.PythonNature;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.junit.After;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
+import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.core.runtime.FileSourceUnit;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
+import com.yoursway.sadr.python.core.runtime.ProjectUnit;
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
@@ -53,6 +62,7 @@ import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
+import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.goals.CreateSwampGoal;
@@ -99,6 +109,52 @@ public abstract class AbstractTypeInferencingTestCase {
         }
     }
     
+    public ProjectRuntime createProjectRuntime(IScriptProject project) {
+        return new ProjectRuntime(new ProjectUnit(findSourceModules(project)));
+    }
+    
+    public static FileSourceUnit createFileSourceUnit(ISourceModule element) {
+        IResource resource;
+        try {
+            resource = element.getCorrespondingResource();
+        } catch (ModelException e) {
+            e.printStackTrace();
+            return null;
+        }
+        if (resource instanceof IFile) {
+            IFile file = (IFile) resource;
+            String path = element.getParent().getPath().toString() + "/" + element.getElementName();
+            return new FileSourceUnit(file.getLocation().toFile(), path);
+        }
+        return null;
+    }
+    
+    public static void findSourceModules(IParent element, List<FileSourceUnit> list) {
+        if (element instanceof ISourceModule) {
+            FileSourceUnit fsu = createFileSourceUnit((ISourceModule) element);
+            if (fsu != null) {
+                list.add(fsu);
+            }
+            return;
+        }
+        IModelElement[] children;
+        try {
+            children = element.getChildren();
+            for (IModelElement e : children)
+                if (e instanceof IParent) {
+                    findSourceModules((IParent) e, list);
+                }
+        } catch (ModelException e1) {
+            e1.printStackTrace();
+        }
+    }
+    
+    private static Collection<FileSourceUnit> findSourceModules(IScriptProject project) {
+        List<FileSourceUnit> modules = new ArrayList<FileSourceUnit>();
+        findSourceModules(project, modules);
+        return modules;
+    }
+    
     protected void runTest() throws Exception {
         String methodName = callerOutside(AbstractTypeInferencingTestCase.class);
         String className = getClass().getSimpleName();
@@ -112,7 +168,7 @@ public abstract class AbstractTypeInferencingTestCase {
         createProject("test", file);
         
         IScriptProject scriptProject = DLTKCore.create(testProject);
-        ProjectRuntime projectRuntime = new ProjectRuntime(scriptProject);
+        ProjectRuntime projectRuntime = createProjectRuntime(scriptProject);
         
         Engine engine = projectRuntime.getEngine();
         
@@ -375,8 +431,8 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
-                return new CreateInstanceGoal(classC, null, new PythonArguments(),
-                        Context.EMPTY_CONTEXT, new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                return new CreateInstanceGoal(classC, null, new PythonArguments(), Context.EMPTY_CONTEXT,
+                        new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                             
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
@@ -470,8 +526,8 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.innerScope().parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
-                return new CreateInstanceGoal(classC, null, new PythonArguments(),
-                        Context.EMPTY_CONTEXT, new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
+                return new CreateInstanceGoal(classC, func, new PythonArguments(), Context.EMPTY_CONTEXT,
+                        new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                                 Context context = createSelfContext(func, result);
@@ -635,6 +691,25 @@ public abstract class AbstractTypeInferencingTestCase {
         return 0; // not found
     }
     
+    private final class PythonVariableCollectingAcceptor extends PythonVariableAcceptor {
+        Map<String, RuntimeObject> map = new TreeMap<String, RuntimeObject>();
+        ValueInfoBuilder builder = new ValueInfoBuilder();
+        
+        @Override
+        public void addResult(String key, RuntimeObject value) {
+            map.put(key, value);
+            builder.add(value.getType(), value);
+        }
+        
+        public ValueInfo getResult() {
+            return builder.build();
+        }
+        
+        public <T> void checkpoint(IGrade<T> grade) {
+            
+        }
+    }
+    
     class FindVariableAssertion implements IAssertion {
         private final int line;
         private final int namePos;
@@ -646,11 +721,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY_CONTEXT) {
-                @Override
-                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                }
-            };
+            PythonVariableCollectingAcceptor acceptor = new PythonVariableCollectingAcceptor();
             IGoal goal = createGoal(fileC, acceptor);
             int actualLine = -2;
             String prefix = "";
@@ -671,7 +742,7 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+        public IGoal createGoal(PythonFileC fileC, PythonVariableAcceptor acceptor) {
             ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);

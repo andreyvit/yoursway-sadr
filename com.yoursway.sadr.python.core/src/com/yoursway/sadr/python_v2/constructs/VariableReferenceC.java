@@ -15,13 +15,19 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     }
     
     @Override
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(final Context context, final PythonValueSetAcceptor acceptor) {
+        return new ResolveNameToObjectGoal(this, context, new PythonVariableDelegatingAcceptor(acceptor,
+                context));
+    }
+    
+    @Override
+    public IGoal evaluate(final Context context, final PythonVariableAcceptor acceptor) {
         return new ResolveNameToObjectGoal(this, context, acceptor);
     }
     
     @Override
     public boolean match(Frog frog) {
-        return node.getName().equals(frog);
+        return frog.match(name());
     }
     
     public String name() {

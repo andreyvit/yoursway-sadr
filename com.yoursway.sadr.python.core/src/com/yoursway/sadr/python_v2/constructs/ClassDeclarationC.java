@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import static com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo.emptyValueInfo;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -9,11 +7,11 @@ import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
+import com.yoursway.sadr.succeeder.IGoal;
 
 public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     
@@ -41,11 +39,6 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
         setPreChildren(supers);
     }
     
-    public ContinuationRequestorCalledToken evaluateValue(PythonDynamicContext dc, InfoKind infoKind,
-            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
-        return continuation.consume(emptyValueInfo(), requestor);
-    }
-    
     //    public void actOnModel(ModelRequest request) {
     //        String superclassName = PythonUtils.superclassName(node);
     //        PythonClassType superclass = null;
@@ -70,7 +63,18 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     
     @Override
     public boolean match(Frog frog) {
-        return name().equals(frog.getAccessor());
+        return frog.match(name());
+    }
+    
+    @Override
+    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        FunctionObject functionObject = new FunctionObject(this);
+        return new PassResultGoal(context, acceptor, functionObject);
+    }
+    
+    @Override
+    public IGoal evaluate(Context context, final PythonVariableAcceptor acceptor) {
+        return evaluate(context, new PythonValueSetDelegatingAcceptor(context, name(), acceptor));
     }
     
     public MethodDeclarationC findDeclaredMethod(String methodName) {

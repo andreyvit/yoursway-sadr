@@ -5,7 +5,6 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpres
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.ReadFieldGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveModuleImportGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
@@ -87,8 +86,8 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
                         } else if (object instanceof PythonObject) {
                             if (object.getType() == ModuleType.instance()) {
                                 PythonValue<ModuleValue> value = (PythonValue<ModuleValue>) object;
-                                schedule(new ResolveModuleImportGoal(value, variable.name(), acceptor,
-                                        context));
+                                schedule(new ResolveModuleImportGoal(value, new Frog(variable.name()),
+                                        new PythonVariableDelegatingAcceptor(acceptor, context), context));
                             } else {
                                 schedule(CallResolver.findMethod(object, variable.name(), acceptor,
                                         getContext()));
@@ -98,7 +97,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
                 };
                 schedule(receiver.evaluate(context, receiverResolved));
                 // XXX: and run symbolic evaluation as well! ;)
-                schedule(new ReadFieldGoal(context, receiver(), variable(), acceptor));
+                //schedule(new ReadFieldGoal(context, receiver(), variable(), acceptor));
             }
         };
     }

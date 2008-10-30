@@ -65,9 +65,13 @@ public class Frog {
         }
     }
     
+    protected String name() {
+        return this.accessor + (pattern ? "*" : "");
+    }
+    
     @Override
     public String toString() {
-        return this.accessor + (pattern ? "*" : "");
+        return name();
     }
     
     public boolean isPattern() {

@@ -2,11 +2,9 @@ package com.yoursway.sadr.core.constructs;
 
 import java.util.List;
 
-import org.eclipse.dltk.ast.ASTNode;
-
 import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.InfoKind;
 
 public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N> {
@@ -17,7 +15,7 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     
     C staticallyEnclosingConstruct();
     
-    C subconstructFor(ASTNode node);
+    C subconstructFor(N node);
     
     C parent();
     

@@ -8,7 +8,7 @@ public interface ImportDeclarationC extends PythonConstruct {
     
     PythonConstruct resolveImport(PythonValue<ModuleValue> value, String path) throws Exception;
     
-    PythonValue<ModuleValue> resolveAlias(String alias);
+    PythonValue<ModuleValue> resolveAlias(String name);
     
     PythonFileC resolvePath(String path);
 }

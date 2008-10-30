@@ -7,7 +7,6 @@ import java.util.Map;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonDictExpression;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
@@ -54,7 +53,7 @@ public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpress
                     
                     @Override
                     public <T> void allResultsProcessed(IGrade<T> grade) {
-                        updateGrade(acceptor, Grade.DONE);
+                        updateGrade(acceptor, grade);
                     }
                 };
                 

@@ -100,4 +100,8 @@ public class ValueInfo implements IValueInfo {
         return true;
     }
     
+    @Override
+    public String toString() {
+    	return "types="+typeSet.toString()+"\n"+"values="+valueSet.toString();
+    }
 }

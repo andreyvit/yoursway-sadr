@@ -7,7 +7,6 @@ import java.util.Map;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
@@ -41,7 +40,11 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
                         }
                         PythonValue<ListValue> listObject = ListType.wrap(arguments);
                         acceptor.addResult(listObject, context);
-                        updateGrade(acceptor, Grade.DONE);
+                    }
+                    
+                    @Override
+                    public <T> void allResultsProcessed(IGrade<T> grade) {
+                        updateGrade(acceptor, grade);
                     }
                 };
                 

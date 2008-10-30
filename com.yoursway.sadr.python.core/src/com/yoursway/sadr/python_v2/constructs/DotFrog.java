@@ -18,6 +18,11 @@ public class DotFrog extends Frog {
     }
     
     @Override
+    public String toString() {
+        return head.toString() + "." + name();
+    }
+    
+    @Override
     public boolean match(List<PythonConstruct> constructs) {
         return head.match(constructs) && constructs.get(getLength() - 1).match(this);
     }

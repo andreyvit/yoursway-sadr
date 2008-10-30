@@ -24,7 +24,7 @@ public class IfC extends PythonConstructImpl<IfStatement> {
     @Override
     protected void wrapEnclosedChildren() {
         thenBlock = PythonConstructFactory.wrap(node.getThen().getChilds(), innerScope());
-        List<ASTNode> astElse = Collections.EMPTY_LIST;
+        List<ASTNode> astElse = Collections.emptyList();
         if (node.getElse() != null) {
             if (node.getElse() instanceof IfStatement) {
                 astElse = new ArrayList<ASTNode>(1);

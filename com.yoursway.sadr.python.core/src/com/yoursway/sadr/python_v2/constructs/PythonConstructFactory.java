@@ -15,6 +15,7 @@ import org.eclipse.dltk.ast.expressions.StringLiteral;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
+import org.eclipse.dltk.python.parser.ast.PythonAssertStatement;
 import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonDelStatement;
@@ -35,6 +36,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonAllImportExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonDictExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonForListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonFunctionDecorator;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonImportExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
@@ -44,9 +46,13 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
+import org.eclipse.dltk.python.parser.ast.statements.BreakStatement;
+import org.eclipse.dltk.python.parser.ast.statements.ContinueStatement;
 import org.eclipse.dltk.python.parser.ast.statements.EmptyStatement;
+import org.eclipse.dltk.python.parser.ast.statements.ExecStatement;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
+import org.eclipse.dltk.python.parser.ast.statements.TryFinallyStatement;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
@@ -126,11 +132,16 @@ public class PythonConstructFactory {
                 || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
                 || node instanceof PythonSubscriptExpression || node instanceof PythonWhileStatement
                 || node instanceof PythonYieldStatement || node instanceof PythonTryStatement
-                || node instanceof PythonExceptStatement) {
-            System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
+                || node instanceof PythonExceptStatement || node instanceof ContinueStatement
+                || node instanceof PythonForListExpression || node instanceof BreakStatement
+                || node instanceof ExecStatement || node instanceof TryFinallyStatement
+                || node instanceof PythonAssertStatement) {
+            //            System.out.println("Warning: no construct for node " + node.getClass().getSimpleName());
             return new UnhandledC(scope, node);
         }
-        throw new RuntimeException("No construct found for node " + node.getClass());
+        System.out.println("ERROR: no construct for node " + node.getClass().getSimpleName());
+        return new UnhandledC(scope, node);
+        //        throw new RuntimeException("No construct found for node " + node.getClass());
     }
     
     private static PythonConstruct wrapBinaryExpression(Scope sc, BinaryExpression node) {

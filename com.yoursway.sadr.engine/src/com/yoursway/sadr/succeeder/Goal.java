@@ -43,7 +43,7 @@ public abstract class Goal implements IGoal {
         String result = describe();
         if (result == null)
             throw new NullPointerException("goal.describe is null");
-        return result + "\n" + scheduler.getGoalStack(this);
+        return result + (scheduler != null ? "\n" + scheduler.getGoalStack(this) : "");
     }
     
     public String describe() {

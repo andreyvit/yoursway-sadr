@@ -178,6 +178,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return false;
     }
     
+    public IGoal evaluate(Context context, PythonVariableAcceptor acceptor) {
+        return null;
+    }
+    
     public PythonConstruct parent() {
         //TODO implement parent relation
         throw new UnsupportedOperationException();

@@ -37,6 +37,9 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
         addOp("!=", "__ne__");
         addOp(">", "__gt__");
         addOp(">=", "__ge__");
+        addOp(" is ", "__eq__");//FIXME
+        addOp(" is not ", "__ne__");//FIXME
+        addOp(" not in ", "__notcontains__");//FIXME
     }
     
     static void addOp(String name, String op) {
@@ -63,11 +66,15 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     public PythonConstruct getLeft() {
         if (node.getKind() == Expression.E_IN)
             return getPostChildren().get(1);
+        if (node.getKind() == Expression.E_NOTIN)
+            return getPostChildren().get(1);
         return getPostChildren().get(0);
     }
     
     public PythonConstruct getRight() {
         if (node.getKind() == Expression.E_IN)
+            return getPostChildren().get(0);
+        if (node.getKind() == Expression.E_NOTIN)
             return getPostChildren().get(0);
         return getPostChildren().get(1);
     }

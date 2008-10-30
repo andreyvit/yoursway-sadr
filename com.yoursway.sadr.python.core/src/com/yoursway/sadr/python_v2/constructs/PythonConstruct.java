@@ -16,6 +16,8 @@ public interface PythonConstruct {
     
     IGoal evaluate(Context context, PythonValueSetAcceptor acceptor);
     
+    IGoal evaluate(Context context, PythonVariableAcceptor acceptor);
+    
     Scope parentScope();
     
     Scope innerScope();

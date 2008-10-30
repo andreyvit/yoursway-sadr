@@ -99,7 +99,7 @@ public final class CallResolver {
             final Context actualArguments = new ContextImpl(realArgs, args);
             return new ExpressionValueGoal(actualArguments, acceptor) {
                 public void preRun() {
-                    ResultsCollector rc = new ResultsCollector(0, Context.EMPTY_CONTEXT) {
+                    ResultsCollector rc = new ResultsCollector(0, Context.EMPTY) {
                         @Override
                         protected <T> void processResultTuple(Map<Object, RuntimeObject> results,
                                 IGrade<T> grade) {
@@ -131,7 +131,7 @@ public final class CallResolver {
                                         + " in function " + methodDeclC.displayName());
                             }
                             //FIXME: change to context that was right before function call
-                            IGoal evaluate = init.evaluate(Context.EMPTY_CONTEXT, rc.createAcceptor(name));
+                            IGoal evaluate = init.evaluate(Context.EMPTY, rc.createAcceptor(name));
                             schedule(evaluate);
                         }
                     }

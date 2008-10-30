@@ -16,7 +16,7 @@ public interface Context {
     
     public void getMatchingArguments(Frog name, PythonVariableAcceptor va);
     
-    static final Context EMPTY_CONTEXT = new Context() {
+    static final Context EMPTY = new Context() {
         
         public RuntimeObject getActualArgument(String name) {
             return null;

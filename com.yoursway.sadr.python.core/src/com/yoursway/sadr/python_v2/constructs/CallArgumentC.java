@@ -18,7 +18,7 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     
     private final PythonConstruct value;
     
-    CallArgumentC(Scope scope, PythonCallArgument node) {
+    public CallArgumentC(Scope scope, PythonCallArgument node) {
         super(scope, node);
         Assert.isLegal(node.getValue() != null, "node.getValue() should be != null");
         value = getPostChildren().get(0);

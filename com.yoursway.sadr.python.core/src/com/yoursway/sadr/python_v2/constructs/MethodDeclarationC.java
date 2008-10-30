@@ -76,7 +76,12 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     }
     
     @Override
+    public IGoal evaluate(Context context, final PythonVariableAcceptor acceptor) {
+        return evaluate(context, new PythonValueSetDelegatingAcceptor(context, name(), acceptor));
+    }
+    
+    @Override
     public boolean match(Frog frog) {
-        return node.equals(frog.getAccessor());
+        return frog.match(name());
     }
 }

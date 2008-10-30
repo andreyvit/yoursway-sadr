@@ -41,19 +41,26 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
                     @Override
                     protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
                         RuntimeObject arrayObject = results.get(0);
-                        PythonArguments args = new PythonArguments(results.get(1));
-                        if (arrayObject.getType() instanceof PythonClassType) {
-                            schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, acceptor,
-                                    context, ArrayAccessC.this));
+                        if (arrayObject != null) {
+                            PythonArguments args = new PythonArguments(results.get(1));
+                            if (arrayObject.getType() instanceof PythonClassType) {
+                                schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, acceptor,
+                                        context, ArrayAccessC.this));
+                            }
                         }
                     }
+                    
+                    @Override
+                    public <T> void allResultsProcessed(IGrade<T> grade) {
+                        // TODO Auto-generated method stub
+                        
+                    }
                 };
-                schedule(new ResolveNameToObjectGoal((VariableReferenceC) array, context, rc
-                        .createAcceptor(0)));
+                schedule(new ResolveNameToObjectGoal((VariableReferenceC) array, context,
+                        new PythonVariableDelegatingAcceptor(rc.createAcceptor(0), context)));
                 schedule(rc.addSubgoal(index, 1));
                 rc.startCollecting();
             }
         };
     }
-    
 }

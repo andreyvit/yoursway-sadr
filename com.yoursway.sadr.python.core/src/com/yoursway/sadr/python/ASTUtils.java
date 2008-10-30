@@ -2,21 +2,14 @@ package com.yoursway.sadr.python;
 
 import java.util.Stack;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.ASTVisitor;
 import org.eclipse.dltk.ast.Modifiers;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.declarations.TypeDeclaration;
-import org.eclipse.dltk.ast.parser.ISourceParser;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.DLTKLanguageManager;
-import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.core.SourceParserUtil;
-import org.eclipse.dltk.python.core.PythonNature;
 
 public class ASTUtils {
     
@@ -291,35 +284,6 @@ public class ASTUtils {
         }
         
         return visitor.getResult();
-        
-    }
-    
-    public static ModuleDeclaration getAST(ISourceModule module) {
-        
-        return SourceParserUtil.getModuleDeclaration(module, null);
-        
-    }
-    
-    public static ModuleDeclaration getAST(char[] cs) {
-        
-        try {
-            
-            ISourceParser sourceParser = DLTKLanguageManager.getSourceParser(PythonNature.NATURE_ID);
-            
-            ModuleDeclaration declaration = sourceParser.parse("RawSource".toCharArray(), cs, null);
-            return declaration;
-            
-        } catch (ModelException e) {
-            
-            e.printStackTrace();
-            
-        } catch (CoreException e) {
-            
-            e.printStackTrace();
-            
-        }
-        
-        return null;
         
     }
     

@@ -5,17 +5,11 @@ import static java.util.Collections.emptyList;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.core.IModelElement;
-import org.eclipse.dltk.core.IParent;
-import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
@@ -172,42 +166,6 @@ public class PythonUtils {
         //            
         //        }
         return false;
-    }
-    
-    public static FileSourceUnit createFileSourceUnit(ISourceModule element) {
-        IResource resource;
-        try {
-            resource = element.getCorrespondingResource();
-        } catch (ModelException e) {
-            e.printStackTrace();
-            return null;
-        }
-        if (resource instanceof IFile) {
-            IFile file = (IFile) resource;
-            String path = element.getParent().getPath().toString() + "/" + element.getElementName();
-            return new FileSourceUnit(file.getLocation().toFile(), path);
-        }
-        return null;
-    }
-    
-    public static void findSourceModules(IParent element, List<FileSourceUnit> list) {
-        if (element instanceof ISourceModule) {
-            FileSourceUnit fsu = createFileSourceUnit((ISourceModule) element);
-            if (fsu != null) {
-                list.add(fsu);
-            }
-            return;
-        }
-        IModelElement[] children;
-        try {
-            children = element.getChildren();
-            for (IModelElement e : children)
-                if (e instanceof IParent) {
-                    findSourceModules((IParent) e, list);
-                }
-        } catch (ModelException e1) {
-            e1.printStackTrace();
-        }
     }
     
     @SuppressWarnings("unchecked")

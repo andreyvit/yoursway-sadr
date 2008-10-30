@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.goals;
 
 import java.util.List;
 
+import com.yoursway.sadr.python_v2.constructs.DotFrog;
 import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
@@ -44,7 +45,7 @@ public class ReadFieldGoal extends ContextSensitiveGoal {
     }
     
     public void preRun() {
-        Frog frog = new FieldReadF(receiver.toFrog(), variable);
+        Frog frog = new DotFrog(receiver.toFrog(), variable);
         parrotizeStartingWithParentOf(receiver, frog, new ValueRequest(acceptor));
     }
     

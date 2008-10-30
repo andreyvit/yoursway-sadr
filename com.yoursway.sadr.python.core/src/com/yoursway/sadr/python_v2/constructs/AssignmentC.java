@@ -50,6 +50,17 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
         return rightPart.evaluate(context, acceptor);
     }
     
+    @Override
+    public IGoal evaluate(Context context, final PythonVariableAcceptor acceptor) {
+        if (this.lhs() instanceof VariableReferenceC) {
+            final VariableReferenceC reference = (VariableReferenceC) this.lhs();
+            final String name = reference.name();
+            return evaluate(context, new PythonValueSetDelegatingAcceptor(context, name, acceptor));
+        } else {
+            return null;
+        }
+    }
+    
     public String getName() {
         Statement left = node.getLeft();
         if (left instanceof VariableReference) {

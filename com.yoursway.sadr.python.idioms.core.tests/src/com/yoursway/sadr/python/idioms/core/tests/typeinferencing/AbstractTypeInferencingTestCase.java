@@ -41,8 +41,6 @@ import org.junit.After;
 
 import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ExpressionValueInfoGoal;
-import com.yoursway.sadr.python.core.typeinferencing.goals.ValueInfoGoal;
 import com.yoursway.sadr.python.idioms.core.Idiom;
 import com.yoursway.sadr.python.idioms.core.IdiomMatch;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;

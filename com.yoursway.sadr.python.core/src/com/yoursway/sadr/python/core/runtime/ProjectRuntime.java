@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
@@ -30,16 +29,6 @@ public class ProjectRuntime {
         this.modules = project.getModules();
         for (FileSourceUnit module : this.modules)
             contributeModule(module);
-    }
-    
-    public ProjectRuntime(IScriptProject project) {
-        this(new ProjectUnit(findSourceModules(project)));
-    }
-    
-    private static Collection<FileSourceUnit> findSourceModules(IScriptProject project) {
-        List<FileSourceUnit> modules = new ArrayList<FileSourceUnit>();
-        PythonUtils.findSourceModules(project, modules);
-        return modules;
     }
     
     public PythonFileC getModule(File file) {

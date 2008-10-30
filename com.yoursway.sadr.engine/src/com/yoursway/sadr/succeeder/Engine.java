@@ -32,7 +32,11 @@ public class Engine implements IScheduler {
     public String getGoalStack(IGoal goal) {
         StringBuilder output = new StringBuilder();
         while (goal != null) {
-            output.append("\\-> " + goal.describe().replace("\n", " ") + '\n');
+            try {
+                output.append("\\-> " + goal.describe().replace("\n", " ") + '\n');
+            } catch (RuntimeException e) {
+                output.append("<Unknown goal>\n");
+            }
             goal = parentGoals.get(goal);
         }
         return output.toString();
