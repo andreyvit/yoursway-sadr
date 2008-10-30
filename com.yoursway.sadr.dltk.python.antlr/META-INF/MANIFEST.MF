@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Antlr Plug-in
+Bundle-SymbolicName: com.yoursway.sadr.dltk.python.antlr
+Bundle-Version: 3.0.0
+Bundle-Vendor: antlr.org
+Bundle-ClassPath: antlr.jar
+Export-Package: org.antlr,
+ org.antlr.analysis,
+ org.antlr.codegen,
+ org.antlr.codegen.templates.Java,
+ org.antlr.misc,
+ org.antlr.runtime,
+ org.antlr.runtime.debug,
+ org.antlr.runtime.misc,
+ org.antlr.runtime.tree,
+ org.antlr.tool,
+ org.antlr.tool.templates,
+ org.antlr.tool.templates.dot,
+ org.antlr.tool.templates.messages.formats,
+ org.antlr.tool.templates.messages.languages
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
