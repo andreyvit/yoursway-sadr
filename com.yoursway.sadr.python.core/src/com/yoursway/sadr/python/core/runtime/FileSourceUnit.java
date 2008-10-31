@@ -10,10 +10,6 @@ public class FileSourceUnit {
     private final File file;
     private final String path;
     
-    public FileSourceUnit(File file) {
-        this(file, "all/you/need/is/boo");
-    }
-    
     public FileSourceUnit(File file, String path) {
         this.file = file;
         this.path = path;
