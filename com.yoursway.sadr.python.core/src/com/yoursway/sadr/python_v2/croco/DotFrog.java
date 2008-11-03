@@ -1,6 +1,5 @@
-package com.yoursway.sadr.python_v2.constructs;
+package com.yoursway.sadr.python_v2.croco;
 
-import java.util.List;
 
 public class DotFrog extends Frog {
     protected final Frog head;
@@ -22,8 +21,11 @@ public class DotFrog extends Frog {
         return head.toString() + "." + name();
     }
     
-    @Override
-    public boolean match(List<PythonConstruct> constructs) {
-        return head.match(constructs) && constructs.get(getLength() - 1).match(this);
-    }
+    //    @Override
+    //    public boolean match(PythonStatement statement) {
+    //        if (statement instanceof AssignmentStatement) {
+    //            
+    //            return head.match(constructs) && constructs.get(getLength() - 1).match(this);
+    //        }
+    //    }
 }

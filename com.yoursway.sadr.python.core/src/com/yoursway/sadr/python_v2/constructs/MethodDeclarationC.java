@@ -10,6 +10,8 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.goals.PassResultGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
@@ -35,7 +37,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
                 PythonArgument argument = (PythonArgument) arg;
                 ASTNode init = argument.getInitialization();
                 if (init != null) {
-                    PythonConstruct wrappedInitializer = PythonConstructFactory.wrap(init, innerScope());
+                    PythonConstruct wrappedInitializer = PythonConstructFactory.wrap(init, scope());
                     inits.put(argument.getName(), wrappedInitializer);
                     preChildren.add(wrappedInitializer);
                 }

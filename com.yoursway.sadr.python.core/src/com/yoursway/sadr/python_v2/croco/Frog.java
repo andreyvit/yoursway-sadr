@@ -1,10 +1,11 @@
-package com.yoursway.sadr.python_v2.constructs;
+package com.yoursway.sadr.python_v2.croco;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python.PythonElement;
+import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 
 public class Frog {
     private final String accessor;
@@ -36,9 +37,8 @@ public class Frog {
         return 1;
     }
     
-    public boolean match(List<PythonConstruct> constructs) {
-        PythonConstruct construct = constructs.get(getLength() - 1);
-        return construct.match(this);
+    public boolean match(PythonElement element) {
+        return element.match(this);
     }
     
     public boolean match(String name) {

@@ -1,9 +1,9 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
+import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.ModuleValue;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;

@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
+import com.yoursway.sadr.python_v2.croco.Frog;
 
 //FIXME make real context or settle crocodiles here. 
 /**

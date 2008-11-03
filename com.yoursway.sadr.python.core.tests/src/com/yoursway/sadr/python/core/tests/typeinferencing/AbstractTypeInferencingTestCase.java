@@ -397,9 +397,9 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSetAcceptor acceptor,
                 final PythonConstruct construct, final Engine engine) {
-            if (construct.innerScope() instanceof MethodDeclarationC
+            if (construct.scope() instanceof MethodDeclarationC
                     && construct.parentScope() instanceof ClassDeclarationC) {
-                final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
+                final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
                 return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Context.EMPTY,
                         new PythonValueSetAcceptor(Context.EMPTY) {
@@ -492,10 +492,10 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSetAcceptor acceptor,
                 final PythonConstruct construct, final Engine engine) {
-            if (construct.innerScope() instanceof MethodDeclarationC
-                    && construct.innerScope().parentScope() instanceof ClassDeclarationC) {
-                final MethodDeclarationC func = (MethodDeclarationC) construct.innerScope();
-                ClassDeclarationC classC = (ClassDeclarationC) construct.innerScope().parentScope();
+            if (construct.scope() instanceof MethodDeclarationC
+                    && construct.scope().parentScope() instanceof ClassDeclarationC) {
+                final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
+                ClassDeclarationC classC = (ClassDeclarationC) construct.scope().parentScope();
                 return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Context.EMPTY,
                         new PythonValueSetAcceptor(Context.EMPTY) {
                             @Override

@@ -1,16 +1,21 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
+import com.google.common.collect.Lists;
+import com.yoursway.sadr.python.PythonStatement;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
-public class AssignmentC extends PythonConstructImpl<Assignment> {
+public class AssignmentC extends PythonConstructImpl<Assignment> implements PythonStatement {
     
     private final PythonConstruct leftPart;
     private final PythonConstruct rightPart;
@@ -59,6 +64,11 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public List<PythonStatement> getStatements() {
+        return Lists.newArrayList((PythonStatement) this);
     }
     
     public String getName() {

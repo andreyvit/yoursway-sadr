@@ -49,10 +49,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
         List<PythonConstruct> wrappedChildren = new ArrayList<PythonConstruct>();
         if (node.getArgs() != null) {
             List<ASTNode> argNodes = ((ASTNode) node.getChilds().get(ARGUMENTS_INDEX)).getChilds();
-            this.args = PythonConstructFactory.wrap(argNodes, innerScope());
+            this.args = PythonConstructFactory.wrap(argNodes, scope());
             wrappedChildren.addAll(this.args);
         }
-        callable = PythonConstructFactory.wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), innerScope());
+        callable = PythonConstructFactory.wrap((ASTNode) node.getChilds().get(CALLABLE_INDEX), scope());
         if (callable instanceof FieldAccessC) {
             FieldAccessC fieldAccess = (FieldAccessC) callable;
             self = fieldAccess.receiver();

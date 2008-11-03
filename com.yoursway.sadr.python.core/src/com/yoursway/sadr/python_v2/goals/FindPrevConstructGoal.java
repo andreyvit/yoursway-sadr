@@ -65,7 +65,7 @@ public class FindPrevConstructGoal extends Goal {
         PythonConstruct prevConstruct = findPrevConstruct(current);
         System.out.println("PREV: " + current + " --> " + prevConstruct);
         if (prevConstruct == null && current instanceof MethodDeclarationC) {
-            schedule(new FindCallersGoal(current.innerScope(), new CallersAcceptor()));
+            schedule(new FindCallersGoal(current.scope(), new CallersAcceptor()));
         } else {
             if (prevConstruct != null)
                 acceptor.addResult(prevConstruct);

@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.python.PythonStatement;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.croco.Egg;
-import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -19,7 +19,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     private List<PythonConstruct> preChildren = Collections.EMPTY_LIST;
     private List<PythonConstruct> postChildren;
     private PythonConstructImpl<ASTNode> sintacticallyPreviousConstruct;
-    private Egg egg;
     
     public PythonConstructImpl(Scope sc, N node) {
         this.parentScope = sc;
@@ -40,7 +39,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     protected void wrapEnclosedChildren() {
         //TODO pre- & post- children.
-        setPostChildren(PythonConstructFactory.wrap(this.node.getChilds(), innerScope()));
+        setPostChildren(PythonConstructFactory.wrap(this.node.getChilds(), scope()));
     }
     
     public PythonConstruct staticallyEnclosingConstruct() {
@@ -108,7 +107,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return parentScope;
     }
     
-    public Scope innerScope() {
+    public Scope scope() {
         return parentScope;
     }
     
@@ -187,10 +186,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         throw new UnsupportedOperationException();
     }
     
-    public Krocodile toEgg() {
-        if (egg == null) {
-            egg = new Egg(this);
-        }
-        return egg;
+    public List<PythonStatement> getStatements() {
+        return Collections.emptyList();
     }
 }

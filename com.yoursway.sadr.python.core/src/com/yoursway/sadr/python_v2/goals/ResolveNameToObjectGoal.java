@@ -2,13 +2,13 @@ package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
+import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;
@@ -56,7 +56,7 @@ public class ResolveNameToObjectGoal extends IterationGoal<PythonVariableAccepto
     
     @Override
     public String describe() {
-        String scope = (from.innerScope()).toString();
+        String scope = (from.scope()).toString();
         return super.describe() + "\nfor name " + this.frog + " in " + scope;
     }
     

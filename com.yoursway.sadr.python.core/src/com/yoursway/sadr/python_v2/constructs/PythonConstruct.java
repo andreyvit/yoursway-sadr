@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
+import com.yoursway.sadr.python.PythonStatement;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -20,7 +20,7 @@ public interface PythonConstruct {
     
     Scope parentScope();
     
-    Scope innerScope();
+    Scope scope();
     
     List<PythonConstruct> getPostChildren();
     
@@ -30,8 +30,5 @@ public interface PythonConstruct {
     
     PythonConstruct parent();
     
-    public boolean match(Frog frog);
-    
-    Krocodile toEgg();
-    
+    List<PythonStatement> getStatements();
 }

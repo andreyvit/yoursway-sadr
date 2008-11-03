@@ -4,17 +4,16 @@ import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.Set;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeId;
+import com.yoursway.sadr.blocks.foundation.values.CacheRecord;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python_v2.constructs.Frog;
 
-public class PythonId implements RuntimeId {
+public class PythonRecord implements CacheRecord {
     final int id;
     Set<Frog> frogs = newHashSet();
-    Set<PythonId> conditionallyEqualIds = newHashSet();
+    Set<PythonRecord> conditionallyEqualIds = newHashSet();
     Set<RuntimeObject> values = newHashSet();
     
-    public PythonId(int id) {
+    public PythonRecord(int id) {
         this.id = id;
     }
     

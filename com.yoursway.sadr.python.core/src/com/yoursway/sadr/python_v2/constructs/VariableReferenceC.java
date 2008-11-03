@@ -2,13 +2,15 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.ast.references.VariableReference;
 
+import com.yoursway.sadr.python.PythonElement;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
-public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
+public class VariableReferenceC extends PythonConstructImpl<VariableReference> implements PythonElement {
     
     VariableReferenceC(Scope sc, VariableReference node) {
         super(sc, node);
