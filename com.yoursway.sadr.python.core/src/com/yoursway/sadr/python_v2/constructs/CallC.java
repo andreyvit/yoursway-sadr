@@ -11,11 +11,11 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
@@ -63,7 +63,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     }
     
     @Override
-    public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(final Krocodile context, PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
                 ResultsCollector rc = new ResultsCollector(args.size() + 2, context) {

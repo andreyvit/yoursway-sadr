@@ -7,9 +7,9 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.PassResultGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.ModuleType;
 import com.yoursway.sadr.python_v2.model.builtins.ModuleValue;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
@@ -66,7 +66,7 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
     }
     
     @Override
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
         return new PassResultGoal(context, acceptor, null);
     }
     
@@ -82,6 +82,6 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
     
     @Override
     public boolean match(Frog frog) {
-        return hasImport(frog.getAccessor());
+        return hasImport(frog.accessor());
     }
 }

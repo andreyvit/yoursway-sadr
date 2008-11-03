@@ -5,9 +5,9 @@ import org.eclipse.dltk.ast.expressions.StringLiteral;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.StringType;
 import com.yoursway.sadr.python_v2.model.builtins.UnicodeType;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -42,7 +42,7 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     }
     
     @Override
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
                 RuntimeObject wrappedValue;

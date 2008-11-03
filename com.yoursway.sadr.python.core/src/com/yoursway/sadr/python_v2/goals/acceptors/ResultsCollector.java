@@ -15,16 +15,16 @@ import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.ValueSet;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class ResultsCollector extends Synchronizer {
     private final Map<Object, MutableValueSet> results;
-    private final Context context;
+    private final Krocodile context;
     private boolean adding = true;
     
-    public ResultsCollector(int capacity, Context context) {
+    public ResultsCollector(int capacity, Krocodile context) {
         this.context = context;
         results = new HashMap<Object, MutableValueSet>(capacity);
     }

@@ -9,16 +9,16 @@ import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
 public final class CallRedirectGoal extends ExpressionValueGoal {
     private final PythonArguments args;
     private final String methodName;
     
-    public CallRedirectGoal(Context context, PythonValueSetAcceptor acceptor, PythonArguments args,
+    public CallRedirectGoal(Krocodile context, PythonValueSetAcceptor acceptor, PythonArguments args,
             String methodName, PythonConstruct caller) {
         super(context, acceptor);
         this.args = args;

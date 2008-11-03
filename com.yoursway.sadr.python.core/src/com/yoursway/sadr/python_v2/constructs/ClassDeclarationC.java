@@ -9,9 +9,9 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.PassResultGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGoal;
 
@@ -69,13 +69,13 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
     }
     
     @Override
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
         FunctionObject functionObject = new FunctionObject(this);
         return new PassResultGoal(context, acceptor, functionObject);
     }
     
     @Override
-    public IGoal evaluate(Context context, final PythonVariableAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, final PythonVariableAcceptor acceptor) {
         return evaluate(context, new PythonValueSetDelegatingAcceptor(context, name(), acceptor));
     }
     

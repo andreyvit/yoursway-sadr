@@ -18,7 +18,7 @@ import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.sadr.python_v2.model.builtins.TupleType;
 import com.yoursway.sadr.python_v2.model.builtins.TupleValue;
 
-public class ContextImpl implements Context {
+public class ContextImpl {
     
     Map<String, RuntimeObject> args = new HashMap<String, RuntimeObject>();
     
@@ -63,7 +63,7 @@ public class ContextImpl implements Context {
         return args.toString();
     }
     
-    public void getMatchingArguments(Frog name, PythonVariableAcceptor acceptor) {
+    public void findMatchingArguments(Frog name, PythonVariableAcceptor acceptor) {
         for (Entry<String, RuntimeObject> entry : args.entrySet()) {
             if (name.match(entry.getKey())) {
                 acceptor.addResult(entry.getKey(), entry.getValue());

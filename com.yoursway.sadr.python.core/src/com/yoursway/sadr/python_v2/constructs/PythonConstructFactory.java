@@ -55,9 +55,9 @@ import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 import org.eclipse.dltk.python.parser.ast.statements.TryFinallyStatement;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public class PythonConstructFactory {
@@ -178,7 +178,7 @@ public class PythonConstructFactory {
     public static PythonConstruct NULL_CONSTRUCT = new PythonConstruct() {
         private static final String MESSAGE = "Null construct.";
         
-        public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+        public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
             throw new UnsupportedOperationException(MESSAGE);
         }
         
@@ -194,7 +194,7 @@ public class PythonConstructFactory {
             throw new UnsupportedOperationException(MESSAGE);
         }
         
-        public Scope innerScope() {
+        public Scope scope() {
             throw new UnsupportedOperationException(MESSAGE);
         }
         
@@ -202,24 +202,16 @@ public class PythonConstructFactory {
             throw new UnsupportedOperationException(MESSAGE);
         }
         
-        public PythonConstruct parent() {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
         public Scope parentScope() {
             throw new UnsupportedOperationException(MESSAGE);
         }
         
-        public IGoal evaluate(Context context, PythonVariableAcceptor acceptor) {
+        public IGoal evaluate(Krocodile context, PythonVariableAcceptor acceptor) {
             throw new UnsupportedOperationException(MESSAGE);
         }
         
         public boolean match(Frog frog) {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public Krocodile toEgg() {
-            throw new UnsupportedOperationException(MESSAGE);
+            return false;
         }
     };
     

@@ -59,11 +59,11 @@ import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
 import com.yoursway.sadr.python_v2.goals.CreateSwampGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
@@ -263,9 +263,9 @@ public abstract class AbstractTypeInferencingTestCase {
         return namePos;
     }
     
-    private Context createSelfContext(final MethodDeclarationC func, RuntimeObject self) {
+    private Krocodile createSelfContext(final MethodDeclarationC func, RuntimeObject self) {
         ArrayList<PythonArgument> list = new ArrayList<PythonArgument>();
-        Context context = new ContextImpl(list, new PythonArguments());
+        Krocodile context = new Krocodile(Krocodile.EMPTY, func, new ContextImpl(list, new PythonArguments()));
         PythonArgument arg = (PythonArgument) func.node().getArguments().get(0);
         context.put(arg.getName(), self);
         return context;
@@ -378,7 +378,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY) {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Krocodile.EMPTY) {
                 
                 @Override
                 protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
@@ -401,18 +401,18 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
-                return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Context.EMPTY,
-                        new PythonValueSetAcceptor(Context.EMPTY) {
+                return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Krocodile.EMPTY,
+                        new PythonValueSetAcceptor(Krocodile.EMPTY) {
                             
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                                Context context = createSelfContext(func, result);
+                                Krocodile context = createSelfContext(func, result);
                                 IGoal goal = construct.evaluate(context, acceptor);
                                 engine.schedule(null, goal);
                             }
                         });
             } else {
-                return construct.evaluate(Context.EMPTY, acceptor);
+                return construct.evaluate(Krocodile.EMPTY, acceptor);
             }
         }
         
@@ -423,32 +423,6 @@ public abstract class AbstractTypeInferencingTestCase {
             return createSelfGoal(fileC, acceptor, construct, engine);
         }
     }
-    
-    //    class LocalVarTypeAssertion implements IAssertion {
-    //        
-    //        private final int namePos;
-    //        
-    //        public LocalVarTypeAssertion(String expression, int namePos) {
-    //            this.namePos = namePos;
-    //        }
-    //        
-    //        public void check(PythonFileC fileC, ISourceModule cu, Engine engine, StringBuilder expected,
-    //                StringBuilder actual) throws Exception {
-    //            throw new UnsupportedOperationException();
-    //        }
-    //        
-    //        public ValueInfoGoal createGoal(PythonFileC fileC) {
-    //            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
-    //            PythonConstruct construct = fileC.subconstructFor(node);
-    //            if (!(node instanceof SimpleReference))
-    //                throw new IllegalArgumentException();
-    //            PythonVariable variable = construct.staticContext().variableLookup().lookupVariable(
-    //                    ((SimpleReference) node).getName());
-    //            return Goals.createVariableTypeGoal(variable, InfoKind.TYPE, new EmptyDynamicContext(), construct
-    //                    .staticContext());
-    //        }
-    //        
-    //    }
     
     class ExpressionValueAssertion implements IAssertion {
         
@@ -466,7 +440,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY) {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Krocodile.EMPTY) {
                 @Override
                 public <T> void checkpoint(IGrade<T> grade) {
                     System.out.println("Done");
@@ -496,17 +470,17 @@ public abstract class AbstractTypeInferencingTestCase {
                     && construct.scope().parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.scope().parentScope();
-                return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Context.EMPTY,
-                        new PythonValueSetAcceptor(Context.EMPTY) {
+                return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Krocodile.EMPTY,
+                        new PythonValueSetAcceptor(Krocodile.EMPTY) {
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                                Context context = createSelfContext(func, result);
+                                Krocodile context = createSelfContext(func, result);
                                 IGoal goal = construct.evaluate(context, acceptor);
                                 engine.schedule(null, goal);
                             }
                         });
             } else {
-                return construct.evaluate(Context.EMPTY, acceptor);
+                return construct.evaluate(Krocodile.EMPTY, acceptor);
             }
         }
         
@@ -534,7 +508,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Context.EMPTY) {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Krocodile.EMPTY) {
                 @Override
                 public <T> void checkpoint(IGrade<T> grade) {
                     System.out.println("Done");
@@ -717,7 +691,7 @@ public abstract class AbstractTypeInferencingTestCase {
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             if (construct instanceof VariableReferenceC) {
-                return new ResolveNameToObjectGoal((VariableReferenceC) construct, Context.EMPTY, acceptor);
+                return new ResolveNameToObjectGoal((VariableReferenceC) construct, Krocodile.EMPTY, acceptor);
             } else {
                 throw new IllegalStateException("Should be VariableReferenceC, but found "
                         + construct.getClass().getSimpleName());

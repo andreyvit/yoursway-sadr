@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.PythonStatement;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
@@ -134,7 +133,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return node.toString();
     }
     
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
         throw new UnsupportedOperationException("Evaluate is not enabled for node class "
                 + this.node.getClass().getSimpleName());
     }
@@ -177,16 +176,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return false;
     }
     
-    public IGoal evaluate(Context context, PythonVariableAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonVariableAcceptor acceptor) {
         return null;
-    }
-    
-    public PythonConstruct parent() {
-        //TODO implement parent relation
-        throw new UnsupportedOperationException();
-    }
-    
-    public List<PythonStatement> getStatements() {
-        return Collections.emptyList();
     }
 }

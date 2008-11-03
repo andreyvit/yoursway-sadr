@@ -4,8 +4,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
@@ -27,7 +27,7 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     }
     
     @Override
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
         return value.evaluate(context, acceptor);
     }
 }

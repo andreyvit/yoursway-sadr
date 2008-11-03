@@ -6,12 +6,12 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpressio
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -34,7 +34,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
     }
     
     @Override
-    public IGoal evaluate(final Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(final Krocodile context, PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
                 ResultsCollector rc = new ResultsCollector(2, context) {

@@ -4,19 +4,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.PythonElement;
+import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 
 public class Frog {
+    public static final int SEARCH = -1;
     private final String accessor;
     private final boolean pattern;
-    protected int id;
+    protected final int id;
     
     /**
      * Accessor is list of characters; can end with "*" that means it's pattern
      * for completion
      */
-    public Frog(String accessor) {
+    public Frog(String accessor, int id) {
+        this.id = id;
         pattern = accessor.endsWith("*");
         if (pattern) {
             this.accessor = accessor.substring(0, accessor.length() - 1);
@@ -25,8 +27,35 @@ public class Frog {
         }
     }
     
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((accessor == null) ? 0 : accessor.hashCode());
+        result = prime * result + id;
+        result = prime * result + (pattern ? 1231 : 1237);
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Frog other = (Frog) obj;
+        if (accessor == null) {
+            if (other.accessor != null)
+                return false;
+        } else if (!accessor.equals(other.accessor))
+            return false;
+        if (id != other.id)
+            return false;
+        if (pattern != other.pattern)
+            return false;
+        return true;
     }
     
     public int getId() {
@@ -37,7 +66,7 @@ public class Frog {
         return 1;
     }
     
-    public boolean match(PythonElement element) {
+    public boolean match(PythonConstruct element) {
         return element.match(this);
     }
     
@@ -49,7 +78,7 @@ public class Frog {
         }
     }
     
-    public String getAccessor() {
+    public String accessor() {
         return accessor;
     }
     

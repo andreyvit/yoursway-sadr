@@ -1,12 +1,37 @@
 package com.yoursway.sadr.python_v2.croco;
 
-
 public class DotFrog extends Frog {
     protected final Frog head;
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((head == null) ? 0 : head.hashCode());
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DotFrog other = (DotFrog) obj;
+        if (head == null) {
+            if (other.head != null)
+                return false;
+        } else if (!head.equals(other.head))
+            return false;
+        return true;
+    }
+    
     protected int length;
     
-    public DotFrog(Frog head, String var) {
-        super(var);
+    public DotFrog(Frog head, String var, int id) {
+        super(var, id);
         this.head = head;
         this.length = super.getLength() + 1;
     }
@@ -21,11 +46,7 @@ public class DotFrog extends Frog {
         return head.toString() + "." + name();
     }
     
-    //    @Override
-    //    public boolean match(PythonStatement statement) {
-    //        if (statement instanceof AssignmentStatement) {
-    //            
-    //            return head.match(constructs) && constructs.get(getLength() - 1).match(this);
-    //        }
-    //    }
+    public Frog head() {
+        return head;
+    }
 }

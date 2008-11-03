@@ -10,9 +10,9 @@ import java.util.Map;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
@@ -25,7 +25,7 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
     private final PythonConstruct instanceCreator;
     
     public CreateInstanceGoal(ClassDeclarationC classDecl, PythonConstruct instanceCreator,
-            PythonArguments args, Context context, PythonValueSetAcceptor acceptor) {
+            PythonArguments args, Krocodile context, PythonValueSetAcceptor acceptor) {
         super(context);
         this.instanceCreator = instanceCreator;
         if (instanceCreator == null)

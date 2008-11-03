@@ -4,8 +4,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
 public class ArgumentC extends PythonConstructImpl<PythonArgument> {
@@ -30,7 +30,7 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     }
     
     @Override
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
         Assert.isLegal(init != null, "node.getInitialization() should be != null");
         return init.evaluate(context, acceptor);
     }

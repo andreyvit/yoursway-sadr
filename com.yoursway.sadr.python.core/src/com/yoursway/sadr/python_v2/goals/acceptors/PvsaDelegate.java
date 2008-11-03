@@ -2,7 +2,7 @@ package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.succeeder.IGrade;
 
 /**
@@ -12,7 +12,7 @@ public class PvsaDelegate<Acceptor extends PythonValueSetAcceptor> extends Pytho
     
     private final IncrementableSynchronizer<PythonValueSetAcceptor> incSync;
     
-    public PvsaDelegate(IncrementableSynchronizer<PythonValueSetAcceptor> incSync, Context context) {
+    public PvsaDelegate(IncrementableSynchronizer<PythonValueSetAcceptor> incSync, Krocodile context) {
         super(context);
         this.incSync = incSync;
         incSync.addAcceptor(this);

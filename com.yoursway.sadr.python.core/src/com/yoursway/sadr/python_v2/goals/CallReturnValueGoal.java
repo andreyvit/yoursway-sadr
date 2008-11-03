@@ -7,8 +7,8 @@ import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.ReturnC;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.succeeder.IGrade;
 
@@ -17,13 +17,13 @@ public class CallReturnValueGoal extends ContextSensitiveGoal {
     private final MethodDeclarationC methodDecl;
     private final PythonValueSetAcceptor acceptor;
     
-    public CallReturnValueGoal(MethodDeclarationC methodDecl, Context context, PythonValueSetAcceptor acceptor) {
+    public CallReturnValueGoal(MethodDeclarationC methodDecl, Krocodile context, PythonValueSetAcceptor acceptor) {
         super(context);
         this.methodDecl = methodDecl;
         this.acceptor = acceptor;
     }
     
-    public CallReturnValueGoal(MethodDeclarationC decl, final Context arguments, final Context parentContext,
+    public CallReturnValueGoal(MethodDeclarationC decl, final Krocodile arguments, final Krocodile parentContext,
             final PythonValueSetAcceptor parentAcceptor) {
         super(arguments);
         this.methodDecl = decl;

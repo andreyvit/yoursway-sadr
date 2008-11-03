@@ -8,10 +8,10 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.sadr.python_v2.model.builtins.TupleType;
 import com.yoursway.sadr.python_v2.model.builtins.TupleValue;
@@ -26,7 +26,7 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
     }
     
     @Override
-    public IGoal evaluate(final Context context, final PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(final Krocodile context, final PythonValueSetAcceptor acceptor) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
                 List<PythonConstruct> args = getPostChildren();

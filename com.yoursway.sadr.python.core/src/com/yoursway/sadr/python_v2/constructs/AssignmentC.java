@@ -1,21 +1,17 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
-import com.google.common.collect.Lists;
-import com.yoursway.sadr.python.PythonStatement;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.succeeder.IGoal;
 
-public class AssignmentC extends PythonConstructImpl<Assignment> implements PythonStatement {
+public class AssignmentC extends PythonConstructImpl<Assignment> {
     
     private final PythonConstruct leftPart;
     private final PythonConstruct rightPart;
@@ -45,18 +41,20 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
     public boolean match(Frog frog) {
         PythonConstruct lhs = this.lhs();
         if (lhs instanceof VariableReferenceC) {
-            return lhs.match(frog);
+            //this is here because VRC.match should always return false
+            return frog.match(((VariableReferenceC) lhs).name());
         }
-        return false;
+        //FIXME: return false for invalid constructs
+        return lhs.match(frog);
     }
     
     @Override
-    public IGoal evaluate(Context context, PythonValueSetAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
         return rightPart.evaluate(context, acceptor);
     }
     
     @Override
-    public IGoal evaluate(Context context, final PythonVariableAcceptor acceptor) {
+    public IGoal evaluate(Krocodile context, final PythonVariableAcceptor acceptor) {
         if (this.lhs() instanceof VariableReferenceC) {
             final VariableReferenceC reference = (VariableReferenceC) this.lhs();
             final String name = reference.name();
@@ -64,11 +62,6 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
         } else {
             return null;
         }
-    }
-    
-    @Override
-    public List<PythonStatement> getStatements() {
-        return Lists.newArrayList((PythonStatement) this);
     }
     
     public String getName() {
@@ -79,28 +72,4 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
         }
         return null;
     }
-    
-    //    public void actOnModel(ModelRequest request) {
-    //        PythonConstruct lhs = lhs();
-    //        Collection<MumblaWumblaThreesome> swingerParty = lhs.mumblaWumbla();
-    //        for (MumblaWumblaThreesome threesome : swingerParty)
-    //            if (threesome.receiver() == null) {
-    //                String name = threesome.variableName();
-    //                staticContext().variableLookup().lookupVariable(name);
-    //            }
-    //        
-    //        //        Statement left = node.getLeft();
-    //        //        if (left instanceof ExtendedVariableReference) {
-    //        //            ExtendedVariableReference evr = (ExtendedVariableReference) left;
-    //        //            List<ASTNode> children = PythonUtils.expressionsOf(evr);
-    //        //            if (children.size() == 2 && children.get(0) instanceof VariableReference
-    //        //                    && ((VariableReference) children.get(0)).getName().equals("self")
-    //        //                    && children.get(1) instanceof VariableReference) {
-    //        //                VariableReference fieldName = (VariableReference) children.get(1);
-    //        //                PythonClassImpl klass = staticContext().currentClass();
-    //        //                new PythonSourceField(request.context(), klass, fieldName.getName(), fieldName);
-    //        //            }
-    //        //        }
-    //    }
-    
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.succeeder.IAcceptor;
 import com.yoursway.sadr.succeeder.IGoal;
 
@@ -20,9 +20,9 @@ import com.yoursway.sadr.succeeder.IGoal;
 public abstract class InstanceTracker implements IAcceptor {
     private class EvaluationDescriptor {
         private final PythonConstruct valueSource;
-        private final Context context;
+        private final Krocodile context;
         
-        public EvaluationDescriptor(PythonConstruct valueSource, Context context) {
+        public EvaluationDescriptor(PythonConstruct valueSource, Krocodile context) {
             if (valueSource == null || context == null)
                 throw new IllegalArgumentException();
             this.valueSource = valueSource;
@@ -41,7 +41,7 @@ public abstract class InstanceTracker implements IAcceptor {
         this.instance = instance;
     }
     
-    public void addAttribute(String name, PythonConstruct valueSource, Context context) {
+    public void addAttribute(String name, PythonConstruct valueSource, Krocodile context) {
         if (name == null || name.length() == 0)
             throw new IllegalArgumentException("incorrect name");
         attributes.put(name, new EvaluationDescriptor(valueSource, context));

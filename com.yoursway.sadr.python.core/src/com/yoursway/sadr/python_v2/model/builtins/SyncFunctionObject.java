@@ -4,9 +4,9 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.Context;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.succeeder.IGoal;
 
@@ -15,7 +15,7 @@ public class SyncFunctionObject extends FunctionObject {
     private final class EvaluateBuiltinFunctionGoal extends ExpressionValueGoal {
         private final PythonArguments args;
         
-        private EvaluateBuiltinFunctionGoal(Context context, PythonValueSetAcceptor acceptor,
+        private EvaluateBuiltinFunctionGoal(Krocodile context, PythonValueSetAcceptor acceptor,
                 PythonArguments args) {
             super(context, acceptor);
             this.args = args;
@@ -38,7 +38,7 @@ public class SyncFunctionObject extends FunctionObject {
     }
     
     @Override
-    public IGoal evaluateGoal(PythonValueSetAcceptor acceptor, final Context context,
+    public IGoal evaluateGoal(PythonValueSetAcceptor acceptor, final Krocodile context,
             final PythonArguments args) {
         return new EvaluateBuiltinFunctionGoal(context, acceptor, args);
     }

@@ -10,19 +10,19 @@ import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.model.Context;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.succeeder.IAcceptor;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public abstract class PythonValueSetAcceptor implements IAcceptor {
     
-    private final Map<Context, MutableValueSet> contextToValues = new HashMap<Context, MutableValueSet>();
+    private final Map<Krocodile, MutableValueSet> contextToValues = new HashMap<Krocodile, MutableValueSet>();
     private final ValueInfoBuilder builder = new ValueInfoBuilder(); //FIXME Build value info in getResult().
-    protected final Context activeContext;
+    protected final Krocodile activeContext;
     private PythonConstruct callingConstruct = null;
     
-    public PythonValueSetAcceptor(Context activeContext) {
+    public PythonValueSetAcceptor(Krocodile activeContext) {
         this.activeContext = activeContext;
     }
     
@@ -36,7 +36,7 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
         this.callingConstruct = callingConstruct;
     }
     
-    public void addResult(RuntimeObject result, Context context) {
+    public void addResult(RuntimeObject result, Krocodile context) {
         if (null == result)
             throw new IllegalStateException("There should be no null items in results!");
         
@@ -50,7 +50,7 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
         contextToValues.get(context).add(result);
     }
     
-    public MutableValueSet getResultByContext(Context context) {
+    public MutableValueSet getResultByContext(Krocodile context) {
         return contextToValues.get(context);
     }
     
