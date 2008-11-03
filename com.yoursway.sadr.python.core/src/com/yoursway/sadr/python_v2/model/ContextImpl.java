@@ -10,8 +10,8 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
+import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.model.builtins.DictType;
 import com.yoursway.sadr.python_v2.model.builtins.DictValue;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;

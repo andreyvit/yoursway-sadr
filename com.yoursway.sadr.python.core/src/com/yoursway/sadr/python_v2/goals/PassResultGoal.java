@@ -1,11 +1,10 @@
 /**
  * 
  */
-package com.yoursway.sadr.python_v2.constructs;
+package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.Context;
 

@@ -26,7 +26,7 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     }
     
     @Override
-    public Scope innerScope() {
+    public Scope scope() {
         return this;
     }
     

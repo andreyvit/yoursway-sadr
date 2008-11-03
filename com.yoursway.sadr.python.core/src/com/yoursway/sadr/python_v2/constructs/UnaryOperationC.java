@@ -5,6 +5,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.goals.PassResultGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.Context;

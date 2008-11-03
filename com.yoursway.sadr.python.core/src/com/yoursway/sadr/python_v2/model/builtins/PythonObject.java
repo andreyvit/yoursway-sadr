@@ -9,9 +9,9 @@ import java.util.Set;
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrar;
-import com.yoursway.sadr.python_v2.constructs.Frog;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
+import com.yoursway.sadr.python_v2.croco.Frog;
 
 public class PythonObject implements RuntimeObject {
     

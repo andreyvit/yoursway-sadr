@@ -23,7 +23,7 @@ public class IfC extends PythonConstructImpl<IfStatement> {
     
     @Override
     protected void wrapEnclosedChildren() {
-        thenBlock = PythonConstructFactory.wrap(node.getThen().getChilds(), innerScope());
+        thenBlock = PythonConstructFactory.wrap(node.getThen().getChilds(), scope());
         List<ASTNode> astElse = Collections.emptyList();
         if (node.getElse() != null) {
             if (node.getElse() instanceof IfStatement) {
@@ -34,13 +34,13 @@ public class IfC extends PythonConstructImpl<IfStatement> {
             } else
                 throw new IllegalStateException("Improper if statement handling.");
         }
-        elseBlock = PythonConstructFactory.wrap(astElse, innerScope());
+        elseBlock = PythonConstructFactory.wrap(astElse, scope());
         List<PythonConstruct> postChildren = new LinkedList<PythonConstruct>();
         postChildren.addAll(thenBlock);
         postChildren.addAll(elseBlock);
         setPostChildren(postChildren);
         
-        condition = PythonConstructFactory.wrap(node.getCondition(), innerScope());
+        condition = PythonConstructFactory.wrap(node.getCondition(), scope());
         List<PythonConstruct> preChildren = new ArrayList<PythonConstruct>(1);
         preChildren.add(condition);
         setPreChildren(preChildren);
