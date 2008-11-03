@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -29,7 +28,6 @@ import junit.framework.Assert;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -37,11 +35,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.junit.After;
 
+import com.google.common.collect.Lists;
+import com.yoursway.ide.application.model.Project;
+import com.yoursway.ide.application.model.application.ApplicationModel;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
@@ -75,27 +74,28 @@ import com.yoursway.sadr.succeeder.IGrade;
 public abstract class AbstractTypeInferencingTestCase {
     
     protected IProject testProject;
-    private File tempDirectory;
+    protected Project project;
+    protected ApplicationModel app;
     
-    private void createProject(String projectName, File projectLocation) throws Exception {
+    private File createProject(String projectName, File projectLocation) throws Exception {
         final IWorkspace workspace = ResourcesPlugin.getWorkspace();
         testProject = workspace.getRoot().getProject(projectName);
         if (testProject.exists())
             testProject.delete(false, true, null);
         IProjectDescription description = workspace.newProjectDescription(testProject.getName());
-        description.setNatureIds(new String[] { PythonNature.NATURE_ID });
         //        URL projectLocation = DtlTestsPlugin.getDefault().getBundle().getEntry("test_projects/" + projectName);
         //        if (projectLocation == null)
         //            throw new AssertionError("Test project not found.");
         //        URL resolvedProjectLocation = Platform.resolve(projectLocation);
         IPath tempPath = Activator.getDefault().getStateLocation().append("testprojects").append(projectName);
-        tempDirectory = tempPath.toFile();
+        File tempDirectory = tempPath.toFile();
         FileUtil.recursiveDelete(tempDirectory);
         recursiveCopy(projectLocation, tempDirectory);
         //      recursiveCopy(new File(resolvedProjectLocation.getPath()), tempDirectory);
         description.setLocation(tempPath);
         testProject.create(description, null);
         testProject.open(null);
+        return tempDirectory;
     }
     
     @After
@@ -105,50 +105,25 @@ public abstract class AbstractTypeInferencingTestCase {
         }
     }
     
-    public ProjectRuntime createProjectRuntime(IScriptProject project) {
+    public ProjectRuntime createProjectRuntime(File tempDirectory) {
+        app = new ApplicationModel(tempDirectory);
+        this.project = new Project(app, new PythonProjectType(), tempDirectory);
         return new ProjectRuntime(new ProjectUnit(findSourceModules(project)));
     }
     
-    public static FileSourceUnit createFileSourceUnit(ISourceModule element) {
-        IResource resource;
-        try {
-            resource = element.getCorrespondingResource();
-        } catch (ModelException e) {
-            e.printStackTrace();
-            return null;
-        }
-        if (resource instanceof IFile) {
-            IFile file = (IFile) resource;
-            String path = element.getParent().getPath().toString() + "/" + element.getElementName();
-            return new FileSourceUnit(file.getLocation().toFile(), path);
-        }
-        return null;
-    }
-    
-    public static void findSourceModules(IParent element, List<FileSourceUnit> list) {
-        if (element instanceof ISourceModule) {
-            FileSourceUnit fsu = createFileSourceUnit((ISourceModule) element);
-            if (fsu != null) {
-                list.add(fsu);
+    private Collection<FileSourceUnit> findSourceModules(Project project) {
+        Collection<File> files = project.findAllFiles();
+        Collection<FileSourceUnit> sourceUnits = Lists.newArrayListWithCapacity(files.size());
+        String root = project.getLocation().getAbsolutePath();
+        if (!root.endsWith("/"))
+            root += "/";
+        for (File file : files)
+            if (file.getName().toLowerCase().endsWith(".py")) {
+                String path = file.getAbsolutePath();
+                path = path.substring(0, path.length() - 3).replace(root, "").replace("/", ".");
+                sourceUnits.add(new FileSourceUnit(file, path));
             }
-            return;
-        }
-        IModelElement[] children;
-        try {
-            children = element.getChildren();
-            for (IModelElement e : children)
-                if (e instanceof IParent) {
-                    findSourceModules((IParent) e, list);
-                }
-        } catch (ModelException e1) {
-            e1.printStackTrace();
-        }
-    }
-    
-    private static Collection<FileSourceUnit> findSourceModules(IScriptProject project) {
-        List<FileSourceUnit> modules = new ArrayList<FileSourceUnit>();
-        findSourceModules(project, modules);
-        return modules;
+        return sourceUnits;
     }
     
     protected void runTest() throws Exception {
@@ -161,10 +136,9 @@ public abstract class AbstractTypeInferencingTestCase {
             throw new AssertionError("Test project not found.");
         URL resolvedProjectLocation = FileLocator.resolve(projectLocation);
         File file = new File(resolvedProjectLocation.getPath());
-        createProject("test", file);
+        File rootDir = createProject("test", file);
         
-        IScriptProject scriptProject = DLTKCore.create(testProject);
-        ProjectRuntime projectRuntime = createProjectRuntime(scriptProject);
+        ProjectRuntime projectRuntime = createProjectRuntime(rootDir);
         
         Engine engine = projectRuntime.getEngine();
         
