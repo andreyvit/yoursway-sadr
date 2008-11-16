@@ -208,8 +208,20 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
                 if (!goalsToRecalculate.isEmpty())
                     System.out.println("IncrementalGoalState.storeIntoCache()");
             }
-            data.update(result, sourceDeps, deps, (dependentOnRecursiveResult ? 1
-                    : CachedGoalData.NON_RECURSIVE));
+            int recursive;
+            recursive = dependentOnRecursiveResult
+                    || needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged ? 1
+                    : CachedGoalData.NON_RECURSIVE;
+            if (!data.isRecursiveResult())
+                throw new IllegalStateException(
+                        "Improving a non-recursive result is forbidden (should never happen)");
+            if (data.recursiveAttemps != 0)
+                recursive = data.recursiveAttemps;
+            else
+                recursive = dependentOnRecursiveResult
+                        || needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged ? 1
+                        : CachedGoalData.NON_RECURSIVE;
+            data.update(result, sourceDeps, deps, recursive);
             if (needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged)
                 // TODO: ideally we want to delay parent notification in this case 
                 enqueueRecursiveRecalculation(goal, data);
