@@ -59,12 +59,16 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
     
     static class CachedGoalData {
         
+        private static final DependencyContributor[] NO_DEPENDENCY_CONTRIBUTORS = new DependencyContributor[0];
+        
+        private static final SourceUnit[] NO_SOURCE_UNITS = new SourceUnit[0];
+        
         public static final int NON_RECURSIVE = -1;
         
         final Goal<?> goal;
         Result result;
-        SourceUnit[] sourceUnits;
-        DependencyContributor[] dependencyContributors;
+        SourceUnit[] sourceUnits = NO_SOURCE_UNITS;
+        DependencyContributor[] dependencyContributors = NO_DEPENDENCY_CONTRIBUTORS;
         int recursiveAttemps;
         final Collection<Goal<?>> recursiveDependencies = newArrayList();
         
@@ -205,8 +209,8 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             Collection<Goal<?>> goalsToRecalculate = emptyList();
             if (data.resultChanged(result)) {
                 goalsToRecalculate = data.recursiveDependencies();
-                if (!goalsToRecalculate.isEmpty())
-                    System.out.println("IncrementalGoalState.storeIntoCache()");
+                //                if (!goalsToRecalculate.isEmpty())
+                //                    System.out.println("IncrementalGoalState.storeIntoCache()");
             }
             int recursive;
             recursive = dependentOnRecursiveResult
@@ -303,8 +307,8 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         CachedGoalData data = cache.get(goal);
         if (data == null) {
             data = new CachedGoalData(goal);
-            data.update(super.createRecursiveResult(parentState, goal), new SourceUnit[0],
-                    new DependencyContributor[0], 1);
+            data.update(super.createRecursiveResult(parentState, goal), CachedGoalData.NO_SOURCE_UNITS,
+                    CachedGoalData.NO_DEPENDENCY_CONTRIBUTORS, 1);
             cache.put(goal, data);
         }
         ((IncrementalGoalState) parentState).setDependentOnRecursiveResult(data);
@@ -325,7 +329,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             throw new NullPointerException("goal is null");
         if (data == null)
             throw new NullPointerException("data is null");
-        System.out.println("IncrementalAnalysisEngine.enqueueRecursiveRecalculation(" + goal + ")");
+        //        System.out.println("IncrementalAnalysisEngine.enqueueRecursiveRecalculation(" + goal + ")");
         
         if (data.incrementRecursiveAttempts() > MAX_RECURSIVE_ATTEMPS)
             return;
