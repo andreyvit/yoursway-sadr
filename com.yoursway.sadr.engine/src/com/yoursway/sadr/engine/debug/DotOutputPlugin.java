@@ -6,6 +6,8 @@ import static com.yoursway.utils.YsFileUtils.writeString;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Collection;
 import java.util.Map;
 
@@ -87,7 +89,8 @@ public class DotOutputPlugin implements EngineListener {
     
     private final boolean dumpOnEveryChange;
     
-    public DotOutputPlugin(File outputFile, IncrementalAnalysisEngine engine, boolean dumpOnEveryChange) {
+    public DotOutputPlugin(File outputFile, IncrementalAnalysisEngine engine, boolean dumpOnEveryChange,
+            final int tcpPort) {
         if (outputFile == null)
             throw new NullPointerException("outputFile is null");
         if (engine == null)
@@ -95,28 +98,48 @@ public class DotOutputPlugin implements EngineListener {
         this.outputFile = outputFile;
         engine.addListener(this);
         this.dumpOnEveryChange = dumpOnEveryChange;
+        if (tcpPort > 0) {
+            Thread thread = new Thread("Engine TCP debug plugin") {
+                @Override
+                public void run() {
+                    try {
+                        ServerSocket serverSocket = new ServerSocket(tcpPort);
+                        serverSocket.setReuseAddress(true);
+                        while (true) {
+                            Socket socket = serverSocket.accept();
+                            socket.getOutputStream().write(DotOutputPlugin.this.toString().getBytes("utf-8"));
+                            socket.close();
+                        }
+                    } catch (Throwable throwable) {
+                        throwable.printStackTrace(System.err);
+                    }
+                }
+            };
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
     
-    public void goalExecutionStarting(Goal<?> goal) {
+    public synchronized void goalExecutionStarting(Goal<?> goal) {
         activeGoal = goal;
         lookup(goal);
         if (dumpOnEveryChange)
             updateOutputFile();
     }
     
-    public void goalFinished(Goal<?> goal, Boolean isRecursive, Result result) {
+    public synchronized void goalFinished(Goal<?> goal, Boolean isRecursive, Result result) {
         SessionInfo session = lookup(goal).lastSession;
         session.finished = true;
         session.recursive = isRecursive;
     }
     
-    public void goalParentAdded(Goal<?> goal, Goal<?> parent) {
+    public synchronized void goalParentAdded(Goal<?> goal, Goal<?> parent) {
         GoalInfo goalInfo = lookup(goal);
         GoalInfo parentInfo = lookup(parent);
         parentInfo.lastSession.children.add(goalInfo.lastSession);
     }
     
-    public void goalScheduled(Goal<?> goal) {
+    public synchronized void goalScheduled(Goal<?> goal) {
         GoalInfo info = lookup(goal);
         if (info.needsNewSession())
             info.addSession(new SessionInfo(info.id, info.sessions.size() + 1));
@@ -148,7 +171,7 @@ public class DotOutputPlugin implements EngineListener {
         return builder.toString();
     }
     
-    public void toString(StringBuilder result) {
+    public synchronized void toString(StringBuilder result) {
         result.append("digraph Goals {\n");
         for (GoalInfo info : goalInfos) {
             result.append("\n");
@@ -215,11 +238,11 @@ public class DotOutputPlugin implements EngineListener {
         return label;
     }
     
-    public void rootGoalFinished(Goal<?> goal) {
+    public synchronized void rootGoalFinished(Goal<?> goal) {
         updateOutputFile();
     }
     
-    public void goalRecursiveDependencyAdded(Goal<?> goal, Goal<?> dependsOn) {
+    public synchronized void goalRecursiveDependencyAdded(Goal<?> goal, Goal<?> dependsOn) {
         lookup(goal).lastSession.recursiveDeps.add(lookup(dependsOn).lastSession);
     }
     
