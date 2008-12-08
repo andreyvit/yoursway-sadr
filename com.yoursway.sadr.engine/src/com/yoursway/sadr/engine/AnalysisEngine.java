@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Continuations evaluator. Just invoke new
@@ -18,6 +19,12 @@ import org.eclipse.core.runtime.Assert;
  * scheduler for this continuation and all tasks scheduled by it.
  */
 public abstract class AnalysisEngine implements GoalResultCacheCleaner {
+    
+    protected void trace(String msg) {
+        String trace = Platform.getDebugOption("com.yoursway.sadr.engine/traceGoals");
+        if (trace != null)
+            System.out.println(msg);
+    }
     
     static final class GoalContinuationContractViolation extends RuntimeException {
         
@@ -52,6 +59,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         public <R extends Result> Slot<R> subgoal(Goal<R> goal) {
             Result cachedResult = lookupResultInCache(goal, writableGoalState);
             if (cachedResult != null) {
+                trace("cacheHit() for subgoal: " + goal);
                 stats.cacheHit(goal);
                 return new SlotImpl<R>((R) cachedResult);
             }
@@ -151,6 +159,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             ++secondMagicNumber;
             secondMagicSet.add(this);
             queue.enqueue(new InitialGoalQuery(this));
+            trace("queue.enqueue(): " + goal);
             slot = new SlotImpl<R>();
         }
         
@@ -232,7 +241,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         @SuppressWarnings("unchecked")
         public void markAsDone(Result result) {
             if (source == GoalSource.DUPLICATE)
-                System.out.println("GoalState.markAsDone(" + this + ")");
+                System.out.println("source == GoalSource.DUPLICATE, GoalState.markAsDone(" + this + ")");
             if (subgoalCount >= ADDING_SUBGOALS)
                 throw new IllegalStateException(
                         "Cannot mark the goal as done from inside allowStateChangeAndRun");
@@ -245,7 +254,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         }
         
         protected void goalFinished() {
-            //            System.out.println("FINISHED " + goal);
+            trace("goalFinished(): " + goal);
             --secondMagicNumber;
             secondMagicSet.remove(this);
             activeGoalStates.remove(goal);

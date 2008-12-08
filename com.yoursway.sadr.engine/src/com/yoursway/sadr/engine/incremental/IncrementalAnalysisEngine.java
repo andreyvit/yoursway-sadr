@@ -329,7 +329,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             throw new NullPointerException("goal is null");
         if (data == null)
             throw new NullPointerException("data is null");
-        //        System.out.println("IncrementalAnalysisEngine.enqueueRecursiveRecalculation(" + goal + ")");
+        trace("IncrementalAnalysisEngine.enqueueRecursiveRecalculation(" + goal + ")");
         
         if (data.incrementRecursiveAttempts() > MAX_RECURSIVE_ATTEMPS)
             return;
