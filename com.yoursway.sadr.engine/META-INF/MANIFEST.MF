@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core Plug-in
+Bundle-Name: SADR Engine
 Bundle-SymbolicName: com.yoursway.sadr.engine
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.yoursway.sadr.engine.internal.Activator
