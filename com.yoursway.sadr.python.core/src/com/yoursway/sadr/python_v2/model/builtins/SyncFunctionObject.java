@@ -23,7 +23,7 @@ public class SyncFunctionObject extends FunctionObject {
         
         public void preRun() {
             RuntimeObject result = SyncFunctionObject.this.evaluate(args);
-            acceptor.addResult(result, getContext());
+            acceptor.addResult(result, getKrocodile());
             updateGrade(acceptor, Grade.DONE);
         }
         

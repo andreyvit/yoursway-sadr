@@ -55,7 +55,6 @@ import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 import org.eclipse.dltk.python.parser.ast.statements.TryFinallyStatement;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -204,14 +203,6 @@ public class PythonConstructFactory {
         
         public Scope parentScope() {
             throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public IGoal evaluate(Krocodile context, PythonVariableAcceptor acceptor) {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public boolean match(Frog frog) {
-            return false;
         }
     };
     

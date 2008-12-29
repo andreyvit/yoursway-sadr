@@ -36,7 +36,7 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
     
     public void preRun() {
         List<PythonConstruct> superClasses = classDeclarationC.getSuperClasses();
-        ResultsCollector rc = new ResultsCollector(superClasses.size(), getContext()) {
+        ResultsCollector rc = new ResultsCollector(superClasses.size(), getKrocodile()) {
             @Override
             protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
                 List<PythonClassType> supers = new ArrayList<PythonClassType>();
@@ -51,7 +51,7 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
                 }
                 PythonClassType receiverType = new PythonClassType(classDeclarationC, supers);
                 PythonObject receiver = new PythonObject(receiverType, instanceCreator);
-                acceptor.addResult(receiver, getContext());
+                acceptor.addResult(receiver, getKrocodile());
             }
             
             @Override

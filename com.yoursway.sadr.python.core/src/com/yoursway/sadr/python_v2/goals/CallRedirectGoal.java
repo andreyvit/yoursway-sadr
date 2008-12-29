@@ -29,10 +29,10 @@ public final class CallRedirectGoal extends ExpressionValueGoal {
         List<RuntimeObject> posArgs = args.readPositionalArgs();
         if (posArgs.size() == 1) {
             schedule(CallResolver.callMethod(posArgs.get(0), methodName, new PythonArguments(), acceptor,
-                    getContext(), NULL_CONSTRUCT));
+                    getKrocodile(), NULL_CONSTRUCT));
         } else if (posArgs.size() == 2) {
             schedule(CallResolver.callMethod(posArgs.get(1), methodName, new PythonArguments(), acceptor,
-                    getContext(), NULL_CONSTRUCT));
+                    getKrocodile(), NULL_CONSTRUCT));
         } else
             throw new IllegalStateException("Only one or two arguments allowed!");
     }

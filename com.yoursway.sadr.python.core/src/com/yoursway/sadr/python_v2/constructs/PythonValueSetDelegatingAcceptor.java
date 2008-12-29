@@ -14,7 +14,7 @@ final class PythonValueSetDelegatingAcceptor extends PythonValueSetAcceptor {
     
     PythonValueSetDelegatingAcceptor(Krocodile activeContext, String name,
             PythonVariableAcceptor acceptor) {
-        super(activeContext);
+        super();
         this.name = name;
         this.acceptor = acceptor;
     }

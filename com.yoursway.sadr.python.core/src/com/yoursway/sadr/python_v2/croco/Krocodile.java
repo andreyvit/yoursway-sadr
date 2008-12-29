@@ -75,7 +75,7 @@ public class Krocodile {
         
         @Override
         public String toString() {
-            return "Empty context";
+            return "Empty";
         }
     };
     

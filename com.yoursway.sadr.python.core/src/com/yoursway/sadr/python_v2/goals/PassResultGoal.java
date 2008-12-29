@@ -18,7 +18,7 @@ final public class PassResultGoal extends ExpressionValueGoal {
     
     public void preRun() {
         if (result != null) {
-            acceptor.addResult(result, getContext());
+            acceptor.addResult(result, getKrocodile());
         }
         updateGrade(acceptor, Grade.DONE);
     }

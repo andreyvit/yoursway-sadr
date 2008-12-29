@@ -7,8 +7,8 @@ public abstract class ExpressionValueGoal extends ContextSensitiveGoal {
     
     protected final PythonValueSetAcceptor acceptor;
     
-    public ExpressionValueGoal(Krocodile context, PythonValueSetAcceptor acceptor) {
-        super(context);
+    public ExpressionValueGoal(Krocodile krocodile, PythonValueSetAcceptor acceptor) {
+        super(krocodile);
         this.acceptor = acceptor;
     }
     

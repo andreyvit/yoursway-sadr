@@ -1,29 +1,27 @@
 package com.yoursway.sadr.python_v2.goals.acceptors;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python.core.typeinferencing.valuesets.MutableValueSet;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.Acceptor;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
-import com.yoursway.sadr.succeeder.IAcceptor;
 import com.yoursway.sadr.succeeder.IGrade;
 
-public abstract class PythonValueSetAcceptor implements IAcceptor {
+public abstract class PythonValueSetAcceptor extends Acceptor {
     
-    private final Map<Krocodile, MutableValueSet> contextToValues = new HashMap<Krocodile, MutableValueSet>();
     private final ValueInfoBuilder builder = new ValueInfoBuilder(); //FIXME Build value info in getResult().
-    protected final Krocodile activeContext;
     private PythonConstruct callingConstruct = null;
     
-    public PythonValueSetAcceptor(Krocodile activeContext) {
-        this.activeContext = activeContext;
+    public PythonValueSetAcceptor() {
+    }
+    
+    public PythonValueSetAcceptor(Acceptor parent) {
+        super(parent);
     }
     
     /**
@@ -45,26 +43,16 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
         }
         
         builder.add(result.getType(), result);
-        if (contextToValues.get(context) == null)
-            contextToValues.put(context, new MutableValueSet());
-        contextToValues.get(context).add(result);
-    }
-    
-    public MutableValueSet getResultByContext(Krocodile context) {
-        return contextToValues.get(context);
-    }
-    
-    protected void setResults(PythonValueSetAcceptor other) {
-        contextToValues.putAll(other.contextToValues);
     }
     
     public ValueInfo getResult() {
         return builder.build();
     }
     
+    @Override
     public <T> void checkpoint(IGrade<T> grade) {
-        MutableValueSet resultByContext = getResultByContext(activeContext);
-        if (null == resultByContext) {
+        ValueInfo resultByContext = getResult();
+        if (resultByContext.isEmpty()) {
             acceptIndividualResult(null, grade);
             return;
         }
@@ -74,6 +62,7 @@ public abstract class PythonValueSetAcceptor implements IAcceptor {
                 throw new IllegalStateException("There should be no null items in results!");
             acceptIndividualResult(item, grade);
         }
+        super.checkpoint(grade);
     }
     
     //TODO it isn't the most elegant solution - make it pretty.

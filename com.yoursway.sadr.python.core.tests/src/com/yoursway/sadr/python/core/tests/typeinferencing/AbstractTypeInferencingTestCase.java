@@ -17,9 +17,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +40,6 @@ import com.google.common.collect.Lists;
 import com.yoursway.ide.application.model.Project;
 import com.yoursway.ide.application.model.application.ApplicationModel;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
-import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
@@ -57,12 +54,9 @@ import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
-import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
-import com.yoursway.sadr.python_v2.goals.CreateSwampGoal;
-import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
@@ -214,15 +208,15 @@ public abstract class AbstractTypeInferencingTestCase {
             //            String expr = tok.nextToken();
             //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
             //            assertion = new LocalVarTypeAssertion(expr, namePos);
-        } else if ("swamp-test".equals(test)) { // not used yet
-            String expr = tok.nextToken();
-            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
-            needToken(tok, "=>");
-            String correctClassRef = tok.nextToken();
-            while (tok.hasMoreTokens()) {
-                correctClassRef += " " + tok.nextToken();
-            }
-            assertion = new SwampTestAssertion(expr, namePos, correctClassRef);
+            //        } else if ("swamp-test".equals(test)) { // not used yet
+            //            String expr = tok.nextToken();
+            //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
+            //            needToken(tok, "=>");
+            //            String correctClassRef = tok.nextToken();
+            //            while (tok.hasMoreTokens()) {
+            //                correctClassRef += " " + tok.nextToken();
+            //            }
+            //            assertion = new SwampTestAssertion(expr, namePos, correctClassRef);
         } else if ("has-method".equals(test)) {
             //            String expr = tok.nextToken();
             //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
@@ -378,7 +372,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Krocodile.EMPTY) {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
                 
                 @Override
                 protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
@@ -402,7 +396,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
                 return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Krocodile.EMPTY,
-                        new PythonValueSetAcceptor(Krocodile.EMPTY) {
+                        new PythonValueSetAcceptor(acceptor) {
                             
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
@@ -440,7 +434,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Krocodile.EMPTY) {
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
                 @Override
                 public <T> void checkpoint(IGrade<T> grade) {
                     System.out.println("Done");
@@ -471,7 +465,7 @@ public abstract class AbstractTypeInferencingTestCase {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.scope().parentScope();
                 return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Krocodile.EMPTY,
-                        new PythonValueSetAcceptor(Krocodile.EMPTY) {
+                        new PythonValueSetAcceptor() {
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                                 Krocodile context = createSelfContext(func, result);
@@ -492,55 +486,55 @@ public abstract class AbstractTypeInferencingTestCase {
         }
     }
     
-    class SwampTestAssertion implements IAssertion {
-        
-        private final String correctClassRef;
-        
-        private final String expression;
-        
-        private final int namePos;
-        
-        public SwampTestAssertion(String expression, int namePos, String ClassRecorrectClassReff) {
-            this.expression = expression;
-            this.namePos = namePos;
-            this.correctClassRef = ClassRecorrectClassReff;
-        }
-        
-        public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
-                StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Krocodile.EMPTY) {
-                @Override
-                public <T> void checkpoint(IGrade<T> grade) {
-                    System.out.println("Done");
-                    //do nothing;
-                }
-                
-                @Override
-                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                    // TODO Auto-generated method stub
-                    
-                }
-            };
-            IGoal goal = createGoal(fileC, acceptor);
-            engine.run(goal);
-            ValueInfo result = acceptor.getResult();
-            String[] possibleValues = result.describePossibleValues();
-            Arrays.sort(possibleValues, Strings.getNaturalComparator());
-            String values = Strings.join(possibleValues, ",");
-            if (values.length() == 0)
-                values = "(none)";
-            String prefix = expression + " : ";
-            expected.append(prefix).append(correctClassRef).append('\n');
-            actual.append(prefix).append(values).append('\n');
-        }
-        
-        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
-            ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
-            assertNotNull(node);
-            //            PythonConstruct construct = fileC.subconstructFor(node);
-            return new CreateSwampGoal(null, acceptor);//FIXME?
-        }
-    }
+    //    class SwampTestAssertion implements IAssertion {
+    //        
+    //        private final String correctClassRef;
+    //        
+    //        private final String expression;
+    //        
+    //        private final int namePos;
+    //        
+    //        public SwampTestAssertion(String expression, int namePos, String ClassRecorrectClassReff) {
+    //            this.expression = expression;
+    //            this.namePos = namePos;
+    //            this.correctClassRef = ClassRecorrectClassReff;
+    //        }
+    //        
+    //        public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
+    //                StringBuilder actual) throws Exception {
+    //            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor(Krocodile.EMPTY) {
+    //                @Override
+    //                public <T> void checkpoint(IGrade<T> grade) {
+    //                    System.out.println("Done");
+    //                    //do nothing;
+    //                }
+    //                
+    //                @Override
+    //                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+    //                    // TODO Auto-generated method stub
+    //                    
+    //                }
+    //            };
+    //            IGoal goal = createGoal(fileC, acceptor);
+    //            engine.run(goal);
+    //            ValueInfo result = acceptor.getResult();
+    //            String[] possibleValues = result.describePossibleValues();
+    //            Arrays.sort(possibleValues, Strings.getNaturalComparator());
+    //            String values = Strings.join(possibleValues, ",");
+    //            if (values.length() == 0)
+    //                values = "(none)";
+    //            String prefix = expression + " : ";
+    //            expected.append(prefix).append(correctClassRef).append('\n');
+    //            actual.append(prefix).append(values).append('\n');
+    //        }
+    //        
+    //        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+    //            ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
+    //            assertNotNull(node);
+    //            //            PythonConstruct construct = fileC.subconstructFor(node);
+    //            return new CreateSwampGoal(null, acceptor);//FIXME?
+    //        }
+    //    }
     
     //    class HasMethodAssertion implements IAssertion {
     //        
@@ -635,25 +629,6 @@ public abstract class AbstractTypeInferencingTestCase {
         return 0; // not found
     }
     
-    private final class PythonVariableCollectingAcceptor extends PythonVariableAcceptor {
-        Map<String, RuntimeObject> map = new TreeMap<String, RuntimeObject>();
-        ValueInfoBuilder builder = new ValueInfoBuilder();
-        
-        @Override
-        public void addResult(String key, RuntimeObject value) {
-            map.put(key, value);
-            builder.add(value.getType(), value);
-        }
-        
-        public ValueInfo getResult() {
-            return builder.build();
-        }
-        
-        public <T> void checkpoint(IGrade<T> grade) {
-            
-        }
-    }
-    
     class FindVariableAssertion implements IAssertion {
         private final int line;
         private final int namePos;
@@ -665,7 +640,12 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonVariableCollectingAcceptor acceptor = new PythonVariableCollectingAcceptor();
+            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+                @Override
+                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                    
+                }
+            };
             IGoal goal = createGoal(fileC, acceptor);
             int actualLine = -2;
             String prefix = "";
@@ -686,12 +666,12 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public IGoal createGoal(PythonFileC fileC, PythonVariableAcceptor acceptor) {
+        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
             ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             if (construct instanceof VariableReferenceC) {
-                return new ResolveNameToObjectGoal((VariableReferenceC) construct, Krocodile.EMPTY, acceptor);
+                return construct.evaluate(Krocodile.EMPTY, acceptor);
             } else {
                 throw new IllegalStateException("Should be VariableReferenceC, but found "
                         + construct.getClass().getSimpleName());

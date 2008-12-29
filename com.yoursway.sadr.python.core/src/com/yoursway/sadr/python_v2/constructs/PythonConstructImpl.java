@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.succeeder.IGoal;
@@ -36,6 +35,9 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return sintacticallyPreviousConstruct;
     }
     
+    /**
+     * NB: always called from constructor
+     */
     protected void wrapEnclosedChildren() {
         //TODO pre- & post- children.
         setPostChildren(PythonConstructFactory.wrap(this.node.getChilds(), scope()));
@@ -170,13 +172,5 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
             prev = c;
         }
         return prev;
-    }
-    
-    public boolean match(Frog frog) {
-        return false;
-    }
-    
-    public IGoal evaluate(Krocodile context, PythonVariableAcceptor acceptor) {
-        return null;
     }
 }

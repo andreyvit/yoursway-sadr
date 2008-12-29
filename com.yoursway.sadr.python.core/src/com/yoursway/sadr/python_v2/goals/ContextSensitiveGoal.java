@@ -5,17 +5,17 @@ import com.yoursway.sadr.succeeder.CheckpointToken;
 import com.yoursway.sadr.succeeder.Goal;
 
 public abstract class ContextSensitiveGoal extends Goal {
-    private final Krocodile context;
+    private final Krocodile crocodile;
     
     public ContextSensitiveGoal(Krocodile context) {
-        this.context = context;
+        this.crocodile = context;
         if (context == null) {
             throw new NullPointerException("Context is null");
         }
     }
     
-    public Krocodile getContext() {
-        return context;
+    public Krocodile getKrocodile() {
+        return crocodile;
     }
     
     @Override
@@ -31,7 +31,7 @@ public abstract class ContextSensitiveGoal extends Goal {
             simpleName = this.getClass().getName();
             simpleName = simpleName.substring(simpleName.lastIndexOf('.') + 1);
         }
-        if (this.getContext() != null) {
+        if (this.getKrocodile() != null) {
             return simpleName + " with context";
         } else {
             return simpleName;

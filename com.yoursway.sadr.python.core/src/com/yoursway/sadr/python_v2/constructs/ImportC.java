@@ -80,7 +80,6 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
         imports.put(alias, value);
     }
     
-    @Override
     public boolean match(Frog frog) {
         return hasImport(frog.accessor());
     }

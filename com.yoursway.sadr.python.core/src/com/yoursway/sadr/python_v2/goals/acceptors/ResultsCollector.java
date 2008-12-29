@@ -54,7 +54,7 @@ public abstract class ResultsCollector extends Synchronizer {
     final public <K> void subgoalCompleted(Object name, IGrade<K> grade) {
     }
     
-    final private <K> void subgoalDone(Object name, IGrade<K> grade) {
+    final private <K> void objectCollected(Object name, IGrade<K> grade) {
         if (adding)
             throw new IllegalStateException(
                     "Done signal not possible in init stage. You forgot to run startCollecting()");
@@ -63,28 +63,28 @@ public abstract class ResultsCollector extends Synchronizer {
     }
     
     public PythonValueSetAcceptor createAcceptor(final Object name) {
-        if (!adding)
+        if (!adding) {
             throw new IllegalStateException("Adding not available in waiting stage.");
-        counter++;
+        }
+        addSubgoal();
         if (results.containsKey(name)) {
             throw new IllegalArgumentException("Key " + name + " already found.");
         }
         if (results.get(name) == null)
             results.put(name, new MutableValueSet());
-        return new PythonValueSetAcceptor(context) {
+        return new PythonValueSetAcceptor() {
             @Override
             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 results.get(name).add(result);
                 if (grade.isDone())
-                    subgoalDone(name, grade);
+                    objectCollected(name, grade);
             }
         };
     }
     
     final public void startCollecting() {
         adding = false;
-        if (counter <= 0)
-            completed(Grade.DONE);
+        checkCompleted(Grade.DONE);
     }
     
     private <T> void fixResult(Iterator<Entry<Object, ValueSet>> tupleElementIter,
@@ -102,7 +102,7 @@ public abstract class ResultsCollector extends Synchronizer {
     }
     
     @Override
-    public final <T> void completed(IGrade<T> grade) {
+    public final <T> void checkpoint(IGrade<T> grade) {
         Map<Object, RuntimeObject> concreteResults = new HashMap<Object, RuntimeObject>();
         Set<Entry<Object, ValueSet>> entrySet = getResults().entrySet();
         //TODO        if (entrySet.isEmpty())

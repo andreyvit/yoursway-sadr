@@ -9,15 +9,19 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.croco.PythonRecord;
+import com.yoursway.sadr.python_v2.goals.Acceptor;
 import com.yoursway.sadr.python_v2.goals.PassResultGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGoal;
 
-public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
+public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> implements PythonDeclaration {
     
     private Map<String, PythonConstruct> inits;
     private FunctionObject functionObject;
@@ -51,7 +55,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
     }
     
     public String displayName() {
-        return "Method " + this.node.getName();
+        return "Method " + this.name();
     }
     
     @Override
@@ -77,12 +81,19 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> {
         return this.node.getName();
     }
     
-    @Override
-    public IGoal evaluate(Krocodile context, final PythonVariableAcceptor acceptor) {
-        return evaluate(context, new PythonValueSetDelegatingAcceptor(context, name(), acceptor));
+    public void index(Krocodile crocodile, final Acceptor acceptor) {
+        PythonRecord record = Index.newRecord(name());
+        Index.add(crocodile, this, record);
+        for (Object arg : this.node.getArguments()) {
+            if (arg instanceof PythonArgument) {
+                PythonArgument argument = (PythonArgument) arg;
+                record = Index.newRecord(argument.getName());
+                Index.add(crocodile, this, record);
+            }
+        }
+        acceptor.subgoalDone(Grade.DONE);
     }
     
-    @Override
     public boolean match(Frog frog) {
         return frog.match(name());
     }

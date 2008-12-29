@@ -17,7 +17,7 @@ public abstract class SimpleSynchronizer extends Synchronizer {
     public IAcceptor createAcceptor() {
         if (!adding)
             throw new IllegalStateException("Adding not available in waiting stage.");
-        ++counter;
+        addSubgoal();
         return new IAcceptor() {
             public <T> void checkpoint(IGrade<T> grade) {
                 if (grade.isDone())
@@ -28,8 +28,7 @@ public abstract class SimpleSynchronizer extends Synchronizer {
     
     final public void startCollecting() {
         adding = false;
-        if (counter <= 0)
-            completed(Grade.DONE);
+        checkCompleted(Grade.DONE);
     }
     
 }

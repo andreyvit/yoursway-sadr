@@ -80,7 +80,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                                 PythonConstruct value = (((CallArgumentC) arg).getValue());
                                 if (value instanceof AssignmentC) {
                                     AssignmentC assignmentC = (AssignmentC) value;
-                                    real.getKwargs().put(assignmentC.getName(), results.get(arg));
+                                    real.getKwargs().put(assignmentC.name(), results.get(arg));
                                 } else {
                                     RuntimeObject result = results.get(arg);
                                     if (argC.getStar() == PythonArgument.NOSTAR) {
@@ -96,10 +96,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                         
                         if (method instanceof FunctionObject) {
                             schedule(CallResolver.callFunction((FunctionObject) method, real, acceptor,
-                                    getContext(), CallC.this));
+                                    getKrocodile(), CallC.this));
                         } else if (method instanceof PythonObject) {
                             schedule(CallResolver.callMethod(method, "__call__", real, acceptor,
-                                    getContext(), CallC.this));
+                                    getKrocodile(), CallC.this));
                         } else if (method == null) {
                             return;
                             //                            throw new IllegalStateException("Unable to find callable " + callable
@@ -113,10 +113,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                     }
                 };
                 
-                schedule(callable.evaluate(getContext(), rc.createAcceptor(CALLABLE)));
+                schedule(callable.evaluate(getKrocodile(), rc.createAcceptor(CALLABLE)));
                 
                 if (self != null) {
-                    schedule(self.evaluate(getContext(), rc.createAcceptor(SELF)));
+                    schedule(self.evaluate(getKrocodile(), rc.createAcceptor(SELF)));
                 }
                 
                 for (PythonConstruct arg : args) {

@@ -27,20 +27,20 @@ public class UnaryOperationC extends UnaryC implements PythonConstruct {
             public void preRun() {
                 final PythonArguments args = new PythonArguments();
                 
-                final PythonValueSetAcceptor methodFound = new PythonValueSetAcceptor(context) {
+                final PythonValueSetAcceptor methodFound = new PythonValueSetAcceptor() {
                     
                     @Override
                     protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
                         if (callable == null) {
                             schedule(new PassResultGoal(context, acceptor, null));
                         } else {
-                            schedule(CallResolver.callFunction(callable, args, acceptor, getContext(),
+                            schedule(CallResolver.callFunction(callable, args, acceptor, getKrocodile(),
                                     UnaryOperationC.this));
                         }
                     }
                 };
                 
-                PythonValueSetAcceptor evaluated = new PythonValueSetAcceptor(context) {
+                PythonValueSetAcceptor evaluated = new PythonValueSetAcceptor() {
                     
                     @Override
                     protected <T> void acceptIndividualResult(RuntimeObject left, IGrade<T> grade) {

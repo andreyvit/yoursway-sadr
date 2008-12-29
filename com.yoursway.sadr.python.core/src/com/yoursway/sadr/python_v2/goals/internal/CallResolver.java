@@ -40,7 +40,7 @@ public final class CallResolver {
             final PythonConstruct callingConstruct) {
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
-                PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor(context) {
+                PythonValueSetAcceptor findAcceptor = new PythonValueSetAcceptor() {
                     
                     @Override
                     protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {

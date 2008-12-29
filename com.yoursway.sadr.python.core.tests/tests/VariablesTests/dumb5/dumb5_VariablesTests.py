@@ -1,4 +1,4 @@
-class Aaa():
+class Aaa:
     def foo(self):
         self.x = 42
 

@@ -15,7 +15,7 @@ public final class PythonVariableDelegatingAcceptor extends PythonVariableAccept
     private final PythonValueSetAcceptor acceptor;
     private final Krocodile context;
     
-    PythonVariableDelegatingAcceptor(PythonValueSetAcceptor acceptor, Krocodile context) {
+    public PythonVariableDelegatingAcceptor(PythonValueSetAcceptor acceptor, Krocodile context) {
         this.acceptor = acceptor;
         this.context = context;
     }

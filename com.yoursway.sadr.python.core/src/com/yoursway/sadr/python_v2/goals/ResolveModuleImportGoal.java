@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.goals;
 
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
@@ -58,7 +59,7 @@ public class ResolveModuleImportGoal extends Goal {
             String path = parentModule.getValue().getPath();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                //                updateGrade(acceptor, Grade.DONE);
+                updateGrade(acceptor, Grade.DONE);
             } else {
                 schedule(new ResolveNameToObjectGoal(variable, fileC, context, acceptor));
             }
@@ -67,14 +68,14 @@ public class ResolveModuleImportGoal extends Goal {
             String alias = module.getValue().getAlias();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                //                updateGrade(acceptor, Grade.DONE);
+                updateGrade(acceptor, Grade.DONE);
             } else {
-                schedule(new ResolveNameToObjectGoal(new Frog(alias, Frog.SEARCH), fileC, context,
-                        acceptor));
+                schedule(new ResolveNameToObjectGoal(Frog.searchFrog(alias), fileC, context, acceptor));
             }
         } else { // found submodule
             String alias = module.getValue().getAlias();
             acceptor.addResult(alias, module);
+            updateGrade(acceptor, Grade.DONE);
         }
     }
 }

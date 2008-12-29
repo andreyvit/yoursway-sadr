@@ -43,7 +43,7 @@ public class BinaryOperationC extends BinaryC {
                             return;
                         }
                         final PythonArguments args = new PythonArguments(left, right);
-                        final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor(context) {
+                        final PythonValueSetAcceptor rightFound = new PythonValueSetAcceptor(acceptor) {
                             
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
@@ -51,11 +51,11 @@ public class BinaryOperationC extends BinaryC {
                                     schedule(new PassResultGoal(context, acceptor, null));
                                 } else {
                                     schedule(CallResolver.callFunction(callable, args, acceptor,
-                                            getContext(), BinaryOperationC.this));
+                                            getKrocodile(), BinaryOperationC.this));
                                 }
                             }
                         };
-                        PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor(context) {
+                        PythonValueSetAcceptor leftFound = new PythonValueSetAcceptor() {
                             
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject callable, IGrade<T> grade) {
@@ -63,7 +63,7 @@ public class BinaryOperationC extends BinaryC {
                                     schedule(CallResolver.findMethod(right, rightOpName, rightFound, context));
                                 } else {
                                     schedule(CallResolver.callFunction(callable, args, acceptor,
-                                            getContext(), BinaryOperationC.this));
+                                            getKrocodile(), BinaryOperationC.this));
                                 }
                             }
                         };

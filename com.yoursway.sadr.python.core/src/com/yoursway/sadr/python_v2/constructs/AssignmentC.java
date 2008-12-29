@@ -1,17 +1,19 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.dltk.ast.statements.Statement;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.DotFrog;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.croco.PythonRecord;
+import com.yoursway.sadr.python_v2.goals.Acceptor;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.succeeder.IGoal;
 
-public class AssignmentC extends PythonConstructImpl<Assignment> {
+public class AssignmentC extends PythonConstructImpl<Assignment> implements PythonDeclaration {
     
     private final PythonConstruct leftPart;
     private final PythonConstruct rightPart;
@@ -19,11 +21,10 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
     
     AssignmentC(Scope scope, Assignment node) {
         super(scope, node);
-        if (node.getRight() == null) {
-            System.out.println("Weird construct");
-        }
-        Assert.isLegal(node.getLeft() != null, "node.getLeft() should be != null");
-        Assert.isLegal(node.getRight() != null, "node.getRight() should be != null");
+        if (node.getLeft() == null)
+            throw new IllegalArgumentException("node.getLeft() should be not null");
+        if (node.getRight() == null)
+            throw new IllegalArgumentException("node.getRight() should be not null");
         
         leftPart = getPostChildren().get(LEFT);
         rightPart = getPostChildren().get(RIGHT);
@@ -37,15 +38,8 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
         return rightPart;
     }
     
-    @Override
     public boolean match(Frog frog) {
-        PythonConstruct lhs = this.lhs();
-        if (lhs instanceof VariableReferenceC) {
-            //this is here because VRC.match should always return false
-            return frog.match(((VariableReferenceC) lhs).name());
-        }
-        //FIXME: return false for invalid constructs
-        return lhs.match(frog);
+        return frog.match(name());
     }
     
     @Override
@@ -53,22 +47,28 @@ public class AssignmentC extends PythonConstructImpl<Assignment> {
         return rightPart.evaluate(context, acceptor);
     }
     
-    @Override
-    public IGoal evaluate(Krocodile context, final PythonVariableAcceptor acceptor) {
-        if (this.lhs() instanceof VariableReferenceC) {
-            final VariableReferenceC reference = (VariableReferenceC) this.lhs();
-            final String name = reference.name();
-            return evaluate(context, new PythonValueSetDelegatingAcceptor(context, name, acceptor));
-        } else {
-            return null;
+    public void index(Krocodile crocodile, final Acceptor acceptor) {
+        if (leftPart instanceof VariableReferenceC) {
+            String name = ((VariableReferenceC) leftPart).name();
+            Index.newRecord(name, crocodile, this);
+        } else if (leftPart instanceof FieldAccessC) {
+            FieldAccessC varRead = (FieldAccessC) leftPart;
+            String tail = varRead.variable().name();
+            if (searchFrog.match(tail)) {
+                PythonRecord head = lookup(dotFrog.head(), varRead.receiver());
+                if (head == null) {
+                    return null;
+                }
+                DotFrog resultFrog = new DotFrog(dotFrog.head(), tail, Frog.UNKNOWN);
+                PythonRecord whole = Index.lookup(resultFrog);
+            }
         }
+        acceptor.subgoalDone(Grade.DONE);
     }
     
-    public String getName() {
-        Statement left = node.getLeft();
-        if (left instanceof VariableReference) {
-            VariableReference reference = (VariableReference) left;
-            return reference.getName();
+    public String name() {
+        if (leftPart instanceof VariableReferenceC) {
+            return ((VariableReferenceC) leftPart).name();
         }
         return null;
     }

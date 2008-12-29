@@ -34,7 +34,7 @@ public class FindPrevConstructGoal extends Goal {
             SimpleSynchronizer sync = new SimpleSynchronizer() {
                 
                 @Override
-                public <K> void completed(IGrade<K> grade) {
+                public <K> void checkpoint(IGrade<K> grade) {
                     updateGrade(acceptor, grade);
                 }
                 

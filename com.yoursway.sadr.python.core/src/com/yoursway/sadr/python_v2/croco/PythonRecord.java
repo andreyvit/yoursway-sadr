@@ -20,6 +20,9 @@ public class PythonRecord implements CacheRecord {
     public void addFrog(Frog frog) {
         if (frog == null)
             throw new NullPointerException("frog is null");
+        if (frog.id != Frog.UNKNOWN)
+            throw new IllegalArgumentException("frog is already assigned!");
         frogs.add(frog);
+        frog.setId(id);
     }
 }

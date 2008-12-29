@@ -38,7 +38,7 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
         return new ExpressionValueGoal(context, acceptor) {
             public void preRun() {
                 FunctionObject obj = new FunctionObject(PythonLambdaExpressionC.this);
-                acceptor.addResult(obj, getContext());
+                acceptor.addResult(obj, getKrocodile());
                 updateGrade(acceptor, Grade.DONE);
             }
         };

@@ -7,15 +7,19 @@ import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
+import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.croco.PythonRecord;
+import com.yoursway.sadr.python_v2.goals.Acceptor;
 import com.yoursway.sadr.python_v2.goals.PassResultGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
 import com.yoursway.sadr.succeeder.IGoal;
 
-public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
+public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> implements PythonDeclaration {
     
     private List<PythonConstruct> supers;
     
@@ -63,7 +67,6 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
         return node.getName();
     }
     
-    @Override
     public boolean match(Frog frog) {
         return frog.match(name());
     }
@@ -74,9 +77,10 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> {
         return new PassResultGoal(context, acceptor, functionObject);
     }
     
-    @Override
-    public IGoal evaluate(Krocodile context, final PythonVariableAcceptor acceptor) {
-        return evaluate(context, new PythonValueSetDelegatingAcceptor(context, name(), acceptor));
+    public void index(Krocodile crocodile, final Acceptor acceptor) {
+        PythonRecord record = Index.newRecord(name());
+        Index.add(crocodile, this, record);
+        acceptor.subgoalDone(Grade.DONE);
     }
     
     public MethodDeclarationC findDeclaredMethod(String methodName) {

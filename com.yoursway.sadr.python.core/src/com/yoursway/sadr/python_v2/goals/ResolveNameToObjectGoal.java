@@ -2,81 +2,55 @@ package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.constructs.FieldAccessC;
 import com.yoursway.sadr.python_v2.constructs.IfC;
-import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDeclaration;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
+import com.yoursway.sadr.python_v2.croco.DotFrog;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.IncrementableSynchronizer;
+import com.yoursway.sadr.python_v2.croco.PythonRecord;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
 import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.succeeder.Goal;
-import com.yoursway.sadr.succeeder.IGoal;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public class ResolveNameToObjectGoal extends Goal {
     
     private final Frog frog;
-    private PythonConstruct from;
-    
-    protected IncrementableSynchronizer<PythonVariableAcceptor> incSync;
-    protected PythonVariableAcceptor acceptor;
+    private final PythonConstruct from;
     private final Krocodile crocodile;
+    protected final PythonVariableAcceptor acceptor;
     
-    protected void init(PythonVariableAcceptor acceptor) {
-        this.incSync = new IncrementableSynchronizer<PythonVariableAcceptor>(acceptor) {
-            
-            @Override
-            public <T> void completed(IGrade<T> grade) {
-                // TODO Auto-generated method stub
-                
-            }
-            
-        };
-    }
-    
-    public ResolveNameToObjectGoal(Frog name, PythonConstruct from, Krocodile crocodile,
-            final PythonVariableAcceptor acceptor) {
-        init(acceptor);
-        this.acceptor = acceptor;
-        this.crocodile = crocodile;
-        this.frog = name;
+    public ResolveNameToObjectGoal(Frog frog, PythonConstruct from, Krocodile crocodile,
+            PythonVariableAcceptor acceptor) {
+        if (from == null)
+            throw new NullPointerException("from is null");
+        if (crocodile == null)
+            throw new NullPointerException("croco is null");
+        if (acceptor == null)
+            throw new NullPointerException("acceptor is null");
+        this.frog = frog;
         this.from = from;
-        if (name == null || from == null)
-            throw new IllegalArgumentException();
+        this.crocodile = crocodile;
+        this.acceptor = acceptor;
+        System.out.println("Created ResolveNameToObjectGoal");
     }
     
     public ResolveNameToObjectGoal(Frog name, PythonFileC from, Krocodile crocodile,
-            final PythonVariableAcceptor acceptor) {
-        init(acceptor);
-        this.acceptor = acceptor;
-        this.crocodile = crocodile;
-        if (name == null || from == null)
-            throw new IllegalArgumentException();
-        this.frog = name;
-        this.from = from.getPostChildren().get(from.getPostChildren().size() - 1);
+            PythonVariableAcceptor acceptor) {
+        this(name, from.getPostChildren().get(from.getPostChildren().size() - 1), crocodile, acceptor);
     }
     
     public ResolveNameToObjectGoal(VariableReferenceC variable, Krocodile crocodile,
-            final PythonVariableAcceptor acceptor) {
-        init(acceptor);
-        this.acceptor = acceptor;
-        this.crocodile = crocodile;
-        this.frog = new Frog(variable.name(), Frog.SEARCH);
-        this.from = variable;
-        if (frog == null || from == null)
-            throw new IllegalArgumentException();
-    }
-    
-    private boolean leavingScope(PythonConstruct currentConstruct, PythonConstruct prevConstruct) {
-        return currentConstruct == null && prevConstruct != null
-                || currentConstruct.parentScope() != prevConstruct.parentScope();
+            PythonVariableAcceptor acceptor) {
+        this(Frog.searchFrog(variable.name()), variable, crocodile, acceptor);
     }
     
     @Override
@@ -85,80 +59,66 @@ public class ResolveNameToObjectGoal extends Goal {
         return super.describe() + "\nfor name " + this.frog + " in " + scope;
     }
     
-    protected Goal iteration() {
-        if (this.from == null)
-            throw new NullPointerException("this.from is null");
-        PythonConstruct currentConstruct = this.from;
-        Scope scope = currentConstruct.parentScope();
-        //        if (currentConstruct instanceof IfC) {
-        //            resolveIf((IfC) currentConstruct);
-        //            break;
-        //        }
-        boolean foundOrImported = currentConstruct.match(frog);
-        
-        if (foundOrImported) {
-            if (currentConstruct instanceof ImportDeclarationC) {
-                ImportDeclarationC moduleImport = (ImportDeclarationC) currentConstruct;
-                schedule(new ResolveModuleImportGoal(moduleImport, frog, acceptor, crocodile));
-            } else {
-                IGoal subgoal = currentConstruct.evaluate(crocodile, acceptor);
-                if (subgoal != null) {
-                    schedule(subgoal);
+    public PythonRecord lookup(Frog searchFrog, PythonConstruct construct) {
+        if (searchFrog instanceof DotFrog) {
+            
+        } else {
+            
+        }
+        return null;
+    }
+    
+    public void find() {
+        PythonConstruct construct = from;
+        while ((construct = construct.getSyntacticallyPreviousConstruct()) != null) {
+            if (construct instanceof PythonDeclaration) {
+                final PythonDeclaration declaration = (PythonDeclaration) construct;
+                if (declaration.match(frog)) {
+                    // means it's simple frog or it's last part of big frog
+                    // first, check for simple names.
+                    PythonRecord record = Index.lookup(crocodile, declaration);
+                    if()
+                    declaration.evaluate(crocodile, new PythonValueSetAcceptor(acceptor) {
+                        @Override
+                        protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+                            acceptor.addResult(declaration.name(), result);
+                        }
+                    });
                 }
             }
         }
-        
-        PythonConstruct prevConstruct = currentConstruct;
-        currentConstruct = currentConstruct.getSyntacticallyPreviousConstruct();
-        
-        if (leavingScope(currentConstruct, prevConstruct)) {
-            if (crocodile != null) {
-                crocodile.getMatchingArguments(this.frog, acceptor);
-            }
-            scope = scope.parentScope();
-            if (scope == null) {
-                //built-in name is checked
-                Builtins.instance().findAttributes(frog, acceptor);
-                return null;
-            }
-            currentConstruct = scope.getPostChildren().get(scope.getPostChildren().size() - 1);
-        }
-        from = currentConstruct;
-        return this;
     }
     
     public void preRun() {
-        while (true) {
-            Goal iteration = iteration();
-            if (null == iteration) {
-                updateGrade(this.acceptor, Grade.DONE);
-                break;
-            }
+        //            crocodile.getMatchingArguments(this.frog, acceptor);
+        //        scope = scope.parentScope();
+        //        if (scope == null) {
+        //            //built-in name is checked
+        //            Builtins.instance().findAttributes(frog, acceptor);
+        if (!Index.isIndexed(from.parentScope())) {
+            schedule(new IndexConstructGoal(from, crocodile, new Acceptor(acceptor) {
+                @Override
+                public <T> void checkpoint(IGrade<T> grade) {
+                    if (grade == Grade.DONE) {
+                        find();
+                    }
+                    super.checkpoint(grade);
+                }
+            }));
+        } else {
+            find();
         }
+        System.out.println("Completed ResolveNameToObjectGoal");
     }
     
-    protected void resolveIf(final IfC ifc) {
-        incSync.increment();
-        schedule(ifc.getCondition().evaluate(crocodile, new PythonValueSetAcceptor(crocodile) {
-            //TODO incSync here
-            
+    protected void resolveIf(final IfC ifc, final PythonVariableAcceptor acceptor) {
+        schedule(ifc.getCondition().evaluate(crocodile, new PythonValueSetAcceptor(acceptor) {
             @Override
             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                 if (null == result)
                     return;
                 schedule(CallResolver.callMethod(result, "__nonzero__", new PythonArguments(),
-                        new PythonValueSetAcceptor(crocodile) {//TODO incSync here
-                            private boolean decremented = false;
-                            
-                            @Override
-                            public <K> void checkpoint(IGrade<K> grade) {
-                                super.checkpoint(grade);
-                                if (!decremented) {
-                                    decremented = true;
-                                    incSync.decrement();
-                                }
-                            }
-                            
+                        new PythonValueSetAcceptor(this) {//TODO incSync here
                             @Override
                             protected <K> void acceptIndividualResult(RuntimeObject result, IGrade<K> grade) {
                                 if (Builtins.getTrue().equals(result)) {
@@ -168,7 +128,7 @@ public class ResolveNameToObjectGoal extends Goal {
                                     schedule(new ResolveNameToObjectGoal(frog, ifc.elseBlock().get(
                                             ifc.elseBlock().size() - 1), crocodile, acceptor));
                                 } else {
-                                    //TODO schedule both
+                                    //TODO schedule both?
                                 }
                             }
                         }, crocodile, ifc));

@@ -50,7 +50,7 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
                     wrappedValue = UnicodeType.wrap(StringLiteralC.this);
                 else
                     wrappedValue = StringType.wrap(StringLiteralC.this);
-                acceptor.addResult(wrappedValue, getContext());
+                acceptor.addResult(wrappedValue, getKrocodile());
                 updateGrade(acceptor, Grade.DONE);
             }
             

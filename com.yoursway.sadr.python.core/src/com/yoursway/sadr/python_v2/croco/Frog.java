@@ -4,20 +4,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.PythonDeclaration;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 
 public class Frog {
     public static final int SEARCH = -1;
+    public static final int UNKNOWN = 0;
     private final String accessor;
     private final boolean pattern;
-    protected final int id;
+    protected int id;
     
     /**
      * Accessor is list of characters; can end with "*" that means it's pattern
      * for completion
      */
-    public Frog(String accessor, int id) {
+    protected Frog(String accessor, int id) {
+        if (id != SEARCH && id != UNKNOWN)
+            throw new IllegalArgumentException("you may assign frog only with setId() method!");
         this.id = id;
         pattern = accessor.endsWith("*");
         if (pattern) {
@@ -25,6 +28,18 @@ public class Frog {
         } else {
             this.accessor = accessor;
         }
+    }
+    
+    public static Frog searchFrog(String name) {
+        return new Frog(name, SEARCH);
+    }
+    
+    public static Frog newFrog(String name) {
+        return new Frog(name, UNKNOWN);
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
     
     @Override
@@ -66,11 +81,13 @@ public class Frog {
         return 1;
     }
     
-    public boolean match(PythonConstruct element) {
+    public boolean match(PythonDeclaration element) {
         return element.match(this);
     }
     
     public boolean match(String name) {
+        if (name == null)
+            return false;
         if (pattern) {
             return name.startsWith(accessor);
         } else {
