@@ -15,7 +15,11 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     
     C staticallyEnclosingConstruct();
     
-    C subconstructFor(N node);
+    /**
+     * WARNING: this method has O(N) complexity (where N is the number of
+     * nodes), so use sparingly.
+     */
+    C subconstructFor(ASTNode node);
     
     C parent();
     

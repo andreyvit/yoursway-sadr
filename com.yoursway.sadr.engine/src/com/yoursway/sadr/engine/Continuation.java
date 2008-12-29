@@ -15,9 +15,8 @@ package com.yoursway.sadr.engine;
  * continuations.
  * 
  */
-public interface Continuation {
+public interface Continuation extends SubgoalsProvider {
     
-    Goal[] provideSubgoals();
+    ContinuationRequestorCalledToken done(ContinuationScheduler requestor);
     
-    void done(ContinuationScheduler requestor);
 }

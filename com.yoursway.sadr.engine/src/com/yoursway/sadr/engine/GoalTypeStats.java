@@ -14,16 +14,11 @@ public class GoalTypeStats {
     
     public long duration;
     
-    public void starting(Goal goal) {
+    public void finishedGoal(Goal<?> goal, int runs, long goalDuration) {
         if (name == null)
             name = goal.getClass().getSimpleName();
-    }
-    
-    public void finishedQuery() {
-        queries++;
-    }
-    
-    public void calculatedGoal() {
+        queries += runs;
+        duration += goalDuration;
         misses++;
         total++;
     }
@@ -47,10 +42,6 @@ public class GoalTypeStats {
         res.append("TIME:                   ").append(duration).append('\n');
         res.append("TIME per cache miss:    ").append((duration * 100 / misses) / 100.0).append('\n');
         return res.toString();
-    }
-    
-    public void addTime(long l) {
-        duration += l;
     }
     
 }

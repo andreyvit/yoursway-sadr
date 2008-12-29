@@ -2,8 +2,8 @@ package com.yoursway.sadr.core.constructs;
 
 import java.util.List;
 
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
+import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.engine.Continuations;
 import com.yoursway.sadr.engine.IterationContinuation;
 import com.yoursway.sadr.engine.SimpleContinuation;
@@ -23,7 +23,7 @@ public abstract class AbstractConstructTraverser<C extends IConstruct<C, SC, DC,
             public ContinuationRequestorCalledToken consume(ConstructVisitor<C, SC, DC, N> subvisitor,
                     ContinuationScheduler requestor) {
                 if (subvisitor == null)
-                    return afterTraverse.run(requestor);
+                    return requestor.schedule(afterTraverse);
                 else {
                     return traverseChildrenOf(construct, requestor, visitor, callLeave, afterTraverse,
                             subvisitor);
@@ -55,7 +55,7 @@ public abstract class AbstractConstructTraverser<C extends IConstruct<C, SC, DC,
             public ContinuationRequestorCalledToken run(ContinuationScheduler requestor) {
                 if (callLeave)
                     subvisitor.leave();
-                return afterTraverse.run(requestor);
+                return requestor.schedule(afterTraverse);
             }
             
         });

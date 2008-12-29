@@ -6,9 +6,13 @@ Bundle-Version: 1.0.0
 Bundle-Activator: com.yoursway.sadr.engine.internal.Activator
 Bundle-Vendor: YourSway
 Require-Bundle: org.eclipse.core.runtime,
- com.google.collections;bundle-version="1.0.0"
+ com.google.collections;bundle-version="1.0.0",
+ com.yoursway.utils;bundle-version="1.0.0"
 Eclipse-LazyStart: true
 Export-Package: com.yoursway.sadr.engine,
- com.yoursway.sadr.engine.util,
- com.yoursway.sadr.succeeder
+ com.yoursway.sadr.succeeder,
+ com.yoursway.sadr.engine.incremental,
+ com.yoursway.sadr.engine.incremental.index,
+ com.yoursway.sadr.engine.util
+>>>>>>> 1d553710b93295db0f6d639e75054462920eff9a:com.yoursway.sadr.engine/META-INF/MANIFEST.MF
 Bundle-ActivationPolicy: lazy

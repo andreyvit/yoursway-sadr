@@ -1,31 +1,17 @@
 package com.yoursway.sadr.engine;
 
-public interface Goal extends ContextSensitiveThing {
+public interface Goal<R extends Result> {
     
     ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor);
-    
-    void done();
-    
-    void causesRecursion();
-    
-    void copyAnswerFrom(Result result);
-    
-    void copyAnswerFrom(Goal goal);
     
     boolean cachable();
     
     int debugSlot();
     
-    void addPropagatingGoal(Goal propagatingGoal);
-    
-    ContextRelation contextRelation();
-    
-    boolean isContextFree();
-    
-    Result roughResult();
-    
-    Goal cloneGoal();
+    Goal<R> cloneGoal();
     
     boolean hasComplexUnnaturalRelationshipWithRecursion();
+    
+    R createRecursiveResult();
     
 }
