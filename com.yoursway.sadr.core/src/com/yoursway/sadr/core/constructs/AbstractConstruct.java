@@ -20,8 +20,10 @@ public abstract class AbstractConstruct<C extends IConstruct<C, SC, DC, N>, SC e
     
     protected List<C> wrap(SC sc, List<N> nodes) {
         ArrayList<C> result = new ArrayList<C>(nodes.size());
-        for (N node : nodes)
-            result.add(wrap(sc, node));
+        for (N node : nodes) {
+            if (node != null)
+                result.add(wrap(sc, node));
+        }
         return result;
     }
     

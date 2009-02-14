@@ -19,7 +19,7 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
      * WARNING: this method has O(N) complexity (where N is the number of
      * nodes), so use sparingly.
      */
-    C subconstructFor(ASTNode node);
+    C subconstructFor(N node);
     
     C parent();
     

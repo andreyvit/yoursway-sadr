@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core Plug-in
+Bundle-Name: SADR Core
 Bundle-SymbolicName: com.yoursway.sadr.core
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.yoursway.sadr.core.internal.Activator
-Bundle-Vendor: YOURSWAY
+Bundle-Vendor: YourSway
 Require-Bundle: org.eclipse.core.runtime,
  com.yoursway.sadr.engine;bundle-version="1.0.0",
  com.google.collections;bundle-version="1.0.0"

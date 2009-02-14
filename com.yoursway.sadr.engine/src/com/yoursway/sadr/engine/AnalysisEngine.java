@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Continuations evaluator. Just invoke new
@@ -18,6 +19,12 @@ import org.eclipse.core.runtime.Assert;
  * scheduler for this continuation and all tasks scheduled by it.
  */
 public abstract class AnalysisEngine implements GoalResultCacheCleaner {
+    
+    protected void trace(String msg) {
+        String trace = Platform.getDebugOption("com.yoursway.sadr.engine/traceGoals");
+        if (trace != null)
+            System.out.println(msg);
+    }
     
     static final class GoalContinuationContractViolation extends RuntimeException {
         
@@ -52,6 +59,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         public <R extends Result> Slot<R> subgoal(Goal<R> goal) {
             Result cachedResult = lookupResultInCache(goal, writableGoalState);
             if (cachedResult != null) {
+                trace("cacheHit() for subgoal: " + goal);
                 stats.cacheHit(goal);
                 return new SlotImpl<R>((R) cachedResult);
             }
@@ -62,9 +70,8 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             } else {
                 long start = System.currentTimeMillis();
                 if (writableGoalState.findGoalStateByGoal(goal) != null) {
-                    debug.recursive(goal);
                     stats.recursiveGoal(goal);
-                    return new SlotImpl<R>(goal.createRecursiveResult());
+                    return new SlotImpl<R>(createRecursiveResult(writableGoalState, goal));
                 }
                 long span = System.currentTimeMillis() - start;
                 if (span > 50)
@@ -110,7 +117,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         
         private static final int ADDING_SUBGOALS = 1000000;
         
-        private final Collection<GoalState> parentStates = newArrayList();
+        protected final Collection<GoalState> parentStates = newArrayList();
         
         private final Collection<GoalState> children = newArrayList();
         
@@ -152,6 +159,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             ++secondMagicNumber;
             secondMagicSet.add(this);
             queue.enqueue(new InitialGoalQuery(this));
+            trace("queue.enqueue(): " + goal);
             slot = new SlotImpl<R>();
         }
         
@@ -233,7 +241,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         @SuppressWarnings("unchecked")
         public void markAsDone(Result result) {
             if (source == GoalSource.DUPLICATE)
-                System.out.println("GoalState.markAsDone(" + this + ")");
+                System.out.println("source == GoalSource.DUPLICATE, GoalState.markAsDone(" + this + ")");
             if (subgoalCount >= ADDING_SUBGOALS)
                 throw new IllegalStateException(
                         "Cannot mark the goal as done from inside allowStateChangeAndRun");
@@ -246,13 +254,12 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         }
         
         protected void goalFinished() {
-            //            System.out.println("FINISHED " + goal);
+            trace("goalFinished(): " + goal);
             --secondMagicNumber;
             secondMagicSet.remove(this);
             activeGoalStates.remove(goal);
             for (GoalState parent : parentStates)
                 parent.subgoalFinished(this);
-            finished(this);
             stats.finishedGoal(goal, runs, duration);
         }
         
@@ -437,9 +444,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     private final QueryQueue queue = new QueryQueue();
     
-    private final Map<Goal<?>, GoalState> activeGoalStates = new HashMap<Goal<?>, GoalState>();
-    
-    private final GoalDebug debug = new GoalDebug();
+    protected final Map<Goal<?>, GoalState> activeGoalStates = new HashMap<Goal<?>, GoalState>();
     
     private AnalysisStats stats = new AnalysisStats();
     
@@ -464,11 +469,6 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         AnalysisStats old = stats;
         stats = new AnalysisStats();
         return old;
-    }
-    
-    public void finished(GoalState state) {
-        Goal<?> goal = state.goal;
-        debug.finished(goal);
     }
     
     //    public void evaluate(Continuation continuation) {
@@ -534,5 +534,9 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     }
     
     protected abstract Result lookupResultInCache(Goal<?> goal, GoalState parentState);
+    
+    protected <R extends Result> R createRecursiveResult(GoalState parentState, Goal<R> goal) {
+        return goal.createRecursiveResult();
+    }
     
 }

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core Plug-in
+Bundle-Name: SADR Engine
 Bundle-SymbolicName: com.yoursway.sadr.engine
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.yoursway.sadr.engine.internal.Activator
 Bundle-Vendor: YourSway
 Require-Bundle: org.eclipse.core.runtime,
@@ -10,9 +10,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.yoursway.utils;bundle-version="1.0.0"
 Eclipse-LazyStart: true
 Export-Package: com.yoursway.sadr.engine,
- com.yoursway.sadr.succeeder,
+ com.yoursway.sadr.engine.debug,
  com.yoursway.sadr.engine.incremental,
  com.yoursway.sadr.engine.incremental.index,
  com.yoursway.sadr.engine.util
->>>>>>> 1d553710b93295db0f6d639e75054462920eff9a:com.yoursway.sadr.engine/META-INF/MANIFEST.MF
 Bundle-ActivationPolicy: lazy
