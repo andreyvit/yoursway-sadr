@@ -20,9 +20,11 @@ import org.eclipse.core.runtime.Platform;
  */
 public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
+    private static final boolean TRACING_GOALS = Boolean.valueOf(Platform
+            .getDebugOption("com.yoursway.sadr.engine/traceGoals"));
+    
     protected void trace(String msg) {
-        String trace = Platform.getDebugOption("com.yoursway.sadr.engine/traceGoals");
-        if (trace != null)
+        if (TRACING_GOALS)
             System.out.println(msg);
     }
     
@@ -155,9 +157,8 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
                 throw new NullPointerException("goal is null");
             this.source = GoalSource.ROOT;
             this.goal = goal;
-            ++magicNumber;
-            ++secondMagicNumber;
-            secondMagicSet.add(this);
+            ++totalGoals;
+            ++unfinishedGoals;
             queue.enqueue(new InitialGoalQuery(this));
             trace("queue.enqueue(): " + goal);
             slot = new SlotImpl<R>();
@@ -255,8 +256,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         
         protected void goalFinished() {
             trace("goalFinished(): " + goal);
-            --secondMagicNumber;
-            secondMagicSet.remove(this);
+            --unfinishedGoals;
             activeGoalStates.remove(goal);
             for (GoalState parent : parentStates)
                 parent.subgoalFinished(this);
@@ -448,9 +448,9 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     private AnalysisStats stats = new AnalysisStats();
     
-    private int magicNumber;
+    private int totalGoals;
     
-    private int secondMagicNumber;
+    private int unfinishedGoals;
     
     <R extends Result> GoalState lookupGoalState(Goal<R> goal) {
         GoalState state = activeGoalStates.get(goal);
@@ -486,9 +486,8 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     @SuppressWarnings("unchecked")
     public <R extends Result> R evaluate(Goal<R> goal) {
         queue.clear();
-        magicNumber = 0;
-        secondMagicNumber = 0;
-        secondMagicSet.clear();
+        totalGoals = 0;
+        unfinishedGoals = 0;
         activeGoalStates.clear();
         toBeDone.clear();
         leaves.clear();
@@ -499,17 +498,10 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         }
         GoalState state = lookupGoalState(goal);
         executeQueue();
-        for (GoalState g : secondMagicSet) {
-            if (g.subgoalCount == 0) {
-                System.out.println(g.monotonicallyIncreasingSubgoalCount + " " + g.evalCount + " " + g.source
-                        + " " + g);
-            } else {
-            }
-        }
-        if (secondMagicNumber > 0)
+        if (unfinishedGoals > 0)
             try {
-                throw new AssertionError(secondMagicNumber
-                        + " goals have not been finalized when calculating " + goal);
+                throw new AssertionError(unfinishedGoals + " goals have not been finalized when calculating "
+                        + goal);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
