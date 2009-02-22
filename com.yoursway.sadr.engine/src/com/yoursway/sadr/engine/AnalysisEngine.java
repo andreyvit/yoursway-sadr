@@ -6,12 +6,16 @@ import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
+
+import com.yoursway.utils.Failure;
 
 /**
  * Continuations evaluator. Just invoke new
@@ -136,13 +140,13 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         
         private int evalCount = 0;
         
-        private Query allChildrenFinishedCallback;
+        private QueryImpl allChildrenFinishedCallback;
         
         private int monotonicallyIncreasingSubgoalCount = 0;
         
-        protected final Goal<?> goal;
+        public final Goal<?> goal;
         
-        protected final SlotImpl<? extends Result> slot;
+        public final SlotImpl<? extends Result> slot;
         
         private long duration = 0;
         
@@ -171,7 +175,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             parentState.subgoalAdded(this);
         }
         
-        public void allowStateChangeAndRun(PossibleSubgoalsAdder adder, Query allChildrenFinishedCallback) {
+        public void allowStateChangeAndRun(PossibleSubgoalsAdder adder, QueryImpl allChildrenFinishedCallback) {
             if (allChildrenFinishedCallback == null)
                 throw new NullPointerException("allChildrenFinishedCallback is null");
             
@@ -301,9 +305,9 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     /**
      * R.I.P., Q
      */
-    abstract class QueryImpl extends Query implements ContinuationScheduler, Runnable {
+    protected abstract class QueryImpl extends Query implements ContinuationScheduler, Runnable {
         
-        protected final GoalState goal;
+        public final GoalState goal;
         
         public QueryImpl(GoalState goal) {
             if (goal == null)
@@ -483,8 +487,12 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     //        });
     //    }
     
-    @SuppressWarnings("unchecked")
     public <R extends Result> R evaluate(Goal<R> goal) {
+        return evaluate(goal, -1);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <R extends Result> R evaluate(Goal<R> goal, int timeoutMillis) {
         queue.clear();
         totalGoals = 0;
         unfinishedGoals = 0;
@@ -497,24 +505,33 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             return (R) cachedResult;
         }
         GoalState state = lookupGoalState(goal);
-        executeQueue();
+        executeQueue(timeoutMillis);
         if (unfinishedGoals > 0)
-            try {
-                throw new AssertionError(unfinishedGoals + " goals have not been finalized when calculating "
-                        + goal);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            throw new SomeGoalsNotFinalized().add("unfinished_goals", unfinishedGoals).add("root_goal", goal);
         return (R) state.slot.result();
     }
     
-    public void executeQueue() {
-        Query current;
+    public void executeQueue(int timeoutMillis) {
+        long fin = (timeoutMillis <= 0 ? -1 : System.currentTimeMillis() + timeoutMillis);
+        QueryImpl current;
         while ((current = queue.poll()) != null) {
             //            System.out.println("RUNNING " + current);
             current.evaluate();
+            if (fin > 0 && System.currentTimeMillis() > fin) {
+                timeLimitReached();
+                break;
+            }
         }
     }
+    
+    private void timeLimitReached() {
+        System.out.println(" *** ANALYSIS TIMEOUT *** ");
+        QueryImpl current;
+        while ((current = queue.poll()) != null)
+            prune(current);
+    }
+    
+    protected abstract void prune(QueryImpl current);
     
     public abstract boolean isCached(Goal<?> goal);
     
@@ -529,6 +546,36 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     protected <R extends Result> R createRecursiveResult(GoalState parentState, Goal<R> goal) {
         return goal.createRecursiveResult();
+    }
+    
+    static class QueryQueue implements QueryEnqueuer {
+        
+        private final Queue<QueryImpl> queue = new LinkedList<QueryImpl>();
+        
+        public void enqueue(QueryImpl query) {
+            queue.add(query);
+        }
+        
+        public QueryImpl poll() {
+            return queue.poll();
+        }
+        
+        public void clear() {
+            queue.clear();
+        }
+        
+    }
+    
+    public interface QueryEnqueuer {
+        
+        void enqueue(QueryImpl query);
+        
+    }
+    
+    static class SomeGoalsNotFinalized extends Failure {
+        
+        private static final long serialVersionUID = 1L;
+        
     }
     
 }

@@ -22,6 +22,10 @@ public class SlotImpl<R extends Result> implements Slot<R> {
         this.result = result;
     }
     
+    public boolean hasResult() {
+        return result != null;
+    }
+    
     public R result() {
         if (result == null)
             throw new IllegalStateException("No result has been stored, cannot retrieve it.");

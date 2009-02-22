@@ -145,6 +145,8 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         
         private boolean dependentOnRecursiveResult = false;
         
+        private boolean pruned = false;
+        
         private boolean needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged;
         
         public <R extends Result> IncrementalGoalState(Goal<R> goal) {
@@ -198,7 +200,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         }
         
         CachedGoalData storeIntoCache() {
-            if (!goal.cachable())
+            if (!goal.cachable() || pruned)
                 return null;
             SourceUnit[] sourceDeps = sourceUnitDependencies.toArray(new SourceUnit[sourceUnitDependencies
                     .size()]);
@@ -252,6 +254,11 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         
         public void setNeedsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged() {
             needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged = true;
+        }
+        
+        public void setPruned() {
+            pruned = true;
+            markAsDone(goal.createRecursiveResult());
         }
         
     }
@@ -354,6 +361,12 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         if (listener == null)
             throw new NullPointerException("listener is null");
         broadcaster.addListener(listener);
+    }
+    
+    @Override
+    protected void prune(QueryImpl current) {
+        ((IncrementalGoalState) current.goal).setPruned();
+        //        current.evaluate();
     }
     
 }
