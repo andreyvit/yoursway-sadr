@@ -15,7 +15,9 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 
+import com.yoursway.sadr.engine.internal.GoalEvaluationFailed;
 import com.yoursway.utils.Failure;
+import com.yoursway.utils.bugs.Bugs;
 
 /**
  * Continuations evaluator. Just invoke new
@@ -155,6 +157,8 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         private int totalSubgoals = 0;
         
         private int visitationMark = 0;
+        
+        protected boolean pruned = false;
         
         public <R extends Result> GoalState(Goal<R> goal) {
             if (goal == null)
@@ -298,6 +302,11 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         @Override
         public String toString() {
             return "<" + subgoalCount + "," + parentStates.size() + ">" + goal;
+        }
+        
+        public void setPruned() {
+            pruned = true;
+            markAsDone(goal.createRecursiveResult());
         }
         
     }
@@ -516,7 +525,15 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         QueryImpl current;
         while ((current = queue.poll()) != null) {
             //            System.out.println("RUNNING " + current);
-            current.evaluate();
+            try {
+                current.evaluate();
+            } catch (RuntimeException e) {
+                Bugs.bug(new GoalEvaluationFailed(e, current.goal.goal));
+                current.goal.setPruned();
+            } catch (AssertionError e) {
+                Bugs.bug(new GoalEvaluationFailed(e, current.goal.goal));
+                current.goal.setPruned();
+            }
             if (fin > 0 && System.currentTimeMillis() > fin) {
                 timeLimitReached();
                 break;

@@ -1,7 +1,7 @@
 [repos]
 	name = sadr
 [dep "yscommons"]
-	commitid = d5ac1d7304134fe4c0094b8824ba5c394d690e17
+	commitid = 679db9bfd69d57701d8c0826f0e002352ed42e52
 	url = git://github.com/andreyvit/yoursway-commons.git
 	branch = master
 [dep "yslibraries"]

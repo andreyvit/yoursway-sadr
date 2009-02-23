@@ -1,5 +1,6 @@
 package com.yoursway.sadr.engine.incremental;
 
+import static com.google.common.base.Join.join;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
@@ -15,8 +16,11 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.GoalResultCacheCleaner;
 import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.engine.incremental.index.DependencyContributor;
+import com.yoursway.sadr.engine.internal.CachedGoalHasNullResult;
+import com.yoursway.utils.YsDebugging;
 import com.yoursway.utils.broadcaster.Broadcaster;
 import com.yoursway.utils.broadcaster.BroadcasterFactory;
+import com.yoursway.utils.bugs.Bugs;
 
 /**
  * TODO Validate cached results instead of throwing them out.
@@ -145,8 +149,6 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         
         private boolean dependentOnRecursiveResult = false;
         
-        private boolean pruned = false;
-        
         private boolean needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged;
         
         public <R extends Result> IncrementalGoalState(Goal<R> goal) {
@@ -256,11 +258,6 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             needsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged = true;
         }
         
-        public void setPruned() {
-            pruned = true;
-            markAsDone(goal.createRecursiveResult());
-        }
-        
     }
     
     @Override
@@ -317,6 +314,15 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             data.update(super.createRecursiveResult(parentState, goal), CachedGoalData.NO_SOURCE_UNITS,
                     CachedGoalData.NO_DEPENDENCY_CONTRIBUTORS, 1);
             cache.put(goal, data);
+        } else {
+            if (data.result == null) {
+                Bugs.bug(new CachedGoalHasNullResult(goal).add("parent_goal",
+                        YsDebugging.simpleNameOf(parentState.goal)).add("recursive_attemps",
+                        data.recursiveAttemps).add("recursive_dependencies",
+                        join(",", data.recursiveDependencies)));
+                // this is a stupid recovery, but anyway better than just failing
+                data.result = goal.createRecursiveResult();
+            }
         }
         ((IncrementalGoalState) parentState).setDependentOnRecursiveResult(data);
         return (R) data.result;
