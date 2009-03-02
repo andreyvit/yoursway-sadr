@@ -464,6 +464,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     private int totalGoals;
     
     private int unfinishedGoals;
+    private List<Long> runTimes;
     
     <R extends Result> GoalState lookupGoalState(Goal<R> goal) {
         GoalState state = activeGoalStates.get(goal);
@@ -521,6 +522,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     }
     
     public void executeQueue(int timeoutMillis) {
+        long start = System.currentTimeMillis();
         long fin = (timeoutMillis <= 0 ? -1 : System.currentTimeMillis() + timeoutMillis);
         QueryImpl current;
         while ((current = queue.poll()) != null) {
@@ -539,6 +541,9 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
                 break;
             }
         }
+        long duration = System.currentTimeMillis() - start;
+        if (runTimes != null)
+            runTimes.add(duration);
     }
     
     private void timeLimitReached() {
@@ -593,6 +598,10 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         
         private static final long serialVersionUID = 1L;
         
+    }
+    
+    public void setRunStatisticsTarget(List<Long> runTimes) {
+        this.runTimes = runTimes;
     }
     
 }
