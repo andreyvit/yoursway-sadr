@@ -3,6 +3,7 @@
  */
 package com.yoursway.sadr.core.constructs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -17,7 +18,10 @@ public class ControlFlowGraph<C extends IConstruct<C, SC, DC, N>, SC extends Sta
     }
     
     public ControlFlowGraph(List<C> constructs) {
-        this.constructs = constructs;
+        for (C c : constructs)
+            if (c == null)
+                throw new NullPointerException("ControlFlowGraph cannot contain nulls");
+        this.constructs = new ArrayList<C>(constructs);
     }
     
     public List<C> getNodes() {

@@ -141,7 +141,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         return result;
     }
     
-    public class IncrementalGoalState extends GoalState {
+    public class IncrementalGoalState extends GoalState implements IncrementalAnalysisTask {
         
         private final Set<SourceUnit> sourceUnitDependencies = newHashSet();
         
@@ -177,10 +177,10 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         }
         
         @Override
-        public void runOnBehalfOfThisGoal(Runnable runnable) {
+        public void run() {
             broadcaster.fire().goalExecutionStarting(goal);
             try {
-                super.runOnBehalfOfThisGoal(runnable);
+                super.run();
             } finally {
                 //
             }
@@ -370,9 +370,8 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
     }
     
     @Override
-    protected void prune(QueryImpl current) {
-        ((IncrementalGoalState) current.goal).setPruned();
-        //        current.evaluate();
+    protected void prune(GoalState current) {
+        ((IncrementalGoalState) current).setPruned();
     }
     
 }

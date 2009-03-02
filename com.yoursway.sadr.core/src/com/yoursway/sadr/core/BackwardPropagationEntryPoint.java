@@ -1,11 +1,14 @@
 package com.yoursway.sadr.core;
 
-import com.yoursway.sadr.engine.ContinuationScheduler;
+import kilim.pausable;
+
 import com.yoursway.sadr.engine.Goal;
 
 public interface BackwardPropagationEntryPoint {
     
-    boolean backwardPropagation(Goal<?> goal, ContinuationScheduler requestor,
-            ValueInfoContinuation continuation);
+    boolean canDoBackwardPropagation(Goal<?> goal);
+    
+    @pausable
+    IValueInfo backwardPropagation(Goal<?> goal);
     
 }

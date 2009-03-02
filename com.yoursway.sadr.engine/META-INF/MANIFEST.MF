@@ -3,15 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: SADR Engine
 Bundle-SymbolicName: com.yoursway.sadr.engine
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: com.yoursway.sadr.engine.internal.Activator
 Bundle-Vendor: YourSway
-Require-Bundle: org.eclipse.core.runtime,
- com.google.collections;bundle-version="1.0.0",
+Require-Bundle: com.google.collections;bundle-version="1.0.0",
  com.yoursway.utils;bundle-version="1.0.0"
-Eclipse-LazyStart: true
 Export-Package: com.yoursway.sadr.engine,
  com.yoursway.sadr.engine.debug,
  com.yoursway.sadr.engine.incremental,
  com.yoursway.sadr.engine.incremental.index,
  com.yoursway.sadr.engine.util
-Bundle-ActivationPolicy: lazy
+Import-Package: kilim,
+ kilim.fibers, kilim.states
+Kilim-Enabled: true

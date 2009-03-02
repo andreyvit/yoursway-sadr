@@ -1,11 +1,13 @@
 package com.yoursway.sadr.engine.incremental.index;
 
-import com.yoursway.sadr.engine.ContinuationScheduler;
+import kilim.pausable;
+
 import com.yoursway.sadr.engine.incremental.SourceUnit;
 
 public interface Index {
     
-    <R> void query(IndexQuery<R> query, ContinuationScheduler cs, R requestor);
+    @pausable
+    <R> void query(IndexQuery<R> query, R requestor);
     
     IndexMemento createMemento(SourceUnit sourceUnit);
     

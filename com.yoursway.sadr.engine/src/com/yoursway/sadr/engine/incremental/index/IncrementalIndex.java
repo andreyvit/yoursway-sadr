@@ -8,12 +8,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.yoursway.sadr.engine.ContinuationScheduler;
+import kilim.pausable;
+
+import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.GoalResultCacheCleaner;
-import com.yoursway.sadr.engine.incremental.IncrementalAnalysisEngine;
+import com.yoursway.sadr.engine.incremental.IncrementalAnalysisTask;
 import com.yoursway.sadr.engine.incremental.SourceUnit;
-import com.yoursway.sadr.engine.incremental.IncrementalAnalysisEngine.IncrementalGoalState;
 
 public class IncrementalIndex implements Index {
     
@@ -83,10 +84,11 @@ public class IncrementalIndex implements Index {
         this.underlyingIndex = underlyingIndex;
     }
     
-    public <R> void query(IndexQuery<R> query, ContinuationScheduler cs, R requestor) {
-        IncrementalAnalysisEngine.IncrementalGoalState goalState = (IncrementalGoalState) cs.getGoalState();
-        goalState.contributeDependecyContributor(new QueryDependencyContributor(lookupQueryData(query)));
-        underlyingIndex.query(query, cs, requestor);
+    @pausable
+    public <R> void query(IndexQuery<R> query, R requestor) {
+        ((IncrementalAnalysisTask) AnalysisEngine.currentTask())
+                .contributeDependecyContributor(new QueryDependencyContributor(lookupQueryData(query)));
+        underlyingIndex.query(query, requestor);
     }
     
     public void prepareToUpdate(SourceUnit sourceUnit) {

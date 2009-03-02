@@ -1,8 +1,11 @@
 package com.yoursway.sadr.engine;
 
+import kilim.pausable;
+
 public interface Goal<R extends Result> {
     
-    ContinuationRequestorCalledToken evaluate(ContinuationScheduler requestor);
+    @pausable
+    R evaluate();
     
     boolean cachable();
     

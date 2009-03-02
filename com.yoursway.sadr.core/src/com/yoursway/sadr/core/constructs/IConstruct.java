@@ -2,9 +2,9 @@ package com.yoursway.sadr.core.constructs;
 
 import java.util.List;
 
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
+import kilim.pausable;
+
+import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.engine.InfoKind;
 
 public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N> {
@@ -25,10 +25,10 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     
     List<C> enclosedConstructs();
     
-    ContinuationRequestorCalledToken evaluateValue(DC dc, InfoKind infoKind, ContinuationScheduler requestor,
-            ValueInfoContinuation continuation);
+    @pausable
+    IValueInfo evaluateValue(DC dc, InfoKind infoKind);
     
-    ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(ContinuationScheduler requestor,
-            ControlFlowGraphRequestor<C, SC, DC, N> continuation);
+    @pausable
+    ControlFlowGraph<C, SC, DC, N> calculateEffectiveControlFlowGraph();
     
 }
