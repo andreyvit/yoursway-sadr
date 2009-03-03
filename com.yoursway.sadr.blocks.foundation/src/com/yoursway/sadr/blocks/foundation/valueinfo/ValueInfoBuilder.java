@@ -43,4 +43,9 @@ public class ValueInfoBuilder {
     public boolean isEmpty() {
         return valueSetBuilder.isEmpty();
     }
+    
+    @Override
+    public String toString() {
+    	return valueSetBuilder.toString();
+    }
 }

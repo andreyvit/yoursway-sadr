@@ -41,7 +41,6 @@ public class CreateInstanceGoal extends ContextSensitiveGoal {
         for (PythonConstruct superClass : superClasses) {
             map.put(superClass, superClass.evaluate(getKrocodile()));
         }
-        
         for (Map<PythonConstruct, RuntimeObject> results : new DictIterator<PythonConstruct>(map)) {
             List<PythonClassType> supers = new ArrayList<PythonClassType>();
             for (RuntimeObject obj : results.values()) {

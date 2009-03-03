@@ -84,4 +84,9 @@ public class PythonValueSet extends Acceptor implements Iterable<RuntimeObject> 
     public boolean isEmpty() {
         return builder.isEmpty();
     }
+    
+    @Override
+    public String toString() {
+        return builder.toString();
+    }
 }

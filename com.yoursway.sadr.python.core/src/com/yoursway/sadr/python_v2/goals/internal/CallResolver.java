@@ -28,7 +28,7 @@ public final class CallResolver {
             args.getArgs().add(0, receiver);
             results.addResults(callFunction(callable, args, crocodile, callingConstruct));
         }
-        return null;
+        return results;
     }
     
     public static PythonValueSet findMethod(RuntimeObject receiver, String methodName, Krocodile context) {

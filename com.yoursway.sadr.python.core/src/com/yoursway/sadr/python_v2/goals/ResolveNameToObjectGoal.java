@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.goals;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonDeclaration;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
@@ -7,6 +8,7 @@ import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.succeeder.Goal;
 
 public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
@@ -55,6 +57,10 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
                     return declaration.evaluate(crocodile);
                 }
             }
+        }
+        RuntimeObject builtin = Builtins.instance().getScopedAttribute(frog.accessor());
+        if (builtin != null) {
+            return new PythonValueSet(builtin, crocodile);
         }
         return PythonValueSet.EMPTY;
     }

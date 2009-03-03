@@ -2,6 +2,7 @@ package com.yoursway.sadr.blocks.integer_literals;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.NumberFormat;
 
 
 public class FloatValue extends NumericValue {
@@ -21,8 +22,11 @@ public class FloatValue extends NumericValue {
     }
     
     public String describe() {
-    	return String.valueOf(value);
-        //return String.format("%.16g", value);
+        NumberFormat nf = NumberFormat.getNumberInstance() ;
+        nf.setGroupingUsed(false) ;     // don't group by threes
+        nf.setMaximumFractionDigits(18) ;
+        nf.setMinimumFractionDigits(0) ;
+        return nf.format(value);
     }
     
     public boolean coercibleToInt(){

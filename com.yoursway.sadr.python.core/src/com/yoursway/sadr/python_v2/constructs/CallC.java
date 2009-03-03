@@ -70,6 +70,9 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                     AssignmentC assignmentC = (AssignmentC) value;
                     real.getKwargs().put(assignmentC.name(), results.get(arg));
                 } else {
+                    if (!results.containsKey(arg)) {
+                        throw new IllegalStateException("Argument is missing!");
+                    }
                     RuntimeObject result = results.get(arg);
                     if (argC.getStar() == PythonArgument.NOSTAR) {
                         real.getArgs().add(result);

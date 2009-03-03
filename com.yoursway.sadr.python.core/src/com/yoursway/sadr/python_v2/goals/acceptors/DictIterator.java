@@ -26,13 +26,17 @@ public class DictIterator<Source> implements Iterable<Map<Source, RuntimeObject>
         this.iterators = new HashMap<Integer, Iterator<Value>>();
         this.sources = new HashMap<Integer, ValueInfo>();
         this.dimensions = newArrayList(map.keySet());
-        this.size = sources.size();
+        this.size = map.size();
         this.count = 1;
         for (int i = 0; i < size; i++) {
-            ValueInfo valueInfo = map.get(dimensions.get(i)).getResult();
+            Source name = dimensions.get(i);
+            ValueInfo valueInfo = map.get(name).getResult();
             this.sources.put(i, valueInfo);
             this.iterators.put(i, makeIterator(i));
             this.count *= valueInfo.containedValues().size();
+            if (count != 0) {
+                this.results.put(name, (RuntimeObject) iterators.get(i).next());
+            }
         }
     }
     
@@ -41,15 +45,18 @@ public class DictIterator<Source> implements Iterable<Map<Source, RuntimeObject>
             return null;
         }
         position += 1;
+        if (position == 1) {
+            return results;
+        }
         for (int i = size - 1; i >= 0; i--) {
+            Source name = dimensions.get(i);
             if (iterators.get(i).hasNext()) {
-                Source name = dimensions.get(i);
                 results.put(name, (RuntimeObject) iterators.get(i).next());
                 break;
             } else {
                 Iterator<Value> iterator = makeIterator(i);
                 iterators.put(i, iterator);
-                results.put(dimensions.get(i), (RuntimeObject) iterator.next());
+                results.put(name, (RuntimeObject) iterator.next());
             }
         }
         return results;
