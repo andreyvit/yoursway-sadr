@@ -13,4 +13,7 @@ public abstract class AbstractGoal<R extends Result> implements Goal<R> {
         return false;
     }
     
+    public Goal<R> cloneGoal() {
+        return null;
+    }
 }

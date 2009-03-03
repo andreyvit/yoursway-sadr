@@ -57,7 +57,7 @@ import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
@@ -372,7 +372,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+            PythonValueSet acceptor = new PythonValueSet() {
                 
                 @Override
                 protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
@@ -389,28 +389,28 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(types).append('\n');
         }
         
-        public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSetAcceptor acceptor,
+        public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSet acceptor,
                 final PythonConstruct construct, final Engine engine) {
             if (construct.scope() instanceof MethodDeclarationC
                     && construct.parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
                 return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Krocodile.EMPTY,
-                        new PythonValueSetAcceptor(acceptor) {
+                        new PythonValueSet(acceptor) {
                             
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                                 Krocodile context = createSelfContext(func, result);
-                                IGoal goal = construct.evaluate(context, acceptor);
+                                IGoal goal = construct.createGoal(context);
                                 engine.schedule(null, goal);
                             }
                         });
             } else {
-                return construct.evaluate(Krocodile.EMPTY, acceptor);
+                return construct.createGoal(Krocodile.EMPTY);
             }
         }
         
-        public IGoal createGoal(Engine engine, PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+        public IGoal createGoal(Engine engine, PythonFileC fileC, PythonValueSet acceptor) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
@@ -434,7 +434,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+            PythonValueSet acceptor = new PythonValueSet() {
                 @Override
                 public <T> void checkpoint(IGrade<T> grade) {
                     System.out.println("Done");
@@ -458,27 +458,27 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(values).append('\n');
         }
         
-        public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSetAcceptor acceptor,
+        public IGoal createSelfGoal(PythonFileC fileC, final PythonValueSet acceptor,
                 final PythonConstruct construct, final Engine engine) {
             if (construct.scope() instanceof MethodDeclarationC
                     && construct.scope().parentScope() instanceof ClassDeclarationC) {
                 final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
                 ClassDeclarationC classC = (ClassDeclarationC) construct.scope().parentScope();
                 return new CreateInstanceGoal(classC, NULL_CONSTRUCT, new PythonArguments(), Krocodile.EMPTY,
-                        new PythonValueSetAcceptor() {
+                        new PythonValueSet() {
                             @Override
                             protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                                 Krocodile context = createSelfContext(func, result);
-                                IGoal goal = construct.evaluate(context, acceptor);
+                                IGoal goal = construct.createGoal(context);
                                 engine.schedule(null, goal);
                             }
                         });
             } else {
-                return construct.evaluate(Krocodile.EMPTY, acceptor);
+                return construct.createGoal(Krocodile.EMPTY);
             }
         }
         
-        public IGoal createGoal(Engine engine, PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+        public IGoal createGoal(Engine engine, PythonFileC fileC, PythonValueSet acceptor) {
             ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
@@ -640,7 +640,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         public void check(PythonFileC fileC, FileSourceUnit cu, Engine engine, StringBuilder expected,
                 StringBuilder actual) throws Exception {
-            PythonValueSetAcceptor acceptor = new PythonValueSetAcceptor() {
+            PythonValueSet acceptor = new PythonValueSet() {
                 @Override
                 protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
                     
@@ -666,12 +666,12 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public IGoal createGoal(PythonFileC fileC, PythonValueSetAcceptor acceptor) {
+        public IGoal createGoal(PythonFileC fileC, PythonValueSet acceptor) {
             ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             if (construct instanceof VariableReferenceC) {
-                return construct.evaluate(Krocodile.EMPTY, acceptor);
+                return construct.createGoal(Krocodile.EMPTY);
             } else {
                 throw new IllegalStateException("Should be VariableReferenceC, but found "
                         + construct.getClass().getSimpleName());

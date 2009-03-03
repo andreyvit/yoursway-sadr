@@ -1,5 +1,7 @@
 package com.yoursway.sadr.succeeder;
 
-public interface IAcceptor {
+import com.yoursway.sadr.engine.Result;
+
+public interface IAcceptor extends Result {
     <T> void checkpoint(IGrade<T> grade);
 }
