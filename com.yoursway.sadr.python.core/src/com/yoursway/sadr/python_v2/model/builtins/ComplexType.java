@@ -10,11 +10,12 @@ import com.yoursway.sadr.python_v2.constructs.ComplexLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
 public class ComplexType extends NumericType {
+    @Override
     public RuntimeObject __long__(PythonArguments args) {
         RuntimeObject val = args.readSingle();
         if (val instanceof ComplexType)
             return wrap(new Complex(0));
-        else if (val instanceof PythonValue)
+        else if (val instanceof PythonValue<?>)
             return coerce((PythonValue<?>) val);
         else
             return null;

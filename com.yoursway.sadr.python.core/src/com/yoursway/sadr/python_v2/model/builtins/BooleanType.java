@@ -14,7 +14,7 @@ public class BooleanType extends NumericType {
         RuntimeObject val = args.readSingle();
         if (val instanceof BooleanType)
             return Builtins.getFalse();
-        else if (val instanceof PythonValue)
+        else if (val instanceof PythonValue<?>)
             return coerce((PythonValue<?>) val);
         else
             return null;

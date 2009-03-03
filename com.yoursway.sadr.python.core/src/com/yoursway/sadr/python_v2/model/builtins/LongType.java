@@ -16,7 +16,7 @@ public class LongType extends NumericType {
         RuntimeObject val = args.readSingle();
         if (val instanceof LongType)
             return wrap(BigInteger.ZERO);
-        else if (val instanceof PythonValue)
+        else if (val instanceof PythonValue<?>)
             return coerce((PythonValue<?>) val);
         else
             return null;

@@ -14,7 +14,7 @@ public class IntegerType extends NumericType {
         RuntimeObject val = args.readSingle();
         if (val instanceof IntegerType)
             return wrap(0);
-        else if (val instanceof PythonValue)
+        else if (val instanceof PythonValue<?>)
             return coerce((PythonValue<?>) val);
         else
             return null;

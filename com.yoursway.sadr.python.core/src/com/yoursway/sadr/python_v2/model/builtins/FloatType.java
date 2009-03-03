@@ -9,11 +9,12 @@ import com.yoursway.sadr.python_v2.constructs.FloatLiteralC;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
 
 public class FloatType extends NumericType {
+    @Override
     public RuntimeObject __float__(PythonArguments args) {
         RuntimeObject val = args.readSingle();
         if (val instanceof FloatType)
             return wrap(0.0);
-        else if (val instanceof PythonValue)
+        else if (val instanceof PythonValue<?>)
             return coerce((PythonValue<?>) val);
         else
             return null;
