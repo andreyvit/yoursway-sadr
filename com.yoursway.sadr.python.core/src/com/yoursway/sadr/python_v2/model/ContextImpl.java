@@ -70,4 +70,8 @@ public class ContextImpl {
             }
         }
     }
+    
+    public Map<String, RuntimeObject> entries() {
+        return args;
+    }
 }

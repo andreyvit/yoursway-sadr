@@ -7,9 +7,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.PassResultGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.ContextSensitiveGoal;
 
 public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     
@@ -44,7 +42,7 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     }
     
     @Override
-    public IGoal evaluate(final Krocodile context, PythonValueSetAcceptor acceptor) {
-        return new PassResultGoal(context, acceptor, null);
+    public ContextSensitiveGoal execute(final Krocodile context) {
+        return null;
     }
 }

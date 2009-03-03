@@ -1,19 +1,21 @@
 package com.yoursway.sadr.python_v2.constructs;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
 import com.google.common.collect.Lists;
-import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.ContextImpl;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
-import com.yoursway.sadr.succeeder.IGoal;
 
-public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpression> {
+public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpression> implements
+        PythonCallable {
     
     private final PythonConstruct body;
     
@@ -34,14 +36,9 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
     }
     
     @Override
-    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
-        return new ExpressionValueGoal(context, acceptor) {
-            public void preRun() {
-                FunctionObject obj = new FunctionObject(PythonLambdaExpressionC.this);
-                acceptor.addResult(obj, getKrocodile());
-                updateGrade(acceptor, Grade.DONE);
-            }
-        };
+    public PythonValueSet evaluate(Krocodile context) {
+        FunctionObject obj = new FunctionObject(this);
+        return new PythonValueSet(obj, context);
     }
     
     public String displayName() {
@@ -51,5 +48,12 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
     @Override
     public String name() {
         return "<lambda>";
+    }
+    
+    public PythonValueSet call(Krocodile crocodile, PythonArguments args) {
+        List<PythonArgument> realArgs = node().getArguments();
+        ContextImpl context = new ContextImpl(realArgs, args);
+        Krocodile actualArguments = new Krocodile(Krocodile.EMPTY, this, context);
+        return getExpression().evaluate(actualArguments);
     }
 }

@@ -7,19 +7,18 @@ import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
-import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.croco.PythonRecord;
-import com.yoursway.sadr.python_v2.goals.Acceptor;
-import com.yoursway.sadr.python_v2.goals.PassResultGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.CreateInstanceGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.PythonArguments;
 import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
-import com.yoursway.sadr.succeeder.IGoal;
 
-public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> implements PythonDeclaration {
+public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> implements PythonDeclaration,
+        PythonCallable {
     
     private List<PythonConstruct> supers;
     
@@ -72,15 +71,14 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     }
     
     @Override
-    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
+    public PythonValueSet evaluate(Krocodile context) {
         FunctionObject functionObject = new FunctionObject(this);
-        return new PassResultGoal(context, acceptor, functionObject);
+        return new PythonValueSet(functionObject, context);
     }
     
-    public void index(Krocodile crocodile, final Acceptor acceptor) {
+    public void index(Krocodile crocodile) {
         PythonRecord record = Index.newRecord(name());
         Index.add(crocodile, this, record);
-        acceptor.subgoalDone(Grade.DONE);
     }
     
     public MethodDeclarationC findDeclaredMethod(String methodName) {
@@ -91,6 +89,10 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
                     return methodC;
             }
         return null;
+    }
+    
+    public PythonValueSet call(Krocodile crocodile, PythonArguments args) {
+        return new CreateInstanceGoal(this, this, args, crocodile).evaluate();
     }
     
 }

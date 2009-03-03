@@ -11,7 +11,7 @@ public class MethodCallC extends CallC {
     
     MethodCallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
-        receiver = getPreChildren().get(RECEIVER);
+        receiver = getPreChildren().get(CALLABLE_INDEX);
     }
     
     @Override

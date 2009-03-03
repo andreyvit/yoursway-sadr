@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
@@ -11,7 +12,7 @@ public class TupleValue extends AbstractValue {
     
     private final List<RuntimeObject> list;
     
-    public TupleValue(List<RuntimeObject> list) {
+    public TupleValue(Collection<RuntimeObject> list) {
         this.list = newArrayList(list);
     }
     

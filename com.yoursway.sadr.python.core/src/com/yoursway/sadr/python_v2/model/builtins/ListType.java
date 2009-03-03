@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
@@ -40,7 +41,7 @@ public class ListType extends PythonClassType {
         return "list";
     }
     
-    public static PythonValue<ListValue> wrap(List<RuntimeObject> list) {
+    public static PythonValue<ListValue> wrap(Collection<RuntimeObject> list) {
         return new PythonValue<ListValue>(instance(), new ListValue(list));
     }
     

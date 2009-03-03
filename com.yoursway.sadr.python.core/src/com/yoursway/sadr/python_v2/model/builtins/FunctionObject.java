@@ -1,57 +1,24 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
-import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.constructs.PythonLambdaExpressionC;
+import com.yoursway.sadr.python_v2.constructs.PythonCallable;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.succeeder.IGoal;
 
 public class FunctionObject extends PythonObject {
-    private final PythonConstruct decl; //either MethodDeclarationC or PythonLambdaExpressionC
     private final String name;
     private PythonClassType boundClass = null;
     
-    public FunctionObject(MethodDeclarationC decl) {
+    public FunctionObject(PythonCallable decl) {
         super(Builtins.FUNCTION, decl);
-        this.decl = decl;
-        this.name = decl.node().getName();
-        setAttribute("__name__", StringType.wrap(name));
-    }
-    
-    public FunctionObject(PythonLambdaExpressionC decl) {
-        super(Builtins.FUNCTION, decl);
-        this.decl = decl;
-        this.name = "<lambda>";
+        this.name = decl.name();
         setAttribute("__name__", StringType.wrap(name));
     }
     
     public FunctionObject(String name) {
         super(Builtins.FUNCTION);
-        this.decl = null;
         this.name = name;
         setAttribute("__name__", StringType.wrap(name));
-    }
-    
-    public FunctionObject(ClassDeclarationC classDeclarationC) {//FIXME OMG! Shit! class name
-        super(Builtins.FUNCTION);//XXX illegal constructor
-        this.decl = classDeclarationC;
-        this.name = classDeclarationC.node().getName();
-        //find/run constructor
-    }
-    
-    /**
-     * @return either MethodDeclarationC or PythonLambdaExpressionC
-     */
-    @Override
-    public PythonConstruct getDecl() {
-        return decl;
-    }
-    
-    public IGoal evaluateGoal(PythonValueSetAcceptor acceptor, Krocodile context, PythonArguments args) {
-        return null;
     }
     
     public boolean isBound() {
@@ -68,10 +35,27 @@ public class FunctionObject extends PythonObject {
     }
     
     public String name() {
-        return this.name;
+        return name;
     }
     
     public void bind(PythonClassType instanceType) {
         this.boundClass = instanceType;
+    }
+    
+    @Override
+    public PythonCallable getDecl() {
+        return (PythonCallable) super.getDecl();
+    }
+    
+    public PythonValueSet call(Krocodile crocodile, PythonArguments args) {
+        if (getDecl() == null) {
+            throw new IllegalStateException();
+        }
+        return getDecl().call(crocodile, args);
+    }
+    
+    @Override
+    public PythonValueSet getAttribute(Krocodile crocodile) {
+        return super.getAttribute(crocodile);
     }
 }

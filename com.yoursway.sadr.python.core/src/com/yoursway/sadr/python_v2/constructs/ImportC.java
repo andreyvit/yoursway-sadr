@@ -8,12 +8,10 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.PassResultGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.builtins.ModuleType;
 import com.yoursway.sadr.python_v2.model.builtins.ModuleValue;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
-import com.yoursway.sadr.succeeder.IGoal;
 
 public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> implements ImportDeclarationC {
     
@@ -66,8 +64,8 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
     }
     
     @Override
-    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
-        return new PassResultGoal(context, acceptor, null);
+    public PythonValueSet evaluate(Krocodile context) {
+        return null;
     }
     
     protected void addModule(String path, String alias, String var) {

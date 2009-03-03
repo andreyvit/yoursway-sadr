@@ -60,6 +60,12 @@ public class Krocodile {
         return context.keys();
     }
     
+    public Map<String, RuntimeObject> entries() {
+        if (context == null && parent != null)
+            return parent.entries();
+        return context.entries();
+    }
+    
     public void put(String name, RuntimeObject value) {
         if (context == null && parent != null) {
             parent.put(name, value);

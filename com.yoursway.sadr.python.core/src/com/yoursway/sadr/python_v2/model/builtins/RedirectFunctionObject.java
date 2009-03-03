@@ -5,9 +5,8 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.CallRedirectGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.succeeder.IGoal;
 
 public final class RedirectFunctionObject extends SyncFunctionObject {
     private final String methodName;
@@ -18,8 +17,7 @@ public final class RedirectFunctionObject extends SyncFunctionObject {
     }
     
     @Override
-    public IGoal evaluateGoal(PythonValueSetAcceptor acceptor, final Krocodile context,
-            final PythonArguments args) {
-        return new CallRedirectGoal(context, acceptor, args, methodName, getDecl());
+    public PythonValueSet call(final Krocodile context, final PythonArguments args) {
+        return new CallRedirectGoal(context, args, methodName, getDecl()).evaluate();
     }
 }

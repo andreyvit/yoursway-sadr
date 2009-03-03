@@ -102,12 +102,12 @@ public class PythonClassType extends PythonObject {
     }
     
     @Override
-    public RuntimeObject getAttribute(String name) {
+    public RuntimeObject getScopedAttribute(String name) {
         if (attributes.containsKey(name))
             return attributes.get(name);
         else {
             for (PythonClassType cls : supers) {
-                RuntimeObject object = cls.getAttribute(name);
+                RuntimeObject object = cls.getScopedAttribute(name);
                 if (object != null)
                     return object;
             }

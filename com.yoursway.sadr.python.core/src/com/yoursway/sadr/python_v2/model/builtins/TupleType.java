@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
@@ -34,7 +35,7 @@ public class TupleType extends PythonClassType {
         return "tuple";
     }
     
-    public static PythonValue<TupleValue> wrap(List<RuntimeObject> list) {
+    public static PythonValue<TupleValue> wrap(Collection<RuntimeObject> list) {
         return new PythonValue<TupleValue>(instance(), new TupleValue(list));
     }
 }

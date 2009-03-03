@@ -12,6 +12,8 @@ import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrar;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public class PythonObject implements RuntimeObject {
     
@@ -48,7 +50,7 @@ public class PythonObject implements RuntimeObject {
         this.id = InstanceRegistrar.registerInstance(this);
     }
     
-    public RuntimeObject getAttribute(String name) {
+    public RuntimeObject getScopedAttribute(String name) {
         return attributes.get(name);
     }
     
@@ -98,11 +100,15 @@ public class PythonObject implements RuntimeObject {
     }
     
     public void setDecl(PythonConstruct decl) {
-        if (decl == null)
-            throw new IllegalArgumentException();
         if (this.decl != null)
-            throw new IllegalStateException();
+            throw new IllegalStateException("Already assigned");
+        if (decl == null)
+            throw new NullPointerException("Decl should never be null!");
         this.decl = decl;
+    }
+    
+    public PythonValueSet getAttribute(Krocodile crocodile) {
+        throw new UnsupportedOperationException();
     }
     
     public void findAttributes(Frog frog, PythonVariableAcceptor acceptor) {

@@ -1,12 +1,13 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.ast.references.VariableReference;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     
@@ -15,9 +16,9 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     }
     
     @Override
-    public IGoal evaluate(final Krocodile context, final PythonValueSetAcceptor acceptor) {
-        return new ResolveNameToObjectGoal(this, context, new PythonVariableDelegatingAcceptor(acceptor,
-                context));
+    @pausable
+    public PythonValueSet evaluate(final Krocodile context) {
+        return new ResolveNameToObjectGoal(this, context).evaluate();
     }
     
     public String name() {

@@ -6,14 +6,16 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.ContextSensitiveGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public interface PythonConstruct {
     
     ASTNode node();
     
-    IGoal evaluate(Krocodile crocodile, PythonValueSetAcceptor acceptor);
+    ContextSensitiveGoal execute(Krocodile crocodile);
+    
+    PythonValueSet evaluate(Krocodile crocodile);
     
     Scope parentScope();
     

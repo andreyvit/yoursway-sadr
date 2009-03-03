@@ -1,6 +1,8 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import com.yoursway.sadr.python_v2.constructs.CallC;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
+
+import com.yoursway.sadr.python_v2.constructs.PythonConstructImpl;
 
 public final class InstanceType extends PythonClassType {
     private final PythonClassType klass;
@@ -18,7 +20,7 @@ public final class InstanceType extends PythonClassType {
         return klass.describe();
     }
     
-    public static InstanceType createSelf(CallC expression) {
+    public static InstanceType createSelf(PythonConstructImpl<PythonCallExpression> expression) {
         // TODO Auto-generated method stub
         return null;
     }

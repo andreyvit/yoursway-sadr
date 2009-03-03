@@ -7,7 +7,6 @@ import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.succeeder.IAcceptor;
-import com.yoursway.sadr.succeeder.IGoal;
 
 /**
  * Tracks instance changes through data-flow.
@@ -29,8 +28,8 @@ public abstract class InstanceTracker implements IAcceptor {
             this.context = context;
         }
         
-        IGoal evaluate(PythonValueSetAcceptor acceptor) {
-            return valueSource.evaluate(this.context, acceptor);
+        PythonValueSet evaluate(PythonValueSet acceptor) {
+            return valueSource.evaluate(this.context);
         }
     }
     

@@ -7,14 +7,14 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.ContextSensitiveGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
     
     protected final N node;
     private final Scope parentScope;
-    private List<PythonConstruct> preChildren = Collections.EMPTY_LIST;
+    private List<PythonConstruct> preChildren = Collections.emptyList();
     private List<PythonConstruct> postChildren;
     private PythonConstructImpl<ASTNode> sintacticallyPreviousConstruct;
     
@@ -75,20 +75,12 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return node == this.node;
     }
     
-    //    public ContinuationRequestorCalledToken calculateEffectiveControlFlowGraph(
-    //            ContinuationScheduler requestor,
-    //            ControlFlowGraphRequestor<PythonConstruct, Scope, PythonDynamicContext, ASTNode> continuation) {
-    //        List<PythonConstruct> constructs = filter(childConstructs(), NOT_METHOD);
-    //        return continuation.process(
-    //                new ControlFlowGraph<PythonConstruct, Scope, PythonDynamicContext, ASTNode>(
-    //                        constructs), requestor);
-    //    }
-    
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((node == null) ? 0 : node.hashCode());
+        //FIXME: Add root element comparison, to check nodes belong to the same tree!
         return result;
     }
     
@@ -101,6 +93,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (getClass() != obj.getClass())
             return false;
         final PythonConstructImpl other = (PythonConstructImpl) obj;
+        //FIXME: Add root element comparison, to check nodes belong to the same tree!
         return (node == other.node);
     }
     
@@ -135,9 +128,13 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return node.toString();
     }
     
-    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
+    public ContextSensitiveGoal execute(Krocodile context) {
         throw new UnsupportedOperationException("Evaluate is not enabled for node class "
                 + this.node.getClass().getSimpleName());
+    }
+    
+    public PythonValueSet evaluate(Krocodile context) {
+        return execute(context).evaluate();
     }
     
     public List<PythonConstruct> getPreChildren() {

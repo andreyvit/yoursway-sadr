@@ -13,7 +13,7 @@ public interface RuntimeObject extends Type, Value {
     
     RuntimeObject getType();
     
-    RuntimeObject getAttribute(String name);
+    RuntimeObject getScopedAttribute(String name);
     
     Map<String, RuntimeObject> getAttributes();
     

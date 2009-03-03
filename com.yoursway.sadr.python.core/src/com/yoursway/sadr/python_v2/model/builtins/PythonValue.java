@@ -35,10 +35,10 @@ public class PythonValue<ValueType extends AbstractValue> extends PythonObject i
     }
     
     @Override
-    public RuntimeObject getAttribute(String name) {
-        RuntimeObject attribute = super.getAttribute(name);
+    public RuntimeObject getScopedAttribute(String name) {
+        RuntimeObject attribute = super.getScopedAttribute(name);
         if (attribute == null) {
-            attribute = this.getType().getAttribute(name);
+            attribute = this.getType().getScopedAttribute(name);
         }
         return attribute;
     }
