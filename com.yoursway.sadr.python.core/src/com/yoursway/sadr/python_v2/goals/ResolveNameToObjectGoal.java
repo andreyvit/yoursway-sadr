@@ -74,6 +74,8 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
                 }
             } else if (construct instanceof IfC) {
                 return resolveIf((IfC) construct);
+            } else if (construct.equals(scope)) {
+                break;
             }
         }
         ContextImpl context = crocodile.getContext(from.scope());
