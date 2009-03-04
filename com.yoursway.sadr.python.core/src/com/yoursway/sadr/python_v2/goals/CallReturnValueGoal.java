@@ -3,6 +3,8 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.ReturnC;
@@ -21,18 +23,31 @@ public class CallReturnValueGoal extends Goal<PythonValueSet> {
         this.crocodile = arguments;
     }
     
-    public PythonValueSet evaluate() {
-        acceptor = new PythonValueSet();
-        List<PythonConstruct> enclosedconstructs = methodDecl.getEnclosedConstructs();
-        List<ReturnC> returns = new LinkedList<ReturnC>();
-        for (PythonConstruct construct : enclosedconstructs) {
+    void collectReturns(List<ReturnC> returns, List<PythonConstruct> constructs) {
+        for (PythonConstruct construct : constructs) {
             if (construct instanceof ReturnC) {
-                ReturnC returnC = (ReturnC) construct;
-                returns.add(returnC);
+                returns.add((ReturnC) construct);
+            } else if (construct instanceof IfC) {
+                IfC ifC = (IfC) construct;
+                PythonValueSet choices = ifC.evaluate(crocodile);
+                for (RuntimeObject choice : choices) {
+                    List<PythonConstruct> branch = ifC.getBranch(choice);
+                    if (branch == null)
+                        continue;
+                    collectReturns(returns, branch);
+                }
+            } else {
+                collectReturns(returns, construct.getPostChildren());
             }
         }
+    }
+    
+    public PythonValueSet evaluate() {
+        List<ReturnC> returns = new LinkedList<ReturnC>();
+        collectReturns(returns, methodDecl.getPostChildren());
+        acceptor = new PythonValueSet();
         for (ReturnC item : returns) {
-            acceptor.addResults(item.getReturnedConstruct().evaluate(crocodile));
+            acceptor.addResults(item.evaluate(crocodile));
         }
         return acceptor;
     }

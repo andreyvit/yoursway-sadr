@@ -114,4 +114,24 @@ public abstract class NumericValue extends AbstractValue{
 	public Complex coerceToComplex() {
 		return new Complex(coerceToFloat());
 	}
+
+	public NumericValue lt(NumericValue rhs) {
+        if(this instanceof ComplexValue || rhs instanceof ComplexValue)
+            return null;
+        if(this instanceof FloatValue || rhs instanceof FloatValue)
+            return new BooleanValue(this.coerceToFloat() < rhs.coerceToFloat());
+        if(this instanceof LongValue || rhs instanceof LongValue)
+            return new BooleanValue(this.coerceToLong().compareTo(rhs.coerceToLong())<0);
+        return new BooleanValue(this.coerceToInt() < rhs.coerceToInt());
+	}
+
+	public NumericValue eq(NumericValue rhs) {
+        if(this instanceof ComplexValue || rhs instanceof ComplexValue)
+            return null;
+        if(this instanceof FloatValue || rhs instanceof FloatValue)
+            return new BooleanValue(this.coerceToFloat() == rhs.coerceToFloat());
+        if(this instanceof LongValue || rhs instanceof LongValue)
+            return new BooleanValue(this.coerceToLong().compareTo(rhs.coerceToLong()) == 0);
+        return new BooleanValue(this.coerceToInt() == rhs.coerceToInt());
+	}
 }

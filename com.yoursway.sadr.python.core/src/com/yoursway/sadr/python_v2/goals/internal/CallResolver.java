@@ -60,6 +60,9 @@ public final class CallResolver {
     
     public static PythonValueSet callFunction(FunctionObject callable, PythonArguments names,
             Krocodile crocodile, PythonConstruct callingConstruct) {
+        if (crocodile.size() > 20) {
+            return PythonValueSet.EMPTY;
+        }
         PythonValueSet valueSet = callable.call(crocodile, names);
         valueSet.setCallingCostruct(callingConstruct);
         return valueSet;

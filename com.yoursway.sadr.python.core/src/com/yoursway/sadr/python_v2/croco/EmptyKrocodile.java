@@ -35,4 +35,9 @@ final class EmptyKrocodile extends Krocodile {
     public String toString() {
         return "Empty";
     }
+    
+    @Override
+    public int size() {
+        return 0;
+    }
 }

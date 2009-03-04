@@ -89,4 +89,10 @@ public class Krocodile {
             return parent.getContext(scope);
         return null;
     }
+    
+    public int size() {
+        if (parent == null)
+            return 1;
+        return 1 + parent.size();
+    }
 }

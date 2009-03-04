@@ -1,6 +1,10 @@
 package com.yoursway.sadr.python_v2.goals;
 
+import java.util.List;
+
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonDeclaration;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
@@ -46,7 +50,18 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
     }
     
     public PythonValueSet evaluate() {
-        PythonConstruct construct = from;
+        PythonValueSet valueSet = findInScope(from, from.scope());
+        if (valueSet != null) {
+            return valueSet;
+        }
+        RuntimeObject builtin = Builtins.instance().getScopedAttribute(frog.accessor());
+        if (builtin != null) {
+            return new PythonValueSet(builtin, crocodile);
+        }
+        return PythonValueSet.EMPTY;
+    }
+    
+    private PythonValueSet findInScope(PythonConstruct construct, Scope scope) {
         while ((construct = construct.getSyntacticallyPreviousConstruct()) != null) {
             if (construct instanceof PythonDeclaration) {
                 final PythonDeclaration declaration = (PythonDeclaration) construct;
@@ -57,6 +72,8 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
                     // PythonRecord record = Index.lookup(crocodile, declaration);
                     return declaration.evaluate(crocodile);
                 }
+            } else if (construct instanceof IfC) {
+                return resolveIf((IfC) construct);
             }
         }
         ContextImpl context = crocodile.getContext(from.scope());
@@ -65,10 +82,22 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
             if (argument != null)
                 return new PythonValueSet(argument, crocodile);
         }
-        RuntimeObject builtin = Builtins.instance().getScopedAttribute(frog.accessor());
-        if (builtin != null) {
-            return new PythonValueSet(builtin, crocodile);
+        Scope parentScope = scope.parentScope();
+        if (parentScope != null) {
+            List<PythonConstruct> children = parentScope.getPostChildren();
+            return findInScope(children.get(children.size() - 1), parentScope);
         }
-        return PythonValueSet.EMPTY;
+        return null;
+    }
+    
+    protected PythonValueSet resolveIf(final IfC ifc) {
+        PythonValueSet results = new PythonValueSet();
+        for (RuntimeObject choice : ifc.evaluate(crocodile)) {
+            List<PythonConstruct> branch = ifc.getBranch(choice);
+            PythonConstruct last = branch.get(branch.size() - 1);
+            ResolveNameToObjectGoal resolve = new ResolveNameToObjectGoal(frog, last, crocodile);
+            results.addResults(resolve.evaluate());
+        }
+        return results;
     }
 }

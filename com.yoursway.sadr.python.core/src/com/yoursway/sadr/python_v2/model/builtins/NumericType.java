@@ -60,6 +60,18 @@ public abstract class NumericType extends PythonClassType {
         return wrap(result);
     }
     
+    public RuntimeObject __lt__(PythonArguments args) {
+        List<NumericValue> values = args.castArgs(2, NumericValue.class);
+        NumericValue result = values.get(0).lt(values.get(1));
+        return wrap(result);
+    }
+    
+    public RuntimeObject __eq__(PythonArguments args) {
+        List<NumericValue> values = args.castArgs(2, NumericValue.class);
+        NumericValue result = values.get(0).eq(values.get(1));
+        return wrap(result);
+    }
+    
     public RuntimeObject __neg__(PythonArguments args) {
         NumericValue value = args.castSingle(NumericValue.class);
         return wrap(value.neg());
