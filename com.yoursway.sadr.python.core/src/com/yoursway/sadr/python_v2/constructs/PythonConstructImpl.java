@@ -7,7 +7,6 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ContextSensitiveGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
@@ -128,13 +127,9 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return node.toString();
     }
     
-    public ContextSensitiveGoal execute(Krocodile context) {
+    public PythonValueSet evaluate(Krocodile context) {
         throw new UnsupportedOperationException("Evaluate is not enabled for node class "
                 + this.node.getClass().getSimpleName());
-    }
-    
-    public PythonValueSet evaluate(Krocodile context) {
-        return execute(context).evaluate();
     }
     
     public List<PythonConstruct> getPreChildren() {

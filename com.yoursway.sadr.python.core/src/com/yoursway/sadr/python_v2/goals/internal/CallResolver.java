@@ -40,7 +40,9 @@ public final class CallResolver {
         // look into class definition
         if (callable == null && receiver.getType() instanceof PythonClassType) {
             PythonClassType klass = (PythonClassType) receiver.getType();
-            if (!(klass != null && klass.getDecl() instanceof ClassDeclarationC))
+            if (klass == null)
+                return PythonValueSet.EMPTY;
+            if (!(klass.getDecl() instanceof ClassDeclarationC))
                 return PythonValueSet.EMPTY;
             MethodDeclarationC declaredMethod = ((ClassDeclarationC) klass.getDecl())
                     .findDeclaredMethod(methodName);

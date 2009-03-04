@@ -48,10 +48,11 @@ public class FunctionObject extends PythonObject {
     }
     
     public PythonValueSet call(Krocodile crocodile, PythonArguments args) {
-        if (getDecl() == null) {
+        PythonCallable decl = getDecl();
+        if (decl == null) {
             throw new IllegalStateException();
         }
-        return getDecl().call(crocodile, args);
+        return decl.call(crocodile, args);
     }
     
     @Override

@@ -6,8 +6,6 @@ import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ContextSensitiveGoal;
 
 public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     
@@ -39,10 +37,5 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     
     public PythonConstruct getLeft() {
         return getPostChildren().get(0);
-    }
-    
-    @Override
-    public ContextSensitiveGoal execute(final Krocodile context) {
-        return null;
     }
 }
