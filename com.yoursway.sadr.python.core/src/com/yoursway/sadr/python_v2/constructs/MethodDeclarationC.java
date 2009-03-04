@@ -4,17 +4,20 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
+import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.croco.PythonRecord;
 import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.DictIterator;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.PythonArguments;
@@ -60,8 +63,27 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     
     public PythonValueSet call(Krocodile crocodile, PythonArguments args) {
         List<PythonArgument> nodeArgs = this.node().getArguments();
-        Krocodile actualArguments = new Krocodile(crocodile, this, new ContextImpl(nodeArgs, args));
-        //FIXME: add processing of argument defaults 
+        ContextImpl context = new ContextImpl(nodeArgs, args);
+        Map<String, PythonValueSet> defaults = new HashMap<String, PythonValueSet>();
+        for (Entry<String, PythonConstruct> init : inits.entrySet()) {
+            String key = init.getKey();
+            if (context.getActualArgument(key) == null) {
+                PythonValueSet argDefault = init.getValue().evaluate(crocodile);
+                defaults.put(key, argDefault);
+            }
+        }
+        PythonValueSet results = new PythonValueSet();
+        for (Map<String, RuntimeObject> def : new DictIterator<String>(defaults)) {
+            for (Entry<String, RuntimeObject> e : def.entrySet()) {
+                context.put(e.getKey(), e.getValue());
+            }
+            results.addResults(callWithArgs(crocodile, context));
+        }
+        return results;
+    }
+    
+    private PythonValueSet callWithArgs(Krocodile crocodile, ContextImpl context) {
+        Krocodile actualArguments = new Krocodile(crocodile, this, context);
         CallReturnValueGoal subgoal = new CallReturnValueGoal(this, actualArguments);
         return subgoal.evaluate();
     }
