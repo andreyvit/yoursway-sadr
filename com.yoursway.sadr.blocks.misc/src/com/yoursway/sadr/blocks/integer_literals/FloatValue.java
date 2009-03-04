@@ -4,38 +4,37 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 
-
 public class FloatValue extends NumericValue {
 
-    private final double value;
-    
-    public FloatValue(double v) {
-        this.value = v;
-    }
-    
-    public FloatValue(long val) {
-        this.value = Double.valueOf(val);
+	private final double value;
+
+	public FloatValue(double v) {
+		this.value = v;
+	}
+
+	public FloatValue(long val) {
+		this.value = Double.valueOf(val);
 	}
 
 	public double value() {
-        return value;
-    }
-    
-    public String describe() {
-        NumberFormat nf = NumberFormat.getNumberInstance() ;
-        nf.setGroupingUsed(false) ;     // don't group by threes
-        nf.setMaximumFractionDigits(18) ;
-        nf.setMinimumFractionDigits(0) ;
-        return nf.format(value);
-    }
-    
-    public boolean coercibleToInt(){
-    	return true;
-    }
+		return value;
+	}
 
-    public long coerceToInt(){
-    	return (int) value;
-    }
+	public String describe() {
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setGroupingUsed(false); // don't group by threes
+		nf.setMaximumFractionDigits(18);
+		nf.setMinimumFractionDigits(1);
+		return nf.format(value);
+	}
+
+	public boolean coercibleToInt() {
+		return true;
+	}
+
+	public long coerceToInt() {
+		return (int) value;
+	}
 
 	@Override
 	public BigInteger coerceToLong() {
