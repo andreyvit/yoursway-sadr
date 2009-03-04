@@ -8,6 +8,7 @@ import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.ContextImpl;
 import com.yoursway.sadr.python_v2.model.builtins.Builtins;
 import com.yoursway.sadr.succeeder.Goal;
 
@@ -27,7 +28,7 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
         this.from = from;
         this.crocodile = crocodile;
         this.builder = new PythonValueSet();
-        System.out.println("Created ResolveNameToObjectGoal");
+        System.out.println("Resolving name '" + frog + "'");
     }
     
     public ResolveNameToObjectGoal(Frog name, PythonFileC from, Krocodile crocodile) {
@@ -57,6 +58,12 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
                     return declaration.evaluate(crocodile);
                 }
             }
+        }
+        ContextImpl context = crocodile.getContext(from.scope());
+        if (context != null) {
+            RuntimeObject argument = context.getActualArgument(frog.accessor());
+            if (argument != null)
+                return new PythonValueSet(argument, crocodile);
         }
         RuntimeObject builtin = Builtins.instance().getScopedAttribute(frog.accessor());
         if (builtin != null) {

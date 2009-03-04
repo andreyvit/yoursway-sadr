@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
@@ -72,5 +73,20 @@ public class Krocodile {
         } else {
             context.put(name, value);
         }
+    }
+    
+    @Override
+    public String toString() {
+        String sParent = parent != null ? parent + "\n" : "";
+        String sContext = context != null ? context.toString() : "(empty)";
+        return sParent + sContext;
+    }
+    
+    public ContextImpl getContext(Scope scope) {
+        if (construct.equals(scope))
+            return context;
+        if (parent != null)
+            return parent.getContext(scope);
+        return null;
     }
 }
