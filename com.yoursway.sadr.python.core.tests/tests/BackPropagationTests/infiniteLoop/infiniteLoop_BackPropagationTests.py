@@ -7,6 +7,6 @@ def foo(u):
 
 def bozz():
   z = foo(0)
-  print z   ## value z => none
+  print z   ## value z => (none)
 
 
