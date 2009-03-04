@@ -1,16 +1,15 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 
 import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.DictIterator;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.goals.acceptors.TupleIterator;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.sadr.python_v2.model.builtins.TupleType;
 import com.yoursway.sadr.python_v2.model.builtins.TupleValue;
@@ -26,13 +25,13 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
     public PythonValueSet evaluate(final Krocodile context) {
         List<PythonConstruct> args = getPostChildren();
         PythonValueSet results = new PythonValueSet();
-        Map<PythonConstruct, PythonValueSet> choices = new HashMap<PythonConstruct, PythonValueSet>();
+        ArrayList<PythonValueSet> choices = new ArrayList<PythonValueSet>();
         for (PythonConstruct arg : args) {
             PythonValueSet evaluated = arg.evaluate(context);
-            choices.put(arg, evaluated);
+            choices.add(evaluated);
         }
-        for (Map<PythonConstruct, RuntimeObject> actualArguments : new DictIterator<PythonConstruct>(choices)) {
-            PythonValue<TupleValue> tupleObject = TupleType.wrap(actualArguments.values());
+        for (List<RuntimeObject> actualArguments : new TupleIterator(choices)) {
+            PythonValue<TupleValue> tupleObject = TupleType.wrap(actualArguments);
             results.addResult(tupleObject, context);
         }
         return results;

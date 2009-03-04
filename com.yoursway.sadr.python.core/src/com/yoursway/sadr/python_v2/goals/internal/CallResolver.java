@@ -58,7 +58,6 @@ public final class CallResolver {
         return callFunction((FunctionObject) callable, names, crocodile, callingConstruct);
     }
     
-    @SuppressWarnings("unchecked")
     public static PythonValueSet callFunction(FunctionObject callable, PythonArguments names,
             Krocodile crocodile, PythonConstruct callingConstruct) {
         PythonValueSet valueSet = callable.call(crocodile, names);

@@ -16,17 +16,20 @@ public class TupleIterator implements Iterator<List<RuntimeObject>>, Iterable<Li
     private int position;
     private final ArrayList<ValueInfo> sources;
     
-    public TupleIterator(List<PythonValueSet> sources) {
+    public TupleIterator(List<PythonValueSet> list) {
         this.results = new ArrayList<RuntimeObject>();
         this.iterators = new ArrayList<Iterator<Value>>();
         this.sources = new ArrayList<ValueInfo>();
-        this.size = sources.size();
+        this.size = list.size();
         this.count = 1;
         for (int i = 0; i < size; i++) {
-            ValueInfo valueInfo = sources.get(i).getResult();
+            ValueInfo valueInfo = list.get(i).getResult();
             this.sources.add(valueInfo);
             this.iterators.add(makeIterator(i));
             this.count *= valueInfo.containedValues().size();
+            if (count != 0) {
+                this.results.add(i, (RuntimeObject) iterators.get(i).next());
+            }
         }
     }
     
@@ -35,14 +38,19 @@ public class TupleIterator implements Iterator<List<RuntimeObject>>, Iterable<Li
             return null;
         }
         position += 1;
+        if (position == 1)
+            return results;
+        
         int i = size - 1;
-        while (!iterators.get(i).hasNext() && i >= 0) {
-            Iterator<Value> iterator = makeIterator(i);
-            iterators.set(i, iterator);
-            results.set(i, (RuntimeObject) iterator.next());
-        }
-        if (i > 0) {
-            results.set(i - 1, (RuntimeObject) iterators.get(i).next());
+        while (i >= 0) {
+            if (iterators.get(i).hasNext()) {
+                results.set(i - 1, (RuntimeObject) iterators.get(i).next());
+                break;
+            } else {
+                Iterator<Value> iterator = makeIterator(i);
+                iterators.set(i, iterator);
+                results.set(i, (RuntimeObject) iterator.next());
+            }
         }
         return results;
     }
