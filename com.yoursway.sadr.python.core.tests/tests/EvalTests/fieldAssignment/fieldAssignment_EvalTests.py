@@ -5,12 +5,11 @@ class Foo(object):
 
 def ggg():
   name = "idontexist"
-  m = """
-  class Foo():
+  m = """class Foo():
     def %s(self):
-      self.xx = 42
-  """ % name
-  eval(m)
+         self.xx = 42""" % name
+  exec(m)
 
+ggg()
 
 

@@ -7,7 +7,7 @@ class Xxx:
   
 class Moo:
   def __init__(self, p):
-    self.bbb = p.q
+    self.bbb = p
     
   def boo(self):
     return self.ccc

@@ -4,11 +4,11 @@ class Foo:
     q = self.xx ## value q => 42
   def ggg(self, n)
     m = "self.xx = " + n
-    eval(m)
+    exec(m)
 
 def boo():
   num = "42"
   f = Foo()
   f.ggg(num)
 
-
+boo()
