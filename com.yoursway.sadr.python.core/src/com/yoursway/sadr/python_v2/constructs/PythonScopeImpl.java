@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstructImpl<N> implements Scope {
     

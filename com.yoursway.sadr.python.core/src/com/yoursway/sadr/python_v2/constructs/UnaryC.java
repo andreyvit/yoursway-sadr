@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     

@@ -3,7 +3,6 @@ package com.yoursway.sadr.python_v2.constructs;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 

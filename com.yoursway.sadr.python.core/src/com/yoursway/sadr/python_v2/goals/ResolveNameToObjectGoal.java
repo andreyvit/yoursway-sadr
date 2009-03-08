@@ -2,18 +2,18 @@ package com.yoursway.sadr.python_v2.goals;
 
 import java.util.List;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonDeclaration;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
+import com.yoursway.sadr.python_v2.constructs.Scope;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
-import com.yoursway.sadr.python_v2.model.builtins.Builtins;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.types.Builtins;
 import com.yoursway.sadr.succeeder.Goal;
 
 public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
@@ -54,7 +54,7 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
         if (valueSet != null) {
             return valueSet;
         }
-        RuntimeObject builtin = Builtins.instance().getScopedAttribute(frog.accessor());
+        PythonObject builtin = Builtins.instance().getScopedAttribute(frog.accessor());
         if (builtin != null) {
             return new PythonValueSet(builtin, crocodile);
         }
@@ -80,7 +80,7 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
         }
         ContextImpl context = crocodile.getContext(from.scope());
         if (context != null) {
-            RuntimeObject argument = context.getActualArgument(frog.accessor());
+            PythonObject argument = context.getActualArgument(frog.accessor());
             if (argument != null)
                 return new PythonValueSet(argument, crocodile);
         }
@@ -94,7 +94,7 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
     
     protected PythonValueSet resolveIf(final IfC ifc) {
         PythonValueSet results = new PythonValueSet();
-        for (RuntimeObject choice : ifc.evaluate(crocodile)) {
+        for (PythonObject choice : ifc.evaluate(crocodile)) {
             List<PythonConstruct> branch = ifc.getBranch(choice);
             PythonConstruct last = branch.get(branch.size() - 1);
             ResolveNameToObjectGoal resolve = new ResolveNameToObjectGoal(frog, last, crocodile);

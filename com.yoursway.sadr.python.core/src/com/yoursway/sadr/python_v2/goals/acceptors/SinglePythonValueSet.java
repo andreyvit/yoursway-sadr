@@ -5,14 +5,13 @@ import java.util.Iterator;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.Acceptor;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
-public class SinglePythonValueSet extends Acceptor implements Iterable<RuntimeObject> {
+public class SinglePythonValueSet extends Acceptor implements Iterable<PythonObject> {
     
     private final ValueInfoBuilder builder = new ValueInfoBuilder(); //FIXME Build value info in getResult().
     private PythonConstruct callingConstruct = null;
@@ -22,7 +21,7 @@ public class SinglePythonValueSet extends Acceptor implements Iterable<RuntimeOb
     public SinglePythonValueSet() {
     }
     
-    public SinglePythonValueSet(RuntimeObject result, Krocodile context) {
+    public SinglePythonValueSet(PythonObject result, Krocodile context) {
         addResult(result, context);
     }
     
@@ -40,12 +39,12 @@ public class SinglePythonValueSet extends Acceptor implements Iterable<RuntimeOb
         this.callingConstruct = callingConstruct;
     }
     
-    public void addResult(RuntimeObject result, Krocodile context) {
+    public void addResult(PythonObject result, Krocodile context) {
         if (null == result)
             throw new IllegalStateException("There should be no null items in results!");
         
-        if (callingConstruct != null && ((PythonObject) result).getDecl() == null) {//TODO move get/set decl to PythonConstruct interface?
-            ((PythonObject) result).setDecl(callingConstruct);
+        if (callingConstruct != null && result.getDecl() == null) {//TODO move get/set decl to PythonConstruct interface?
+            result.setDecl(callingConstruct);
         }
         
         builder.add(result.getType(), result);
@@ -57,22 +56,22 @@ public class SinglePythonValueSet extends Acceptor implements Iterable<RuntimeOb
     
     public void addResults(SinglePythonValueSet r, Krocodile context) {
         for (Value value : r.getResult().containedValues()) {
-            addResult((RuntimeObject) value, context);
+            addResult((PythonObject) value, context);
         }
         
     }
     
-    public Iterator<RuntimeObject> iterator() {
+    public Iterator<PythonObject> iterator() {
         Collection<Value> values = builder.build().containedValues();
         final Iterator<Value> iterator = values.iterator();
-        return new Iterator<RuntimeObject>() {
+        return new Iterator<PythonObject>() {
             
             public boolean hasNext() {
                 return iterator.hasNext();
             }
             
-            public RuntimeObject next() {
-                return (RuntimeObject) iterator.next();
+            public PythonObject next() {
+                return (PythonObject) iterator.next();
             }
             
             public void remove() {

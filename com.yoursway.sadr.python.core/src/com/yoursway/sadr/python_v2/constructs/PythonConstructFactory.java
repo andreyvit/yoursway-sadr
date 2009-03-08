@@ -54,7 +54,6 @@ import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 import org.eclipse.dltk.python.parser.ast.statements.TryFinallyStatement;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class PythonConstructFactory {
     

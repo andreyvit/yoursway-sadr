@@ -5,14 +5,12 @@ import java.util.List;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.goals.acceptors.TupleIterator;
-import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
-import com.yoursway.sadr.python_v2.model.builtins.TupleType;
-import com.yoursway.sadr.python_v2.model.builtins.TupleValue;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.types.TupleType;
+import com.yoursway.sadr.python_v2.model.builtins.values.TupleValue;
 
 public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpression> implements
         PythonConstruct {
@@ -30,8 +28,8 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
             PythonValueSet evaluated = arg.evaluate(context);
             choices.add(evaluated);
         }
-        for (List<RuntimeObject> actualArguments : new TupleIterator(choices)) {
-            PythonValue<TupleValue> tupleObject = TupleType.wrap(actualArguments);
+        for (List<PythonObject> actualArguments : new TupleIterator(choices)) {
+            TupleValue tupleObject = TupleType.wrap(actualArguments);
             results.addResult(tupleObject, context);
         }
         return results;

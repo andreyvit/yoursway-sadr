@@ -3,9 +3,9 @@
  */
 package com.yoursway.sadr.python_v2.constructs;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.succeeder.IGrade;
 
 public final class PythonVariableDelegatingAcceptor extends PythonVariableAcceptor {
@@ -21,7 +21,7 @@ public final class PythonVariableDelegatingAcceptor extends PythonVariableAccept
     }
     
     @Override
-    public void addResult(String key, RuntimeObject value) {
+    public void addResult(String key, PythonObject value) {
         acceptor.addResult(value, context);
     }
     

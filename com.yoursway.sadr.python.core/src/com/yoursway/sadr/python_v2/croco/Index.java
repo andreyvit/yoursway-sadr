@@ -3,8 +3,8 @@ package com.yoursway.sadr.python_v2.croco;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.constructs.Scope;
 
 public class Index {
     

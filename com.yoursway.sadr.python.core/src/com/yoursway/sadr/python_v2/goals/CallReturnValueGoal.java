@@ -3,13 +3,13 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.ReturnC;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.succeeder.Goal;
 
 public class CallReturnValueGoal extends Goal<PythonValueSet> {
@@ -30,7 +30,7 @@ public class CallReturnValueGoal extends Goal<PythonValueSet> {
             } else if (construct instanceof IfC) {
                 IfC ifC = (IfC) construct;
                 PythonValueSet choices = ifC.evaluate(crocodile);
-                for (RuntimeObject choice : choices) {
+                for (PythonObject choice : choices) {
                     List<PythonConstruct> branch = ifC.getBranch(choice);
                     if (branch == null)
                         continue;

@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +40,6 @@ import com.google.common.collect.Lists;
 import com.yoursway.ide.application.model.Project;
 import com.yoursway.ide.application.model.application.ApplicationModel;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
@@ -55,10 +55,12 @@ import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.types.PythonException;
 import com.yoursway.sadr.succeeder.Engine;
 
 public abstract class AbstractTypeInferencingTestCase {
@@ -253,14 +255,6 @@ public abstract class AbstractTypeInferencingTestCase {
         return namePos;
     }
     
-    private Krocodile createSelfContext(final MethodDeclarationC func, RuntimeObject self) {
-        ArrayList<PythonArgument> list = new ArrayList<PythonArgument>();
-        Krocodile context = new Krocodile(Krocodile.EMPTY, func, new ContextImpl(list, new PythonArguments()));
-        PythonArgument arg = (PythonArgument) func.node().getArguments().get(0);
-        context.put(arg.getName(), self);
-        return context;
-    }
-    
     protected static void assertCorrectString0(String fileName, Object object) throws IOException {
         String content = readFile(fileName);
         assertEquals(content.trim(), object.toString().trim());
@@ -357,10 +351,22 @@ public abstract class AbstractTypeInferencingTestCase {
                 && construct.parentScope() instanceof ClassDeclarationC) {
             final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
             ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
-            PythonValueSet results = classC.call(Krocodile.EMPTY, new PythonArguments());
-            for (RuntimeObject result : results) {
-                Krocodile context = createSelfContext(func, result);
-                return construct.evaluate(context);
+            PythonValueSet klasses = classC.evaluate(Krocodile.EMPTY);
+            for (PythonObject klass : klasses) {
+                PythonValueSet results = CallResolver.callFunction(klass, new RuntimeArguments(),
+                        Krocodile.EMPTY, classC);
+                for (PythonObject result : results) {
+                    List<PythonArgument> args = func.getArguments();
+                    Krocodile context;
+                    try {
+                        context = new Krocodile(Krocodile.EMPTY, func, new ContextImpl(args,
+                                new RuntimeArguments(result)));
+                        return construct.evaluate(context);
+                    } catch (PythonException e) {
+                        e.printStackTrace();
+                        return new PythonValueSet();
+                    }
+                }
             }
             throw new IllegalStateException("No method found!");
         } else {
@@ -462,7 +468,7 @@ public abstract class AbstractTypeInferencingTestCase {
     //                }
     //                
     //                @Override
-    //                protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
+    //                protected <T> void acceptIndividualResult(PythonObject result, IGrade<T> grade) {
     //                    // TODO Auto-generated method stub
     //                    
     //                }

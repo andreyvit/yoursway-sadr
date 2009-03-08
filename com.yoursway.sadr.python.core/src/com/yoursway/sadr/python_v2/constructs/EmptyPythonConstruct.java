@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 

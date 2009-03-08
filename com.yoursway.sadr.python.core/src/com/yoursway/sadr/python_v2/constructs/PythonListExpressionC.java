@@ -5,14 +5,12 @@ import java.util.List;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.goals.acceptors.TupleIterator;
-import com.yoursway.sadr.python_v2.model.builtins.ListType;
-import com.yoursway.sadr.python_v2.model.builtins.ListValue;
-import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.types.ListType;
+import com.yoursway.sadr.python_v2.model.builtins.values.ListValue;
 
 public class PythonListExpressionC extends PythonConstructImpl<PythonListExpression> implements
         PythonConstruct {
@@ -30,8 +28,8 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
             PythonValueSet evaluated = arg.evaluate(context);
             choices.add(evaluated);
         }
-        for (List<RuntimeObject> actualArguments : new TupleIterator(choices)) {
-            PythonValue<ListValue> listObject = ListType.wrap(actualArguments);
+        for (List<PythonObject> actualArguments : new TupleIterator(choices)) {
+            ListValue listObject = ListType.wrap(actualArguments);
             results.addResult(listObject, context);
         }
         return results;

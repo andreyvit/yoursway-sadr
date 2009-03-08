@@ -3,9 +3,9 @@ package com.yoursway.sadr.python_v2.goals.acceptors;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.succeeder.IAcceptor;
 
 /**
@@ -33,10 +33,10 @@ public abstract class InstanceTracker implements IAcceptor {
         }
     }
     
-    private final RuntimeObject instance;
+    private final PythonObject instance;
     private final Map<String, EvaluationDescriptor> attributes = new HashMap<String, EvaluationDescriptor>();
     
-    public InstanceTracker(RuntimeObject instance) {
+    public InstanceTracker(PythonObject instance) {
         this.instance = instance;
     }
     
@@ -49,7 +49,7 @@ public abstract class InstanceTracker implements IAcceptor {
     /**
      * @return unprocessed tracked instance.
      */
-    public RuntimeObject blankInstance() {
+    public PythonObject blankInstance() {
         return instance;
     }
 }

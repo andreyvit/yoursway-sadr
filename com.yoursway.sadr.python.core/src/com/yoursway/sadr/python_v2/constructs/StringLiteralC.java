@@ -2,11 +2,10 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
-import com.yoursway.sadr.python_v2.model.builtins.StringType;
-import com.yoursway.sadr.python_v2.model.builtins.UnicodeType;
+import com.yoursway.sadr.python_v2.model.builtins.types.StringType;
+import com.yoursway.sadr.python_v2.model.builtins.types.UnicodeType;
 
 public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     

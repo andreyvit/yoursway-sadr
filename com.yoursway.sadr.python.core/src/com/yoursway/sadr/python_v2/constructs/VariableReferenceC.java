@@ -4,7 +4,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.ast.references.VariableReference;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;

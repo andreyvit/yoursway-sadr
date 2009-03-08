@@ -10,15 +10,13 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
 import com.yoursway.sadr.python_v2.goals.acceptors.DictIterator;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
-import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.values.CallableObject;
 
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     
@@ -55,10 +53,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
         setPostChildren(Collections.EMPTY_LIST);
     }
     
-    private PythonValueSet findArguments(PythonValueSet container, Map<Object, RuntimeObject> results,
+    private PythonValueSet findArguments(PythonValueSet container, Map<Object, PythonObject> results,
             Krocodile crocodile) {
-        RuntimeObject method = results.get(CALLABLE);
-        PythonArguments real = new PythonArguments();
+        PythonObject method = results.get(CALLABLE);
+        RuntimeArguments real = new RuntimeArguments();
         if (results.containsKey(SELF)) {
             real.getArgs().add(results.get(SELF));
         }
@@ -73,7 +71,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                     if (!results.containsKey(arg)) {
                         throw new IllegalStateException("Argument is missing!");
                     }
-                    RuntimeObject result = results.get(arg);
+                    PythonObject result = results.get(arg);
                     if (argC.getStar() == PythonArgument.NOSTAR) {
                         real.getArgs().add(result);
                     } else if (argC.getStar() == PythonArgument.STAR) {
@@ -85,14 +83,10 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
             }
         }
         
-        if (method instanceof FunctionObject) {
-            container.addResults(CallResolver.callFunction((FunctionObject) method, real, crocodile, this));
-        } else if (method instanceof PythonObject) {
-            container.addResults(CallResolver.callMethod(method, "__call__", real, crocodile, CallC.this));
-        } else if (method == null) {
-            return container;
-            //                            throw new IllegalStateException("Unable to find callable " + callable
-            //                                    + ", resolved to " + method);
+        if (method instanceof CallableObject) {
+            container.addResults(CallResolver.callFunction((CallableObject) method, real, crocodile, this));
+        } else if (method != null) {
+            container.addResults(CallResolver.callMethod(method, "__call__", real, crocodile, this));
         }
         return container;
     }
@@ -113,7 +107,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
         }
         
         PythonValueSet collection = new PythonValueSet();
-        for (Map<Object, RuntimeObject> list : new DictIterator<Object>(choices)) {
+        for (Map<Object, PythonObject> list : new DictIterator<Object>(choices)) {
             findArguments(collection, list, context);
         }
         return collection;

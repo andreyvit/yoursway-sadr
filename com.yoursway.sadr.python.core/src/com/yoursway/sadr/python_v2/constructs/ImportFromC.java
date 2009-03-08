@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.dltk.python.parser.ast.PythonImportFromStatement;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ImportFromC extends ImportC<PythonImportFromStatement> {
     

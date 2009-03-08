@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.dltk.python.parser.ast.PythonImportStatement;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonImportExpression;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class ImportModuleC extends ImportC<PythonImportStatement> {
     

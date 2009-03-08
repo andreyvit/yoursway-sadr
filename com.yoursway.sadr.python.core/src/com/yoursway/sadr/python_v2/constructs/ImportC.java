@@ -5,13 +5,11 @@ import java.util.HashMap;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
-import com.yoursway.sadr.python_v2.model.builtins.ModuleType;
-import com.yoursway.sadr.python_v2.model.builtins.ModuleValue;
-import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
+import com.yoursway.sadr.python_v2.model.builtins.types.ModuleType;
+import com.yoursway.sadr.python_v2.model.builtins.values.ModuleValue;
 
 public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> implements ImportDeclarationC {
     
@@ -31,14 +29,14 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
         return imports.containsKey(variable);
     }
     
-    //    public PythonConstruct resolveImport(PythonValue<ModuleValue> value, String var) {
+    //    public PythonConstruct resolveImport(ModuleValue value, String var) {
     //        ModuleValue module = value.getValue();
     //        String realPath = module.getPath() + '.' + var;
     //        return resolveImport(value, realPath);
     //    }
     //    
-    public PythonConstruct resolveImport(PythonValue<ModuleValue> value, String path) throws Exception {
-        ModuleValue module = value.getValue();
+    public PythonConstruct resolveImport(ModuleValue value, String path) throws Exception {
+        ModuleValue module = value;
         if (module.getVar() != null) {
             throw new Exception("Looking for variable, but already got variable! You suck!");
         }
@@ -55,7 +53,7 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
         return null;
     }
     
-    public PythonValue<ModuleValue> resolveAlias(String alias) {
+    public ModuleValue resolveAlias(String alias) {
         ModuleValue value = imports.get(alias);
         if (value != null)
             return ModuleType.wrap(this, value);

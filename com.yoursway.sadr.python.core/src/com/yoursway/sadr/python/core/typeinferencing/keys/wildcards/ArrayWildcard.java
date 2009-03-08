@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.core.typeinferencing.keys.wildcards;
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.wildcards.AbstractWildcard;
 import com.yoursway.sadr.blocks.foundation.wildcards.Wildcard;
-import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
+import com.yoursway.sadr.python_v2.model.builtins.types.ArrayType;
 
 public class ArrayWildcard extends AbstractWildcard {
     

@@ -3,9 +3,9 @@ package com.yoursway.sadr.python_v2.croco;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonDeclaration;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 public class Frog {
     public static final int SEARCH = -1;
@@ -99,13 +99,13 @@ public class Frog {
         return accessor;
     }
     
-    public void filter(Map<String, RuntimeObject> attributes, PythonVariableAcceptor acceptor) {
+    public void filter(Map<String, PythonObject> attributes, PythonVariableAcceptor acceptor) {
         if (!pattern) {
             if (attributes.containsKey(accessor)) {
                 acceptor.addResult(accessor, attributes.get(accessor));
             }
         }
-        for (Entry<String, RuntimeObject> entry : attributes.entrySet()) {
+        for (Entry<String, PythonObject> entry : attributes.entrySet()) {
             if (match(entry.getKey()))
                 acceptor.addResult(entry.getKey(), entry.getValue());
         }

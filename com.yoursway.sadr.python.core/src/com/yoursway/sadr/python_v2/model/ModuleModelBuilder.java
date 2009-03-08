@@ -13,7 +13,7 @@ public class ModuleModelBuilder extends ASTVisitor {
     //    
     //    private final LexicalScopeImpl model = new LexicalScopeImpl(Builtins.getBuiltinModule()); // module model being builded
     //    private final Stack<LexicalScopeImpl> scopes = new Stack<LexicalScopeImpl>(); // nested scopes stack
-    //    private final Stack<PythonClassType> classes = new Stack<PythonClassType>(); // nested classes stack
+    //    private final Stack<PythonType> classes = new Stack<PythonType>(); // nested classes stack
     //    
     //    public ModuleModelBuilder() {
     //        scopes.push(model);
@@ -23,7 +23,7 @@ public class ModuleModelBuilder extends ASTVisitor {
     //        return model;
     //    }
     //    
-    //    private void createAttribute(String name, RuntimeObject object) {
+    //    private void createAttribute(String name, PythonObject object) {
     //        if (!classes.isEmpty())
     //            classes.peek().setAttribute(name, object);
     //        else
@@ -36,12 +36,12 @@ public class ModuleModelBuilder extends ASTVisitor {
     //    }
     //    
     //    private void onVisitLambdaAssignnment(String name, PythonLambdaExpression lambdaExpression) {
-    //        FunctionObject function = new FunctionObject(scopes.peek(), lambdaExpression);
+    //        CallableObject function = new CallableObject(scopes.peek(), lambdaExpression);
     //        createAttribute(name, function);
     //    }
     //    
     //    private void onVisitVariableAssignment(SimpleReference var, Statement val) {
-    //        RuntimeObject valueObject = new ObjectStub(val);
+    //        PythonObject valueObject = new ObjectStub(val);
     //        createAttribute(var.getName(), valueObject);
     //    }
     //    
@@ -102,7 +102,7 @@ public class ModuleModelBuilder extends ASTVisitor {
     //    @Override
     //    public boolean visit(MethodDeclaration s) throws Exception {
     //        createConstruct(s); //TODO construct wrapper
-    //        FunctionObject function = new FunctionObject(scopes.peek(), s);
+    //        CallableObject function = new CallableObject(scopes.peek(), s);
     //        createAttribute(s.getName(), function);
     //        scopes.push((LexicalScopeImpl) function.getScope());
     //        return true;
@@ -120,13 +120,13 @@ public class ModuleModelBuilder extends ASTVisitor {
     //        if (!(s instanceof PythonClassDeclaration))
     //            throw new RuntimeException("PythonClassDeclaration expected.");
     //        List<ASTNode> superclassAstNodes = ((PythonClassDeclaration) s).getSupers();
-    //        List<PythonClassType> supers = new ArrayList<PythonClassType>(superclassAstNodes.size());
+    //        List<PythonType> supers = new ArrayList<PythonType>(superclassAstNodes.size());
     //        for (ASTNode astNode : superclassAstNodes) {
     //            if (!(astNode instanceof Statement))
     //                throw new RuntimeException("Statement object expected.");
     //            supers.add(new ClassStub((Statement) astNode));
     //        }
-    //        PythonClassType cls = new PythonClassType(supers);
+    //        PythonType cls = new PythonType(supers);
     //        classes.push(cls);
     //        return true;
     //    }

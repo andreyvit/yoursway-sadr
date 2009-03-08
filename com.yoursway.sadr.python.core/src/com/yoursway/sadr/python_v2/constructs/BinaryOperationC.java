@@ -2,12 +2,11 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
-import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 public class BinaryOperationC extends BinaryC {
     
@@ -26,21 +25,21 @@ public class BinaryOperationC extends BinaryC {
         PythonValueSet rightSet = getRight().evaluate(parent);
         PythonValueSet resultSet = new PythonValueSet();
         
-        for (RuntimeObject left : leftSet) {
+        for (PythonObject left : leftSet) {
             PythonValueSet methods = CallResolver.findMethod(left, leftOpName, parent);
             if (!methods.isEmpty()) {
-                for (RuntimeObject right : rightSet) {
-                    PythonArguments args = new PythonArguments(left, right);
-                    for (RuntimeObject method : methods) {
+                for (PythonObject right : rightSet) {
+                    RuntimeArguments args = new RuntimeArguments(left, right);
+                    for (PythonObject method : methods) {
                         PythonValueSet value = CallResolver.callFunction(method, args, parent, this);
                         resultSet.addResults(value);
                     }
                 }
             } else {
-                for (RuntimeObject right : rightSet) {
-                    PythonArguments args = new PythonArguments(left, right);
+                for (PythonObject right : rightSet) {
+                    RuntimeArguments args = new RuntimeArguments(left, right);
                     PythonValueSet rightMethods = CallResolver.findMethod(right, rightOpName, parent);
-                    for (RuntimeObject method : rightMethods) {
+                    for (PythonObject method : rightMethods) {
                         PythonValueSet value = CallResolver.callFunction(method, args, parent, this);
                         resultSet.addResults(value);
                     }

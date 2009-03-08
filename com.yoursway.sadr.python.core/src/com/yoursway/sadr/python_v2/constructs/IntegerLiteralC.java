@@ -1,11 +1,13 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
-import com.yoursway.sadr.python_v2.model.builtins.IntegerType;
+import com.yoursway.sadr.python_v2.model.builtins.values.IntegerValue;
+import com.yoursway.sadr.python_v2.model.builtins.values.NumericValue;
 
 public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     
@@ -14,7 +16,9 @@ public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     }
     
     @Override
+    @pausable
     public PythonValueSet evaluate(final Krocodile context) {
-        return new PythonValueSet(IntegerType.wrap(this), context);
+        NumericValue val = new IntegerValue(this.node().getIntValue());
+        return new PythonValueSet(val, context);
     }
 }

@@ -4,13 +4,11 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
-import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpression> {
     
@@ -35,15 +33,13 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
         PythonValueSet values = array.evaluate(context);
         PythonValueSet indexes = index.evaluate(context);
         
-        for (RuntimeObject arrayObject : values) {
+        for (PythonObject arrayObject : values) {
             if (arrayObject != null) {
-                for (RuntimeObject arrayIndex : indexes) {
-                    PythonArguments args = new PythonArguments(newArrayList(arrayIndex));
-                    if (arrayObject.getType() instanceof PythonClassType) {
-                        PythonValueSet r = CallResolver.callMethod(arrayObject, "__getitem__", args, context,
-                                this);
-                        results.addResults(r);
-                    }
+                for (PythonObject arrayIndex : indexes) {
+                    RuntimeArguments args = new RuntimeArguments(newArrayList(arrayIndex));
+                    PythonValueSet r = CallResolver.callMethod(arrayObject, "__getitem__", args, context,
+                            this);
+                    results.addResults(r);
                 }
             }
         }

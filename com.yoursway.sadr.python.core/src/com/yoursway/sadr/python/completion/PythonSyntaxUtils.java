@@ -39,8 +39,6 @@ public class PythonSyntaxUtils {
         return null;
     }
     
-    // FIXME Kalugin-WTF what about ? and !
-    // Re: they are specially processed, ?,!,=(yes, you forgot =) is not a name chars
     public static boolean isNameChar(char c) {
         return (Character.isLetterOrDigit(c) || c == '_');
     }

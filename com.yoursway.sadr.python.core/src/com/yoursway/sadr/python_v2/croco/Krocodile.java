@@ -3,11 +3,11 @@ package com.yoursway.sadr.python_v2.croco;
 import java.util.Map;
 import java.util.Set;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
+import com.yoursway.sadr.python_v2.constructs.Scope;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 public class Krocodile {
     
@@ -39,7 +39,7 @@ public class Krocodile {
         return construct;
     }
     
-    public RuntimeObject getActualArgument(String name) {
+    public PythonObject getActualArgument(String name) {
         if (context == null && parent != null)
             return parent.getActualArgument(name);
         return context.getActualArgument(name);
@@ -61,13 +61,13 @@ public class Krocodile {
         return context.keys();
     }
     
-    public Map<String, RuntimeObject> entries() {
+    public Map<String, PythonObject> entries() {
         if (context == null && parent != null)
             return parent.entries();
         return context.entries();
     }
     
-    public void put(String name, RuntimeObject value) {
+    public void put(String name, PythonObject value) {
         if (context == null && parent != null) {
             parent.put(name, value);
         } else {
