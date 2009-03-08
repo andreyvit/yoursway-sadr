@@ -16,9 +16,13 @@ public class BuiltinFunctionObject extends FunctionObject {
     @Override
     public PythonValueSet call(Krocodile crocodile, RuntimeArguments args) {
         try {
-            return new PythonValueSet(evaluate(args), crocodile);
+            PythonObject val = evaluate(args);
+            if (val == null) {
+                return PythonValueSet.EMPTY;
+            }
+            return new PythonValueSet(val, crocodile);
         } catch (PythonException e) {
-            return new PythonValueSet();
+            return PythonValueSet.EMPTY;
         }
         
     }

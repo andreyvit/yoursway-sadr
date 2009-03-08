@@ -1,25 +1,70 @@
 package com.yoursway.sadr.python_v2.model.builtins.types;
 
 import com.yoursway.sadr.python_v2.constructs.IntegerLiteralC;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.model.RuntimeArguments;
+import com.yoursway.sadr.python_v2.model.TypeError;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
+import com.yoursway.sadr.python_v2.model.builtins.values.BooleanValue;
+import com.yoursway.sadr.python_v2.model.builtins.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.values.IntegerValue;
+import com.yoursway.sadr.python_v2.model.builtins.values.LongValue;
 import com.yoursway.sadr.python_v2.model.builtins.values.NumericValue;
 import com.yoursway.sadr.python_v2.model.builtins.values.StringValue;
 
 public class IntegerType extends NumericType {
     public IntegerType() {
+        setAttribute(new BuiltinFunctionObject("__call__") {
+            @Override
+            public PythonValueSet call(Krocodile crocodile, RuntimeArguments args) {
+                PythonObject val;
+                try {
+                    val = args.readSingle();
+                } catch (TypeError e) {
+                    return PythonValueSet.EMPTY;
+                }
+                if (val instanceof BooleanType) {
+                    return new PythonValueSet(BooleanValue.instance_false, crocodile);
+                } else if (val instanceof NumericValue) {
+                    boolean bool = ((NumericValue) val).coerceToBool();
+                    return new PythonValueSet(BooleanValue.instance(bool), crocodile);
+                } else if (val instanceof StringValue) {
+                    StringValue stringValue = (StringValue) val;
+                    return new PythonValueSet(wrap(stringValue.coerceToInt()), crocodile);
+                } else if (val instanceof PythonValue) {
+                    PythonValue pvalue = (PythonValue) val;
+                    return _int(crocodile, pvalue);
+                }
+                
+                return PythonValueSet.EMPTY;
+            }
+        });
     }
     
-    public PythonObject __call__(RuntimeArguments args) throws PythonException {
-        PythonObject val = args.readSingle();
-        if (val instanceof IntegerType)
-            return wrap(0);
-        else if (val instanceof PythonValue)
-            return cast(val);
-        else
-            return null;
+    protected PythonValueSet _int(Krocodile crocodile, PythonValue pvalue) {
+        PythonValueSet methods = CallResolver.findMethod(pvalue, "__int__", crocodile);
+        PythonValueSet results = new PythonValueSet();
+        if (methods.isEmpty()) {
+            results.addException(new TypeError(pvalue.getType() + " instance has no attribute '__int__'"));
+            return results;
+        }
+        for (PythonObject method : methods) {
+            PythonValueSet to_int = CallResolver.callFunction(method, new RuntimeArguments(method),
+                    crocodile, getDecl());
+            for (PythonObject intvalue : to_int) {
+                if (intvalue instanceof IntegerValue || intvalue instanceof LongValue) {
+                    results.addResult(intvalue, crocodile);
+                } else {
+                    PythonType type = intvalue.getType();
+                    results.addException(new TypeError("__int__ returned non-int (type " + type + ")"));
+                }
+                
+            }
+        }
+        return results;
     }
     
     public IntegerValue cast(PythonObject val) throws PythonException {

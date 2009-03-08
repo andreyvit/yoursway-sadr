@@ -87,7 +87,7 @@ public class NumericType extends BuiltinType {
     public PythonObject __nonzero__(RuntimeArguments args) throws PythonException {
         PythonObject val = args.readSingle();
         if (val.getType().getClass() == this.getClass())
-            return BooleanType.instance.coerce(val);
+            return BooleanType.cast(val);
         else
             return null;
     }

@@ -56,6 +56,17 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     private PythonValueSet findArguments(PythonValueSet container, Map<Object, PythonObject> results,
             Krocodile crocodile) {
         PythonObject method = results.get(CALLABLE);
+        RuntimeArguments real = addArguments(results);
+        
+        if (method instanceof CallableObject) {
+            container.addResults(CallResolver.callFunction((CallableObject) method, real, crocodile, this));
+        } else if (method != null) {
+            container.addResults(CallResolver.callMethod(method, "__call__", real, crocodile, this));
+        }
+        return container;
+    }
+
+    private RuntimeArguments addArguments(Map<Object, PythonObject> results) {
         RuntimeArguments real = new RuntimeArguments();
         if (results.containsKey(SELF)) {
             real.getArgs().add(results.get(SELF));
@@ -82,13 +93,7 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
                 }
             }
         }
-        
-        if (method instanceof CallableObject) {
-            container.addResults(CallResolver.callFunction((CallableObject) method, real, crocodile, this));
-        } else if (method != null) {
-            container.addResults(CallResolver.callMethod(method, "__call__", real, crocodile, this));
-        }
-        return container;
+        return real;
     }
     
     @Override

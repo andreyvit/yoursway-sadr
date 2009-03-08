@@ -25,7 +25,8 @@ public final class CallResolver {
             final RuntimeArguments args, Krocodile crocodile, final PythonConstruct callingConstruct) {
         PythonValueSet results = new PythonValueSet();
         for (PythonObject callable : findMethod(receiver, methodName, crocodile)) {
-            //args.getArgs().add(0, receiver);
+            //            if (!(callable instanceof RedirectFunctionObject))
+            //                args.getArgs().add(0, receiver);
             results.addResults(callFunction(callable, args, crocodile, callingConstruct));
         }
         return results;

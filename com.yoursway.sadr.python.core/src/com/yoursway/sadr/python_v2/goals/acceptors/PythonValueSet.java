@@ -9,7 +9,9 @@ import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.Acceptor;
+import com.yoursway.sadr.python_v2.model.TypeError;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.values.BooleanValue;
 
 public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     
@@ -22,6 +24,10 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     }
     
     public PythonValueSet(PythonObject result, Krocodile context) {
+        addResult(result, context);
+    }
+    
+    public PythonValueSet(boolean result, Krocodile context) {
         addResult(result, context);
     }
     
@@ -49,6 +55,10 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     
     public void addResult(PythonObject result, Krocodile context) {
         addResult(result);
+    }
+    
+    public void addResult(boolean result, Krocodile context) {
+        addResult(BooleanValue.instance(result));
     }
     
     public void addResults(PythonValueSet r) {
@@ -88,5 +98,9 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     @Override
     public String toString() {
         return builder.toString();
+    }
+    
+    public void addException(TypeError typeError) {
+        
     }
 }
