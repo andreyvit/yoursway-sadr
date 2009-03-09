@@ -9,6 +9,6 @@
 	url = git://github.com/andreyvit/yoursway-libraries.git
 	branch = master
 [dep "kilim-osgi"]
-	commitid = 23858fe979ecc8813c5693f39a4da1390cbcf469
+	commitid = ffb329807d9854ab928f58e82585cfbcf011747b
 	url = git@github.com:andreyvit/kilim-osgi.git
 	branch = master
