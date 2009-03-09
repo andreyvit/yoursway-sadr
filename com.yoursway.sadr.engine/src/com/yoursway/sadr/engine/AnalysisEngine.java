@@ -18,6 +18,7 @@ import java.util.concurrent.Executor;
 import kilim.pausable;
 import kilim.fibers.PauseReason;
 import kilim.fibers.Task;
+import kilim.fibers.TaskDoneReason;
 
 import com.yoursway.sadr.engine.internal.GoalEvaluationFailed;
 import com.yoursway.utils.Failure;
@@ -242,7 +243,13 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         @Override
         @pausable
         public void execute() throws Exception {
-            markAsDone(goal.evaluate());
+            try {
+                markAsDone(goal.evaluate());
+            } catch (OutOfMemoryError e) {
+                memoryHog = null;
+                Runtime.getRuntime().gc();
+                throw e;
+            }
         }
         
         @Override
@@ -250,10 +257,18 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             long start = System.currentTimeMillis();
             try {
                 super.run();
+                if (pauseReason instanceof TaskDoneReason) {
+                    Object exitobj = ((TaskDoneReason) pauseReason).exitObj;
+                    if (exitobj instanceof Error)
+                        throw (Error) exitobj;
+                    if (exitobj instanceof RuntimeException)
+                        throw (RuntimeException) exitobj;
+                }
             } finally {
                 long end = System.currentTimeMillis();
                 long duration = end - start;
                 executionFinished(duration);
+                timeSpentInRun += duration;
             }
         }
         
@@ -336,7 +351,8 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     private int totalGoals;
     
     private int unfinishedGoals;
-    private List<Long> runTimes;
+    //    private List<Long> runTimes;
+    private byte[] memoryHog;
     
     <R extends Result> GoalState lookupGoalState(Goal<R> goal) {
         GoalState state = activeGoalStates.get(goal);
@@ -375,30 +391,61 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     @SuppressWarnings("unchecked")
     public <R extends Result> R evaluate(Goal<R> goal, int timeoutMillis) {
-        queue.clear();
-        totalGoals = 0;
-        unfinishedGoals = 0;
-        activeGoalStates.clear();
-        toBeDone.clear();
-        leaves.clear();
-        Result cachedResult = lookupResultInCache(goal, null);
-        if (cachedResult != null) {
-            stats.cacheHit(goal);
-            return (R) cachedResult;
+        long start = System.currentTimeMillis();
+        try {
+            queue.clear();
+            totalGoals = 0;
+            unfinishedGoals = 0;
+            activeGoalStates.clear();
+            toBeDone.clear();
+            leaves.clear();
+            Result cachedResult = lookupResultInCache(goal, null);
+            if (cachedResult != null) {
+                stats.cacheHit(goal);
+                ++cachedRootGoalCount;
+                timeSpentInEvaluateCached += System.currentTimeMillis() - start;
+                return (R) cachedResult;
+            }
+            GoalState state = lookupGoalState(goal);
+            executeQueue(timeoutMillis);
+            
+            if (unfinishedGoals > 0)
+                throw new SomeGoalsNotFinalized().add("unfinished_goals", unfinishedGoals).add("root_goal",
+                        goal);
+            return (R) state.slot.result();
+        } finally {
+            long duration = System.currentTimeMillis() - start;
+            timeSpentInEvaluate += duration;
+            rootGoalCount++;
+            //            System.out.println(rootGoalCount + " root goals, executeQueue() " + timeSpentInExecuteQueue
+            //                    + ", run() " + timeSpentInRun + ", evaluate() " + timeSpentInEvaluate
+            //                    + " including cached " + timeSpentInEvaluateCached + " (in " + cachedRootGoalCount
+            //                    + " cached root goals)");
         }
-        GoalState state = lookupGoalState(goal);
-        executeQueue(timeoutMillis);
-        if (unfinishedGoals > 0)
-            throw new SomeGoalsNotFinalized().add("unfinished_goals", unfinishedGoals).add("root_goal", goal);
-        return (R) state.slot.result();
     }
     
+    public long timeSpentInExecuteQueue = 0, timeSpentInRun = 0, timeSpentInEvaluate = 0,
+            timeSpentInEvaluateCached = 0;
+    public int rootGoalCount = 0, cachedRootGoalCount = 0;
+    
     public void executeQueue(int timeoutMillis) {
+        if (memoryHog == null)
+            memoryHog = new byte[64 * 1024]; // 64K should be enough for everyone
+        memoryHog[0] = 42;
         long start = System.currentTimeMillis();
         long fin = (timeoutMillis <= 0 ? -1 : System.currentTimeMillis() + timeoutMillis);
         GoalState current;
         while ((current = queue.poll()) != null) {
-            //            System.out.println("RUNNING " + current);
+            // //           System.out.println("RUNNING " + current);
+            long freeMemory = computeFreeMemory();
+            if (freeMemory < 20 * 1024 * 1024) {
+                Runtime.getRuntime().gc();
+                freeMemory = computeFreeMemory();
+                if (freeMemory < 40 * 1024 * 1024) {
+                    timeLimitReached();
+                    break;
+                }
+            }
             try {
                 current.run();
             } catch (RuntimeException e) {
@@ -407,15 +454,32 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             } catch (AssertionError e) {
                 Bugs.bug(new GoalEvaluationFailed(e, current.goal));
                 current.setPruned();
+            } catch (OutOfMemoryError e) {
+                memoryHog = null;
+                Runtime.getRuntime().gc();
+                Bugs.bug(e);
+                timeLimitReached();
+                break;
             }
             if (fin > 0 && System.currentTimeMillis() > fin) {
                 timeLimitReached();
                 break;
             }
         }
+        memoryHog = null;
         long duration = System.currentTimeMillis() - start;
-        if (runTimes != null)
-            runTimes.add(duration);
+        timeSpentInExecuteQueue += duration;
+        //        if (runTimes != null)
+        //            runTimes.add(duration);
+    }
+    
+    private long computeFreeMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        long maxMemory = runtime.maxMemory();
+        long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+        long potentiallyFreeMemory = (maxMemory == Long.MAX_VALUE ? runtime.freeMemory() : maxMemory
+                - usedMemory);
+        return potentiallyFreeMemory;
     }
     
     private void timeLimitReached() {
@@ -473,7 +537,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     }
     
     public void setRunStatisticsTarget(List<Long> runTimes) {
-        this.runTimes = runTimes;
+        //        this.runTimes = runTimes;
     }
     
 }
