@@ -31,14 +31,13 @@ import com.yoursway.utils.bugs.Bugs;
  */
 public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
-    private static final boolean TRACING_GOALS = false;
+    protected static final boolean TRACING_GOALS = false;
     
     //    Boolean.valueOf(Platform
     //            .getDebugOption("com.yoursway.sadr.engine/traceGoals"));
     
     protected void trace(String msg) {
-        if (TRACING_GOALS)
-            System.out.println(msg);
+        System.out.println(msg);
     }
     
     static final class GoalContinuationContractViolation extends RuntimeException {
@@ -104,13 +103,11 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         
         public final SlotImpl<? extends Result> slot;
         
-        private long duration = 0;
-        
-        private int runs = 0;
-        
         private int totalSubgoals = 0;
         
         private int visitationMark = 0;
+        
+        private boolean finished = false;
         
         protected boolean pruned = false;
         
@@ -121,7 +118,8 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             this.goal = goal;
             ++totalGoals;
             ++unfinishedGoals;
-            trace("queue.enqueue(): " + goal);
+            if (TRACING_GOALS)
+                trace("queue.enqueue(): " + goal);
             slot = new SlotImpl<R>();
             start(AnalysisEngine.this.executor);
         }
@@ -152,12 +150,6 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
                 else
                     throw new AssertionError("Invalid value of the internal subgoal count");
             subgoalCount = ADDING_SUBGOALS;
-        }
-        
-        public void executionFinished(long duration) {
-            ++evalCount;
-            ++runs;
-            this.duration += duration;
         }
         
         /**
@@ -198,12 +190,18 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         }
         
         protected void goalFinished() {
-            trace("goalFinished(): " + goal);
+            if (finished)
+                throw new IllegalStateException("Goal is already finished: " + goal);
+            finished = true;
+            if (TRACING_GOALS)
+                trace("goalFinished(): " + goal);
             --unfinishedGoals;
-            activeGoalStates.remove(goal);
+            GoalState removed = activeGoalStates.remove(goal);
+            if (removed != this)
+                throw new AssertionError("Goal state is too old for those newy-deletey things");
             for (GoalState parent : parentStates)
                 parent.subgoalFinished(this);
-            stats.finishedGoal(goal, runs, duration);
+            stats.finishedGoal(goal);
         }
         
         void subgoalAdded(GoalState state) {
@@ -254,9 +252,11 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         
         @Override
         public void run() {
+            if (finished)
+                throw new IllegalArgumentException("Goal is already finished: " + goal);
             long start = System.currentTimeMillis();
             try {
-                super.run();
+                super.run(); // calls goalFinished when absofuckinglutely done
                 if (pauseReason instanceof TaskDoneReason) {
                     Object exitobj = ((TaskDoneReason) pauseReason).exitObj;
                     if (exitobj instanceof Error)
@@ -265,10 +265,9 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
                         throw (RuntimeException) exitobj;
                 }
             } finally {
-                long end = System.currentTimeMillis();
-                long duration = end - start;
-                executionFinished(duration);
-                timeSpentInRun += duration;
+                long d = System.currentTimeMillis() - start;
+                ++evalCount;
+                stats.finishedRun(goal, d);
             }
         }
         
@@ -302,15 +301,15 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         <R extends Result> Slot<R> subgoal(Goal<R> goal) {
             Result cachedResult = lookupResultInCache(goal, this);
             if (cachedResult != null) {
-                trace("cacheHit() for subgoal: " + goal);
+                if (TRACING_GOALS)
+                    trace("cacheHit() for subgoal: " + goal);
                 stats.cacheHit(goal);
                 return new SlotImpl<R>((R) cachedResult);
             }
             GoalState state = activeGoalStates.get(goal);
-            if (state == null) {
-                state = createGoalState(goal);
-                activeGoalStates.put(goal, state);
-            } else {
+            if (state == null)
+                state = createAndPutGoalState(goal);
+            else {
                 long start = System.currentTimeMillis();
                 if (findGoalStateByGoal(goal) != null) {
                     stats.recursiveGoal(goal);
@@ -356,10 +355,14 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     <R extends Result> GoalState lookupGoalState(Goal<R> goal) {
         GoalState state = activeGoalStates.get(goal);
-        if (state == null) {
-            state = createGoalState(goal);
-            activeGoalStates.put(goal, state);
-        }
+        if (state == null)
+            state = createAndPutGoalState(goal);
+        return state;
+    }
+    
+    protected <R extends Result> GoalState createAndPutGoalState(Goal<R> goal) {
+        GoalState state = createGoalState(goal);
+        activeGoalStates.put(goal, state);
         return state;
     }
     
@@ -395,6 +398,8 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         try {
             queue.clear();
             totalGoals = 0;
+            if (unfinishedGoals > 0)
+                System.err.println("unfinishedGoals was > 0");
             unfinishedGoals = 0;
             activeGoalStates.clear();
             toBeDone.clear();
@@ -402,8 +407,7 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             Result cachedResult = lookupResultInCache(goal, null);
             if (cachedResult != null) {
                 stats.cacheHit(goal);
-                ++cachedRootGoalCount;
-                timeSpentInEvaluateCached += System.currentTimeMillis() - start;
+                stats.rootGoalDone(System.currentTimeMillis() - start);
                 return (R) cachedResult;
             }
             GoalState state = lookupGoalState(goal);
@@ -412,21 +416,17 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             if (unfinishedGoals > 0)
                 throw new SomeGoalsNotFinalized().add("unfinished_goals", unfinishedGoals).add("root_goal",
                         goal);
+            else if (unfinishedGoals < 0)
+                throw new AssertionError("FUCK FUCK FUCK");
             return (R) state.slot.result();
         } finally {
-            long duration = System.currentTimeMillis() - start;
-            timeSpentInEvaluate += duration;
-            rootGoalCount++;
+            stats.rootGoalDone(System.currentTimeMillis() - start);
             //            System.out.println(rootGoalCount + " root goals, executeQueue() " + timeSpentInExecuteQueue
             //                    + ", run() " + timeSpentInRun + ", evaluate() " + timeSpentInEvaluate
             //                    + " including cached " + timeSpentInEvaluateCached + " (in " + cachedRootGoalCount
             //                    + " cached root goals)");
         }
     }
-    
-    public long timeSpentInExecuteQueue = 0, timeSpentInRun = 0, timeSpentInEvaluate = 0,
-            timeSpentInEvaluateCached = 0;
-    public int rootGoalCount = 0, cachedRootGoalCount = 0;
     
     public void executeQueue(int timeoutMillis) {
         if (memoryHog == null)
@@ -435,15 +435,19 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
         long start = System.currentTimeMillis();
         long fin = (timeoutMillis <= 0 ? -1 : System.currentTimeMillis() + timeoutMillis);
         GoalState current;
+        int loopNo = 0;
         while ((current = queue.poll()) != null) {
-            // //           System.out.println("RUNNING " + current);
-            long freeMemory = computeFreeMemory();
-            if (freeMemory < 20 * 1024 * 1024) {
-                Runtime.getRuntime().gc();
-                freeMemory = computeFreeMemory();
-                if (freeMemory < 40 * 1024 * 1024) {
-                    timeLimitReached();
-                    break;
+            //           System.out.println("RUNNING " + current);
+            if (loopNo++ == 50) {
+                loopNo = 0;
+                long freeMemory = computeFreeMemory();
+                if (freeMemory < 20 * 1024 * 1024) {
+                    Runtime.getRuntime().gc();
+                    freeMemory = computeFreeMemory();
+                    if (freeMemory < 40 * 1024 * 1024) {
+                        timeLimitReached();
+                        break;
+                    }
                 }
             }
             try {
@@ -466,9 +470,11 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
                 break;
             }
         }
-        memoryHog = null;
-        long duration = System.currentTimeMillis() - start;
-        timeSpentInExecuteQueue += duration;
+        if (unfinishedGoals > 0)
+            System.err.println("ACHTUNG UNFINISHED GOALS ATTACK!!!!!");
+        else if (unfinishedGoals < 0)
+            System.err.println("FUCK FUCK FUCK");
+        stats.queueRunDone(System.currentTimeMillis() - start);
         //        if (runTimes != null)
         //            runTimes.add(duration);
     }

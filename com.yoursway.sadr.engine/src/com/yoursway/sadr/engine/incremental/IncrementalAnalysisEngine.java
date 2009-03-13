@@ -178,7 +178,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         
         @Override
         public void run() {
-            broadcaster.fire().goalExecutionStarting(goal);
+            //            broadcaster.fire().goalExecutionStarting(goal);
             try {
                 super.run();
             } finally {
@@ -342,15 +342,15 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
             throw new NullPointerException("goal is null");
         if (data == null)
             throw new NullPointerException("data is null");
-        trace("IncrementalAnalysisEngine.enqueueRecursiveRecalculation(" + goal + ")");
+        if (TRACING_GOALS)
+            trace("IncrementalAnalysisEngine.enqueueRecursiveRecalculation(" + goal + ")");
         
         if (data.incrementRecursiveAttempts() > MAX_RECURSIVE_ATTEMPS)
             return;
         GoalState state = activeGoalStates.get(goal);
-        if (state == null) {
-            state = createGoalState(goal);
-            activeGoalStates.put(goal, state);
-        } else {
+        if (state == null)
+            state = createAndPutGoalState(goal);
+        else {
             ((IncrementalGoalState) state)
                     .setNeedsToBeCalculatedAgainUponFinishingBecauseRecursiveDepsHaveChanged();
         }

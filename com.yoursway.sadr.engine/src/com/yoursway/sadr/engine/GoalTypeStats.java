@@ -14,13 +14,16 @@ public class GoalTypeStats {
     
     public long duration;
     
-    public void finishedGoal(Goal<?> goal, int runs, long goalDuration) {
+    public void finishedGoal(Goal<?> goal) {
         if (name == null)
             name = goal.getClass().getSimpleName();
-        queries += runs;
-        duration += goalDuration;
         misses++;
         total++;
+    }
+    
+    public void finishedRun(Goal<?> goal, long goalDuration) {
+        queries += 1;
+        duration += goalDuration;
     }
     
     public void cacheHit() {
