@@ -2,6 +2,8 @@ package com.yoursway.sadr.python.index.unodes;
 
 import static java.lang.String.format;
 
+import com.yoursway.sadr.python.index.punodes.Punode;
+
 public class VariableUnode extends Unode {
     
     private final String name;
@@ -39,6 +41,11 @@ public class VariableUnode extends Unode {
         } else if (!name.equals(other.name))
             return false;
         return true;
+    }
+    
+    @Override
+    public Punode punodize() {
+        return null;
     }
     
 }

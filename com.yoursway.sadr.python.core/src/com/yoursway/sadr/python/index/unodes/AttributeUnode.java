@@ -2,6 +2,10 @@ package com.yoursway.sadr.python.index.unodes;
 
 import static java.lang.String.format;
 
+import com.yoursway.sadr.python.index.punodes.AttributePunode;
+import com.yoursway.sadr.python.index.punodes.HeadPunode;
+import com.yoursway.sadr.python.index.punodes.Punode;
+
 public class AttributeUnode extends Unode {
     
     private final Unode receiver;
@@ -53,4 +57,8 @@ public class AttributeUnode extends Unode {
         return true;
     }
     
+    @Override
+    public Punode punodize() {
+        return new AttributePunode(new HeadPunode(receiver), name);
+    }
 }

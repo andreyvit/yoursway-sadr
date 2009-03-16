@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.index.unodes;
 
+import com.yoursway.sadr.python.index.punodes.Punode;
+
 public abstract class Unode {
     
     protected int hashCode;
@@ -19,5 +21,7 @@ public abstract class Unode {
     public final int hashCode() {
         return hashCode;
     }
+    
+    public abstract Punode punodize();
     
 }
