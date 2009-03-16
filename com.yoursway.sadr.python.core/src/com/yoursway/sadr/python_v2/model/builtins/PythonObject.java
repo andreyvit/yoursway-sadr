@@ -41,8 +41,8 @@ public abstract class PythonObject extends AbstractValue {
         this.decl = decl;
     }
     
-    public PythonObject getScopedAttribute(String name) {
-        return this.getType().getScopedAttribute(name);
+    public PythonObject getBuiltinAttribute(String name) {
+        return this.getType().getBuiltinAttribute(name);
     }
     
     public String name() {

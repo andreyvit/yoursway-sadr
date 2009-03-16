@@ -19,10 +19,18 @@ import com.yoursway.sadr.python_v2.model.builtins.values.InstanceValue;
 
 public class CreateInstanceGoal extends ContextSensitiveGoal {
     private final ClassDeclarationC classDeclarationC;
+    private final InstanceType instanceType;
     
     public CreateInstanceGoal(ClassDeclarationC classDecl, RuntimeArguments args, Krocodile context) {
         super(context);
         this.classDeclarationC = classDecl;
+        this.instanceType = null;
+    }
+    
+    public CreateInstanceGoal(InstanceType type, RuntimeArguments args, Krocodile context) {
+        super(context);
+        this.classDeclarationC = type.getDecl();
+        this.instanceType = type;
     }
     
     @Override

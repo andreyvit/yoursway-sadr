@@ -42,6 +42,9 @@ public class ReflectedFunctionObject extends BuiltinFunctionObject {
             if (e instanceof PythonException) {
                 throw (PythonException) e;
             }
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
             if (e.getCause() != null && e.getCause() instanceof RuntimeException)
                 throw (RuntimeException) e.getCause();
             e.printStackTrace();

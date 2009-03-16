@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.model.builtins.values;
 
 import java.math.BigInteger;
 
+import com.yoursway.sadr.python_v2.model.builtins.types.BooleanType;
 import com.yoursway.sadr.python_v2.model.builtins.types.LongType;
 import com.yoursway.sadr.python_v2.model.builtins.types.PythonType;
 
@@ -125,12 +126,12 @@ public class LongValue extends NumericValue {
     
     @Override
     public NumericValue lt(NumericValue rhs) {
-        return BooleanValue.instance(value.compareTo(rhs.coerceToLong()) < 0);
+        return BooleanType.wrap((value.compareTo(rhs.coerceToLong()) < 0));
     }
     
     @Override
     public NumericValue eq(NumericValue rhs) {
-        return BooleanValue.instance(value.compareTo(rhs.coerceToLong()) == 0);
+        return BooleanType.wrap((value.compareTo(rhs.coerceToLong()) == 0));
     }
     
 }

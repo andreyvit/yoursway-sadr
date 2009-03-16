@@ -45,8 +45,7 @@ public class BooleanType extends NumericType {
             methods = CallResolver.findMethod(pvalue, "__len__", crocodile);
         }
         if (methods.isEmpty()) {
-            boolean bool = !pvalue.equals(NoneValue.instance);
-            return new PythonValueSet(bool, crocodile);
+            return new PythonValueSet((!NoneValue.instance.equals(pvalue)), crocodile);
         }
         PythonValueSet results = new PythonValueSet();
         for (PythonObject method : methods) {
@@ -79,14 +78,10 @@ public class BooleanType extends NumericType {
                 } catch (TypeError e) {
                     return PythonValueSet.EMPTY;
                 }
-                if (val instanceof BooleanType) {
-                    return new PythonValueSet(BooleanValue.instance_false, crocodile);
-                } else if (val instanceof NumericValue) {
-                    boolean bool = ((NumericValue) val).coerceToBool();
-                    return new PythonValueSet(BooleanValue.instance(bool), crocodile);
+                if (val instanceof NumericValue) {
+                    return new PythonValueSet(((NumericValue) val).coerceToBool(), crocodile);
                 } else if (val instanceof PythonValue) {
-                    PythonValue pvalue = (PythonValue) val;
-                    return bool(crocodile, pvalue);
+                    return bool(crocodile, (PythonValue) val);
                 }
                 
                 return PythonValueSet.EMPTY;
@@ -97,7 +92,7 @@ public class BooleanType extends NumericType {
     public static BooleanType instance = new BooleanType();
     
     public static BooleanValue wrap(BooleanLiteralC literal) {
-        return BooleanValue.instance(literal.getValue());
+        return wrap(literal.getValue());
     }
     
     public static BooleanValue wrap(boolean value) {

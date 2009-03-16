@@ -25,7 +25,7 @@ public class BaseStringType extends BuiltinType {
     public static List<StringValue> coerce(int size, RuntimeArguments args) throws PythonException {
         List<PythonObject> values = args.readArgs(size);
         for (BaseStringType type : types) {
-            if (hasType(values, type)) {
+            if (type.hasType(values)) {
                 List<StringValue> output = new ArrayList<StringValue>(values.size());
                 for (PythonObject value : values) {
                     output.add(type.coerce(value));

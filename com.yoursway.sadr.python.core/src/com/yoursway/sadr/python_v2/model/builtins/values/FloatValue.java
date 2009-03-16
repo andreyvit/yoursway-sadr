@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 
+import com.yoursway.sadr.python_v2.model.builtins.types.BooleanType;
 import com.yoursway.sadr.python_v2.model.builtins.types.FloatType;
 import com.yoursway.sadr.python_v2.model.builtins.types.PythonType;
 
@@ -114,12 +115,12 @@ public class FloatValue extends NumericValue {
     
     @Override
     public BooleanValue lt(NumericValue rhs) {
-        return BooleanValue.instance(value < rhs.coerceToFloat());
+        return BooleanType.wrap((value < rhs.coerceToFloat()));
     }
     
     @Override
     public BooleanValue eq(NumericValue rhs) {
-        return BooleanValue.instance(value == rhs.coerceToFloat());
+        return BooleanType.wrap((value == rhs.coerceToFloat()));
     }
     
 }

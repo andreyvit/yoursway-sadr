@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.model.builtins.values;
 
 import java.math.BigInteger;
 
+import com.yoursway.sadr.python_v2.model.builtins.types.BooleanType;
 import com.yoursway.sadr.python_v2.model.builtins.types.IntegerType;
 import com.yoursway.sadr.python_v2.model.builtins.types.PythonType;
 
@@ -134,12 +135,12 @@ public class IntegerValue extends NumericValue {
     
     @Override
     public NumericValue lt(NumericValue rhs) {
-        return BooleanValue.instance(this.coerceToInt() < rhs.coerceToInt());
+        return BooleanType.wrap((this.coerceToInt() < rhs.coerceToInt()));
     }
     
     @Override
     public NumericValue eq(NumericValue rhs) {
-        return BooleanValue.instance(this.coerceToInt() == rhs.coerceToInt());
+        return BooleanType.wrap((this.coerceToInt() == rhs.coerceToInt()));
     }
     
 }

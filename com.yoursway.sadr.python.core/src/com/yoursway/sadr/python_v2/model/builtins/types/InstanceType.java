@@ -34,8 +34,7 @@ public class InstanceType extends PythonType implements CallableObject {
     }
     
     public PythonValueSet call(Krocodile crocodile, RuntimeArguments args) {
-        ClassDeclarationC decl = getDecl();
-        return new CreateInstanceGoal(decl, args, crocodile).evaluate();
+        return new CreateInstanceGoal(this, args, crocodile).evaluate();
     }
     
     @Override

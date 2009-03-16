@@ -18,12 +18,12 @@ public class BuiltinType extends PythonType {
         for (Method method : methods) {
             String name = method.getName();
             Class<?>[] params = method.getParameterTypes();
-            if (params.length == 1 && params[0].equals(RuntimeArguments.class)
-                    && PythonObject.class.isAssignableFrom(method.getReturnType())) {
+            boolean returnOk = PythonObject.class.isAssignableFrom(method.getReturnType());
+            if (returnOk && params.length == 1 && params[0].equals(RuntimeArguments.class)) {
                 setAttribute(new ReflectedFunctionObject(this, name, method));
             } else if (name.startsWith("__") && name.endsWith("__")) {
-                throw new IllegalStateException("Method " + name + " of class " + this.getClass()
-                        + " has wrong arguments");
+                String mesg = "Method " + name + " of class " + this.getClass() + " has wrong arguments";
+                throw new IllegalStateException(mesg);
                 
             }
         }
@@ -37,19 +37,18 @@ public class BuiltinType extends PythonType {
     
     public void setAttribute(String name, PythonObject object) {
         if (null == name || null == object) {
-            throw new IllegalArgumentException("setAttribute failed for class"
-                    + this.getClass().getSimpleName());
+            throw new IllegalArgumentException("setAttribute failed for class" + getClass().getSimpleName());
         }
         attributes.put(name, object);
     }
     
     @Override
-    public PythonObject getScopedAttribute(String name) {
+    public PythonObject getBuiltinAttribute(String name) {
         if (attributes.containsKey(name))
             return attributes.get(name);
         else {
             for (PythonType cls : getSuperClasses()) {
-                PythonObject object = cls.getScopedAttribute(name);
+                PythonObject object = cls.getBuiltinAttribute(name);
                 if (object != null)
                     return object;
             }

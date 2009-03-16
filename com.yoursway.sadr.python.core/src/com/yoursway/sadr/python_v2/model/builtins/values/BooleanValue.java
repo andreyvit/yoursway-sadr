@@ -71,20 +71,16 @@ public class BooleanValue extends IntegerValue {
     
     @Override
     public NumericValue and(NumericValue rhs) {
-        return instance(this.coerceToBool() & rhs.coerceToBool());
+        return BooleanType.wrap((this.coerceToBool() & rhs.coerceToBool()));
     }
     
     @Override
     public NumericValue or(NumericValue rhs) {
-        return instance(this.coerceToBool() | rhs.coerceToBool());
+        return BooleanType.wrap((this.coerceToBool() | rhs.coerceToBool()));
     }
     
     @Override
     public NumericValue xor(NumericValue rhs) {
-        return instance(this.coerceToBool() ^ rhs.coerceToBool());
-    }
-    
-    public static BooleanValue instance(boolean b) {
-        return b ? instance_true : instance_false;
+        return BooleanType.wrap((this.coerceToBool() ^ rhs.coerceToBool()));
     }
 }

@@ -128,24 +128,19 @@ public class NumericType extends BuiltinType {
     public NumericValue coerce(PythonObject val) throws PythonException {
         if (val instanceof NumericValue)
             return (NumericValue) val;
-        throw new PythonException();
+        throw new CoersionFailed();
     }
     
     static List<NumericType> getTypes() {
+        //FIXME: move back to static singleton
         return immutableList(ComplexType.instance, FloatType.instance, LongType.instance,
                 IntegerType.instance);
-    }
-    
-    public static NumericValue coerce1(PythonObject val) throws PythonException {
-        if (val instanceof NumericValue)
-            return (NumericValue) val;
-        throw new CoersionFailed();
     }
     
     public static List<NumericValue> coerce(int size, RuntimeArguments args) throws PythonException {
         List<PythonObject> values = args.readArgs(size);
         for (NumericType type : getTypes()) {
-            if (hasType(values, type)) {
+            if (type.hasType(values)) {
                 List<NumericValue> output = new ArrayList<NumericValue>();
                 for (PythonObject value : values) {
                     output.add(type.coerce(value));

@@ -21,14 +21,17 @@ import com.yoursway.sadr.python_v2.model.builtins.types.PythonType;
 
 public class FunctionObject extends PythonObject implements CallableObject {
     private final String name;
+    private final PythonObject object;
     
-    public FunctionObject(CallableDeclaration decl) {
+    public FunctionObject(CallableDeclaration decl, PythonObject object) {
         super(decl);
+        this.object = object; // 
         this.name = decl.name();
     }
     
-    public FunctionObject(String name) {
+    public FunctionObject(String name, PythonObject object) { // unbound
         super(null);
+        this.object = object;
         this.name = name;
     }
     
