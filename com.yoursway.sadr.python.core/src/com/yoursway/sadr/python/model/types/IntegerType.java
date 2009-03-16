@@ -2,7 +2,6 @@ package com.yoursway.sadr.python.model.types;
 
 import com.yoursway.sadr.python.constructs.IntegerLiteralC;
 import com.yoursway.sadr.python.model.CallResolver;
-import com.yoursway.sadr.python.model.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.model.values.IntegerValue;
 import com.yoursway.sadr.python.model.values.LongValue;
 import com.yoursway.sadr.python.model.values.NumericValue;
@@ -15,29 +14,29 @@ import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 public class IntegerType extends NumericType {
     public IntegerType() {
-        setAttribute(new BuiltinFunctionObject("__call__") {
-            @Override
-            public PythonValueSet call(PythonDynamicContext crocodile, RuntimeArguments args) {
-                PythonValue val;
-                try {
-                    val = args.readSingle();
-                } catch (TypeError e) {
-                    return PythonValueSet.EMPTY;
-                }
-                if (val instanceof BooleanType) {
-                    return new PythonValueSet(false, crocodile);
-                } else if (val instanceof NumericValue) {
-                    boolean bool = ((NumericValue) val).coerceToBool();
-                    return new PythonValueSet(bool, crocodile);
-                } else if (val instanceof StringValue) {
-                    StringValue stringValue = (StringValue) val;
-                    return new PythonValueSet(wrap(stringValue.coerceToInt()), crocodile);
-                } else {
-                    PythonValue pvalue = val;
-                    return _int(crocodile, pvalue);
-                }
-            }
-        });
+        //        setAttribute(new BuiltinFunctionObject("__call__") {
+        //            @Override
+        //            public PythonValueSet call(PythonDynamicContext crocodile, RuntimeArguments args) {
+        //                PythonValue val;
+        //                try {
+        //                    val = args.readSingle();
+        //                } catch (TypeError e) {
+        //                    return PythonValueSet.EMPTY;
+        //                }
+        //                if (val instanceof BooleanType) {
+        //                    return new PythonValueSet(false, crocodile);
+        //                } else if (val instanceof NumericValue) {
+        //                    boolean bool = ((NumericValue) val).coerceToBool();
+        //                    return new PythonValueSet(bool, crocodile);
+        //                } else if (val instanceof StringValue) {
+        //                    StringValue stringValue = (StringValue) val;
+        //                    return new PythonValueSet(wrap(stringValue.coerceToInt()), crocodile);
+        //                } else {
+        //                    PythonValue pvalue = val;
+        //                    return _int(crocodile, pvalue);
+        //                }
+        //            }
+        //        });
     }
     
     protected PythonValueSet _int(PythonDynamicContext crocodile, PythonValue pvalue) {

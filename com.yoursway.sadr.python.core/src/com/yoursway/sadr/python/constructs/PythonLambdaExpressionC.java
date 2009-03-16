@@ -2,6 +2,8 @@ package com.yoursway.sadr.python.constructs;
 
 import java.util.List;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
@@ -40,6 +42,7 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
         return null;
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new UnsupportedOperationException();
     }

@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
@@ -72,10 +74,17 @@ public class ProjectRuntime {
             ModuleDeclaration moduleDecl = parser.parse(moduleName.toCharArray(), module
                     .getSourceAsCharArray(), null);
             
-            PythonFileC moduleObject = new PythonFileC(null, moduleDecl, moduleName, module, this);
+            final PythonFileC moduleObject = new PythonFileC(moduleDecl, moduleName, module, this);
             //FIXME convert module names to python code form (e.g. "package.module").
             nameToModule.put(module.getFile().getCanonicalFile(), moduleObject);
-            indexManager.addToIndex(moduleObject);
+            engine.evaluate(new AbstractGenericGoal() {
+                
+                @pausable
+                public GenericResult evaluate() {
+                    indexManager.addToIndex(moduleObject);
+                    return new GenericResult();
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getCause() != null) {

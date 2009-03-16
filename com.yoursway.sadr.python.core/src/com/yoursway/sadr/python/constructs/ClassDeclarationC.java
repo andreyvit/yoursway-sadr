@@ -3,6 +3,8 @@ package com.yoursway.sadr.python.constructs;
 import java.util.Collections;
 import java.util.List;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
@@ -73,6 +75,7 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
         throw new NotImplementedException();
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new VoidConstructException(this);
     }

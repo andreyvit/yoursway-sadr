@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -31,6 +33,7 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
     //        return results;
     //    }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new UnsupportedOperationException();
     }

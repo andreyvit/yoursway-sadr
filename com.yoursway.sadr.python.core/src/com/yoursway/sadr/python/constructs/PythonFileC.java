@@ -2,6 +2,8 @@ package com.yoursway.sadr.python.constructs;
 
 import java.util.List;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -18,9 +20,9 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements P
     private final FileSourceUnit module;
     private final List<PythonConstruct> body;
     
-    public PythonFileC(PythonStaticContext sc, ModuleDeclaration node, String name, FileSourceUnit module,
+    public PythonFileC(ModuleDeclaration node, String name, FileSourceUnit module,
             ProjectRuntime projectRuntime) {
-        super(sc, node, null);
+        super(null, node, null);
         this.moduleName = name;
         this.module = module;
         this.projectRuntime = projectRuntime;
@@ -56,6 +58,7 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements P
         return this;
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new UnsupportedOperationException();
     }

@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
@@ -32,6 +34,7 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
         return init;
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new UnsupportedOperationException();
     }

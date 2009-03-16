@@ -2,6 +2,8 @@ package com.yoursway.sadr.python.constructs;
 
 import java.util.List;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -45,6 +47,7 @@ public class IfC extends PythonConstructImpl<IfStatement> {
         }
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new VoidConstructException(this);
     }

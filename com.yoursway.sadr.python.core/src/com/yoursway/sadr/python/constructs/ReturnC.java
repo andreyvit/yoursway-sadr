@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -19,6 +21,7 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> {
         return expression;
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new VoidConstructException(this);
     }

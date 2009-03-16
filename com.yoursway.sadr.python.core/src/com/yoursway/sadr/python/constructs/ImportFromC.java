@@ -3,6 +3,8 @@ package com.yoursway.sadr.python.constructs;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.python.parser.ast.PythonImportFromStatement;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -34,6 +36,7 @@ public class ImportFromC extends ImportC<PythonImportFromStatement> {
     }
     
     @Override
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new VoidConstructException(this);
     }

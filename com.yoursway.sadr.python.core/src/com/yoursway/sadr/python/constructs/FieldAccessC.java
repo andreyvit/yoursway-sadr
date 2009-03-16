@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -25,6 +27,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
         return variable;
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         // TODO
         return null;

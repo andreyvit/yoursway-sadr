@@ -22,6 +22,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     private ControlFlowGraph<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> effectiveControlFlowGraph;
     
     public PythonConstructImpl(PythonStaticContext sc, N node, PythonConstructImpl<?> parent) {
+        if (sc == null)
+            sc = (PythonStaticContext) this;
+        if (node == null)
+            throw new NullPointerException("node is null");
         this.parentScope = sc;
         this.node = node;
         if (parent != null)

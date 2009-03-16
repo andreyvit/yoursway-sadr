@@ -20,7 +20,8 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        throw new UnsupportedOperationException();
+        //        return new PythonValueSet(new IntegerValue(4242), dc);
+        return PythonValueSet.EMPTY;
     }
     
 }

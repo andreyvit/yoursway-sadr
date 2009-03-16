@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -14,6 +16,7 @@ public class PythonTupleExpressionC extends PythonConstructImpl<PythonTupleExpre
         super(sc, node, parent);
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new UnsupportedOperationException();
     }

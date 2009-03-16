@@ -2,6 +2,8 @@ package com.yoursway.sadr.python.constructs;
 
 import java.util.HashMap;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -65,6 +67,7 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
         imports.put(alias, value);
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new VoidConstructException(this);
     }

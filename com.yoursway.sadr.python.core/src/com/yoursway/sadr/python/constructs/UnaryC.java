@@ -2,6 +2,9 @@ package com.yoursway.sadr.python.constructs;
 
 import java.util.HashMap;
 
+import kilim.pausable;
+
+import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 
@@ -13,6 +16,7 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     
     protected static HashMap<Integer, String> opnames = new HashMap<Integer, String>();
     protected static HashMap<String, String> oplist = new HashMap<String, String>();
+    private final PythonConstruct argument;
     static {
         addOp(Expression.E_LNOT, "not ", "__not__");
         addOp(Expression.E_BNOT, "~", "__invert__");
@@ -35,8 +39,11 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
         if (node.getChilds().size() != 1) {
             throw new IllegalArgumentException();
         }
+        argument = wrap((ASTNode) node.getChilds().get(0), sc);
+        argument.hashCode();
     }
     
+    @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         return PythonValueSet.EMPTY;
     }
