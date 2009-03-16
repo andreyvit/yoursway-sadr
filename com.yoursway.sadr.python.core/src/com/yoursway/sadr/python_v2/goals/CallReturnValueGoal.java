@@ -3,64 +3,53 @@ package com.yoursway.sadr.python_v2.goals;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python_v2.constructs.IfC;
 import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.ReturnC;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.builtins.Builtins;
-import com.yoursway.sadr.succeeder.IGrade;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.succeeder.Goal;
 
-public class CallReturnValueGoal extends ContextSensitiveGoal {
+public class CallReturnValueGoal extends Goal<PythonValueSet> {
     
     private final MethodDeclarationC methodDecl;
-    private final PythonValueSetAcceptor acceptor;
+    private PythonValueSet acceptor;
+    private final Krocodile crocodile;
     
-    public CallReturnValueGoal(MethodDeclarationC methodDecl, Krocodile context, PythonValueSetAcceptor acceptor) {
-        super(context);
+    public CallReturnValueGoal(MethodDeclarationC methodDecl, final Krocodile arguments) {
         this.methodDecl = methodDecl;
-        this.acceptor = acceptor;
+        this.crocodile = arguments;
     }
     
-    public CallReturnValueGoal(MethodDeclarationC decl, final Krocodile arguments, final Krocodile parentContext,
-            final PythonValueSetAcceptor parentAcceptor) {
-        super(arguments);
-        this.methodDecl = decl;
-        this.acceptor = new PythonValueSetAcceptor() {
-            
-            @Override
-            protected <T> void acceptIndividualResult(RuntimeObject result, IGrade<T> grade) {
-                if (result == null) {
-                    result = Builtins.getNone();
-                }
-                parentAcceptor.addResult(result, parentContext);
-                updateGrade(parentAcceptor, grade);
-            }
-        };
-    }
-    
-    public void preRun() {
-        List<PythonConstruct> enclosedconstructs = methodDecl.getEnclosedConstructs();
-        List<ReturnC> returns = new LinkedList<ReturnC>();
-        for (PythonConstruct construct : enclosedconstructs) {
+    void collectReturns(List<ReturnC> returns, List<PythonConstruct> constructs) {
+        for (PythonConstruct construct : constructs) {
             if (construct instanceof ReturnC) {
-                ReturnC returnC = (ReturnC) construct;
-                returns.add(returnC);
+                returns.add((ReturnC) construct);
+            } else if (construct instanceof IfC) {
+                IfC ifC = (IfC) construct;
+                PythonValueSet choices = ifC.evaluate(crocodile);
+                for (PythonObject choice : choices) {
+                    List<PythonConstruct> branch = ifC.getBranch(choice);
+                    if (branch == null)
+                        continue;
+                    collectReturns(returns, branch);
+                }
+            } else {
+                collectReturns(returns, construct.getPostChildren());
             }
         }
-        //        ResultsCollector collector = new ResultsCollector(returns.size()) {
-        //            @Override
-        //            public <T> void completed(IGrade<T> grade) {
-        //                
-        //            }
-        //        };
+    }
+    
+    public PythonValueSet evaluate() {
+        List<ReturnC> returns = new LinkedList<ReturnC>();
+        collectReturns(returns, methodDecl.getPostChildren());
+        acceptor = new PythonValueSet();
         for (ReturnC item : returns) {
-            schedule(item.getReturnedConstruct().evaluate(getKrocodile(), acceptor));
+            acceptor.addResults(item.evaluate(crocodile));
         }
-        //        if (returns.isEmpty()) {
-        //            updateGrade(acceptor, Grade.DONE);
-        //        }
+        return acceptor;
     }
     
     @Override

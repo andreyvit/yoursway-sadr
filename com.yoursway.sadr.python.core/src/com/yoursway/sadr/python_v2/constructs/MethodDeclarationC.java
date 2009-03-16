@@ -9,22 +9,24 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
-import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.croco.PythonRecord;
-import com.yoursway.sadr.python_v2.goals.Acceptor;
-import com.yoursway.sadr.python_v2.goals.PassResultGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.CallReturnValueGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.values.FunctionObject;
 
-public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> implements PythonDeclaration {
+public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> implements PythonDeclaration,
+        CallableDeclaration {
     
-    private Map<String, PythonConstruct> inits;
+    Map<String, PythonConstruct> inits;
     private FunctionObject functionObject;
+    
+    @SuppressWarnings("unchecked")
+    public List<PythonArgument> getArguments() {
+        return node.getArguments();
+    }
     
     MethodDeclarationC(Scope sc, MethodDeclaration node) {
         super(sc, node);
@@ -59,29 +61,23 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     }
     
     @Override
-    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
+    public PythonValueSet evaluate(Krocodile context) {
         if (functionObject == null)
             functionObject = new FunctionObject(this);
-        return new PassResultGoal(context, acceptor, functionObject);
+        return new PythonValueSet(functionObject, context);
     }
     
-    //    public void actOnModel(ModelRequest request) {
-    //        PythonClassImpl klass = staticContext().currentClass();
-    //        if (klass != null) {
-    //            PythonSourceMethod method = new PythonSourceMethod(klass, request.context(), this);
-    //            innerScope = new MethodScope(nearestScope(), method, node);
-    //        } else {
-    //            PythonSourceProcedure procedure = new PythonSourceProcedure(request.context(), this);
-    //            innerScope = new ProcedureScope(nearestScope(), procedure, node);
-    //        }
-    //    }
+    public PythonValueSet call(Krocodile crocodile) {
+        CallReturnValueGoal subgoal = new CallReturnValueGoal(this, crocodile);
+        return subgoal.evaluate();
+    }
     
     @Override
     public String name() {
         return this.node.getName();
     }
     
-    public void index(Krocodile crocodile, final Acceptor acceptor) {
+    public void index(Krocodile crocodile) {
         PythonRecord record = Index.newRecord(name());
         Index.add(crocodile, this, record);
         for (Object arg : this.node.getArguments()) {
@@ -91,7 +87,6 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
                 Index.add(crocodile, this, record);
             }
         }
-        acceptor.subgoalDone(Grade.DONE);
     }
     
     public boolean match(Frog frog) {

@@ -1,14 +1,13 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import com.yoursway.sadr.python_v2.model.builtins.ModuleValue;
-import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
+import com.yoursway.sadr.python_v2.model.builtins.values.ModuleValue;
 
 public interface ImportDeclarationC extends PythonConstruct {
     boolean hasImport(String variable);
     
-    PythonConstruct resolveImport(PythonValue<ModuleValue> value, String path) throws Exception;
+    PythonConstruct resolveImport(ModuleValue value, String path) throws Exception;
     
-    PythonValue<ModuleValue> resolveAlias(String name);
+    ModuleValue resolveAlias(String name);
     
     PythonFileC resolvePath(String path);
 }

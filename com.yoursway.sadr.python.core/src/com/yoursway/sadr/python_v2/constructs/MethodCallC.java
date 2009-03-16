@@ -2,8 +2,6 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-
 @Deprecated
 public class MethodCallC extends CallC {
     
@@ -11,12 +9,12 @@ public class MethodCallC extends CallC {
     
     MethodCallC(Scope sc, PythonCallExpression node) {
         super(sc, node);
-        receiver = getPreChildren().get(RECEIVER);
+        receiver = getPreChildren().get(CALLABLE_INDEX);
     }
     
     @Override
     public String toString() {
-        return node.toString();
+        return node.getName() + "(" + node.getArgs().getChilds() + ")";
     }
     
     @Override

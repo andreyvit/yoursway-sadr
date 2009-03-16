@@ -7,38 +7,44 @@ import static com.yoursway.sadr.python_v2.constructs.PythonConstructFactory.NULL
 
 import java.util.List;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
+import com.yoursway.sadr.python_v2.model.TypeError;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
-public final class CallRedirectGoal extends ExpressionValueGoal {
-    private final PythonArguments args;
+public final class CallRedirectGoal extends ContextSensitiveGoal {
+    private final RuntimeArguments args;
     private final String methodName;
     
-    public CallRedirectGoal(Krocodile context, PythonValueSetAcceptor acceptor, PythonArguments args,
-            String methodName, PythonConstruct caller) {
-        super(context, acceptor);
+    public CallRedirectGoal(Krocodile context, RuntimeArguments args, String methodName,
+            PythonConstruct caller) {
+        super(context);
         this.args = args;
         this.methodName = methodName;
     }
     
-    public void preRun() {
-        List<RuntimeObject> posArgs = args.readPositionalArgs();
+    @Override
+    public PythonValueSet evaluate() {
+        List<PythonObject> posArgs;
+        try {
+            posArgs = args.readPositionalArgs();
+        } catch (TypeError e) {
+            throw new IllegalStateException(e);
+        }
         if (posArgs.size() == 1) {
-            schedule(CallResolver.callMethod(posArgs.get(0), methodName, new PythonArguments(), acceptor,
-                    getKrocodile(), NULL_CONSTRUCT));
+            return CallResolver.callMethod(posArgs.get(0), methodName, new RuntimeArguments(posArgs.get(0)),
+                    getKrocodile(), NULL_CONSTRUCT);
         } else if (posArgs.size() == 2) {
-            schedule(CallResolver.callMethod(posArgs.get(1), methodName, new PythonArguments(), acceptor,
-                    getKrocodile(), NULL_CONSTRUCT));
+            return CallResolver.callMethod(posArgs.get(1), methodName, new RuntimeArguments(),
+                    getKrocodile(), NULL_CONSTRUCT);
         } else
             throw new IllegalStateException("Only one or two arguments allowed!");
     }
     
     @Override
     public String describe() {
-        return "ExpressionValueGoal for function " + "len";
+        return "ContextSensitiveGoal for function " + methodName;
     }
 }

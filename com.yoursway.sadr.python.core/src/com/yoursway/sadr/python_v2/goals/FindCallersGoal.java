@@ -1,25 +1,23 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import static com.yoursway.sadr.python.Grade.DONE;
-
 import java.util.List;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.constructs.MethodCallC;
 import com.yoursway.sadr.python_v2.constructs.ProcedureCallC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonScopeImpl;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonConstructAcceptor;
+import com.yoursway.sadr.python_v2.constructs.Scope;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonConstructSet;
 import com.yoursway.sadr.succeeder.Goal;
 
-public class FindCallersGoal extends Goal {
+public class FindCallersGoal extends Goal<PythonConstructSet> {
     private final Scope parentScope;
     private final String name;
-    private final PythonConstructAcceptor acceptor;
+    private final PythonConstructSet acceptor;
     
-    public FindCallersGoal(Scope parentScope, PythonConstructAcceptor acceptor) {
+    public FindCallersGoal(Scope parentScope, PythonConstructSet acceptor) {
         this.parentScope = parentScope;
-        this.acceptor = acceptor;
+        this.acceptor = new PythonConstructSet();
         this.name = parentScope.name();
     }
     
@@ -43,9 +41,8 @@ public class FindCallersGoal extends Goal {
         }
     }
     
-    public void preRun() {
-        System.out.println(scheduler().getGoalStack(this));
+    public PythonConstructSet evaluate() {
         findInScope(this.parentScope.getFileScope());
-        updateGrade(acceptor, DONE);
+        return acceptor;
     }
 }

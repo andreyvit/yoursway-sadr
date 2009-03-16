@@ -1,29 +1,26 @@
 package com.yoursway.sadr.python_v2.goals;
 
-import com.yoursway.sadr.python.Grade;
 import com.yoursway.sadr.python_v2.constructs.ImportDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonFileC;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.model.builtins.ModuleValue;
-import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.values.ModuleValue;
 import com.yoursway.sadr.succeeder.Goal;
 
-public class ResolveModuleImportGoal extends Goal {
+public class ResolveModuleImportGoal extends Goal<PythonValueSet> {
     
-    private final PythonVariableAcceptor acceptor;
     private final Krocodile context;
-    private final PythonValue<ModuleValue> module;
+    private final ModuleValue module;
     private final ImportDeclarationC moduleImport;
-    private final PythonValue<ModuleValue> parentModule;
+    private final ModuleValue parentModule;
     private final Frog variable;
     
     // evaluates a.b where a is module and b is identifier
-    public ResolveModuleImportGoal(PythonValue<ModuleValue> module, Frog variable,
-            PythonVariableAcceptor acceptor, Krocodile context) {
+    public ResolveModuleImportGoal(ModuleValue module, Frog variable, Krocodile context) {
         this.moduleImport = (ImportDeclarationC) module.getDecl();
-        String name = module.getValue().getPath() + "." + variable.toString();
+        String name = module.getPath() + "." + variable.toString();
         this.module = moduleImport.resolveAlias(name);
         if (this.module == null) {
             this.variable = variable;
@@ -31,7 +28,6 @@ public class ResolveModuleImportGoal extends Goal {
             this.variable = null;
         }
         this.parentModule = module;
-        this.acceptor = acceptor;
         this.context = context;
     }
     
@@ -46,7 +42,6 @@ public class ResolveModuleImportGoal extends Goal {
             this.variable = null;
         }
         this.parentModule = moduleImport.resolveAlias("*");
-        this.acceptor = acceptor;
         this.context = context;
         //        if (this.module == null) {
         //            throw new IllegalArgumentException("Impossible, cause hasImport will return false");
@@ -54,28 +49,26 @@ public class ResolveModuleImportGoal extends Goal {
         
     }
     
-    public void preRun() {
+    public PythonValueSet evaluate() {
         if (this.module == null) { // not found, looking for var in parent module
-            String path = parentModule.getValue().getPath();
+            String path = parentModule.getPath();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                updateGrade(acceptor, Grade.DONE);
+                return new PythonValueSet();
             } else {
-                schedule(new ResolveNameToObjectGoal(variable, fileC, context, acceptor));
+                return new ResolveNameToObjectGoal(variable, fileC, context).evaluate();
             }
-        } else if (module.getValue().getVar() != null) { // found explicit import of var
-            String path = module.getValue().getPath();
-            String alias = module.getValue().getAlias();
+        } else if (module.getVar() != null) { // found explicit import of var
+            String path = module.getPath();
+            String alias = module.getAlias();
             PythonFileC fileC = moduleImport.resolvePath(path);
             if (fileC == null) {
-                updateGrade(acceptor, Grade.DONE);
+                return PythonValueSet.EMPTY;
             } else {
-                schedule(new ResolveNameToObjectGoal(Frog.searchFrog(alias), fileC, context, acceptor));
+                return new ResolveNameToObjectGoal(Frog.searchFrog(alias), fileC, context).evaluate();
             }
         } else { // found submodule
-            String alias = module.getValue().getAlias();
-            acceptor.addResult(alias, module);
-            updateGrade(acceptor, Grade.DONE);
+            return new PythonValueSet(module, context);
         }
     }
 }

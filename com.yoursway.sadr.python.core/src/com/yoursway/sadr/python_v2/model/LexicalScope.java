@@ -2,7 +2,7 @@ package com.yoursway.sadr.python_v2.model;
 
 import java.util.Set;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 /**
  * Lexical scopes in Python are function and module scopes. Lexical scopes
@@ -29,7 +29,7 @@ public interface LexicalScope {
      * @return python object model for the given name or null if the name can
      *         not be resolved.
      */
-    RuntimeObject lookup(String name);
+    PythonObject lookup(String name);
     
     /**
      * @return all names that can be looked up.

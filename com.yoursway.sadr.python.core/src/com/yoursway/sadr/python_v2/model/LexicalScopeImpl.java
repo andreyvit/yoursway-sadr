@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 @Deprecated
 public class LexicalScopeImpl implements LexicalScope {
     
-    private final Map<String, RuntimeObject> namesToObjects = new HashMap<String, RuntimeObject>();
+    private final Map<String, PythonObject> namesToObjects = new HashMap<String, PythonObject>();
     private final LexicalScope enclosingScope;
     private final List<PythonConstruct> constructs = new LinkedList<PythonConstruct>();
     
@@ -25,14 +25,14 @@ public class LexicalScopeImpl implements LexicalScope {
         this.enclosingScope = enclosingScope;
     }
     
-    public RuntimeObject lookup(String name) {
+    public PythonObject lookup(String name) {
         return namesToObjects.get(name);
     }
     
     /**
      * Adds <code>object</code> with <code>name</code> to the scope.
      */
-    public void setName(String name, RuntimeObject object) {
+    public void setName(String name, PythonObject object) {
         namesToObjects.put(name, object);
     }
     

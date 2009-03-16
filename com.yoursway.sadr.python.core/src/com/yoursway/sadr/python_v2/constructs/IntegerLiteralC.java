@@ -1,14 +1,13 @@
 package com.yoursway.sadr.python_v2.constructs;
 
+import kilim.pausable;
+
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 
-import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.builtins.IntegerType;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.values.IntegerValue;
+import com.yoursway.sadr.python_v2.model.builtins.values.NumericValue;
 
 public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     
@@ -17,18 +16,9 @@ public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     }
     
     @Override
-    public IGoal evaluate(final Krocodile context, final PythonValueSetAcceptor acceptor) {
-        return new ExpressionValueGoal(context, acceptor) {
-            public void preRun() {
-                acceptor.addResult(IntegerType.wrap(IntegerLiteralC.this), context);
-                updateGrade(acceptor, Grade.DONE);
-            }
-            
-            @Override
-            public String describe() {
-                String basic = "Evaluating integer literal";
-                return basic + "\nfor expression " + IntegerLiteralC.this.toString();
-            }
-        };
+    @pausable
+    public PythonValueSet evaluate(final Krocodile context) {
+        NumericValue val = new IntegerValue(this.node().getIntValue());
+        return new PythonValueSet(val, context);
     }
 }

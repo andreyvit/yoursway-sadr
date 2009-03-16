@@ -1,96 +1,32 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
-import static com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import static com.yoursway.sadr.python_v2.model.builtins.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.values.InstanceRegistrar;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
-import com.yoursway.sadr.python_v2.croco.Frog;
+import com.yoursway.sadr.python_v2.model.builtins.types.PythonException;
+import com.yoursway.sadr.python_v2.model.builtins.types.PythonType;
+import com.yoursway.sadr.python_v2.model.builtins.values.InstanceRegistrar;
 
-public class PythonObject implements RuntimeObject {
+public abstract class PythonObject extends AbstractValue {
+    private PythonConstruct decl;
+    private final int id;
     
-    Map<String, RuntimeObject> attributes = new HashMap<String, RuntimeObject>();
-    private PythonClassType type;
-    
-    private PythonConstruct decl; // only if current object is made from this construct 
-    private final int id;//object's identity
-    
-    public Map<String, RuntimeObject> getAttributes() {
-        return attributes;
-    }
-    
-    /**
-     * This constructor is intended to be for built-ins only!
-     */
-    public PythonObject(PythonClassType type) {
-        this.type = type;
+    public PythonObject() {
         this.decl = null;
         this.id = BUILTIN_INSTANCE_ID;
     }
     
-    /**
-     * Creates object for a source code construct (<code>declaration</code>).
-     * 
-     * @param declaration
-     *            a construct that creates the object; can not be null.
-     */
-    public PythonObject(PythonClassType type, PythonConstruct declaration) {
-        if (declaration == null)
-            throw new IllegalArgumentException();
-        this.type = type;
+    public PythonObject(PythonConstruct declaration) {
         this.decl = declaration;
         this.id = InstanceRegistrar.registerInstance(this);
     }
     
-    public RuntimeObject getAttribute(String name) {
-        return attributes.get(name);
-    }
-    
-    //TODO refactor setAttribute() method
-    public void setAttribute(String name, RuntimeObject object) {
-        if (null == name || null == object) {
-            throw new IllegalArgumentException("setAttribute failed for class"
-                    + this.getClass().getSimpleName());
-        }
-        attributes.put(name, object);
-    }
-    
-    /**
-     * Should be asynchronous
-     */
-    public PythonClassType getType() {
-        return type;
-    }
-    
-    public void setType(PythonClassType type) {
-        this.type = type;
-    }
-    
-    public Set<String> getAttributeNames() {
-        return attributes.keySet();
-    }
+    public abstract PythonType getType();
     
     @Override
-    public String toString() {
-        return this.describe();
-    }
-    
     public String describe() {
-        return type.describe() + " " + " instance #" + id;
-    }
-    
-    public AbstractValue cast(PythonValue<?> value) {
-        return null;
-    }
-    
-    public <T extends AbstractValue> T convertValue(Class<T> type) {
-        return null;
+        return getType().describe() + " " + " instance #" + id;
     }
     
     public PythonConstruct getDecl() {
@@ -98,13 +34,26 @@ public class PythonObject implements RuntimeObject {
     }
     
     public void setDecl(PythonConstruct decl) {
-        if (decl == null)
-            throw new IllegalArgumentException();
         if (this.decl != null)
-            throw new IllegalStateException();
+            throw new IllegalStateException("Already assigned");
+        if (decl == null)
+            throw new NullPointerException("Decl should never be null!");
         this.decl = decl;
     }
     
-    public void findAttributes(Frog frog, PythonVariableAcceptor acceptor) {
+    public PythonObject getScopedAttribute(String name) {
+        return this.getType().getScopedAttribute(name);
+    }
+    
+    public String name() {
+        return null;
+    }
+    
+    public boolean isInstance(PythonType type) {
+        return getType().isInstance(type);
+    }
+    
+    public PythonObject cast(PythonType type) throws PythonException {
+        return type.coerce(this);
     }
 }

@@ -5,62 +5,59 @@ package com.yoursway.sadr.python_v2.goals;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
-import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.goals.acceptors.TupleIterator;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
-import com.yoursway.sadr.succeeder.IGrade;
+import com.yoursway.sadr.python_v2.model.builtins.types.InstanceType;
+import com.yoursway.sadr.python_v2.model.builtins.types.PythonType;
+import com.yoursway.sadr.python_v2.model.builtins.values.InstanceValue;
 
 public class CreateInstanceGoal extends ContextSensitiveGoal {
-    private final PythonValueSetAcceptor acceptor;
     private final ClassDeclarationC classDeclarationC;
-    private final PythonConstruct instanceCreator;
     
-    public CreateInstanceGoal(ClassDeclarationC classDecl, PythonConstruct instanceCreator,
-            PythonArguments args, Krocodile context, PythonValueSetAcceptor acceptor) {
+    public CreateInstanceGoal(ClassDeclarationC classDecl, RuntimeArguments args, Krocodile context) {
         super(context);
-        this.instanceCreator = instanceCreator;
-        if (instanceCreator == null)
-            throw new IllegalArgumentException();
-        this.acceptor = acceptor;
         this.classDeclarationC = classDecl;
     }
     
-    public void preRun() {
+    @Override
+    public PythonValueSet evaluate() {
+        acceptor = new PythonValueSet();
+        
         List<PythonConstruct> superClasses = classDeclarationC.getSuperClasses();
-        ResultsCollector rc = new ResultsCollector(superClasses.size(), getKrocodile()) {
-            @Override
-            protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
-                List<PythonClassType> supers = new ArrayList<PythonClassType>();
-                for (RuntimeObject obj : results.values()) {
-                    if (obj instanceof FunctionObject) {
-                        FunctionObject func = (FunctionObject) obj;
-                        ClassDeclarationC decl = (ClassDeclarationC) func.getDecl();
-                        PythonClassType superType = new PythonClassType(decl);
-                        supers.add(superType);
-                    }
-                    
-                }
-                PythonClassType receiverType = new PythonClassType(classDeclarationC, supers);
-                PythonObject receiver = new PythonObject(receiverType, instanceCreator);
+        ArrayList<PythonValueSet> supers = new ArrayList<PythonValueSet>();
+        for (PythonConstruct superClass : superClasses) {
+            PythonValueSet sup = superClass.evaluate(getKrocodile());
+            if (!sup.isEmpty())
+                supers.add(sup);
+        }
+        for (List<PythonObject> results : new TupleIterator(supers)) {
+            ArrayList<PythonType> types = convertToTypes(results);
+            if (types != null) {
+                InstanceType receiverType = new InstanceType(classDeclarationC);
+                receiverType.setSuperClasses(types);
+                PythonObject receiver = new InstanceValue(receiverType);
                 acceptor.addResult(receiver, getKrocodile());
             }
-            
-            @Override
-            public <T> void allResultsProcessed(IGrade<T> grade) {
-                updateGrade(acceptor, grade);
+        }
+        return acceptor;
+    }
+    
+    private ArrayList<PythonType> convertToTypes(List<PythonObject> results) {
+        ArrayList<PythonType> types = new ArrayList<PythonType>();
+        for (PythonObject r : results) {
+            if (r instanceof PythonType) {
+                types.add((PythonType) r);
+            } else {
+                return null;
             }
-        };
-        schedule(rc.addSubgoals(superClasses));
-        rc.startCollecting();
+        }
+        return types;
     }
     
     @Override

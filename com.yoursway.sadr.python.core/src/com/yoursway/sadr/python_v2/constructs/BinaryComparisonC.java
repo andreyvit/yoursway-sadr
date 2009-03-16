@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class BinaryComparisonC extends BinaryC {
     

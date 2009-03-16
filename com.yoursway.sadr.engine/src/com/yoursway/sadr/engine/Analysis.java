@@ -1,5 +1,7 @@
 package com.yoursway.sadr.engine;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +28,11 @@ public class Analysis {
     @pausable
     public static <R extends Result> List<R> evaluate(Collection<? extends Goal<R>> goals) {
         return AnalysisEngine.currentTask().evaluate(goals);
+    }
+    
+    @pausable
+    public static <R extends Result> List<R> evaluate(Goal<R>... goals) {
+        return AnalysisEngine.currentTask().evaluate(newArrayList(goals));
     }
     
     @pausable

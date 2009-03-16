@@ -5,21 +5,21 @@ import java.util.List;
 
 import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
-import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.Index;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.croco.PythonRecord;
-import com.yoursway.sadr.python_v2.goals.Acceptor;
-import com.yoursway.sadr.python_v2.goals.PassResultGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.types.InstanceType;
 
-public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> implements PythonDeclaration {
+public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> implements PythonDeclaration,
+        CallableDeclaration {
     
     private List<PythonConstruct> supers;
     
@@ -47,7 +47,7 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     
     //    public void actOnModel(ModelRequest request) {
     //        String superclassName = PythonUtils.superclassName(node);
-    //        PythonClassType superclass = null;
+    //        PythonType superclass = null;
     //        if (superclassName != null)
     //            superclass = staticContext().classLookup().lookupClass(superclassName);
     //        
@@ -72,18 +72,17 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     }
     
     @Override
-    public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
-        FunctionObject functionObject = new FunctionObject(this);
-        return new PassResultGoal(context, acceptor, functionObject);
+    public PythonValueSet evaluate(Krocodile context) {
+        PythonObject callableObject = new InstanceType(this);
+        return new PythonValueSet(callableObject, context);
     }
     
-    public void index(Krocodile crocodile, final Acceptor acceptor) {
+    public void index(Krocodile crocodile) {
         PythonRecord record = Index.newRecord(name());
         Index.add(crocodile, this, record);
-        acceptor.subgoalDone(Grade.DONE);
     }
     
-    public MethodDeclarationC findDeclaredMethod(String methodName) {
+    public CallableDeclaration findDeclaredMethod(String methodName) {
         for (PythonConstruct construct : getPostChildren())
             if (construct instanceof MethodDeclarationC) {
                 MethodDeclarationC methodC = (MethodDeclarationC) construct;
@@ -93,4 +92,15 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
         return null;
     }
     
+    public PythonValueSet call(Krocodile crocodile) {
+        throw new NotImplementedException();
+    }
+    
+    public PythonConstruct getArgInit(String name) {
+        throw new NotImplementedException();
+    }
+    
+    public List<PythonArgument> getArguments() {
+        throw new NotImplementedException();
+    }
 }

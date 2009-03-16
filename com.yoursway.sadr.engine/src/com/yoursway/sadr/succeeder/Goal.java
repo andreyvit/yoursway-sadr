@@ -1,41 +1,27 @@
 package com.yoursway.sadr.succeeder;
 
-import java.util.Collection;
+import com.yoursway.sadr.engine.AbstractGoal;
+import com.yoursway.sadr.engine.Analysis;
+import com.yoursway.sadr.engine.Result;
 
-public abstract class Goal implements IGoal {
-    private IScheduler scheduler;
+public abstract class Goal<R extends Result> extends AbstractGoal<R> {
     
-    protected IScheduler scheduler() {
-        return scheduler;
+    @Override
+    public boolean cachable() {
+        return true;
     }
     
-    public void schedule(IGoal goal) {
-        scheduler.schedule(this, goal);
+    @Override
+    public boolean hasComplexUnnaturalRelationshipWithRecursion() {
+        return false;
     }
     
-    protected void schedule(Collection<IGoal> goals) {
-        scheduler.schedule(this, goals);
-    }
-    
-    public void schedule(IGoal goal, ISchedulingStrategy strategy) {
-        scheduler.schedule(this, goal, strategy);
-    }
-    
-    protected void schedule(Collection<IGoal> goals, ISchedulingStrategy strategy) {
-        scheduler.schedule(this, goals, strategy);
-    }
-    
-    public <T> CheckpointToken updateGrade(IAcceptor acceptor, IGrade<T> grade) {
-        return scheduler.updateGrade(this, acceptor, grade);
-    }
-    
-    public final void setScheduler(IScheduler scheduler) {
-        this.scheduler = scheduler;
-    }
-    
-    public CheckpointToken flush() {
-        // TODO Auto-generated method stub
+    public R createRecursiveResult() {
         return null;
+    }
+    
+    public int debugSlot() {
+        return 0;
     }
     
     @Override
@@ -43,7 +29,7 @@ public abstract class Goal implements IGoal {
         String result = describe();
         if (result == null)
             throw new NullPointerException("goal.describe is null");
-        return result + (scheduler != null ? "\n" + scheduler.getGoalStack(this) : "");
+        return result;
     }
     
     public String describe() {
@@ -53,5 +39,9 @@ public abstract class Goal implements IGoal {
             simpleName = simpleName.substring(simpleName.lastIndexOf('.') + 1);
         }
         return simpleName;
+    }
+    
+    public R schedule(Goal<R> goal) {
+        return Analysis.evaluate(goal);
     }
 }

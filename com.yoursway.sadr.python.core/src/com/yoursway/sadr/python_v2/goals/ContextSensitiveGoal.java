@@ -1,27 +1,33 @@
 package com.yoursway.sadr.python_v2.goals;
 
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.succeeder.CheckpointToken;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.succeeder.Goal;
 
-public abstract class ContextSensitiveGoal extends Goal {
+public abstract class ContextSensitiveGoal extends Goal<PythonValueSet> {
+    protected PythonValueSet acceptor;
     private final Krocodile crocodile;
     
-    public ContextSensitiveGoal(Krocodile context) {
-        this.crocodile = context;
-        if (context == null) {
-            throw new NullPointerException("Context is null");
-        }
+    public ContextSensitiveGoal(Krocodile crocodile) {
+        this.crocodile = crocodile;
     }
     
     public Krocodile getKrocodile() {
         return crocodile;
     }
     
-    @Override
-    public CheckpointToken flush() {
-        // TODO Auto-generated method stub
-        return null;
+    public PythonValueSet getAcceptor() {
+        return acceptor;
+    }
+    
+    public PythonValueSet evaluate() {
+        this.acceptor = new PythonValueSet();
+        preRun();
+        return acceptor;
+    }
+    
+    public void preRun() {
+        
     }
     
     @Override

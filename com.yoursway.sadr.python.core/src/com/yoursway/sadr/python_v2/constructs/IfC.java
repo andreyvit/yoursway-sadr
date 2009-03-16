@@ -9,7 +9,12 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
+import com.yoursway.sadr.python_v2.croco.Krocodile;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.values.BooleanValue;
 
 public class IfC extends PythonConstructImpl<IfStatement> {
     
@@ -64,5 +69,26 @@ public class IfC extends PythonConstructImpl<IfStatement> {
     
     public PythonConstruct getCondition() {
         return condition;
+    }
+    
+    @Override
+    public PythonValueSet evaluate(Krocodile crocodile) {
+        PythonValueSet cond = this.getCondition().evaluate(crocodile);
+        PythonValueSet results = new PythonValueSet();
+        for (PythonObject result : cond) {
+            results.addResults(CallResolver.callMethod(result, "__nonzero__", new RuntimeArguments(),
+                    crocodile, this));
+        }
+        return results;
+    }
+    
+    public List<PythonConstruct> getBranch(PythonObject choice) {
+        if (BooleanValue.instance_true.equals(choice)) {
+            return thenBlock();
+        } else if (BooleanValue.instance_false.equals(choice)) {
+            return elseBlock();
+        } else { // What the hell was this?!
+            return null;
+        }
     }
 }

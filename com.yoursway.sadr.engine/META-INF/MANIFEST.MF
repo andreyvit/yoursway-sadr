@@ -10,7 +10,8 @@ Export-Package: com.yoursway.sadr.engine,
  com.yoursway.sadr.engine.debug,
  com.yoursway.sadr.engine.incremental,
  com.yoursway.sadr.engine.incremental.index,
- com.yoursway.sadr.engine.util
+ com.yoursway.sadr.engine.util,
+ com.yoursway.sadr.succeeder
 Import-Package: kilim,
  kilim.fibers, kilim.states
 Kilim-Enabled: true

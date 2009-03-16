@@ -2,13 +2,9 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.ast.expressions.FloatNumericLiteral;
 
-import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.builtins.FloatType;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.types.FloatType;
 
 public class FloatLiteralC extends PythonConstructImpl<FloatNumericLiteral> {
     FloatLiteralC(Scope sc, FloatNumericLiteral node) {
@@ -16,18 +12,7 @@ public class FloatLiteralC extends PythonConstructImpl<FloatNumericLiteral> {
     }
     
     @Override
-    public IGoal evaluate(final Krocodile context, final PythonValueSetAcceptor acceptor) {
-        return new ExpressionValueGoal(context, acceptor) {
-            public void preRun() {
-                acceptor.addResult(FloatType.wrap(FloatLiteralC.this), context);
-                updateGrade(acceptor, Grade.DONE);
-            }
-            
-            @Override
-            public String describe() {
-                String basic = "Evaluating float literal";
-                return basic + "\nfor expression " + FloatLiteralC.this.toString();
-            }
-        };
+    public PythonValueSet evaluate(final Krocodile context) {
+        return new PythonValueSet(FloatType.wrap(this), context);
     }
 }

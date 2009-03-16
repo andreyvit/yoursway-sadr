@@ -3,7 +3,6 @@ package com.yoursway.sadr.python_v2.constructs;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 
 public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> {
     

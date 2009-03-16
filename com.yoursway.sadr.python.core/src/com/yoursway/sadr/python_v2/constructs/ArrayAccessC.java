@@ -1,21 +1,14 @@
 package com.yoursway.sadr.python_v2.constructs;
 
-import java.util.Map;
+import static com.google.common.collect.Lists.newArrayList;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.ResolveNameToObjectGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
-import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.builtins.PythonClassType;
-import com.yoursway.sadr.succeeder.IGoal;
-import com.yoursway.sadr.succeeder.IGrade;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpression> {
     
@@ -34,33 +27,22 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
     }
     
     @Override
-    public IGoal evaluate(final Krocodile context, PythonValueSetAcceptor acceptor) {
-        return new ExpressionValueGoal(context, acceptor) {
-            public void preRun() {
-                ResultsCollector rc = new ResultsCollector(2, context) {
-                    @Override
-                    protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
-                        RuntimeObject arrayObject = results.get(0);
-                        if (arrayObject != null) {
-                            PythonArguments args = new PythonArguments(results.get(1));
-                            if (arrayObject.getType() instanceof PythonClassType) {
-                                schedule(CallResolver.callMethod(arrayObject, "__getitem__", args, acceptor,
-                                        context, ArrayAccessC.this));
-                            }
-                        }
-                    }
-                    
-                    @Override
-                    public <T> void allResultsProcessed(IGrade<T> grade) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                };
-                schedule(new ResolveNameToObjectGoal((VariableReferenceC) array, context,
-                        new PythonVariableDelegatingAcceptor(rc.createAcceptor(0), context)));
-                schedule(rc.addSubgoal(index, 1));
-                rc.startCollecting();
+    public PythonValueSet evaluate(final Krocodile context) {
+        PythonValueSet results = new PythonValueSet();
+        
+        PythonValueSet values = array.evaluate(context);
+        PythonValueSet indexes = index.evaluate(context);
+        
+        for (PythonObject arrayObject : values) {
+            if (arrayObject != null) {
+                for (PythonObject arrayIndex : indexes) {
+                    RuntimeArguments args = new RuntimeArguments(newArrayList(arrayIndex));
+                    PythonValueSet r = CallResolver.callMethod(arrayObject, "__getitem__", args, context,
+                            this);
+                    results.addResults(r);
+                }
             }
-        };
+        }
+        return results;
     }
 }

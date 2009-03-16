@@ -14,12 +14,8 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
-import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
-import com.yoursway.sadr.blocks.foundation.typesets.TypeSetBuilder;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python.core.typeinferencing.types.ArrayType;
-import com.yoursway.sadr.python.core.typeinferencing.types.StubType;
+import com.yoursway.sadr.python_v2.constructs.Scope;
 
 public class PythonUtils {
     
@@ -39,28 +35,6 @@ public class PythonUtils {
         if (node == null)
             return emptyList();
         return node.getChilds();
-    }
-    
-    public static TypeSet replaceWildcard(Type wildcard, TypeSet replacement) {
-        TypeSetBuilder builder = new TypeSetBuilder();
-        for (Type type : replacement.containedTypes())
-            builder.add(replaceWildcard(wildcard, type));
-        return builder.build();
-    }
-    
-    public static Type replaceWildcard(Type wildcard, Type replacement) {
-        if (wildcard == StubType.WILDCARD)
-            return replacement;
-        else if (wildcard instanceof ArrayType) {
-            ArrayType arr = (ArrayType) wildcard;
-            Type replaced = replaceWildcard(arr.component(), replacement);
-            if (replaced.equals(arr.component()))
-                return wildcard;
-            else
-                return new ArrayType(replaced);
-        } else {
-            return wildcard;
-        }
     }
     
     public static String[] splitByComma(String fieldList) {

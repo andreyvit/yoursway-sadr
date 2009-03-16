@@ -54,10 +54,6 @@ import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 import org.eclipse.dltk.python.parser.ast.statements.TryFinallyStatement;
 
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
-import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.succeeder.IGoal;
 
 public class PythonConstructFactory {
     
@@ -174,36 +170,6 @@ public class PythonConstructFactory {
     /**
      * Use this constant instead of <code>null</code> value.
      */
-    public static PythonConstruct NULL_CONSTRUCT = new PythonConstruct() {
-        private static final String MESSAGE = "Null construct.";
-        
-        public IGoal evaluate(Krocodile context, PythonValueSetAcceptor acceptor) {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public List<PythonConstruct> getPostChildren() {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public List<PythonConstruct> getPreChildren() {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public PythonConstruct getSyntacticallyPreviousConstruct() {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public Scope scope() {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public ASTNode node() {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-        
-        public Scope parentScope() {
-            throw new UnsupportedOperationException(MESSAGE);
-        }
-    };
+    public static PythonConstruct NULL_CONSTRUCT = new EmptyPythonConstruct();
     
 }

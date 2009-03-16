@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,26 +10,20 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.goals.acceptors.ResultsCollector;
-import com.yoursway.sadr.python_v2.goals.internal.CallResolver;
-import com.yoursway.sadr.python_v2.model.PythonArguments;
-import com.yoursway.sadr.python_v2.model.builtins.FunctionObject;
+import com.yoursway.sadr.python_v2.goals.CallResolver;
+import com.yoursway.sadr.python_v2.goals.acceptors.DictIterator;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
-import com.yoursway.sadr.succeeder.IGoal;
-import com.yoursway.sadr.succeeder.IGrade;
+import com.yoursway.sadr.python_v2.model.builtins.values.CallableObject;
 
 public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     
-    private static final String CALLABLE = "func";
-    private static final int CALLABLE_INDEX = 0;
+    private static final Object CALLABLE = "func";
+    protected static final int CALLABLE_INDEX = 0;
     private static final int ARGUMENTS_INDEX = 1;
-    protected static final String SELF = "self";
-    protected final int RECEIVER = CALLABLE_INDEX;//FIXME what a shit is it?!
+    protected static final Object SELF = "self";
     private List<PythonConstruct> args;
     private PythonConstruct self;
     private PythonConstruct callable;
@@ -39,10 +34,6 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
     }
     
     abstract public PythonConstruct getReceiver();
-    
-    public List<PythonConstruct> getArgs() {
-        return args;
-    }
     
     @Override
     protected void wrapEnclosedChildren() {
@@ -62,92 +53,69 @@ public abstract class CallC extends PythonConstructImpl<PythonCallExpression> {
         setPostChildren(Collections.EMPTY_LIST);
     }
     
+    private PythonValueSet findArguments(PythonValueSet container, Map<Object, PythonObject> results,
+            Krocodile crocodile) {
+        PythonObject method = results.get(CALLABLE);
+        RuntimeArguments real = addArguments(results);
+        
+        if (method instanceof CallableObject) {
+            container.addResults(CallResolver.callFunction((CallableObject) method, real, crocodile, this));
+        } else if (method != null) {
+            container.addResults(CallResolver.callMethod(method, "__call__", real, crocodile, this));
+        }
+        return container;
+    }
+
+    private RuntimeArguments addArguments(Map<Object, PythonObject> results) {
+        RuntimeArguments real = new RuntimeArguments();
+        if (results.containsKey(SELF)) {
+            real.getArgs().add(results.get(SELF));
+        }
+        for (PythonConstruct arg : args) {
+            if (arg instanceof CallArgumentC) {
+                CallArgumentC argC = (CallArgumentC) arg;
+                PythonConstruct value = (((CallArgumentC) arg).getValue());
+                if (value instanceof AssignmentC) {
+                    AssignmentC assignmentC = (AssignmentC) value;
+                    real.getKwargs().put(assignmentC.name(), results.get(arg));
+                } else {
+                    if (!results.containsKey(arg)) {
+                        throw new IllegalStateException("Argument is missing!");
+                    }
+                    PythonObject result = results.get(arg);
+                    if (argC.getStar() == PythonArgument.NOSTAR) {
+                        real.getArgs().add(result);
+                    } else if (argC.getStar() == PythonArgument.STAR) {
+                        real.setLastArg(result);
+                    } else if (argC.getStar() == PythonArgument.DOUBLESTAR) {
+                        real.setLastKwarg(result);
+                    }
+                }
+            }
+        }
+        return real;
+    }
+    
     @Override
-    public IGoal evaluate(final Krocodile context, PythonValueSetAcceptor acceptor) {
-        return new ExpressionValueGoal(context, acceptor) {
-            public void preRun() {
-                ResultsCollector rc = new ResultsCollector(args.size() + 2, context) {
-                    @Override
-                    protected <T> void processResultTuple(Map<Object, RuntimeObject> results, IGrade<T> grade) {
-                        RuntimeObject method = results.get(CALLABLE);
-                        PythonArguments real = new PythonArguments();
-                        if (results.containsKey(SELF)) {
-                            real.getArgs().add(results.get(SELF));
-                        }
-                        for (PythonConstruct arg : args) {
-                            if (arg instanceof CallArgumentC) {
-                                CallArgumentC argC = (CallArgumentC) arg;
-                                PythonConstruct value = (((CallArgumentC) arg).getValue());
-                                if (value instanceof AssignmentC) {
-                                    AssignmentC assignmentC = (AssignmentC) value;
-                                    real.getKwargs().put(assignmentC.name(), results.get(arg));
-                                } else {
-                                    RuntimeObject result = results.get(arg);
-                                    if (argC.getStar() == PythonArgument.NOSTAR) {
-                                        real.getArgs().add(result);
-                                    } else if (argC.getStar() == PythonArgument.STAR) {
-                                        real.setLastArg(result);
-                                    } else if (argC.getStar() == PythonArgument.DOUBLESTAR) {
-                                        real.setLastKwarg(result);
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if (method instanceof FunctionObject) {
-                            schedule(CallResolver.callFunction((FunctionObject) method, real, acceptor,
-                                    getKrocodile(), CallC.this));
-                        } else if (method instanceof PythonObject) {
-                            schedule(CallResolver.callMethod(method, "__call__", real, acceptor,
-                                    getKrocodile(), CallC.this));
-                        } else if (method == null) {
-                            return;
-                            //                            throw new IllegalStateException("Unable to find callable " + callable
-                            //                                    + ", resolved to " + method);
-                        }
-                    }
-                    
-                    @Override
-                    public <T> void allResultsProcessed(IGrade<T> grade) {
-                        updateGrade(acceptor, grade);
-                    }
-                };
-                
-                schedule(callable.evaluate(getKrocodile(), rc.createAcceptor(CALLABLE)));
-                
-                if (self != null) {
-                    schedule(self.evaluate(getKrocodile(), rc.createAcceptor(SELF)));
-                }
-                
-                for (PythonConstruct arg : args) {
-                    if (arg instanceof CallArgumentC) {
-                        PythonConstruct value = (((CallArgumentC) arg).getValue());
-                        if (value instanceof AssignmentC) {
-                            AssignmentC assignmentC = (AssignmentC) value;
-                            schedule(assignmentC.rhs().evaluate(context, rc.createAcceptor(arg)));
-                        } else {
-                            schedule(arg.evaluate(context, rc.createAcceptor(arg)));
-                        }
-                    }
-                }
-                rc.startCollecting();
+    public PythonValueSet evaluate(final Krocodile context) {
+        HashMap<Object, PythonValueSet> choices = new HashMap<Object, PythonValueSet>();
+        choices.put(CALLABLE, callable.evaluate(context));
+        
+        if (self != null) {
+            choices.put(SELF, self.evaluate(context));
+        }
+        
+        for (PythonConstruct arg : args) {
+            if (arg instanceof CallArgumentC) {
+                choices.put(arg, arg.evaluate(context));
             }
-            
-            //            protected String getName(final CallC var) {
-            //                String name = null;
-            //                if (var instanceof MethodCallC) {
-            //                    name = var.node().getMethodName();
-            //                } else if (var instanceof ProcedureCallC) {
-            //                    name = var.node().getProcedureName();
-            //                }
-            //                return name;
-            //            }
-            
-            @Override
-            public String describe() {
-                return super.describe() + "\nfor expression " + CallC.this.toString();
-            }
-        };
+        }
+        
+        PythonValueSet collection = new PythonValueSet();
+        for (Map<Object, PythonObject> list : new DictIterator<Object>(choices)) {
+            findArguments(collection, list, context);
+        }
+        return collection;
     }
     
     @Override

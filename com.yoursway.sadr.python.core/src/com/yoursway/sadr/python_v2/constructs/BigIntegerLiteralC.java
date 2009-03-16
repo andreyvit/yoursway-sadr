@@ -2,13 +2,9 @@ package com.yoursway.sadr.python_v2.constructs;
 
 import org.eclipse.dltk.ast.expressions.BigNumericLiteral;
 
-import com.yoursway.sadr.python.Grade;
-import com.yoursway.sadr.python.core.typeinferencing.scopes.Scope;
 import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetAcceptor;
-import com.yoursway.sadr.python_v2.model.builtins.LongType;
-import com.yoursway.sadr.succeeder.IGoal;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.model.builtins.types.LongType;
 
 public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
     
@@ -17,18 +13,7 @@ public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
     }
     
     @Override
-    public IGoal evaluate(final Krocodile context, PythonValueSetAcceptor acceptor) {
-        return new ExpressionValueGoal(context, acceptor) {
-            public void preRun() {
-                acceptor.addResult(LongType.wrap(BigIntegerLiteralC.this), context);
-                updateGrade(acceptor, Grade.DONE);
-            }
-            
-            @Override
-            public String describe() {
-                String basic = "Evaluating long literal";
-                return basic + "\nfor expression " + BigIntegerLiteralC.this.toString();
-            }
-        };
+    public PythonValueSet evaluate(final Krocodile context) {
+        return new PythonValueSet(LongType.wrap(this), context);
     }
 }

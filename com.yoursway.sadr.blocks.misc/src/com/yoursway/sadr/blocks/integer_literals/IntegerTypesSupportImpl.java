@@ -3,13 +3,7 @@ package com.yoursway.sadr.blocks.integer_literals;
 import com.yoursway.sadr.blocks.foundation.AbstractBuildingBlock;
 import com.yoursway.sadr.blocks.foundation.AnalysisSchemaBuilder;
 import com.yoursway.sadr.blocks.foundation.RuntimeModel;
-import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
-import com.yoursway.sadr.blocks.simple_types.SimpleType;
-import com.yoursway.sadr.blocks.simple_types.SimpleTypeItem;
 import com.yoursway.sadr.blocks.simple_types.SimpleTypesSupport;
-import com.yoursway.sadr.core.ValueInfoContinuation;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.utils.facelets.FaceletFactory;
 import com.yoursway.utils.facelets.GemstoneDefinitionBuilder;
 import com.yoursway.utils.facelets.Slot;
@@ -54,16 +48,4 @@ public class IntegerTypesSupportImpl extends AbstractBuildingBlock implements In
     public RuntimeModelWithIntegerTypes facelet(RuntimeModel model) {
         return model.get(modelSlot);
     }
-
-    public ContinuationRequestorCalledToken evaluateIntegerLiteral(RuntimeModel runtimeModel, long v,
-            ContinuationScheduler requestor, ValueInfoContinuation continuation) {
-//        ValueInfoBuilder builder = new ValueInfoBuilder();
-//        RuntimeModelWithIntegerTypes modelWithIntegerTypes = 
-//                facelet(runtimeModel);
-//        SimpleType t = modelWithIntegerTypes.intType();
-//        builder.add(new SimpleTypeItem(t), new IntegerValue(v));
-//        return continuation.consume(builder.build(), requestor);
-    	return null;
-    }
-    
 }

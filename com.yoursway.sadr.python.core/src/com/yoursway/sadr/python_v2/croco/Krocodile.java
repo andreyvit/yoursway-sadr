@@ -1,12 +1,13 @@
 package com.yoursway.sadr.python_v2.croco;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import com.yoursway.sadr.blocks.foundation.values.RuntimeObject;
 import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
 import com.yoursway.sadr.python_v2.constructs.PythonVariableAcceptor;
+import com.yoursway.sadr.python_v2.constructs.Scope;
 import com.yoursway.sadr.python_v2.model.ContextImpl;
+import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 
 public class Krocodile {
     
@@ -16,7 +17,7 @@ public class Krocodile {
     
     private final ContextImpl context;
     
-    private Krocodile() {
+    Krocodile() {
         this.parent = null;
         this.construct = null;
         this.context = null;
@@ -38,7 +39,7 @@ public class Krocodile {
         return construct;
     }
     
-    public RuntimeObject getActualArgument(String name) {
+    public PythonObject getActualArgument(String name) {
         if (context == null && parent != null)
             return parent.getActualArgument(name);
         return context.getActualArgument(name);
@@ -52,32 +53,7 @@ public class Krocodile {
         }
     }
     
-    public static final Krocodile EMPTY = new Krocodile() {
-        
-        @Override
-        public RuntimeObject getActualArgument(String name) {
-            return null;
-        }
-        
-        @Override
-        public void getMatchingArguments(Frog name, PythonVariableAcceptor va) {
-        }
-        
-        @Override
-        public Set<String> keys() {
-            return new HashSet<String>();
-        }
-        
-        @Override
-        public void put(String name, RuntimeObject value) {
-            
-        }
-        
-        @Override
-        public String toString() {
-            return "Empty";
-        }
-    };
+    public static final Krocodile EMPTY = new EmptyKrocodile();
     
     public Set<String> keys() {
         if (context == null && parent != null)
@@ -85,11 +61,38 @@ public class Krocodile {
         return context.keys();
     }
     
-    public void put(String name, RuntimeObject value) {
+    public Map<String, PythonObject> entries() {
+        if (context == null && parent != null)
+            return parent.entries();
+        return context.entries();
+    }
+    
+    public void put(String name, PythonObject value) {
         if (context == null && parent != null) {
             parent.put(name, value);
         } else {
             context.put(name, value);
         }
+    }
+    
+    @Override
+    public String toString() {
+        String sParent = parent != null ? parent + "\n" : "";
+        String sContext = context != null ? context.toString() : "(empty)";
+        return sParent + sContext;
+    }
+    
+    public ContextImpl getContext(Scope scope) {
+        if (construct.equals(scope))
+            return context;
+        if (parent != null)
+            return parent.getContext(scope);
+        return null;
+    }
+    
+    public int size() {
+        if (parent == null)
+            return 1;
+        return 1 + parent.size();
     }
 }

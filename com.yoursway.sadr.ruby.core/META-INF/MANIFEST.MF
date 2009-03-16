@@ -7,7 +7,6 @@ Bundle-Activator: com.yoursway.sadr.ruby.core.internal.Activator
 Bundle-Vendor: YourSway
 Require-Bundle: org.eclipse.core.runtime,
  com.yoursway.sadr.core,
- org.eclipse.dltk.ruby.core,
  com.yoursway.sadr.core,
  com.yoursway.sadr.engine;bundle-version="1.0.0",
  org.eclipse.core.resources,
@@ -36,3 +35,4 @@ Export-Package: com.yoursway.sadr.ruby,
  com.yoursway.sadr.ruby.core.typeinferencing.values,
  com.yoursway.sadr.ruby.core.typeinferencing.valuesets,
  com.yoursway.sadr.ruby.core.typeinferencing.valuesets.internal
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
