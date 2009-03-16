@@ -71,4 +71,9 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements P
         return index;
     }
     
+    @Override
+    public PythonStaticContext parentScope() {
+        return null;
+    }
+    
 }

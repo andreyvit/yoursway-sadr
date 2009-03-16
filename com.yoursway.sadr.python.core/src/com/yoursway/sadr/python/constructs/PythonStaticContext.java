@@ -7,9 +7,7 @@ import com.yoursway.sadr.engine.incremental.index.Index;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 
 public interface PythonStaticContext extends PythonConstruct,
-        StaticContext<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
-    
-    PythonStaticContext parentScope();
+        StaticContext<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>, PythonScope {
     
     String name();
     

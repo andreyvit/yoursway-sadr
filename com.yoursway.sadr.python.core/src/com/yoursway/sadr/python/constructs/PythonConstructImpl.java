@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.constructs;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.sadr.engine.util.Lists.filter;
 
 import java.util.ArrayList;
@@ -142,6 +143,13 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     public Unode toUnode() {
         return null;
+    }
+    
+    protected List<PythonScope> currentScopes() {
+        final List<PythonScope> scopes = newArrayList();
+        for (PythonScope scope = staticContext(); scope != null; scope = scope.parentScope())
+            scopes.add(scope);
+        return scopes;
     }
     
 }

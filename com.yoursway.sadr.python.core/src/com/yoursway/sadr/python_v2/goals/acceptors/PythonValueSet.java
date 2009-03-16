@@ -132,5 +132,12 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         for (PythonValueSet v : results)
             addResults(v);
     }
+
+    public static PythonValueSet merge(List<PythonValueSet> results) {
+        PythonValueSetBuilder builder = newBuilder();
+        builder.addAll(results);
+        PythonValueSet result = builder.build();
+        return result;
+    }
     
 }
