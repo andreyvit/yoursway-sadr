@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  com.yoursway.sadr.python.core,
  com.yoursway.sadr.blocks.foundation;bundle-version="1.0.0",
  com.yoursway.sadr.blocks.misc;bundle-version="1.0.0",
- com.yoursway.ide.foundation;bundle-version="1.0.0",
- com.google.collections;bundle-version="1.0.0"
+ com.google.collections;bundle-version="1.0.0",
+ com.yoursway.utils
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

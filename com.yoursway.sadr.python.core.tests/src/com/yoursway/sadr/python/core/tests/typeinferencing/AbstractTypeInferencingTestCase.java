@@ -37,8 +37,6 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.junit.After;
 
 import com.google.common.collect.Lists;
-import com.yoursway.ide.application.model.Project;
-import com.yoursway.ide.application.model.application.ApplicationModel;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.util.Strings;
@@ -62,12 +60,11 @@ import com.yoursway.sadr.python_v2.model.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.python_v2.model.builtins.types.PythonException;
 import com.yoursway.sadr.succeeder.Engine;
+import com.yoursway.utils.YsFileUtils;
 
 public abstract class AbstractTypeInferencingTestCase {
     
     protected IProject testProject;
-    protected Project project;
-    protected ApplicationModel app;
     
     private File createProject(String projectName, File projectLocation) throws Exception {
         final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -98,15 +95,27 @@ public abstract class AbstractTypeInferencingTestCase {
     }
     
     public ProjectRuntime createProjectRuntime(File tempDirectory) {
-        app = new ApplicationModel(tempDirectory);
-        this.project = new Project(app, new PythonProjectType(), tempDirectory);
-        return new ProjectRuntime(new ProjectUnit(findSourceModules(project)));
+        Collection<File> files = new ArrayList<File>();
+        findAllFiles(tempDirectory, files);
+        return new ProjectRuntime(new ProjectUnit(findSourceModules(tempDirectory, files)));
     }
     
-    private Collection<FileSourceUnit> findSourceModules(Project project) {
-        Collection<File> files = project.findAllFiles();
+    void findAllFiles(File folder, Collection<File> result) {
+        File[] children = folder.listFiles();
+        if (children != null)
+            for (File child : children) {
+                if (YsFileUtils.isBogusFile(child.getName()))
+                    continue;
+                if (child.isFile())
+                    result.add(child);
+                else
+                    findAllFiles(child, result);
+            }
+    }
+    
+    private Collection<FileSourceUnit> findSourceModules(File project, Collection<File> files) {
         Collection<FileSourceUnit> sourceUnits = Lists.newArrayListWithCapacity(files.size());
-        String root = project.getLocation().getAbsolutePath();
+        String root = project.getAbsolutePath();
         if (!root.endsWith("/"))
             root += "/";
         for (File file : files)
