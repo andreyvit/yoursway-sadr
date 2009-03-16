@@ -5,7 +5,6 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -29,10 +28,6 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
     
     public PythonConstruct rhs() {
         return rhs;
-    }
-    
-    public boolean match(Frog frog) {
-        return frog.match(name());
     }
     
     public void index(PythonDynamicContext crocodile) {

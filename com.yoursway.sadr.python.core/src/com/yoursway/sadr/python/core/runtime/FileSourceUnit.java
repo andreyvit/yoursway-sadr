@@ -5,7 +5,9 @@ import static com.yoursway.utils.YsFileUtils.readAsString;
 import java.io.File;
 import java.io.IOException;
 
-public class FileSourceUnit {
+import com.yoursway.sadr.engine.incremental.SourceUnit;
+
+public class FileSourceUnit implements SourceUnit {
     
     private final File file;
     private final String path;

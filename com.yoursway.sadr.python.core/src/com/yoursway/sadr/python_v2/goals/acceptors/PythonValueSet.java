@@ -6,14 +6,14 @@ import java.util.Iterator;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.Acceptor;
-import com.yoursway.sadr.python_v2.model.TypeError;
-import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
-import com.yoursway.sadr.python_v2.model.builtins.types.BooleanType;
+import com.yoursway.sadr.core.IValueInfo;
+import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.model.types.BooleanType;
+import com.yoursway.sadr.python.objects.TypeError;
+import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
-public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
+public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, PythonValueSetBuilder {
     
     private final ValueInfoBuilder builder = new ValueInfoBuilder(); //FIXME Build value info in getResult().
     private PythonConstruct callingConstruct = null;
@@ -23,11 +23,11 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     public PythonValueSet() {
     }
     
-    public PythonValueSet(PythonObject result, Krocodile context) {
+    public PythonValueSet(PythonValue result, PythonDynamicContext context) {
         addResult(result, context);
     }
     
-    public PythonValueSet(boolean result, Krocodile context) {
+    public PythonValueSet(boolean result, PythonDynamicContext context) {
         addResult(result, context);
     }
     
@@ -41,7 +41,7 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
         this.callingConstruct = callingConstruct;
     }
     
-    public void addResult(PythonObject result) {
+    public void addResult(PythonValue result) {
         if (null == result)
             throw new IllegalStateException("There should be no null items in results!");
         
@@ -53,17 +53,17 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
         builder.add(result.getType(), result);
     }
     
-    public void addResult(PythonObject result, Krocodile context) {
+    public void addResult(PythonValue result, PythonDynamicContext context) {
         addResult(result);
     }
     
-    public void addResult(boolean result, Krocodile context) {
+    public void addResult(boolean result, PythonDynamicContext context) {
         addResult(BooleanType.wrap(result));
     }
     
     public void addResults(PythonValueSet r) {
         for (Value value : r.getResult().containedValues()) {
-            addResult((PythonObject) value, null);
+            addResult((PythonValue) value, null);
         }
         
     }
@@ -72,17 +72,17 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
         return builder.build();
     }
     
-    public Iterator<PythonObject> iterator() {
+    public Iterator<PythonValue> iterator() {
         Collection<Value> values = builder.build().containedValues();
         final Iterator<Value> iterator = values.iterator();
-        return new Iterator<PythonObject>() {
+        return new Iterator<PythonValue>() {
             
             public boolean hasNext() {
                 return iterator.hasNext();
             }
             
-            public PythonObject next() {
-                return (PythonObject) iterator.next();
+            public PythonValue next() {
+                return (PythonValue) iterator.next();
             }
             
             public void remove() {
@@ -103,4 +103,28 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     public void addException(TypeError typeError) {
         
     }
+    
+    public String[] describePossibleTypes() {
+        throw new UnsupportedOperationException();
+    }
+    
+    public String[] describePossibleValues() {
+        throw new UnsupportedOperationException();
+    }
+    
+    public PythonValueSet call(PythonDynamicContext dc) {
+        PythonValueSetBuilder result = PythonValueSet.newBuilder();
+        for (PythonValue value : this)
+            value.call(dc, result);
+        return result.build();
+    }
+    
+    public static PythonValueSetBuilder newBuilder() {
+        return new PythonValueSet();
+    }
+    
+    public PythonValueSet build() {
+        return this;
+    }
+    
 }

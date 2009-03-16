@@ -15,7 +15,7 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.expressions.ExtendedVariableReference;
 
 import com.yoursway.sadr.blocks.foundation.typesets.TypeSet;
-import com.yoursway.sadr.python_v2.constructs.Scope;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
 
 public class PythonUtils {
     
@@ -82,27 +82,27 @@ public class PythonUtils {
     //    
     static class ScopeRequestor {
         
-        private final List<Scope> scopes = new ArrayList<Scope>();
+        private final List<PythonStaticContext> staticContexts = new ArrayList<PythonStaticContext>();
         
-        private Scope answer = null;
+        private PythonStaticContext answer = null;
         
-        public ScopeRequestor(Scope initialScope) {
-            scopes.add(initialScope);
+        public ScopeRequestor(PythonStaticContext initialScope) {
+            staticContexts.add(initialScope);
         }
         
-        public void innerScope(Scope innerScope) {
-            scopes.add(innerScope);
+        public void innerScope(PythonStaticContext innerScope) {
+            staticContexts.add(innerScope);
         }
         
         public void leave() {
-            scopes.remove(scopes.size() - 1);
+            staticContexts.remove(staticContexts.size() - 1);
         }
         
         public void found() {
-            this.answer = scopes.get(scopes.size() - 1);
+            this.answer = staticContexts.get(staticContexts.size() - 1);
         }
         
-        public Scope getInnerScope() {
+        public PythonStaticContext getInnerScope() {
             return answer;
         }
         

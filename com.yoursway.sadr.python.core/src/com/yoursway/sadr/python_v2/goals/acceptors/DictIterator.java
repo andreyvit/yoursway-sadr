@@ -9,12 +9,12 @@ import java.util.Map;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
-public class DictIterator<Source> implements Iterable<Map<Source, PythonObject>>,
-        Iterator<Map<Source, PythonObject>> {
+public class DictIterator<Source> implements Iterable<Map<Source, PythonValue>>,
+        Iterator<Map<Source, PythonValue>> {
     private final HashMap<Integer, Iterator<Value>> iterators;
-    private final HashMap<Source, PythonObject> results;
+    private final HashMap<Source, PythonValue> results;
     private final int size;
     private int count;
     private int position = 0;
@@ -22,7 +22,7 @@ public class DictIterator<Source> implements Iterable<Map<Source, PythonObject>>
     private final ArrayList<Source> dimensions;
     
     public DictIterator(Map<Source, PythonValueSet> map) {
-        this.results = new HashMap<Source, PythonObject>();
+        this.results = new HashMap<Source, PythonValue>();
         this.iterators = new HashMap<Integer, Iterator<Value>>();
         this.sources = new HashMap<Integer, ValueInfo>();
         this.dimensions = newArrayList(map.keySet());
@@ -35,12 +35,12 @@ public class DictIterator<Source> implements Iterable<Map<Source, PythonObject>>
             this.iterators.put(i, makeIterator(i));
             this.count *= valueInfo.containedValues().size();
             if (count != 0) {
-                this.results.put(name, (PythonObject) iterators.get(i).next());
+                this.results.put(name, (PythonValue) iterators.get(i).next());
             }
         }
     }
     
-    public HashMap<Source, PythonObject> next() {
+    public HashMap<Source, PythonValue> next() {
         if (!hasNext()) {
             return null;
         }
@@ -51,12 +51,12 @@ public class DictIterator<Source> implements Iterable<Map<Source, PythonObject>>
         for (int i = size - 1; i >= 0; i--) {
             Source name = dimensions.get(i);
             if (iterators.get(i).hasNext()) {
-                results.put(name, (PythonObject) iterators.get(i).next());
+                results.put(name, (PythonValue) iterators.get(i).next());
                 break;
             } else {
                 Iterator<Value> iterator = makeIterator(i);
                 iterators.put(i, iterator);
-                results.put(name, (PythonObject) iterator.next());
+                results.put(name, (PythonValue) iterator.next());
             }
         }
         return results;
@@ -73,7 +73,7 @@ public class DictIterator<Source> implements Iterable<Map<Source, PythonObject>>
     public void remove() {
     }
     
-    public Iterator<Map<Source, PythonObject>> iterator() {
+    public Iterator<Map<Source, PythonValue>> iterator() {
         return this;
     }
 }

@@ -5,37 +5,10 @@ import static com.yoursway.sadr.engine.util.Lists.filter;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.dltk.ast.ASTListNode;
-import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.ast.declarations.MethodDeclaration;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.ast.expressions.NilLiteral;
-import org.eclipse.dltk.ast.expressions.NumericLiteral;
-import org.eclipse.dltk.ast.expressions.StringLiteral;
-import org.eclipse.dltk.ast.references.SimpleReference;
-import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.dltk.ast.statements.Block;
-import org.eclipse.dltk.ruby.ast.RubyAssignment;
-import org.eclipse.dltk.ruby.ast.RubyBinaryExpression;
-import org.eclipse.dltk.ruby.ast.RubyCallArgument;
-import org.eclipse.dltk.ruby.ast.RubyClassDeclaration;
-import org.eclipse.dltk.ruby.ast.RubyDotExpression;
-import org.eclipse.dltk.ruby.ast.RubyForStatement2;
-import org.eclipse.dltk.ruby.ast.RubyHashPairExpression;
-import org.eclipse.dltk.ruby.ast.RubyIfStatement;
-import org.eclipse.dltk.ruby.ast.RubyMethodArgument;
-import org.eclipse.dltk.ruby.ast.RubyReturnStatement;
-import org.eclipse.dltk.ruby.ast.RubySelfReference;
-import org.eclipse.dltk.ruby.ast.RubySuperExpression;
-import org.eclipse.dltk.ruby.ast.RubyVariableKind;
-
 import com.google.common.base.Predicate;
+import com.sun.mirror.declaration.MethodDeclaration;
 import com.yoursway.sadr.core.constructs.AbstractConstruct;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
-import com.yoursway.sadr.core.constructs.ControlFlowGraphRequestor;
-import com.yoursway.sadr.engine.ContinuationRequestorCalledToken;
-import com.yoursway.sadr.engine.ContinuationScheduler;
 import com.yoursway.sadr.ruby.core.typeinferencing.goals.AccessInfo;
 import com.yoursway.sadr.ruby.core.typeinferencing.scopes.Scope;
 
@@ -60,10 +33,6 @@ public abstract class RubyConstructImpl<N extends ASTNode> extends
     
     public N node() {
         return node;
-    }
-    
-    public RubyConstruct parent() {
-        return staticContext().parentConstruct();
     }
     
     @Override

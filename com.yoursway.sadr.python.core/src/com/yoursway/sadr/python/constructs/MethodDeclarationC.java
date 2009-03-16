@@ -11,7 +11,6 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -61,10 +60,6 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     @Override
     public String name() {
         return this.node.getName();
-    }
-    
-    public boolean match(Frog frog) {
-        return frog.match(name());
     }
     
     @pausable

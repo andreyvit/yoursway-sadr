@@ -13,15 +13,11 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     
     N node();
     
-    C staticallyEnclosingConstruct();
-    
     /**
      * WARNING: this method has O(N) complexity (where N is the number of
      * nodes), so use sparingly.
      */
     C subconstructFor(N node);
-    
-    C parent();
     
     List<C> enclosedConstructs();
     

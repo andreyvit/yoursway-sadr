@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,33 +32,27 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.junit.After;
 
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.values.Value;
+import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.util.Strings;
 import com.yoursway.sadr.python.ASTUtils;
+import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.constructs.PythonFileC;
+import com.yoursway.sadr.python.constructs.VariableReferenceC;
 import com.yoursway.sadr.python.core.runtime.FileSourceUnit;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python.core.runtime.ProjectUnit;
 import com.yoursway.sadr.python.core.tests.Activator;
 import com.yoursway.sadr.python.core.tests.internal.FileUtil;
 import com.yoursway.sadr.python.core.tests.internal.StringInputStream;
-import com.yoursway.sadr.python_v2.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python_v2.constructs.MethodDeclarationC;
-import com.yoursway.sadr.python_v2.constructs.PythonConstruct;
-import com.yoursway.sadr.python_v2.constructs.PythonFileC;
-import com.yoursway.sadr.python_v2.constructs.VariableReferenceC;
-import com.yoursway.sadr.python_v2.croco.Krocodile;
-import com.yoursway.sadr.python_v2.goals.CallResolver;
+import com.yoursway.sadr.python.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
-import com.yoursway.sadr.python_v2.model.ContextImpl;
-import com.yoursway.sadr.python_v2.model.RuntimeArguments;
-import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
-import com.yoursway.sadr.python_v2.model.builtins.types.PythonException;
-import com.yoursway.sadr.succeeder.Engine;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 import com.yoursway.utils.YsFileUtils;
 
 public abstract class AbstractTypeInferencingTestCase {
@@ -141,7 +134,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         ProjectRuntime projectRuntime = createProjectRuntime(rootDir);
         
-        Engine engine = projectRuntime.getEngine();
+        AnalysisEngine engine = projectRuntime.getEngine();
         
         StringBuilder expected = new StringBuilder();
         StringBuilder actual = new StringBuilder();
@@ -158,7 +151,7 @@ public abstract class AbstractTypeInferencingTestCase {
         Assert.assertEquals("Items should match:", expected.toString(), actual.toString());
     }
     
-    private void checkFile(FileSourceUnit sourceModule, ProjectRuntime projectRuntime, Engine engine,
+    private void checkFile(FileSourceUnit sourceModule, ProjectRuntime projectRuntime, AnalysisEngine engine,
             StringBuilder expected, StringBuilder actual) throws Exception {
         Collection<IAssertion> assertions = new ArrayList<IAssertion>();
         
@@ -184,7 +177,7 @@ public abstract class AbstractTypeInferencingTestCase {
             return;
         PythonFileC fileC = projectRuntime.getModule(sourceModule);
         for (IAssertion assertion : assertions)
-            assertion.check(fileC, sourceModule, expected, actual);
+            assertion.check(engine, fileC, sourceModule, expected, actual);
     }
     
     private IAssertion parseAssertion(StringTokenizer tok, String test, String line, String originalLine,
@@ -351,39 +344,38 @@ public abstract class AbstractTypeInferencingTestCase {
     
     public interface IAssertion {
         
-        void check(PythonFileC fileC, FileSourceUnit sourceModule, StringBuilder expected,
-                StringBuilder actual) throws Exception;
+        void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit sourceModule,
+                StringBuilder expected, StringBuilder actual) throws Exception;
     }
     
-    public PythonValueSet createSelfGoal(PythonFileC fileC, final PythonConstruct construct) {
-        if (construct.scope() instanceof MethodDeclarationC
-                && construct.parentScope() instanceof ClassDeclarationC) {
-            final MethodDeclarationC func = (MethodDeclarationC) construct.scope();
-            ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
-            PythonValueSet klasses = classC.evaluate(Krocodile.EMPTY);
-            for (PythonObject klass : klasses) {
-                PythonValueSet results = CallResolver.callFunction(klass, new RuntimeArguments(),
-                        Krocodile.EMPTY, classC);
-                for (PythonObject result : results) {
-                    List<PythonArgument> args = func.getArguments();
-                    Krocodile context;
-                    try {
-                        context = new Krocodile(Krocodile.EMPTY, func, new ContextImpl(args,
-                                new RuntimeArguments(result)));
-                        return construct.evaluate(context);
-                    } catch (PythonException e) {
-                        e.printStackTrace();
-                        return new PythonValueSet();
-                    }
-                }
-            }
-            throw new IllegalStateException("No method found!");
-        } else {
-            return construct.evaluate(Krocodile.EMPTY);
-        }
+    public ExpressionValueGoal createSelfGoal(PythonFileC fileC, final PythonConstruct construct) {
+        //        if (construct instanceof MethodDeclarationC && construct.staticContext() instanceof ClassDeclarationC) {
+        //            final MethodDeclarationC func = (MethodDeclarationC) construct.staticContext();
+        //            ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
+        //            PythonValueSet klasses = classC.evaluate(PythonDynamicContext.EMPTY);
+        //            for (PythonValue klass : klasses) {
+        //                PythonValueSet results = CallResolver.callFunction(klass, new RuntimeArguments(),
+        //                        PythonDynamicContext.EMPTY, classC);
+        //                for (PythonValue result : results) {
+        //                    List<PythonArgument> args = func.getArguments();
+        //                    PythonDynamicContext context;
+        //                    try {
+        //                        context = new PythonDynamicContext(PythonDynamicContext.EMPTY, func, new ContextImpl(
+        //                                args, new RuntimeArguments(result)));
+        //                        return construct.evaluate(context);
+        //                    } catch (PythonException e) {
+        //                        e.printStackTrace();
+        //                        return new PythonValueSet();
+        //                    }
+        //                }
+        //            }
+        //            throw new IllegalStateException("No method found!");
+        //        } else {
+        return new ExpressionValueGoal(construct, PythonDynamicContext.EMPTY);
+        //        }
     }
     
-    public PythonValueSet createGoal(PythonFileC fileC, int namePos) {
+    public ExpressionValueGoal createGoal(PythonFileC fileC, int namePos) {
         ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
         assertNotNull(node);
         PythonConstruct construct = fileC.subconstructFor(node);
@@ -404,10 +396,10 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = correctClassRef;
         }
         
-        public void check(PythonFileC fileC, FileSourceUnit cu, StringBuilder expected, StringBuilder actual)
-                throws Exception {
-            PythonValueSet acceptor = createGoal(fileC, namePos);
-            ValueInfo result = acceptor.getResult();
+        public void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit cu,
+                StringBuilder expected, StringBuilder actual) throws Exception {
+            ExpressionValueGoal goal = createGoal(fileC, namePos);
+            ValueInfo result = engine.evaluate(goal).getResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
             String types = Strings.join(possibleTypes, ",");
@@ -431,10 +423,10 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = ClassRecorrectClassReff;
         }
         
-        public void check(PythonFileC fileC, FileSourceUnit cu, StringBuilder expected, StringBuilder actual)
-                throws Exception {
-            PythonValueSet acceptor = createGoal(fileC);
-            ValueInfo result = acceptor.getResult();
+        public void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit cu,
+                StringBuilder expected, StringBuilder actual) throws Exception {
+            ExpressionValueGoal goal = createGoal(fileC, namePos);
+            ValueInfo result = engine.evaluate(goal).getResult();
             String[] possibleValues = result.describePossibleValues();
             Arrays.sort(possibleValues, Strings.getNaturalComparator());
             String values = Strings.join(possibleValues, ",");
@@ -445,12 +437,6 @@ public abstract class AbstractTypeInferencingTestCase {
             actual.append(prefix).append(values).append('\n');
         }
         
-        public PythonValueSet createGoal(PythonFileC fileC) {
-            ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
-            assertNotNull(node);
-            PythonConstruct construct = fileC.subconstructFor(node);
-            return createSelfGoal(fileC, construct);
-        }
     }
     
     //    class SwampTestAssertion implements IAssertion {
@@ -605,16 +591,17 @@ public abstract class AbstractTypeInferencingTestCase {
             this.namePos = namePos;
         }
         
-        public void check(PythonFileC fileC, FileSourceUnit cu, StringBuilder expected, StringBuilder actual)
-                throws Exception {
-            PythonValueSet values = createGoal(fileC);
+        public void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit cu,
+                StringBuilder expected, StringBuilder actual) throws Exception {
+            ExpressionValueGoal goal = createGoal(fileC);
+            PythonValueSet values = engine.evaluate(goal);
             int actualLine = -2;
             String prefix = "";
             if (!values.isEmpty()) {
                 ValueInfo result = values.getResult();
                 if (result != null) {
                     Collection<Value> vals = result.getValueSet().containedValues();
-                    PythonConstruct decl = ((PythonObject) vals.iterator().next()).getDecl();//FIXME I am Dirty Hack! Fix me, please.
+                    PythonConstruct decl = ((PythonValue) vals.iterator().next()).getDecl();//FIXME I am Dirty Hack! Fix me, please.
                     actualLine = getLine(cu, decl.node());
                 }
                 
@@ -625,12 +612,12 @@ public abstract class AbstractTypeInferencingTestCase {
             
         }
         
-        public PythonValueSet createGoal(PythonFileC fileC) {
+        public ExpressionValueGoal createGoal(PythonFileC fileC) {
             ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             if (construct instanceof VariableReferenceC) {
-                return construct.evaluate(Krocodile.EMPTY);
+                return new ExpressionValueGoal(construct, PythonDynamicContext.EMPTY);
             } else {
                 throw new IllegalStateException("Should be VariableReferenceC, but found "
                         + construct.getClass().getSimpleName());

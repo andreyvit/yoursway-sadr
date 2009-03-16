@@ -1,7 +1,6 @@
 package com.yoursway.sadr.ruby.core.typeinferencing.scopes;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.propagation.PropagationTracker;
 import com.yoursway.sadr.ruby.core.runtime.RubyClass;
@@ -78,10 +77,6 @@ public abstract class ChildScope extends AbstractScope {
     
     public RubyClass currentClass() {
         return parent.currentClass();
-    }
-    
-    public RubyConstruct parentConstruct() {
-        return parent.parentConstruct();
     }
     
 }

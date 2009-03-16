@@ -11,7 +11,6 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -50,10 +49,6 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     @Override
     public String name() {
         return node.getName();
-    }
-    
-    public boolean match(Frog frog) {
-        return frog.match(name());
     }
     
     public CallableDeclaration findDeclaredMethod(String methodName) {

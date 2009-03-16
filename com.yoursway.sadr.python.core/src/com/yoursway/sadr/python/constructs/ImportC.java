@@ -7,7 +7,6 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.model.types.ModuleType;
 import com.yoursway.sadr.python.model.values.ModuleValue;
-import com.yoursway.sadr.python_v2.croco.Frog;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -64,10 +63,6 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
             addModule(parentPath, parentPath, null);
         }
         imports.put(alias, value);
-    }
-    
-    public boolean match(Frog frog) {
-        return hasImport(frog.accessor());
     }
     
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {

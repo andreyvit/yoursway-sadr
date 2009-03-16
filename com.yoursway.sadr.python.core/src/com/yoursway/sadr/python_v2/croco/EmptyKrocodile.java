@@ -6,13 +6,13 @@ package com.yoursway.sadr.python_v2.croco;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.yoursway.sadr.python_v2.constructs.Scope;
-import com.yoursway.sadr.python_v2.model.ContextImpl;
-import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.objects.ContextImpl;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
-final class EmptyKrocodile extends Krocodile {
+final class EmptyKrocodile extends PythonDynamicContext {
     @Override
-    public PythonObject getActualArgument(String name) {
+    public PythonValue getActualArgument(String name) {
         return null;
     }
     
@@ -22,12 +22,12 @@ final class EmptyKrocodile extends Krocodile {
     }
     
     @Override
-    public void put(String name, PythonObject value) {
+    public void put(String name, PythonValue value) {
         
     }
     
     @Override
-    public ContextImpl getContext(Scope scope) {
+    public ContextImpl getContext(PythonStaticContext staticContext) {
         return null;
     }
     

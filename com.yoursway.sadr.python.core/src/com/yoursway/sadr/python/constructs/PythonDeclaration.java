@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python.constructs;
 
-import com.yoursway.sadr.python_v2.croco.Frog;
-
 /**
  * @author buriy
  * 
@@ -14,8 +12,7 @@ import com.yoursway.sadr.python_v2.croco.Frog;
  */
 
 public interface PythonDeclaration extends PythonConstruct {
-    String name();
     
-    public boolean match(Frog frog);
+    String name();
     
 }

@@ -13,22 +13,27 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
-import com.yoursway.sadr.python_v2.constructs.PythonFileC;
-import com.yoursway.sadr.succeeder.DefaultSchedulingStrategy;
-import com.yoursway.sadr.succeeder.Engine;
+import com.yoursway.sadr.engine.incremental.IncrementalAnalysisEngine;
+import com.yoursway.sadr.python.constructs.PythonFileC;
+import com.yoursway.sadr.python.model.IndexManager;
 
 public class ProjectRuntime {
     
     private final Collection<FileSourceUnit> modules;
     private final Map<File, PythonFileC> nameToModule = newHashMap();
-    private final Engine engine;
+    private final IncrementalAnalysisEngine engine;
+    private final IndexManager indexManager;
     
     public ProjectRuntime(ProjectUnit project) {
-        this.engine = new Engine(new DefaultSchedulingStrategy());
-        
+        this.engine = new IncrementalAnalysisEngine();
         this.modules = project.getModules();
+        this.indexManager = new IndexManager();
         for (FileSourceUnit module : this.modules)
             contributeModule(module);
+    }
+    
+    public IncrementalAnalysisEngine getEngine() {
+        return engine;
     }
     
     public PythonFileC getModule(File file) {
@@ -49,10 +54,6 @@ public class ProjectRuntime {
         }
     }
     
-    public Engine getEngine() {
-        return this.engine;
-    }
-    
     List<VariableReference> findVariables(String prefix) {
         List<VariableReference> list = new ArrayList<VariableReference>();
         
@@ -71,9 +72,10 @@ public class ProjectRuntime {
             ModuleDeclaration moduleDecl = parser.parse(moduleName.toCharArray(), module
                     .getSourceAsCharArray(), null);
             
-            PythonFileC moduleObject = new PythonFileC(null, moduleDecl, moduleName, this);
+            PythonFileC moduleObject = new PythonFileC(null, moduleDecl, moduleName, module, this);
             //FIXME convert module names to python code form (e.g. "package.module").
             nameToModule.put(module.getFile().getCanonicalFile(), moduleObject);
+            indexManager.addToIndex(moduleObject);
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getCause() != null) {

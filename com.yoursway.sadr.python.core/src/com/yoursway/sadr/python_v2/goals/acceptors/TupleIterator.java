@@ -6,18 +6,18 @@ import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.values.Value;
-import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
+import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
-public class TupleIterator implements Iterator<List<PythonObject>>, Iterable<List<PythonObject>> {
+public class TupleIterator implements Iterator<List<PythonValue>>, Iterable<List<PythonValue>> {
     private final ArrayList<Iterator<Value>> iterators;
-    private final ArrayList<PythonObject> results;
+    private final ArrayList<PythonValue> results;
     private final int size;
     private int count;
     private int position;
     private final ArrayList<ValueInfo> sources;
     
     public TupleIterator(List<PythonValueSet> list) {
-        this.results = new ArrayList<PythonObject>();
+        this.results = new ArrayList<PythonValue>();
         this.iterators = new ArrayList<Iterator<Value>>();
         this.sources = new ArrayList<ValueInfo>();
         this.size = list.size();
@@ -28,12 +28,12 @@ public class TupleIterator implements Iterator<List<PythonObject>>, Iterable<Lis
             this.iterators.add(makeIterator(i));
             this.count *= valueInfo.containedValues().size();
             if (count != 0) {
-                this.results.add(i, (PythonObject) iterators.get(i).next());
+                this.results.add(i, (PythonValue) iterators.get(i).next());
             }
         }
     }
     
-    public ArrayList<PythonObject> next() {
+    public ArrayList<PythonValue> next() {
         if (!hasNext()) {
             return null;
         }
@@ -44,12 +44,12 @@ public class TupleIterator implements Iterator<List<PythonObject>>, Iterable<Lis
         int i = size - 1;
         while (i >= 0) {
             if (iterators.get(i).hasNext()) {
-                results.set(i - 1, (PythonObject) iterators.get(i).next());
+                results.set(i - 1, (PythonValue) iterators.get(i).next());
                 break;
             } else {
                 Iterator<Value> iterator = makeIterator(i);
                 iterators.set(i, iterator);
-                results.set(i, (PythonObject) iterator.next());
+                results.set(i, (PythonValue) iterator.next());
             }
         }
         return results;
@@ -66,7 +66,7 @@ public class TupleIterator implements Iterator<List<PythonObject>>, Iterable<Lis
     public void remove() {
     }
     
-    public Iterator<List<PythonObject>> iterator() {
+    public Iterator<List<PythonValue>> iterator() {
         return this;
     }
 }
