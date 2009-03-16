@@ -24,20 +24,16 @@ public class DictType extends BuiltinType {
         return array.getDict().get(value);
     }
     
-    @Override
-    public DictValue coerce(PythonObject object) throws PythonException {
-        throw new CoersionFailed();
-    }
-    
-    public DictValue coerce(DictValue object) throws PythonException {
-        if (object.isInstance(this))
-            return object;
-        throw new CoersionFailed();
-    }
-    
-    public PythonObject _len(RuntimeArguments args) throws PythonException {
+    public PythonObject __len__(RuntimeArguments args) throws PythonException {
         DictValue array = DictType.instance.coerce(args.readSingle());
         return IntegerType.wrap(array.getDict().size());
+    }
+    
+    @Override
+    public DictValue coerce(PythonObject object) throws PythonException {
+        if (object.isInstance(this))
+            return (DictValue) object;
+        throw new CoersionFailed();
     }
     
     private DictType() {

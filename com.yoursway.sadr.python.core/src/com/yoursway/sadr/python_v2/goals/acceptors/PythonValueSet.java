@@ -11,7 +11,7 @@ import com.yoursway.sadr.python_v2.croco.Krocodile;
 import com.yoursway.sadr.python_v2.goals.Acceptor;
 import com.yoursway.sadr.python_v2.model.TypeError;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
-import com.yoursway.sadr.python_v2.model.builtins.values.BooleanValue;
+import com.yoursway.sadr.python_v2.model.builtins.types.BooleanType;
 
 public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     
@@ -58,7 +58,7 @@ public class PythonValueSet extends Acceptor implements Iterable<PythonObject> {
     }
     
     public void addResult(boolean result, Krocodile context) {
-        addResult(BooleanValue.instance(result));
+        addResult(BooleanType.wrap(result));
     }
     
     public void addResults(PythonValueSet r) {

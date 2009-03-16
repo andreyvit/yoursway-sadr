@@ -37,7 +37,7 @@ public final class CallResolver {
             throw new IllegalStateException("Receiver is null!");
         }
         System.out.println("Looking for: " + receiver.toString() + "." + methodName);
-        PythonObject callable = receiver.getScopedAttribute(methodName); // instance attributes
+        PythonObject callable = receiver.getBuiltinAttribute(methodName); // instance attributes
         // look into class definition
         if (callable == null) {
             PythonType klass = receiver.getType();

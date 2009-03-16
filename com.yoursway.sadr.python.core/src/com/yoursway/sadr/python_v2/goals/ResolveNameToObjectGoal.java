@@ -54,7 +54,7 @@ public class ResolveNameToObjectGoal extends Goal<PythonValueSet> {
         if (valueSet != null) {
             return valueSet;
         }
-        PythonObject builtin = Builtins.instance().getScopedAttribute(frog.accessor());
+        PythonObject builtin = Builtins.instance().getBuiltinAttribute(frog.accessor());
         if (builtin != null) {
             return new PythonValueSet(builtin, crocodile);
         }

@@ -17,14 +17,7 @@ import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
  * Represents a class type object. Supports class attributes name resolution.
  */
 public abstract class PythonType extends PythonObject implements Type {
-    protected static boolean hasType(List<PythonObject> objects, PythonType type) {
-        for (PythonObject object : objects) {
-            if (object.isInstance(type))
-                return true;
-        }
-        return false;
-    }
-
+    
     PythonType() {
     }
     
@@ -55,7 +48,7 @@ public abstract class PythonType extends PythonObject implements Type {
     }
     
     @Override
-    public PythonObject getScopedAttribute(String name) {
+    public PythonObject getBuiltinAttribute(String name) {
         return null;
     }
     
@@ -67,4 +60,13 @@ public abstract class PythonType extends PythonObject implements Type {
     public PythonValue coerce(PythonObject value) throws PythonException {
         throw new CoersionFailed();
     }
+    
+    protected boolean hasType(List<PythonObject> objects) {
+        for (PythonObject object : objects) {
+            if (object.isInstance(this))
+                return true;
+        }
+        return false;
+    }
+    
 }

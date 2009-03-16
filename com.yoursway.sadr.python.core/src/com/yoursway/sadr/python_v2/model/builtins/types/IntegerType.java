@@ -8,7 +8,6 @@ import com.yoursway.sadr.python_v2.model.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.TypeError;
 import com.yoursway.sadr.python_v2.model.builtins.PythonObject;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
-import com.yoursway.sadr.python_v2.model.builtins.values.BooleanValue;
 import com.yoursway.sadr.python_v2.model.builtins.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python_v2.model.builtins.values.IntegerValue;
 import com.yoursway.sadr.python_v2.model.builtins.values.LongValue;
@@ -27,10 +26,10 @@ public class IntegerType extends NumericType {
                     return PythonValueSet.EMPTY;
                 }
                 if (val instanceof BooleanType) {
-                    return new PythonValueSet(BooleanValue.instance_false, crocodile);
+                    return new PythonValueSet(false, crocodile);
                 } else if (val instanceof NumericValue) {
                     boolean bool = ((NumericValue) val).coerceToBool();
-                    return new PythonValueSet(BooleanValue.instance(bool), crocodile);
+                    return new PythonValueSet(bool, crocodile);
                 } else if (val instanceof StringValue) {
                     StringValue stringValue = (StringValue) val;
                     return new PythonValueSet(wrap(stringValue.coerceToInt()), crocodile);
