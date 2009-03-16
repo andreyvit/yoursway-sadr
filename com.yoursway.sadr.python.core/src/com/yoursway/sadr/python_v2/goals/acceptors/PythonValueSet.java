@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
@@ -125,6 +126,11 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     
     public PythonValueSet build() {
         return this;
+    }
+    
+    public void addAll(List<PythonValueSet> results) {
+        for (PythonValueSet v : results)
+            addResults(v);
     }
     
 }

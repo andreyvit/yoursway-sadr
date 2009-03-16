@@ -5,10 +5,13 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.index.unodes.Unode;
+import com.yoursway.sadr.python.model.IndexAffector;
+import com.yoursway.sadr.python.model.IndexRequest;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
-public class AssignmentC extends PythonConstructImpl<Assignment> implements PythonDeclaration {
+public class AssignmentC extends PythonConstructImpl<Assignment> implements PythonDeclaration, IndexAffector {
     
     private final PythonConstruct lhs, rhs;
     
@@ -57,6 +60,12 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         return rhs.evaluateValue(dc, infoKind);
+    }
+    
+    public void actOnIndex(IndexRequest indexRequest) {
+        Unode lhsUnode = lhs.toUnode();
+        if (lhsUnode != null)
+            indexRequest.addAssignment(lhsUnode, rhs);
     }
     
 }

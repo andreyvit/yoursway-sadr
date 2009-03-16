@@ -12,6 +12,7 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.google.common.base.Predicate;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
+import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
@@ -137,6 +138,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     protected List<PythonConstruct> wrap(List<ASTNode> node, PythonStaticContext staticContext) {
         return PythonConstructFactory.wrap(node, staticContext, this);
+    }
+    
+    public Unode toUnode() {
+        return null;
     }
     
 }

@@ -8,6 +8,7 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.incremental.SourceUnit;
+import com.yoursway.sadr.engine.incremental.index.Index;
 import com.yoursway.sadr.python.core.runtime.FileSourceUnit;
 import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -19,13 +20,15 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements P
     private final ProjectRuntime projectRuntime;
     private final FileSourceUnit module;
     private final List<PythonConstruct> body;
+    private final Index index;
     
     public PythonFileC(ModuleDeclaration node, String name, FileSourceUnit module,
-            ProjectRuntime projectRuntime) {
+            ProjectRuntime projectRuntime, Index index) {
         super(null, node, null);
         this.moduleName = name;
         this.module = module;
         this.projectRuntime = projectRuntime;
+        this.index = index;
         body = wrap(node.getStatements(), this);
         body.isEmpty();
     }
@@ -61,6 +64,11 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements P
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public Index getIndex() {
+        return index;
     }
     
 }

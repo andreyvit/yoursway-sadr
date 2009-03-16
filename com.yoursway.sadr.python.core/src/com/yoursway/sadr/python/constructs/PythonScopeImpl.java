@@ -4,6 +4,7 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.propagation.PropagationTracker;
 import com.yoursway.sadr.core.propagation.PropagationTrackerImpl;
+import com.yoursway.sadr.engine.incremental.index.Index;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 
 public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstructImpl<N> implements
@@ -28,6 +29,10 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
     
     public PropagationTracker<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> propagationTracker() {
         return new PropagationTrackerImpl<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode>();
+    }
+    
+    public Index getIndex() {
+        return staticContext().getIndex();
     }
     
 }

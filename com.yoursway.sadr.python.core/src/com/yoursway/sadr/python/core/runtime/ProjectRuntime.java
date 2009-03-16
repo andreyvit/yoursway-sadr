@@ -16,6 +16,7 @@ import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.engine.incremental.IncrementalAnalysisEngine;
+import com.yoursway.sadr.engine.incremental.index.IncrementalIndex;
 import com.yoursway.sadr.python.constructs.PythonFileC;
 import com.yoursway.sadr.python.model.IndexManager;
 
@@ -25,13 +26,19 @@ public class ProjectRuntime {
     private final Map<File, PythonFileC> nameToModule = newHashMap();
     private final IncrementalAnalysisEngine engine;
     private final IndexManager indexManager;
+    private final IncrementalIndex index;
     
     public ProjectRuntime(ProjectUnit project) {
         this.engine = new IncrementalAnalysisEngine();
         this.modules = project.getModules();
         this.indexManager = new IndexManager();
+        index = new IncrementalIndex(indexManager.createGlobalIndex());
+        for (FileSourceUnit module : this.modules)
+            index.prepareToUpdate(module);
         for (FileSourceUnit module : this.modules)
             contributeModule(module);
+        index.finishUpdate(engine);
+        indexManager.updateFinished();
     }
     
     public IncrementalAnalysisEngine getEngine() {
@@ -74,7 +81,7 @@ public class ProjectRuntime {
             ModuleDeclaration moduleDecl = parser.parse(moduleName.toCharArray(), module
                     .getSourceAsCharArray(), null);
             
-            final PythonFileC moduleObject = new PythonFileC(moduleDecl, moduleName, module, this);
+            final PythonFileC moduleObject = new PythonFileC(moduleDecl, moduleName, module, this, index);
             //FIXME convert module names to python code form (e.g. "package.module").
             nameToModule.put(module.getFile().getCanonicalFile(), moduleObject);
             engine.evaluate(new AbstractGenericGoal() {
