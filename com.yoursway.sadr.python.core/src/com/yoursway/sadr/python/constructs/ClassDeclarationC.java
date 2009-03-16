@@ -13,11 +13,15 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.index.unodes.VariableUnode;
+import com.yoursway.sadr.python.model.IndexAffector;
+import com.yoursway.sadr.python.model.IndexRequest;
+import com.yoursway.sadr.python.model.types.InstanceType;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> implements PythonDeclaration,
-        CallableDeclaration {
+        CallableDeclaration, IndexAffector {
     
     private final List<PythonConstruct> supers;
     private final List<PythonConstruct> body;
@@ -78,6 +82,11 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new VoidConstructException(this);
+    }
+    
+    public void actOnIndex(IndexRequest req) {
+        req.addAssignment(new VariableUnode(name()), new SpecialValueC(staticContext(), new PythonValueSet(
+                new InstanceType(this))));
     }
     
 }

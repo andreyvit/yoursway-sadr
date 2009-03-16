@@ -17,7 +17,7 @@ public class BigIntegerLiteralC extends PythonConstructImpl<BigNumericLiteral> {
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        return new PythonValueSet(LongType.wrap(this), dc);
+        return new PythonValueSet(LongType.wrap(this));
     }
     
 }

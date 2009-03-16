@@ -17,7 +17,7 @@ public class FloatLiteralC extends PythonConstructImpl<FloatNumericLiteral> {
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        return new PythonValueSet(FloatType.wrap(this), dc);
+        return new PythonValueSet(FloatType.wrap(this));
     }
     
 }

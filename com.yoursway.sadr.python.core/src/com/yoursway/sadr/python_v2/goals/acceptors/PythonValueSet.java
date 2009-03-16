@@ -24,8 +24,8 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     public PythonValueSet() {
     }
     
-    public PythonValueSet(PythonValue result, PythonDynamicContext context) {
-        addResult(result, context);
+    public PythonValueSet(PythonValue result) {
+        addResult(result);
     }
     
     public PythonValueSet(boolean result, PythonDynamicContext context) {
@@ -54,17 +54,13 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         builder.add(result.getType(), result);
     }
     
-    public void addResult(PythonValue result, PythonDynamicContext context) {
-        addResult(result);
-    }
-    
     public void addResult(boolean result, PythonDynamicContext context) {
         addResult(BooleanType.wrap(result));
     }
     
     public void addResults(PythonValueSet r) {
         for (Value value : r.getResult().containedValues()) {
-            addResult((PythonValue) value, null);
+            addResult(((PythonValue) value));
         }
         
     }
@@ -132,7 +128,7 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         for (PythonValueSet v : results)
             addResults(v);
     }
-
+    
     public static PythonValueSet merge(List<PythonValueSet> results) {
         PythonValueSetBuilder builder = newBuilder();
         builder.addAll(results);

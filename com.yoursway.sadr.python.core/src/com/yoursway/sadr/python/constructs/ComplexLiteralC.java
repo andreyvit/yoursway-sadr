@@ -17,7 +17,7 @@ public class ComplexLiteralC extends PythonConstructImpl<ComplexNumericLiteral> 
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        return new PythonValueSet(ComplexType.wrap(this), dc);
+        return new PythonValueSet(ComplexType.wrap(this));
     }
     
 }

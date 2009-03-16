@@ -51,7 +51,7 @@ public class IntegerType extends NumericType {
                     crocodile, getDecl());
             for (PythonValue intvalue : to_int) {
                 if (intvalue instanceof IntegerValue || intvalue instanceof LongValue) {
-                    results.addResult(intvalue, crocodile);
+                    results.addResult(intvalue);
                 } else {
                     PythonType type = intvalue.getType();
                     results.addException(new TypeError("__int__ returned non-int (type " + type + ")"));

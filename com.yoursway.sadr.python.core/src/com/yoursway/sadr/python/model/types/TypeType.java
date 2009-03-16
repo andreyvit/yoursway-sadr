@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.model.types;
 
-
 public class TypeType extends PythonType {
     
     public TypeType() {

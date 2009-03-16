@@ -51,7 +51,7 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        return new PythonValueSet(isUnicode ? UnicodeType.wrap(this) : StringType.wrap(this), dc);
+        return new PythonValueSet(isUnicode ? UnicodeType.wrap(this) : StringType.wrap(this));
     }
     
 }

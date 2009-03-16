@@ -19,7 +19,7 @@ public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         NumericValue val = new IntegerValue(this.node().getIntValue());
-        return new PythonValueSet(val, dc);
+        return new PythonValueSet(val);
     }
     
 }

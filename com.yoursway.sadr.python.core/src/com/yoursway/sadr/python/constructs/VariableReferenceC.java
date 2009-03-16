@@ -23,7 +23,10 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        return calculateValuesAssignedTo(toUnode(), staticContext(), dc, currentScopes());
+        Unode unode = toUnode();
+        if (unode == null)
+            return PythonValueSet.EMPTY;
+        return calculateValuesAssignedTo(unode, staticContext(), dc, currentScopes());
     }
     
     @Override

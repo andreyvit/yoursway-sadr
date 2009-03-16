@@ -38,7 +38,10 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     @pausable
     public PythonValueSet evaluateValue(final PythonDynamicContext dc, InfoKind infoKind) {
         List<PythonScope> scopes = currentScopes();
-        Set<Unode> aliases = computeAliases(toUnode(), scopes, staticContext());
+        Unode unode = toUnode();
+        if (unode == null)
+            return PythonValueSet.EMPTY;
+        Set<Unode> aliases = computeAliases(unode, scopes, staticContext());
         return calculateValuesAssignedTo(aliases, staticContext(), dc, scopes);
     }
     

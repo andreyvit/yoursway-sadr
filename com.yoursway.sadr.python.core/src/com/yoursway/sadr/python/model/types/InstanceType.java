@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 import com.yoursway.sadr.python.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python.model.values.CallableObject;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
+import com.yoursway.sadr.python.model.values.InstanceValue;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
 
 public class InstanceType extends PythonType implements CallableObject {
     private ArrayList<PythonType> supers = new ArrayList<PythonType>();
@@ -32,11 +32,6 @@ public class InstanceType extends PythonType implements CallableObject {
         return TypeType.instance;
     }
     
-    public PythonValueSet call(PythonDynamicContext crocodile, RuntimeArguments args) {
-        //        return new CreateInstanceGoal(this, args, crocodile).evaluate();
-        throw new UnsupportedOperationException();
-    }
-    
     @Override
     public ClassDeclarationC getDecl() {
         return (ClassDeclarationC) super.getDecl();
@@ -46,4 +41,10 @@ public class InstanceType extends PythonType implements CallableObject {
     public String name() {
         return getDecl().name();
     }
+    
+    @Override
+    public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
+        builder.addResult(new InstanceValue(this));
+    }
+    
 }
