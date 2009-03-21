@@ -116,7 +116,7 @@ public class IndexManager {
         public IndexRequest createIndexRequest() {
             if (immutable)
                 throw new IllegalStateException("Index memento is immutable");
-            return new IndexRequest(assignments, returns);
+            return new IndexRequest(assignments, returns, IndexNameWrappingStrategy.NULL);
         }
         
         public void makeImmutable() {

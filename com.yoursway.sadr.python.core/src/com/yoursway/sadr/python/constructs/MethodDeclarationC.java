@@ -18,6 +18,7 @@ import com.yoursway.sadr.python.index.ReturnsIndexQuery;
 import com.yoursway.sadr.python.index.ReturnsRequestor;
 import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python.model.IndexAffector;
+import com.yoursway.sadr.python.model.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.model.IndexRequest;
 import com.yoursway.sadr.python.model.values.FunctionObject;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -95,6 +96,10 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     @Override
     public MethodDeclarationC getParentMethodDeclarationC() {
         return this;
+    }
+    
+    public IndexNameWrappingStrategy createWrappingStrategy() {
+        return IndexNameWrappingStrategy.NULL;
     }
     
 }

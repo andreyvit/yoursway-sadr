@@ -45,6 +45,11 @@ public final class VariablesTests extends AbstractTypeInferencingTestCase {
     }
     
     @Test
+    public void staticFieldRead() throws Exception {
+        runTest();
+    }
+    
+    @Test
     public void equalNamesAssignment() throws Exception {
         runTest();
     }

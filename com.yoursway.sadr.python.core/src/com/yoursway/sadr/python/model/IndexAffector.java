@@ -4,4 +4,6 @@ public interface IndexAffector {
     
     void actOnIndex(IndexRequest indexRequest);
     
+    IndexNameWrappingStrategy createWrappingStrategy();
+    
 }

@@ -19,26 +19,18 @@ public class IndexRequest implements
     
     private final AbstractMultiMap<Unode, PythonConstruct> assignments;
     private final AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns;
+    private final IndexNameWrappingStrategy wrappingStrategy;
     
     public IndexRequest(AbstractMultiMap<Unode, PythonConstruct> assignments,
-            AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns) {
+            AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns,
+            IndexNameWrappingStrategy wrappingStrategy) {
         if (assignments == null)
             throw new NullPointerException("assignments is null");
         if (returns == null)
             throw new NullPointerException("returns is null");
         this.assignments = assignments;
         this.returns = returns;
-    }
-    
-    public void accept(PythonConstruct construct) {
-        if (construct == null)
-            throw new NullPointerException("construct is null");
-        if (construct instanceof IndexAffector)
-            try {
-                ((IndexAffector) construct).actOnIndex(this);
-            } catch (Throwable e) {
-                Bugs.bug(e);
-            }
+        this.wrappingStrategy = wrappingStrategy;
     }
     
     public void addAssignment(Unode lhs, PythonConstruct rhs) {
@@ -46,6 +38,9 @@ public class IndexRequest implements
             throw new NullPointerException("lhs is null");
         if (rhs == null)
             throw new NullPointerException("rhs is null");
+        lhs = wrappingStrategy.wrap(lhs);
+        if (lhs == null)
+            throw new NullPointerException("lhs is null");
         assignments.put(lhs, rhs);
     }
     
@@ -63,7 +58,19 @@ public class IndexRequest implements
     @pausable
     public ConstructVisitor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> enter(
             PythonConstruct construct) {
-        accept(construct);
+        if (construct == null)
+            throw new NullPointerException("construct is null");
+        if (construct instanceof IndexAffector) {
+            IndexAffector affector = (IndexAffector) construct;
+            try {
+                affector.actOnIndex(this);
+            } catch (Throwable e) {
+                Bugs.bug(e);
+            }
+            IndexNameWrappingStrategy wrappingStrategy = affector.createWrappingStrategy();
+            if (wrappingStrategy != null)
+                return new IndexRequest(assignments, returns, wrappingStrategy);
+        }
         return this;
     }
     

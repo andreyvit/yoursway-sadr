@@ -15,6 +15,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python.model.IndexAffector;
+import com.yoursway.sadr.python.model.IndexAttributeWrappingStrategy;
+import com.yoursway.sadr.python.model.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.model.IndexRequest;
 import com.yoursway.sadr.python.model.types.InstanceType;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -92,6 +94,10 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     @Override
     public MethodDeclarationC getParentMethodDeclarationC() {
         return null;
+    }
+    
+    public IndexNameWrappingStrategy createWrappingStrategy() {
+        return new IndexAttributeWrappingStrategy(new VariableUnode(name()));
     }
     
 }

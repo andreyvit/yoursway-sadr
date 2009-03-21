@@ -6,6 +6,7 @@ import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.model.IndexAffector;
+import com.yoursway.sadr.python.model.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.model.IndexRequest;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
@@ -32,6 +33,10 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> implements Ind
         MethodDeclarationC methodC = staticContext().getParentMethodDeclarationC();
         if (methodC != null)
             r.addReturnedValue(methodC, expression);
+    }
+    
+    public IndexNameWrappingStrategy createWrappingStrategy() {
+        return null;
     }
     
 }

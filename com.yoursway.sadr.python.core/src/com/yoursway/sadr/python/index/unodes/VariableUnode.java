@@ -15,6 +15,10 @@ public class VariableUnode extends Unode {
         this.hashCode = computeHashCode();
     }
     
+    public String getName() {
+        return name;
+    }
+    
     @Override
     public String toString() {
         return format("Var(%s)", name);

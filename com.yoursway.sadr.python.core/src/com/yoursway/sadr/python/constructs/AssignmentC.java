@@ -7,6 +7,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python.model.IndexAffector;
+import com.yoursway.sadr.python.model.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.model.IndexRequest;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
@@ -66,6 +67,10 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
         Unode lhsUnode = lhs.toUnode();
         if (lhsUnode != null)
             indexRequest.addAssignment(lhsUnode, rhs);
+    }
+    
+    public IndexNameWrappingStrategy createWrappingStrategy() {
+        return null;
     }
     
 }
