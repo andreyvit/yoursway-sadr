@@ -86,8 +86,12 @@ public class IncrementalIndex implements Index {
     
     @pausable
     public <R> void query(IndexQuery<R> query, R requestor) {
-        ((IncrementalAnalysisTask) AnalysisEngine.currentTask())
-                .contributeDependecyContributor(new QueryDependencyContributor(lookupQueryData(query)));
+        SourceUnit sourceUnit = query.localSourceUnit();
+        IncrementalAnalysisTask task = (IncrementalAnalysisTask) AnalysisEngine.currentTask();
+        if (sourceUnit == null)
+            task.contributeDependecyContributor(new QueryDependencyContributor(lookupQueryData(query)));
+        else
+            task.contributeSourceUnitDependency(sourceUnit);
         underlyingIndex.query(query, requestor);
     }
     

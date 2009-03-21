@@ -5,6 +5,8 @@ import java.util.List;
 
 import kilim.pausable;
 
+import com.yoursway.sadr.engine.incremental.index.Index;
+
 public interface AnalysisTask {
     
     @pausable
@@ -12,5 +14,7 @@ public interface AnalysisTask {
     
     @pausable
     <R extends Result> List<R> evaluate(Collection<? extends Goal<R>> goals);
+    
+    Index getIndex();
     
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import kilim.pausable;
 
 import com.google.common.base.Function;
+import com.yoursway.sadr.engine.incremental.index.IndexQuery;
 
 public class Analysis {
     
@@ -47,6 +48,11 @@ public class Analysis {
         goals.add(b);
         List<? extends R> results = evaluate(goals);
         return new Pair<R, R>(results.get(0), results.get(1));
+    }
+    
+    @pausable
+    public static <R> void queryIndex(IndexQuery<R> query, R requestor) {
+        AnalysisEngine.currentTask().getIndex().query(query, requestor);
     }
     
 }

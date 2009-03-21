@@ -7,4 +7,6 @@ public interface IncrementalAnalysisTask extends AnalysisTask {
     
     void contributeDependecyContributor(DependencyContributor dependencyContributor);
     
+    void contributeSourceUnitDependency(SourceUnit sourceUnit);
+    
 }

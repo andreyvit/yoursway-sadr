@@ -20,6 +20,7 @@ import kilim.fibers.PauseReason;
 import kilim.fibers.Task;
 import kilim.fibers.TaskDoneReason;
 
+import com.yoursway.sadr.engine.incremental.index.Index;
 import com.yoursway.sadr.engine.internal.GoalEvaluationFailed;
 import com.yoursway.utils.Failure;
 import com.yoursway.utils.bugs.Bugs;
@@ -33,8 +34,16 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     protected static final boolean TRACING_GOALS = false;
     
+    private final Index index;
+    
     //    Boolean.valueOf(Platform
     //            .getDebugOption("com.yoursway.sadr.engine/traceGoals"));
+    
+    public AnalysisEngine(Index index) {
+        if (index == null)
+            throw new NullPointerException("index is null");
+        this.index = index;
+    }
     
     protected void trace(String msg) {
         System.out.println(msg);
@@ -323,6 +332,10 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
             return (Slot<R>) state.slot;
         }
         
+        public Index getIndex() {
+            return index;
+        }
+        
     }
     
     @pausable
@@ -544,6 +557,10 @@ public abstract class AnalysisEngine implements GoalResultCacheCleaner {
     
     public void setRunStatisticsTarget(List<Long> runTimes) {
         //        this.runTimes = runTimes;
+    }
+    
+    public Index getIndex() {
+        return index;
     }
     
 }

@@ -16,6 +16,8 @@ import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.engine.GoalResultCacheCleaner;
 import com.yoursway.sadr.engine.Result;
 import com.yoursway.sadr.engine.incremental.index.DependencyContributor;
+import com.yoursway.sadr.engine.incremental.index.IncrementalIndex;
+import com.yoursway.sadr.engine.incremental.index.Index;
 import com.yoursway.sadr.engine.internal.CachedGoalHasNullResult;
 import com.yoursway.utils.YsDebugging;
 import com.yoursway.utils.broadcaster.Broadcaster;
@@ -130,6 +132,10 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
     
     final Broadcaster<EngineListener> broadcaster = BroadcasterFactory.newBroadcaster(EngineListener.class);
     
+    public IncrementalAnalysisEngine(Index index) {
+        super(new IncrementalIndex(index));
+    }
+    
     SourceUnitData lookupSourceUnitData(SourceUnit sourceUnit) {
         if (sourceUnit == null)
             throw new NullPointerException("sourceUnit is null");
@@ -240,6 +246,12 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
                 }
             }
             return data;
+        }
+        
+        public void contributeSourceUnitDependency(SourceUnit sourceUnit) {
+            if (sourceUnit == null)
+                throw new NullPointerException("sourceUnit is null");
+            sourceUnitDependencies.add(sourceUnit);
         }
         
         public void contributeDependecyContributor(DependencyContributor contributor) {
@@ -372,6 +384,11 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
     @Override
     protected void prune(GoalState current) {
         ((IncrementalGoalState) current).setPruned();
+    }
+    
+    @Override
+    public IncrementalIndex getIndex() {
+        return (IncrementalIndex) super.getIndex();
     }
     
 }
