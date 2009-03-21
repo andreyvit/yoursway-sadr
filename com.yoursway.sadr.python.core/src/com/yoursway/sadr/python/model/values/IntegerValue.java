@@ -5,8 +5,6 @@ import java.math.BigInteger;
 import com.yoursway.sadr.python.model.types.BooleanType;
 import com.yoursway.sadr.python.model.types.IntegerType;
 import com.yoursway.sadr.python.model.types.PythonType;
-import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
 
 public class IntegerValue extends NumericValue {
     
@@ -143,11 +141,6 @@ public class IntegerValue extends NumericValue {
     @Override
     public NumericValue eq(NumericValue rhs) {
         return BooleanType.wrap((this.coerceToInt() == rhs.coerceToInt()));
-    }
-    
-    @Override
-    public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
-        builder.addResult(new IntegerValue(value + 42));
     }
     
 }

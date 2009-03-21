@@ -21,7 +21,7 @@ import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> implements PythonDeclaration,
-        CallableDeclaration, IndexAffector {
+        IndexAffector {
     
     private final List<PythonConstruct> supers;
     private final List<PythonConstruct> body;
@@ -87,6 +87,11 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     public void actOnIndex(IndexRequest req) {
         req.addAssignment(new VariableUnode(name()), new SpecialValueC(staticContext(), new PythonValueSet(
                 new InstanceType(this))));
+    }
+    
+    @Override
+    public MethodDeclarationC getParentMethodDeclarationC() {
+        return null;
     }
     
 }

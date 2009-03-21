@@ -22,6 +22,7 @@ import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
 
 public class PythonAnalHelpers {
     
@@ -43,7 +44,7 @@ public class PythonAnalHelpers {
         PythonScope outerScope = scopes.get(scopes.size() - 1);
         final Collection<PythonConstruct> outerScopeConstructs = assignmentsByScope.get(outerScope);
         
-        staticContext.getIndex().query(new AssignmentsIndexQuery(unode), new AssignmentsRequestor() {
+        Analysis.queryIndex(new AssignmentsIndexQuery(unode), new AssignmentsRequestor() {
             public void assignment(PythonConstruct rhs, PythonFileC fileC) {
                 Collection<PythonConstruct> constructs = assignmentsByScope.get(rhs.staticContext());
                 if (constructs == null)
@@ -103,6 +104,24 @@ public class PythonAnalHelpers {
             values.add(calculateValuesAssignedTo(alias, sc, dc, scopes));
         PythonValueSet result = PythonValueSet.merge(values);
         return result;
+    }
+    
+    @pausable
+    public static PythonValueSet evaluateConstructs(Collection<PythonConstruct> expressions,
+            PythonDynamicContext dc) {
+        PythonValueSetBuilder builder = PythonValueSet.newBuilder();
+        evaluateConstructs(expressions, dc, builder);
+        return builder.build();
+    }
+    
+    @pausable
+    public static void evaluateConstructs(Collection<PythonConstruct> expressions, PythonDynamicContext dc,
+            PythonValueSetBuilder builder) {
+        Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>(expressions.size());
+        for (PythonConstruct construct : expressions)
+            goals.add(new ExpressionValueGoal(construct, dc));
+        List<PythonValueSet> results = Analysis.evaluate(goals);
+        builder.addAll(results);
     }
     
 }

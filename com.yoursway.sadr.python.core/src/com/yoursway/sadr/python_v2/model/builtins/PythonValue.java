@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
 import static com.yoursway.sadr.python.model.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
+import kilim.pausable;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
@@ -59,6 +60,7 @@ public abstract class PythonValue extends AbstractValue {
         return type.coerce(this);
     }
     
+    @pausable
     public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
     }
     

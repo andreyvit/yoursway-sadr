@@ -1,11 +1,11 @@
 package com.yoursway.sadr.python.constructs;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.dltk.python.parser.ast.PythonArgument;
+import kilim.pausable;
 
-import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
-import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 public interface CallableDeclaration extends PythonConstruct {
     List<PythonArgument> getArguments();
@@ -14,6 +14,7 @@ public interface CallableDeclaration extends PythonConstruct {
     
     PythonConstruct getArgInit(String name);
     
-    PythonValueSet call(PythonDynamicContext crocodile);
+    @pausable
+    Collection<PythonConstruct> findReturnedValues();
     
 }

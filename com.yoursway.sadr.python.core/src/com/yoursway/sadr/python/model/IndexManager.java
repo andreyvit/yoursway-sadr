@@ -15,6 +15,7 @@ import com.yoursway.sadr.engine.incremental.index.IndexMemento;
 import com.yoursway.sadr.engine.incremental.index.IndexQuery;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
+import com.yoursway.sadr.python.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonFileC;
 import com.yoursway.sadr.python.constructs.PythonRootConstruct;
@@ -22,6 +23,8 @@ import com.yoursway.sadr.python.index.AssignmentsIndexQuery;
 import com.yoursway.sadr.python.index.AssignmentsRequestor;
 import com.yoursway.sadr.python.index.DtlIndexQuery;
 import com.yoursway.sadr.python.index.DtlIndexQueryVisitor;
+import com.yoursway.sadr.python.index.ReturnsIndexQuery;
+import com.yoursway.sadr.python.index.ReturnsRequestor;
 import com.yoursway.sadr.python.index.unodes.Unode;
 
 public class IndexManager {
@@ -81,6 +84,8 @@ public class IndexManager {
         
         private final AbstractMultiMap<Unode, PythonConstruct> assignments = new ArrayListHashMultiMap<Unode, PythonConstruct>();
         
+        private final AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns = new ArrayListHashMultiMap<MethodDeclarationC, PythonConstruct>();
+        
         private boolean immutable = false;
         
         public Collection<IndexQuery<?>> diff(IndexMemento previous) {
@@ -111,7 +116,7 @@ public class IndexManager {
         public IndexRequest createIndexRequest() {
             if (immutable)
                 throw new IllegalStateException("Index memento is immutable");
-            return new IndexRequest(assignments);
+            return new IndexRequest(assignments, returns);
         }
         
         public void makeImmutable() {
@@ -121,6 +126,11 @@ public class IndexManager {
         public void findAssignments(Unode name, AssignmentsRequestor requestor, PythonFileC scope) {
             for (PythonConstruct info : assignments.get(name))
                 requestor.assignment(info, scope);
+        }
+        
+        public void findReturns(MethodDeclarationC methodC, ReturnsRequestor requestor) {
+            for (PythonConstruct returnedValue : returns.get(methodC))
+                requestor.returnedValue(returnedValue);
         }
         
     }
@@ -155,6 +165,10 @@ public class IndexManager {
             memento.findAssignments(name, requestor, fileC);
         }
         
+        public void findReturns(MethodDeclarationC methodC, ReturnsRequestor requestor) {
+            memento.findReturns(methodC, requestor);
+        }
+        
     }
     
     class GlobalIndex implements com.yoursway.sadr.engine.incremental.index.Index {
@@ -166,6 +180,12 @@ public class IndexManager {
                 public void acceptAssignmentsQuery(AssignmentsIndexQuery query, AssignmentsRequestor requestor) {
                     for (PythonFileIndexManager file : files.values())
                         file.index().findAssignments(query.getUnode(), requestor);
+                }
+                
+                public void acceptReturnsQuery(ReturnsIndexQuery query, ReturnsRequestor requestor) {
+                    PythonFileIndexManager fileIndex = sourceUnitsTofiles.get(query.localSourceUnit());
+                    if (fileIndex != null)
+                        fileIndex.index().findReturns(query.getMethodC(), requestor);
                 }
                 
             }, requestor);

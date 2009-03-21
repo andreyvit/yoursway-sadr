@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.index;
 
 import static java.lang.String.format;
 
+import com.yoursway.sadr.engine.incremental.SourceUnit;
 import com.yoursway.sadr.python.index.unodes.Unode;
 
 public class AssignmentsIndexQuery implements DtlIndexQuery<AssignmentsRequestor> {
@@ -50,6 +51,10 @@ public class AssignmentsIndexQuery implements DtlIndexQuery<AssignmentsRequestor
     @Override
     public String toString() {
         return format("Assignments(%s)", unode.toString());
+    }
+    
+    public SourceUnit localSourceUnit() {
+        return null;
     }
     
 }

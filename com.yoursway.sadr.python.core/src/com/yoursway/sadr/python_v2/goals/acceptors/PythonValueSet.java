@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import kilim.pausable;
+
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
@@ -109,6 +111,7 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         throw new UnsupportedOperationException();
     }
     
+    @pausable
     public PythonValueSet call(PythonDynamicContext dc) {
         PythonValueSetBuilder result = PythonValueSet.newBuilder();
         for (PythonValue value : this)

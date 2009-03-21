@@ -5,6 +5,8 @@ package com.yoursway.sadr.python.model.types;
 
 import java.util.ArrayList;
 
+import kilim.pausable;
+
 import com.yoursway.sadr.python.constructs.ClassDeclarationC;
 import com.yoursway.sadr.python.model.values.CallableObject;
 import com.yoursway.sadr.python.model.values.InstanceValue;
@@ -43,6 +45,7 @@ public class InstanceType extends PythonType implements CallableObject {
     }
     
     @Override
+    @pausable
     public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
         builder.addResult(new InstanceValue(this));
     }
