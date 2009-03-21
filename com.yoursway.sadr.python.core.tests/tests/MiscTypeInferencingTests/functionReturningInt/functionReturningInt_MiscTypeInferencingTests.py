@@ -1,10 +1,7 @@
 
-class Foo:
-  def foo(s):
-    return 10
+def foo(s):
+  return 10
   
-  def bar(s):
-    x = s.foo()
-    print x ## expr x => int
-
-
+def bar():
+  x = foo()
+  print x ## expr x => int
