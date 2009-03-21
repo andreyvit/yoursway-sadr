@@ -4,13 +4,19 @@
 package com.yoursway.sadr.python.model.types;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.ClassDeclarationC;
+import com.yoursway.sadr.python.constructs.PythonScope;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.unodes.AttributeUnode;
+import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python.model.values.CallableObject;
 import com.yoursway.sadr.python.model.values.InstanceValue;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
 
 public class InstanceType extends PythonType implements CallableObject {
@@ -48,6 +54,13 @@ public class InstanceType extends PythonType implements CallableObject {
     @pausable
     public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
         builder.addResult(new InstanceValue(this));
+    }
+    
+    @Override
+    @pausable
+    public PythonValueSet getAttr(String attrName, PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes) {
+        return new AttributeUnode(new VariableUnode(name()), attrName).calculateValue(sc, dc, scopes);
     }
     
 }

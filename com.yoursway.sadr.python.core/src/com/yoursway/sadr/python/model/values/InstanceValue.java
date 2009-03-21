@@ -16,4 +16,9 @@ public class InstanceValue extends PythonValue {
         return type;
     }
     
+    @Override
+    public String describe() {
+        return "<" + getType().describe() + ">";
+    }
+    
 }

@@ -2,7 +2,16 @@ package com.yoursway.sadr.python.index.unodes;
 
 import static java.lang.String.format;
 
+import java.util.List;
+
+import kilim.pausable;
+
+import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
+import com.yoursway.sadr.python.constructs.PythonScope;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.Punode;
+import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public class VariableUnode extends Unode {
     
@@ -52,4 +61,10 @@ public class VariableUnode extends Unode {
         return null;
     }
     
+    @Override
+    @pausable
+    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes) {
+        return PythonAnalHelpers.queryIndexForValuesAssignedTo(this, sc, dc, scopes);
+    }
 }

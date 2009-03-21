@@ -1,10 +1,21 @@
 package com.yoursway.sadr.python.index.unodes;
 
+import static com.yoursway.sadr.python.constructs.PythonAnalHelpers.queryIndexForValuesAssignedTo;
 import static java.lang.String.format;
 
+import java.util.List;
+import java.util.Set;
+
+import kilim.pausable;
+
+import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
+import com.yoursway.sadr.python.constructs.PythonScope;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.AttributePunode;
 import com.yoursway.sadr.python.index.punodes.HeadPunode;
 import com.yoursway.sadr.python.index.punodes.Punode;
+import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public class AttributeUnode extends Unode {
     
@@ -61,4 +72,36 @@ public class AttributeUnode extends Unode {
     public Punode punodize() {
         return new AttributePunode(new HeadPunode(receiver), name);
     }
+    
+    @Override
+    @pausable
+    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes) {
+        // foo.bar
+        // a) foo.bar = x
+        //    boz.bar = x
+        //    ...
+        // b) 1) foo -> Instance(Foo) 
+        //    2) Foo.bar = y 
+        //    3) <-- bind(y, foo)
+        PythonValueSet result = calculateValueFromTypeAttribute(sc, dc, scopes);
+        PythonValueSet r2 = calculateValueFromAssignments(sc, dc, scopes);
+        return PythonValueSet.merge(result, r2);
+    }
+    
+    @pausable
+    private PythonValueSet calculateValueFromTypeAttribute(PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes) {
+        PythonValueSet foo = receiver.calculateValue(sc, dc, scopes);
+        PythonValueSet result = foo.getAttrFromType(name, sc, dc, scopes);
+        return result;
+    }
+    
+    @pausable
+    private PythonValueSet calculateValueFromAssignments(PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes) {
+        Set<Unode> aliases = PythonAnalHelpers.computeAliases(this, scopes, sc);
+        return queryIndexForValuesAssignedTo(aliases, sc, dc, scopes);
+    }
+    
 }

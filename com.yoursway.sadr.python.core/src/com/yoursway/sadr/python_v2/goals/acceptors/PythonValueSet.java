@@ -11,6 +11,8 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.constructs.PythonScope;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.model.types.BooleanType;
 import com.yoursway.sadr.python.objects.TypeError;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -135,8 +137,28 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     public static PythonValueSet merge(List<PythonValueSet> results) {
         PythonValueSetBuilder builder = newBuilder();
         builder.addAll(results);
-        PythonValueSet result = builder.build();
-        return result;
+        return builder.build();
+    }
+    
+    @pausable
+    public PythonValueSet getAttrFromType(String name, PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes) {
+        PythonValueSetBuilder builder = newBuilder();
+        for (PythonValue value : this)
+            value.getAttrFromType(name, sc, dc, scopes, builder);
+        return builder.build();
+    }
+    
+    public void bind(PythonValue self, PythonValueSetBuilder builder) {
+        for (PythonValue value : this)
+            value.bind(self, builder);
+    }
+    
+    public static PythonValueSet merge(PythonValueSet a, PythonValueSet b) {
+        PythonValueSetBuilder builder = newBuilder();
+        builder.addResults(a);
+        builder.addResults(b);
+        return builder.build();
     }
     
 }

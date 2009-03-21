@@ -10,28 +10,33 @@ import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
-public final class FunctionObject extends PythonValue implements CallableObject {
+public final class BoundFunctionObject extends PythonValue implements CallableObject {
     
-    private final String name;
+    private final FunctionObject func;
+    private final PythonValue self;
     
-    public FunctionObject(CallableDeclaration decl) {
-        super(decl);
-        this.name = decl.name();
+    public BoundFunctionObject(FunctionObject func, PythonValue self) {
+        if (func == null)
+            throw new NullPointerException("func is null");
+        if (self == null)
+            throw new NullPointerException("self is null");
+        this.func = func;
+        this.self = self;
     }
     
     @Override
     public String describe() {
-        return "function " + name();
+        return "bound method " + name() + " of " + self.describe();
     }
     
     @Override
     public String name() {
-        return name;
+        return func.name();
     }
     
     @Override
     public CallableDeclaration getDecl() {
-        return (CallableDeclaration) super.getDecl();
+        return func.getDecl();
     }
     
     @Override
@@ -75,11 +80,6 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     @Override
     public PythonType getType() {
         return FunctionType.instance;
-    }
-    
-    @Override
-    public void bind(PythonValue self, PythonValueSetBuilder builder) {
-        builder.addResult(new BoundFunctionObject(this, self));
     }
     
 }

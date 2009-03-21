@@ -1,10 +1,15 @@
 package com.yoursway.sadr.python_v2.model.builtins;
 
 import static com.yoursway.sadr.python.model.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
+
+import java.util.List;
+
 import kilim.pausable;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.constructs.PythonScope;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.model.types.PythonException;
 import com.yoursway.sadr.python.model.types.PythonType;
 import com.yoursway.sadr.python.model.values.InstanceRegistrar;
@@ -62,6 +67,16 @@ public abstract class PythonValue extends AbstractValue {
     
     @pausable
     public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
+    }
+    
+    @pausable
+    public void getAttrFromType(String name, PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes, PythonValueSetBuilder builder) {
+        getType().getAttr(name, sc, dc, scopes).bind(this, builder);
+    }
+    
+    public void bind(PythonValue self, PythonValueSetBuilder builder) {
+        builder.addResult(this);
     }
     
 }

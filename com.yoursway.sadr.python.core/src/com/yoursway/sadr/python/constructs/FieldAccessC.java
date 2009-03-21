@@ -1,11 +1,5 @@
 package com.yoursway.sadr.python.constructs;
 
-import static com.yoursway.sadr.python.constructs.PythonAnalHelpers.calculateValuesAssignedTo;
-import static com.yoursway.sadr.python.constructs.PythonAnalHelpers.computeAliases;
-
-import java.util.List;
-import java.util.Set;
-
 import kilim.pausable;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
@@ -37,12 +31,10 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     
     @pausable
     public PythonValueSet evaluateValue(final PythonDynamicContext dc, InfoKind infoKind) {
-        List<PythonScope> scopes = currentScopes();
         Unode unode = toUnode();
         if (unode == null)
             return PythonValueSet.EMPTY;
-        Set<Unode> aliases = computeAliases(unode, scopes, staticContext());
-        return calculateValuesAssignedTo(aliases, staticContext(), dc, scopes);
+        return unode.calculateValue(staticContext(), dc, currentScopes());
     }
     
     @Override

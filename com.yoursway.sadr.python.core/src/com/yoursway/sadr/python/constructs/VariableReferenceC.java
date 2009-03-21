@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.constructs;
 
-import static com.yoursway.sadr.python.constructs.PythonAnalHelpers.calculateValuesAssignedTo;
 import kilim.pausable;
 
 import org.eclipse.dltk.ast.references.VariableReference;
@@ -26,7 +25,7 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
         Unode unode = toUnode();
         if (unode == null)
             return PythonValueSet.EMPTY;
-        return calculateValuesAssignedTo(unode, staticContext(), dc, currentScopes());
+        return unode.calculateValue(staticContext(), dc, currentScopes());
     }
     
     @Override

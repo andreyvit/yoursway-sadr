@@ -56,16 +56,6 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static PythonValueSet calculateValuesAssignedTo(Unode unode, PythonStaticContext sc,
-            final PythonDynamicContext dc, List<PythonScope> scopes) {
-        Collection<PythonConstruct> assignments = findConstructsAssignedTo(unode, sc, scopes);
-        final Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>();
-        for (PythonConstruct assignedValue : assignments)
-            goals.add(new ExpressionValueGoal(assignedValue, dc));
-        return PythonValueSet.merge(Analysis.evaluate(goals));
-    }
-    
-    @pausable
     public static Collection<PythonConstruct> findConstructsAssignedTo(Unode unode, PythonStaticContext sc,
             List<PythonScope> scopes) {
         Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope = Maps.newHashMap();
@@ -97,13 +87,12 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static PythonValueSet calculateValuesAssignedTo(Collection<Unode> unodes, PythonStaticContext sc,
-            final PythonDynamicContext dc, List<PythonScope> scopes) {
+    public static PythonValueSet queryIndexForValuesAssignedTo(Collection<Unode> unodes,
+            PythonStaticContext sc, final PythonDynamicContext dc, List<PythonScope> scopes) {
         List<PythonValueSet> values = newArrayList();
         for (Unode alias : unodes)
-            values.add(calculateValuesAssignedTo(alias, sc, dc, scopes));
-        PythonValueSet result = PythonValueSet.merge(values);
-        return result;
+            values.add(queryIndexForValuesAssignedTo(alias, sc, dc, scopes));
+        return PythonValueSet.merge(values);
     }
     
     @pausable
@@ -122,6 +111,16 @@ public class PythonAnalHelpers {
             goals.add(new ExpressionValueGoal(construct, dc));
         List<PythonValueSet> results = Analysis.evaluate(goals);
         builder.addAll(results);
+    }
+    
+    @pausable
+    public static PythonValueSet queryIndexForValuesAssignedTo(Unode unode, PythonStaticContext sc,
+            PythonDynamicContext dc, List<PythonScope> scopes) {
+        Collection<PythonConstruct> assignments = findConstructsAssignedTo(unode, sc, scopes);
+        final Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>();
+        for (PythonConstruct assignedValue : assignments)
+            goals.add(new ExpressionValueGoal(assignedValue, dc));
+        return PythonValueSet.merge(Analysis.evaluate(goals));
     }
     
 }
