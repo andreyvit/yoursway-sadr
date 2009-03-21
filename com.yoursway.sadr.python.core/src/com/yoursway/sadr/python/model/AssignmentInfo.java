@@ -5,23 +5,31 @@ import com.yoursway.sadr.python.index.unodes.Unode;
 
 public class AssignmentInfo {
     
-    private final Unode lhs;
     private final PythonConstruct rhs;
+    private final Unode receiver;
     
-    public AssignmentInfo(Unode lhs, PythonConstruct rhs) {
-        if (lhs == null)
-            throw new NullPointerException("lhs is null");
+    public AssignmentInfo(Unode receiver, PythonConstruct rhs) {
+        if (receiver == null)
+            throw new NullPointerException("receiver is null");
         if (rhs == null)
             throw new NullPointerException("rhs is null");
-        this.lhs = lhs;
+        this.receiver = receiver;
         this.rhs = rhs;
+    }
+    
+    public Unode getReceiver() {
+        return receiver;
+    }
+    
+    public PythonConstruct getRhs() {
+        return rhs;
     }
     
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
+        result = prime * result + ((receiver == null) ? 0 : receiver.hashCode());
         result = prime * result + ((rhs == null) ? 0 : rhs.hashCode());
         return result;
     }
@@ -35,10 +43,10 @@ public class AssignmentInfo {
         if (getClass() != obj.getClass())
             return false;
         AssignmentInfo other = (AssignmentInfo) obj;
-        if (lhs == null) {
-            if (other.lhs != null)
+        if (receiver == null) {
+            if (other.receiver != null)
                 return false;
-        } else if (!lhs.equals(other.lhs))
+        } else if (!receiver.equals(other.receiver))
             return false;
         if (rhs == null) {
             if (other.rhs != null)

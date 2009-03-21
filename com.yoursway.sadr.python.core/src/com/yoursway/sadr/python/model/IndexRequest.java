@@ -6,10 +6,10 @@ import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.ConstructVisitor;
 import com.yoursway.sadr.core.constructs.Request;
-import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.python.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.unodes.AttributeUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.utils.bugs.Bugs;
@@ -17,19 +17,15 @@ import com.yoursway.utils.bugs.Bugs;
 public class IndexRequest implements
         Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
     
-    private final AbstractMultiMap<Unode, PythonConstruct> assignments;
-    private final AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns;
     private final IndexNameWrappingStrategy wrappingStrategy;
+    private final PythonFileIndexMemento memento;
     
-    public IndexRequest(AbstractMultiMap<Unode, PythonConstruct> assignments,
-            AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns,
-            IndexNameWrappingStrategy wrappingStrategy) {
-        if (assignments == null)
-            throw new NullPointerException("assignments is null");
-        if (returns == null)
-            throw new NullPointerException("returns is null");
-        this.assignments = assignments;
-        this.returns = returns;
+    public IndexRequest(PythonFileIndexMemento memento, IndexNameWrappingStrategy wrappingStrategy) {
+        if (memento == null)
+            throw new NullPointerException("memento is null");
+        if (wrappingStrategy == null)
+            throw new NullPointerException("wrappingStrategy is null");
+        this.memento = memento;
         this.wrappingStrategy = wrappingStrategy;
     }
     
@@ -41,7 +37,11 @@ public class IndexRequest implements
         lhs = wrappingStrategy.wrap(lhs);
         if (lhs == null)
             throw new NullPointerException("lhs is null");
-        assignments.put(lhs, rhs);
+        memento.assignments.put(lhs, rhs);
+        if (lhs instanceof AttributeUnode) {
+            AttributeUnode au = (AttributeUnode) lhs;
+            memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
+        }
     }
     
     public void addReturnedValue(MethodDeclarationC methodC, PythonConstruct value) {
@@ -49,7 +49,7 @@ public class IndexRequest implements
             throw new NullPointerException("methodC is null");
         if (value == null)
             throw new NullPointerException("value is null");
-        returns.put(methodC, value);
+        memento.returns.put(methodC, value);
     }
     
     public void leave() {
@@ -69,7 +69,7 @@ public class IndexRequest implements
             }
             IndexNameWrappingStrategy wrappingStrategy = affector.createWrappingStrategy();
             if (wrappingStrategy != null)
-                return new IndexRequest(assignments, returns, wrappingStrategy);
+                return new IndexRequest(memento, wrappingStrategy);
         }
         return this;
     }

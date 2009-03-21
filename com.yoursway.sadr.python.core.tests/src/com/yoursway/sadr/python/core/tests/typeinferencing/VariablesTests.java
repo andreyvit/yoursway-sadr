@@ -93,4 +93,9 @@ public final class VariablesTests extends AbstractTypeInferencingTestCase {
     public void subclassing() throws Exception {
         runTest();
     }
+    
+    @Test
+    public void reverseAttributeAssignment() throws Exception {
+        runTest();
+    }
 }

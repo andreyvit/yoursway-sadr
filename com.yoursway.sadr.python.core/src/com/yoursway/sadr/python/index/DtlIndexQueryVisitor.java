@@ -6,4 +6,7 @@ public interface DtlIndexQueryVisitor {
     
     void acceptReturnsQuery(ReturnsIndexQuery query, ReturnsRequestor requestor);
     
+    void acceptAttributeAssignmentsQuery(AttributeAssignmentsIndexQuery query,
+            AttributeAssignmentsRequestor requestor);
+    
 }

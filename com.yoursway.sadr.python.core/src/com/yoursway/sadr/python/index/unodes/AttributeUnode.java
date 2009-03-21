@@ -1,19 +1,26 @@
 package com.yoursway.sadr.python.index.unodes;
 
-import static com.yoursway.sadr.python.constructs.PythonAnalHelpers.queryIndexForValuesAssignedTo;
 import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import kilim.pausable;
 
+import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
+import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.constructs.PythonFileC;
 import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.AttributeAssignmentsIndexQuery;
+import com.yoursway.sadr.python.index.AttributeAssignmentsRequestor;
 import com.yoursway.sadr.python.index.punodes.AttributePunode;
 import com.yoursway.sadr.python.index.punodes.HeadPunode;
 import com.yoursway.sadr.python.index.punodes.Punode;
+import com.yoursway.sadr.python.model.AssignmentInfo;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -30,6 +37,14 @@ public class AttributeUnode extends Unode {
         this.receiver = receiver;
         this.name = name;
         this.hashCode = computeHashCode();
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public Unode getReceiver() {
+        return receiver;
     }
     
     @Override
@@ -84,13 +99,31 @@ public class AttributeUnode extends Unode {
         // b) 1) foo -> Instance(Foo) 
         //    2) Foo.bar = y 
         //    3) <-- bind(y, foo)
-        PythonValueSet result = calculateValueFromTypeAttribute(sc, dc, scopes);
-        PythonValueSet r2 = calculateValueFromAssignments(sc, dc, scopes);
-        return PythonValueSet.merge(result, r2);
+        // foo.bar.boz
+        // 1) *.boz -> xx.boz = x
+        // 2) check(xx == foo.bar)
+        // 2.1) foo.bar
+        // 2.1.1) *.bar -> zz.bar = z, pp.bar = p
+        // 2.1.2) check(zz == foo)
+        // 2.1.2.1) foo -> <Foo>
+        // 2.1.2.2) zz -> <Foo>
+        //     <- true
+        // 2.1.3) check(pp == foo)
+        // 2.1.3.1) foo -> <Foo>
+        // 2.1.3.2) pp -> <Oof>
+        //     <- false
+        // 2.1.4) z -> <Bar>
+        //    <-- foo.bar -> <Bar>
+        // 2.2) xx -> <Bar>
+        //  <- true: xx == foo.bar
+        // 3) x -> 42
+        // <- foo.bar.boz == 42
+        return PythonValueSet.merge(readFromTypeAndBind(sc, dc, scopes), trackAssignmentsAndRenames(sc, dc,
+                scopes), findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(sc, dc, scopes));
     }
     
     @pausable
-    private PythonValueSet calculateValueFromTypeAttribute(PythonStaticContext sc, PythonDynamicContext dc,
+    private PythonValueSet readFromTypeAndBind(PythonStaticContext sc, PythonDynamicContext dc,
             List<PythonScope> scopes) {
         PythonValueSet foo = receiver.calculateValue(sc, dc, scopes);
         PythonValueSet result = foo.getAttrFromType(name, sc, dc, scopes);
@@ -98,10 +131,29 @@ public class AttributeUnode extends Unode {
     }
     
     @pausable
-    private PythonValueSet calculateValueFromAssignments(PythonStaticContext sc, PythonDynamicContext dc,
+    private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc,
             List<PythonScope> scopes) {
         Set<Unode> aliases = PythonAnalHelpers.computeAliases(this, scopes, sc);
-        return queryIndexForValuesAssignedTo(aliases, sc, dc, scopes);
+        return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases, sc, dc, scopes);
+    }
+    
+    @pausable
+    private PythonValueSet findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(PythonStaticContext sc,
+            PythonDynamicContext dc, List<PythonScope> scopes) {
+        Collection<PythonConstruct> assignedValues = new ArrayList<PythonConstruct>();
+        final List<AssignmentInfo> assignments = new ArrayList<AssignmentInfo>();
+        Analysis.queryIndex(new AttributeAssignmentsIndexQuery(name), new AttributeAssignmentsRequestor() {
+            public void assignment(AssignmentInfo info, PythonFileC fileC) {
+                assignments.add(info);
+            }
+        });
+        PythonValueSet actualReceiverValue = receiver.calculateValue(sc, dc, scopes);
+        for (AssignmentInfo info : assignments) {
+            PythonValueSet candidateReceiverValue = info.getReceiver().calculateValue(sc, dc, scopes);
+            if (candidateReceiverValue.canAlias(actualReceiverValue))
+                assignedValues.add(info.getRhs());
+        }
+        return PythonAnalHelpers.evaluateConstructs(assignedValues, dc);
     }
     
 }

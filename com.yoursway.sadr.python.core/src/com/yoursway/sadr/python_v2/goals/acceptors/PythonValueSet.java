@@ -3,9 +3,11 @@ package com.yoursway.sadr.python_v2.goals.acceptors;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import kilim.pausable;
 
+import com.google.common.collect.Sets;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
@@ -159,6 +161,20 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         builder.addResults(a);
         builder.addResults(b);
         return builder.build();
+    }
+    
+    public static PythonValueSet merge(PythonValueSet... sets) {
+        PythonValueSetBuilder builder = newBuilder();
+        for (PythonValueSet set : sets)
+            builder.addResults(set);
+        return builder.build();
+    }
+    
+    public boolean canAlias(PythonValueSet that) {
+        Set<PythonValue> thisValues = Sets.newHashSet(this);
+        Set<PythonValue> thatValues = Sets.newHashSet(that);
+        thisValues.retainAll(thatValues);
+        return !thisValues.isEmpty();
     }
     
 }
