@@ -29,6 +29,18 @@ public class IndexRequest implements
         this.wrappingStrategy = wrappingStrategy;
     }
     
+    public void addAssignmentWithoutWrapping(Unode lhs, PythonConstruct rhs) {
+        if (lhs == null)
+            throw new NullPointerException("lhs is null");
+        if (rhs == null)
+            throw new NullPointerException("rhs is null");
+        memento.assignments.put(lhs, rhs);
+        if (lhs instanceof AttributeUnode) {
+            AttributeUnode au = (AttributeUnode) lhs;
+            memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
+        }
+    }
+    
     public void addAssignment(Unode lhs, PythonConstruct rhs) {
         if (lhs == null)
             throw new NullPointerException("lhs is null");

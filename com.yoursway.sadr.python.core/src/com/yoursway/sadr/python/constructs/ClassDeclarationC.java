@@ -27,12 +27,18 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     
     private final List<PythonConstruct> supers;
     private final List<PythonConstruct> body;
+    private final InstanceType instanceType;
     
     @SuppressWarnings("unchecked")
     ClassDeclarationC(PythonStaticContext sc, PythonClassDeclaration node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         body = wrap(node.getBody().getChilds(), this);
         supers = wrapSuperclasses();
+        instanceType = new InstanceType(this);
+    }
+    
+    public InstanceType getInstanceType() {
+        return instanceType;
     }
     
     private List<PythonConstruct> wrapSuperclasses() {
@@ -88,7 +94,7 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     
     public void actOnIndex(IndexRequest req) {
         req.addAssignment(new VariableUnode(name()), new SpecialValueC(staticContext(), new PythonValueSet(
-                new InstanceType(this))));
+                instanceType)));
     }
     
     @Override

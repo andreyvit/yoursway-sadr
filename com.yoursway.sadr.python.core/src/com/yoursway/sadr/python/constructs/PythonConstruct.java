@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.constructs;
 
+import java.util.List;
+
 import kilim.pausable;
 
 import org.eclipse.dltk.ast.ASTNode;
@@ -20,5 +22,7 @@ public interface PythonConstruct extends
     PythonFileC fileC();
     
     Unode toUnode();
+    
+    List<PythonScope> currentScopes();
     
 }

@@ -149,9 +149,11 @@ public class AttributeUnode extends Unode {
         });
         PythonValueSet actualReceiverValue = receiver.calculateValue(sc, dc, scopes);
         for (AssignmentInfo info : assignments) {
-            PythonValueSet candidateReceiverValue = info.getReceiver().calculateValue(sc, dc, scopes);
+            PythonConstruct rhs = info.getRhs();
+            PythonValueSet candidateReceiverValue = info.getReceiver().calculateValue(rhs.staticContext(),
+                    dc, rhs.currentScopes());
             if (candidateReceiverValue.canAlias(actualReceiverValue))
-                assignedValues.add(info.getRhs());
+                assignedValues.add(rhs);
         }
         return PythonAnalHelpers.evaluateConstructs(assignedValues, dc);
     }
