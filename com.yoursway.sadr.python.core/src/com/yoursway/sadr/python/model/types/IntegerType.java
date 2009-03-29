@@ -1,15 +1,25 @@
 package com.yoursway.sadr.python.model.types;
 
+import java.util.List;
+import java.util.Set;
+
+import kilim.pausable;
+
 import com.yoursway.sadr.python.constructs.IntegerLiteralC;
+import com.yoursway.sadr.python.constructs.PythonScope;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.model.CallResolver;
+import com.yoursway.sadr.python.model.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.model.values.IntegerValue;
 import com.yoursway.sadr.python.model.values.LongValue;
 import com.yoursway.sadr.python.model.values.NumericValue;
 import com.yoursway.sadr.python.model.values.StringValue;
 import com.yoursway.sadr.python.objects.RuntimeArguments;
 import com.yoursway.sadr.python.objects.TypeError;
+import com.yoursway.sadr.python_v2.croco.Arguments;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
+import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 public class IntegerType extends NumericType {
@@ -101,4 +111,30 @@ public class IntegerType extends NumericType {
         throw new CoersionFailed();
         
     }
+    
+    @Override
+    @pausable
+    public PythonValueSet getAttr(String name, PythonStaticContext sc, PythonDynamicContext dc,
+            List<PythonScope> scopes) {
+        if ("__add__".equals(name))
+            return new PythonValueSet(new BuiltinFunctionObject("integeradd") {
+                @Override
+                @pausable
+                protected PythonValueSet calculate(PythonDynamicContext dc) {
+                    System.out.println(".calculate()");
+                    Arguments arguments = dc.argumentsOfTopCall();
+                    PythonValueSet lhs = arguments.computeArgument(dc, 0, null, null);
+                    PythonValueSet rhs = arguments.computeArgument(dc, 1, null, null);
+                    Set<Long> l = lhs.obtainIntegerValues();
+                    Set<Long> r = rhs.obtainIntegerValues();
+                    PythonValueSetBuilder builder = PythonValueSet.newBuilder();
+                    for (Long ll : l)
+                        for (Long rr : r)
+                            builder.addResult(new IntegerValue(ll + rr));
+                    return builder.build();
+                }
+            });
+        return super.getAttr(name, sc, dc, scopes);
+    }
+    
 }

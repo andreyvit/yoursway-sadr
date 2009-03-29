@@ -86,4 +86,12 @@ public class IndexRequest implements
         return this;
     }
     
+    public void addPassedArgument(Unode arg, PassedArgumentInfo info) {
+        if (arg == null)
+            throw new NullPointerException("arg is null");
+        if (info == null)
+            throw new NullPointerException("callC is null");
+        memento.passedArguments.put(arg, info);
+    }
+    
 }

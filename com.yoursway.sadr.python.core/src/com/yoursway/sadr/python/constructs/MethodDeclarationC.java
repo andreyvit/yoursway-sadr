@@ -22,6 +22,8 @@ import com.yoursway.sadr.python.model.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.model.IndexRequest;
 import com.yoursway.sadr.python.model.values.FunctionObject;
 import com.yoursway.sadr.python.model.values.InstanceValue;
+import com.yoursway.sadr.python_v2.croco.DeclaredArguments;
+import com.yoursway.sadr.python_v2.croco.DeclaredArgumentsBuilder;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -31,6 +33,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     private final Map<String, PythonConstruct> inits;
     private final List<PythonConstruct> body;
     private final List<ArgumentC> arguments;
+    private final DeclaredArguments declaredArguments;
     
     @SuppressWarnings("unchecked")
     MethodDeclarationC(PythonStaticContext sc, MethodDeclaration node, PythonConstructImpl<?> parent) {
@@ -39,6 +42,18 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
         inits = computeInitializers();
         body.isEmpty();
         this.arguments = wrapArguments(node);
+        this.declaredArguments = createDeclaredArguments();
+    }
+    
+    private DeclaredArguments createDeclaredArguments() {
+        DeclaredArgumentsBuilder builder = new DeclaredArgumentsBuilder();
+        for (ArgumentC arg : arguments)
+            arg.addTo(builder);
+        return builder.build();
+    }
+    
+    public DeclaredArguments getDeclaredArguments() {
+        return declaredArguments;
     }
     
     private List<ArgumentC> wrapArguments(MethodDeclaration node) {
@@ -88,10 +103,11 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
                 new PythonValueSet(new FunctionObject(this))));
         Collection<ArgumentProxyC> argumentProxies = new ArrayList<ArgumentProxyC>(arguments.size());
         boolean isFirst = true;
+        int index = 0;
         for (ArgumentC argument : arguments) {
             //            ASTNode initialization = argument.getInitialization();
             //            String key = argument.getName();
-            argumentProxies.add(new ArgumentProxyC(this, this, argument, isFirst));
+            argumentProxies.add(new ArgumentProxyC(this, this, argument, index++));
             isFirst = false;
             //            if (argument.getStar() == PythonArgument.NOSTAR) {
             //                boolean required = initialization == null;

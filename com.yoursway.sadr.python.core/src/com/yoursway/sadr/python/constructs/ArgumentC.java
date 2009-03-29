@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python_v2.croco.DeclaredArgumentsBuilder;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -37,6 +38,18 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         throw new UnsupportedOperationException();
+    }
+    
+    public void addTo(DeclaredArgumentsBuilder builder) {
+        int star = getStar();
+        if (star == 0)
+            builder.add(getName(), this);
+        else if (star == 1)
+            builder.addStar(this);
+        else if (star == 2)
+            builder.addStar(this);
+        else
+            throw new AssertionError("Unreachable");
     }
     
 }

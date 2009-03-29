@@ -1,9 +1,13 @@
 package com.yoursway.sadr.python.model.values;
 
+import java.util.List;
+
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
+import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.FunctionType;
 import com.yoursway.sadr.python.model.types.PythonType;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -80,6 +84,11 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     @Override
     public void bind(PythonValue self, PythonValueSetBuilder builder) {
         builder.addResult(new BoundFunctionObject(this, self));
+    }
+    
+    @Override
+    public void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes) {
+        info.computeAliases(getDecl(), unodes);
     }
     
 }

@@ -8,4 +8,6 @@ public interface PythonScope {
     
     List<PythonScope> currentScopes();
     
+    PythonStaticContext scopeContext();
+    
 }

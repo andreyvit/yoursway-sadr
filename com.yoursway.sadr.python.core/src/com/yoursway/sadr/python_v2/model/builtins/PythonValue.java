@@ -3,6 +3,7 @@ package com.yoursway.sadr.python_v2.model.builtins;
 import static com.yoursway.sadr.python.model.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
 
 import java.util.List;
+import java.util.Set;
 
 import kilim.pausable;
 
@@ -10,6 +11,8 @@ import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.PythonException;
 import com.yoursway.sadr.python.model.types.PythonType;
 import com.yoursway.sadr.python.model.values.InstanceRegistrar;
@@ -77,6 +80,12 @@ public abstract class PythonValue extends AbstractValue {
     
     public void bind(PythonValue self, PythonValueSetBuilder builder) {
         builder.addResult(this);
+    }
+    
+    public void obtainIntegerValue(Set<Long> result) {
+    }
+    
+    public void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes) {
     }
     
 }

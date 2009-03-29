@@ -12,14 +12,19 @@ import java.util.Set;
 
 import kilim.pausable;
 
+import com.google.common.base.Join;
 import com.google.common.collect.Maps;
 import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.python.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.index.AssignmentsIndexQuery;
 import com.yoursway.sadr.python.index.AssignmentsRequestor;
+import com.yoursway.sadr.python.index.PassedArgumentsIndexQuery;
+import com.yoursway.sadr.python.index.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.index.punodes.Punode;
+import com.yoursway.sadr.python.index.unodes.Bnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
+import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
@@ -56,7 +61,34 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static Collection<PythonConstruct> findConstructsAssignedTo(Unode unode, PythonStaticContext sc,
+    public static Collection<PythonConstruct> findRenames(Unode unode, PythonStaticContext sc,
+            List<PythonScope> scopes, final PythonDynamicContext dc) {
+        final Collection<PythonConstruct> result = findConstructsAssignedTo(unode, sc, scopes);
+        
+        final Collection<PassedArgumentInfo> infos = new ArrayList<PassedArgumentInfo>();
+        Analysis.queryIndex(new PassedArgumentsIndexQuery(unode), new PassedArgumentsRequestor() {
+            public void call(PassedArgumentInfo info, PythonFileC fileC) {
+                // FIXME check scope
+                infos.add(info);
+            }
+        });
+        for (PassedArgumentInfo info : infos) {
+            PythonValueSet callable = Analysis.evaluate(new ExpressionValueGoal(info.getCallable(), dc));
+            List<Bnode> unodes = new ArrayList<Bnode>();
+            callable.computeArgumentAliases(info, unodes);
+            for (Bnode bnode : unodes)
+                result.add(new CallAliasProxyC(bnode, info.getCallable()));
+        }
+        System.out.println("renames(" + unode + ") = " + Join.join(", ", result));
+        for (PassedArgumentInfo info : infos)
+            System.out.println(" - " + info);
+        if (unode.toString().equals("Var(p)"))
+            System.out.println("PythonAnalHelpers.findRenames()");
+        return result;
+    }
+    
+    @pausable
+    private static Collection<PythonConstruct> findConstructsAssignedTo(Unode unode, PythonStaticContext sc,
             List<PythonScope> scopes) {
         Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope = Maps.newHashMap();
         for (PythonScope scope : scopes)
@@ -68,13 +100,13 @@ public class PythonAnalHelpers {
     
     @pausable
     public static Set<Unode> computeAliases(Unode unode, List<PythonScope> scopes,
-            PythonStaticContext staticContext) {
+            PythonStaticContext staticContext, PythonDynamicContext dc) {
         Set<Unode> aliases = newHashSet();
         aliases.add(unode);
         
         for (Punode punode = unode.punodize(); punode != null; punode = punode.punodize()) {
-            Collection<PythonConstruct> valuesAssignedToPunodeHead = findConstructsAssignedTo(punode
-                    .getHead(), staticContext, scopes);
+            Collection<PythonConstruct> valuesAssignedToPunodeHead = findRenames(punode.getHead(),
+                    staticContext, scopes, dc);
             for (PythonConstruct assignedValue : valuesAssignedToPunodeHead) {
                 Unode replacementUnode = assignedValue.toUnode();
                 if (replacementUnode != null) {
@@ -83,6 +115,7 @@ public class PythonAnalHelpers {
                 }
             }
         }
+        System.out.println("Aliases of " + unode + ": " + Join.join(", ", aliases));
         return aliases;
     }
     
@@ -116,7 +149,7 @@ public class PythonAnalHelpers {
     @pausable
     public static PythonValueSet queryIndexForValuesAssignedTo(Unode unode, PythonStaticContext sc,
             PythonDynamicContext dc, List<PythonScope> scopes) {
-        Collection<PythonConstruct> assignments = findConstructsAssignedTo(unode, sc, scopes);
+        Collection<PythonConstruct> assignments = findRenames(unode, sc, scopes, dc);
         final Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>();
         for (PythonConstruct assignedValue : assignments)
             goals.add(new ExpressionValueGoal(assignedValue, dc));

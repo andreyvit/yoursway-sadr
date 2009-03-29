@@ -8,6 +8,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.BigNumericLiteral;
+import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.expressions.ExpressionList;
 import org.eclipse.dltk.ast.expressions.FloatNumericLiteral;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
@@ -17,6 +18,7 @@ import org.eclipse.dltk.ast.statements.Block;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonAssertStatement;
 import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
+import org.eclipse.dltk.python.parser.ast.PythonCallArgumentsList;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonDelStatement;
 import org.eclipse.dltk.python.parser.ast.PythonExceptStatement;
@@ -143,6 +145,12 @@ public class PythonConstructFactory {
     private static PythonConstruct wrapBinaryExpression(PythonStaticContext sc, BinaryExpression node,
             PythonConstructImpl<?> parent) {
         String operator = node.getOperator();
+        if ("+".equals(operator)) {
+            PythonCallArgumentsList arglist = new PythonCallArgumentsList();
+            arglist.addArgument(node.getRight(), 0);
+            return new CallC(sc, new PythonCallExpression(new PythonVariableAccessExpression(
+                    (Expression) node.getLeft(), new VariableReference(-1, -1, "__add__")), arglist), parent);
+        }
         if (BinaryOperationC.isBinaryOperation(operator))
             return new BinaryOperationC(sc, node, parent);
         if (BinaryOperationC.isBinAssOperation(operator))

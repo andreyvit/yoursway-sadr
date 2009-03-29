@@ -9,4 +9,6 @@ public interface DtlIndexQueryVisitor {
     void acceptAttributeAssignmentsQuery(AttributeAssignmentsIndexQuery query,
             AttributeAssignmentsRequestor requestor);
     
+    void acceptPassedArgumentsQuery(PassedArgumentsIndexQuery query, PassedArgumentsRequestor requestor);
+    
 }

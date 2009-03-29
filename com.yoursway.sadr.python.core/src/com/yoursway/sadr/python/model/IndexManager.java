@@ -18,6 +18,8 @@ import com.yoursway.sadr.python.index.AttributeAssignmentsIndexQuery;
 import com.yoursway.sadr.python.index.AttributeAssignmentsRequestor;
 import com.yoursway.sadr.python.index.DtlIndexQuery;
 import com.yoursway.sadr.python.index.DtlIndexQueryVisitor;
+import com.yoursway.sadr.python.index.PassedArgumentsIndexQuery;
+import com.yoursway.sadr.python.index.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.index.ReturnsIndexQuery;
 import com.yoursway.sadr.python.index.ReturnsRequestor;
 import com.yoursway.sadr.python.index.unodes.Unode;
@@ -113,6 +115,10 @@ public class IndexManager {
             memento.findAttributeAssignments(attributeName, requestor, fileC);
         }
         
+        public void findPassedArguments(Unode arg, PassedArgumentsRequestor requestor) {
+            memento.findPassedArguments(arg, requestor, fileC);
+        }
+        
     }
     
     class GlobalIndex implements com.yoursway.sadr.engine.incremental.index.Index {
@@ -136,6 +142,12 @@ public class IndexManager {
                         AttributeAssignmentsRequestor requestor) {
                     for (PythonFileIndexManager file : files.values())
                         file.index().findAttributeAssignments(query.getAttributeName(), requestor);
+                }
+                
+                public void acceptPassedArgumentsQuery(PassedArgumentsIndexQuery query,
+                        PassedArgumentsRequestor requestor) {
+                    for (PythonFileIndexManager file : files.values())
+                        file.index().findPassedArguments(query.getUnode(), requestor);
                 }
                 
             }, requestor);

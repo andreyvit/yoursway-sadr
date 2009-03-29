@@ -21,12 +21,16 @@ import com.yoursway.sadr.python.index.AssignmentsIndexQuery;
 import com.yoursway.sadr.python.index.AssignmentsRequestor;
 import com.yoursway.sadr.python.index.AttributeAssignmentsIndexQuery;
 import com.yoursway.sadr.python.index.AttributeAssignmentsRequestor;
+import com.yoursway.sadr.python.index.PassedArgumentsIndexQuery;
+import com.yoursway.sadr.python.index.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.index.ReturnsRequestor;
 import com.yoursway.sadr.python.index.unodes.Unode;
 
 class PythonFileIndexMemento implements IndexMemento {
     
     final AbstractMultiMap<Unode, PythonConstruct> assignments = new ArrayListHashMultiMap<Unode, PythonConstruct>();
+    
+    final AbstractMultiMap<Unode, PassedArgumentInfo> passedArguments = new ArrayListHashMultiMap<Unode, PassedArgumentInfo>();
     
     final AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns = new ArrayListHashMultiMap<MethodDeclarationC, PythonConstruct>();
     
@@ -38,6 +42,7 @@ class PythonFileIndexMemento implements IndexMemento {
         PythonFileIndexMemento prev = (PythonFileIndexMemento) previous;
         Collection<IndexQuery<?>> result = newArrayList();
         diffAssignments(result, this.assignments, prev.assignments);
+        diffPassedArguments(result, this.passedArguments, prev.passedArguments);
         diffAttributeAssignments(result, this.attributeAssignments, prev.attributeAssignments);
         return result;
     }
@@ -57,6 +62,24 @@ class PythonFileIndexMemento implements IndexMemento {
             Set<PythonConstruct> oldValues = newHashSet(prevData.get(name));
             if (!curValues.equals(oldValues))
                 result.add(new AssignmentsIndexQuery(name));
+        }
+    }
+    
+    private void diffPassedArguments(Collection<IndexQuery<?>> result,
+            AbstractMultiMap<Unode, PassedArgumentInfo> curData,
+            AbstractMultiMap<Unode, PassedArgumentInfo> prevData) {
+        Set<Unode> curKeys = newHashSet(curData.keySet());
+        Set<Unode> prevKeys = newHashSet(prevData.keySet());
+        Set<Unode> removedKeys = newHashSet(curKeys);
+        removedKeys.removeAll(prevKeys);
+        for (Unode name : removedKeys)
+            result.add(new PassedArgumentsIndexQuery(name));
+        for (Map.Entry<Unode, Collection<PassedArgumentInfo>> entry : curData.entrySet()) {
+            Unode name = entry.getKey();
+            Set<PassedArgumentInfo> curValues = newHashSet(entry.getValue());
+            Set<PassedArgumentInfo> oldValues = newHashSet(prevData.get(name));
+            if (!curValues.equals(oldValues))
+                result.add(new PassedArgumentsIndexQuery(name));
         }
     }
     
@@ -102,6 +125,11 @@ class PythonFileIndexMemento implements IndexMemento {
             PythonFileC fileC) {
         for (AssignmentInfo info : attributeAssignments.get(attributeName))
             requestor.assignment(info, fileC);
+    }
+    
+    public void findPassedArguments(Unode arg, PassedArgumentsRequestor requestor, PythonFileC fileC) {
+        for (PassedArgumentInfo info : passedArguments.get(arg))
+            requestor.call(info, fileC);
     }
     
 }

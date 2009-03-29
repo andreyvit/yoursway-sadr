@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python.model.values;
 
 import java.math.BigInteger;
+import java.util.Set;
 
 import com.yoursway.sadr.python.model.types.BooleanType;
 import com.yoursway.sadr.python.model.types.IntegerType;
@@ -141,6 +142,11 @@ public class IntegerValue extends NumericValue {
     @Override
     public NumericValue eq(NumericValue rhs) {
         return BooleanType.wrap((this.coerceToInt() == rhs.coerceToInt()));
+    }
+    
+    @Override
+    public void obtainIntegerValue(Set<Long> result) {
+        result.add(this.coerceToInt());
     }
     
 }

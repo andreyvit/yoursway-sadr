@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.constructs;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +12,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.model.values.FunctionObject;
+import com.yoursway.sadr.python_v2.croco.DeclaredArguments;
+import com.yoursway.sadr.python_v2.croco.DeclaredArgumentsBuilder;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -18,11 +21,34 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
         CallableDeclaration {
     
     private final PythonConstruct body;
+    private final List<ArgumentC> arguments;
+    private final DeclaredArguments declaredArguments;
     
     public PythonLambdaExpressionC(PythonStaticContext sc, PythonLambdaExpression node,
             PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         body = wrap(node.getBodyExpression(), sc);
+        this.arguments = wrapArguments(node);
+        this.declaredArguments = createDeclaredArguments();
+    }
+    
+    private List<ArgumentC> wrapArguments(PythonLambdaExpression node) {
+        List<PythonArgument> args = node.getArguments();
+        List<ArgumentC> arguments = new ArrayList<ArgumentC>(args.size());
+        for (PythonArgument arg : args)
+            arguments.add((ArgumentC) wrap(arg, this));
+        return arguments;
+    }
+    
+    private DeclaredArguments createDeclaredArguments() {
+        DeclaredArgumentsBuilder builder = new DeclaredArgumentsBuilder();
+        for (ArgumentC arg : arguments)
+            arg.addTo(builder);
+        return builder.build();
+    }
+    
+    public DeclaredArguments getDeclaredArguments() {
+        return declaredArguments;
     }
     
     @Override

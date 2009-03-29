@@ -4,7 +4,9 @@ import java.util.Collection;
 
 import kilim.pausable;
 
-public interface CallableDeclaration extends PythonConstruct {
+import com.yoursway.sadr.python_v2.croco.DeclaredArguments;
+
+public interface CallableDeclaration extends PythonScope, PythonConstruct {
     
     String name();
     
@@ -12,5 +14,7 @@ public interface CallableDeclaration extends PythonConstruct {
     
     @pausable
     Collection<PythonConstruct> findReturnedValues();
+    
+    DeclaredArguments getDeclaredArguments();
     
 }

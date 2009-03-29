@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.ASTVisitor;
 import org.eclipse.dltk.ast.expressions.Expression;
+import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
 import org.eclipse.dltk.python.parser.ast.PythonCallArgumentsList;
 import org.eclipse.dltk.utils.CorePrinter;
 
@@ -87,7 +88,7 @@ public class PythonCallExpression extends Expression implements ExtendedVariable
         output.formatPrintLn(toString());
     }
     
-    public List<ASTNode> getArgumentsAsList() {
+    public List<PythonCallArgument> getArgumentsAsList() {
         if (arguments == null)
             return Collections.emptyList();
         return arguments.getChilds();

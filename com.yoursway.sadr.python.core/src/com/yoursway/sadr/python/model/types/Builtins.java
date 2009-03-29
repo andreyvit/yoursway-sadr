@@ -1,11 +1,7 @@
 package com.yoursway.sadr.python.model.types;
 
 import com.yoursway.sadr.python.model.values.BooleanValue;
-import com.yoursway.sadr.python.model.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.model.values.NoneValue;
-import com.yoursway.sadr.python.model.values.NumericValue;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
-import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 /**
  * Utility and declaration class.
@@ -40,33 +36,33 @@ public class Builtins extends BuiltinType {
             //            module.setAttribute(new RedirectFunctionObject("str", "__str__"));
             //            module.setAttribute(new RedirectFunctionObject("repr", "__repr__"));
             //            module.setAttribute(new RedirectFunctionObject("unicode", "__unicode__"));
-            module.setAttribute(new BuiltinFunctionObject("chr") {
-                @Override
-                public PythonValue evaluate(RuntimeArguments args) throws PythonException {
-                    NumericValue chr = IntegerType.instance.coerce(args.readSingle());
-                    if (!chr.coercibleToInt())
-                        throw new CoersionFailed();
-                    long code = chr.coerceToInt();
-                    if (code > 255 || code < 0)
-                        return null; //ValueError
-                    return StringType.wrap(String.valueOf((char) code));
-                    
-                }
-            });
-            module.setAttribute(new BuiltinFunctionObject("unichr") {
-                @Override
-                public PythonValue evaluate(RuntimeArguments args) throws PythonException {
-                    NumericValue chr = IntegerType.instance.cast(args.readSingle());
-                    if (!chr.coercibleToInt())
-                        throw new CoersionFailed();
-                    long code = chr.coerceToInt();
-                    if (code > 65535 || code < 0)
-                        return null; //ValueError
-                    return StringType.wrap(String.valueOf((char) code), true);
-                    
-                }
-            });
-            
+            //            module.setAttribute(new BuiltinFunctionObject("chr") {
+            //                @Override
+            //                public PythonValue evaluate(RuntimeArguments args) throws PythonException {
+            //                    NumericValue chr = IntegerType.instance.coerce(args.readSingle());
+            //                    if (!chr.coercibleToInt())
+            //                        throw new CoersionFailed();
+            //                    long code = chr.coerceToInt();
+            //                    if (code > 255 || code < 0)
+            //                        return null; //ValueError
+            //                    return StringType.wrap(String.valueOf((char) code));
+            //                    
+            //                }
+            //            });
+            //            module.setAttribute(new BuiltinFunctionObject("unichr") {
+            //                @Override
+            //                public PythonValue evaluate(RuntimeArguments args) throws PythonException {
+            //                    NumericValue chr = IntegerType.instance.cast(args.readSingle());
+            //                    if (!chr.coercibleToInt())
+            //                        throw new CoersionFailed();
+            //                    long code = chr.coerceToInt();
+            //                    if (code > 65535 || code < 0)
+            //                        return null; //ValueError
+            //                    return StringType.wrap(String.valueOf((char) code), true);
+            //                    
+            //                }
+            //            });
+            //            
         }
         return module;
     }

@@ -1,6 +1,7 @@
 package com.yoursway.sadr.python_v2.goals.acceptors;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,8 @@ import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.BooleanType;
 import com.yoursway.sadr.python.objects.TypeError;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -175,6 +178,18 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         Set<PythonValue> thatValues = Sets.newHashSet(that);
         thisValues.retainAll(thatValues);
         return !thisValues.isEmpty();
+    }
+    
+    public Set<Long> obtainIntegerValues() {
+        Set<Long> result = new HashSet<Long>();
+        for (PythonValue value : this)
+            value.obtainIntegerValue(result);
+        return result;
+    }
+    
+    public void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes) {
+        for (PythonValue value : this)
+            value.computeArgumentAliases(info, unodes);
     }
     
 }

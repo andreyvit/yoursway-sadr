@@ -34,4 +34,8 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
         return parentScope().getParentMethodDeclarationC();
     }
     
+    public PythonStaticContext scopeContext() {
+        return this;
+    }
+    
 }

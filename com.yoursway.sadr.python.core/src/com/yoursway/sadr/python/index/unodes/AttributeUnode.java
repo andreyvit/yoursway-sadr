@@ -133,7 +133,7 @@ public class AttributeUnode extends Unode {
     @pausable
     private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc,
             List<PythonScope> scopes) {
-        Set<Unode> aliases = PythonAnalHelpers.computeAliases(this, scopes, sc);
+        Set<Unode> aliases = PythonAnalHelpers.computeAliases(this, scopes, sc, dc);
         return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases, sc, dc, scopes);
     }
     
