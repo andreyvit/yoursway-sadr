@@ -7,6 +7,7 @@ def foo():
 	y = Foo()
 	y.foox()
 	q = y.z ## value q => 5
-	p = y.x	## expr p => int
+	p = y.x	## value p => 5
+	m = y.z ## value m => 5
  
 foo()

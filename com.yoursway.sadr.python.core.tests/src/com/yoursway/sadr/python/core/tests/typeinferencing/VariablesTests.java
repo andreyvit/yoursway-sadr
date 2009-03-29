@@ -75,6 +75,11 @@ public final class VariablesTests extends AbstractTypeInferencingTestCase {
     }
     
     @Test
+    public void externalFieldAssignmentInFunction() throws Exception {
+        runTest();
+    }
+    
+    @Test
     public void fieldType() throws Exception {
         runTest();
     }
