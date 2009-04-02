@@ -46,6 +46,7 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonDelStatement;
 import org.eclipse.dltk.python.parser.ast.PythonExceptStatement;
 import org.eclipse.dltk.python.parser.ast.PythonForStatement;
+import org.eclipse.dltk.python.parser.ast.PythonGlobalStatement;
 import org.eclipse.dltk.python.parser.ast.PythonImportFromStatement;
 import org.eclipse.dltk.python.parser.ast.PythonImportStatement;
 import org.eclipse.dltk.python.parser.ast.PythonRaiseStatement;
@@ -689,8 +690,10 @@ module_imp returns [ Expression expr = null ]:
 	;		
 
 // TODO: Not Implemented at all yet.
-global_stmt returns [ Statement statement = null ]:
-	 'global' NAME (COMMA NAME)*
+global_stmt returns [ PythonGlobalStatement statement = null; ]:
+	 w = 'global' { statement = new PythonGlobalStatement(toDLTK(w)); }
+	 n = NAME { if(n!=null) statement.add(toDLTK(n)); }
+	 (COMMA n = NAME { if(n!= null) statement.add(toDLTK(n)); } )*
 	;		
 	
 // TODO: Not Implemented at all yet.
