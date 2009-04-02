@@ -184,7 +184,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         
         @Override
         public void run() {
-            //            broadcaster.fire().goalExecutionStarting(goal);
+            broadcaster.fire().goalExecutionStarting(goal);
             try {
                 super.run();
             } finally {

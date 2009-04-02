@@ -11,10 +11,12 @@ import java.util.Map;
 
 import kilim.pausable;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
+import com.yoursway.sadr.engine.debug.DotOutputPlugin;
 import com.yoursway.sadr.engine.incremental.IncrementalAnalysisEngine;
 import com.yoursway.sadr.python.constructs.PythonFileC;
 import com.yoursway.sadr.python.model.IndexManager;
@@ -30,12 +32,28 @@ public class ProjectRuntime {
         this.modules = project.getModules();
         this.indexManager = new IndexManager();
         this.engine = new IncrementalAnalysisEngine(indexManager.createGlobalIndex());
+        configureDebugOutput();
         for (FileSourceUnit module : this.modules)
             engine.getIndex().prepareToUpdate(module);
         for (FileSourceUnit module : this.modules)
             contributeModule(module);
         engine.getIndex().finishUpdate(engine);
         indexManager.updateFinished();
+    }
+    
+    private void configureDebugOutput() {
+        String goalGraphPath = Platform.getDebugOption("com.yoursway.sadr.python.core/dumpGoalGraphTo");
+        String goalGraphPort = Platform
+                .getDebugOption("com.yoursway.sadr.python.core/dumpGoalGraphToTcpConnectionsOnPort");
+        if (goalGraphPath != null && goalGraphPath.trim().length() > 0 || goalGraphPort != null
+                && goalGraphPort.trim().length() > 0) {
+            String goalGraphOnEveryExec = Platform
+                    .getDebugOption("com.yoursway.sadr.python.core/dumpGoalGraphOnEveryExecution");
+            int port = (goalGraphPort == null || goalGraphPort.trim().length() == 0 ? -1 : Integer
+                    .parseInt(goalGraphPort));
+            new DotOutputPlugin((goalGraphPath == null ? null : new File(goalGraphPath)), engine, "true"
+                    .equalsIgnoreCase(goalGraphOnEveryExec), port);
+        }
     }
     
     public IncrementalAnalysisEngine getEngine() {

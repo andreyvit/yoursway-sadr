@@ -1,0 +1,3 @@
+com.yoursway.sadr.python.core/dumpGoalGraphTo =
+com.yoursway.sadr.python.core/dumpGoalGraphToTcpConnectionsOnPort =
+com.yoursway.sadr.python.core/dumpGoalGraphOnEveryExecution = false
