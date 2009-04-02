@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.yoursway.sadr.blocks.foundation;bundle-version="1.0.0",
  com.yoursway.sadr.blocks.misc;bundle-version="1.0.0",
  com.yoursway.utils;bundle-version="1.0.0",
- com.yoursway.sadr.dltk.python.antlr;bundle-version="3.0.0"
+ org.antlr;bundle-version="3.1.1"
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Kilim-Enabled: true
