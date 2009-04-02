@@ -149,7 +149,7 @@ public class PythonAnalHelpers {
     @pausable
     public static PythonValueSet queryIndexForValuesAssignedTo(Unode unode, PythonStaticContext sc,
             PythonDynamicContext dc, List<PythonScope> scopes) {
-        Collection<PythonConstruct> assignments = findRenames(unode, sc, scopes, dc);
+        Collection<PythonConstruct> assignments = findConstructsAssignedTo(unode, sc, scopes);
         final Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>();
         for (PythonConstruct assignedValue : assignments)
             goals.add(new ExpressionValueGoal(assignedValue, dc));
