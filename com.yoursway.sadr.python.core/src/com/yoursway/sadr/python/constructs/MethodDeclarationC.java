@@ -99,8 +99,8 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     }
     
     public void actOnIndex(IndexRequest r) {
-        r.addAssignment(new VariableUnode(node.getName()), new SpecialValueC(staticContext(),
-                new PythonValueSet(new FunctionObject(this))));
+        r.addAssignment(new VariableUnode(node.getName()), staticContext(), new SpecialValueC(
+                staticContext(), new PythonValueSet(new FunctionObject(this))));
         Collection<ArgumentProxyC> argumentProxies = new ArrayList<ArgumentProxyC>(arguments.size());
         boolean isFirst = true;
         int index = 0;
@@ -123,7 +123,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
             //            
         }
         for (ArgumentProxyC proxy : argumentProxies)
-            r.addAssignmentWithoutWrapping(new VariableUnode(proxy.getName()), proxy);
+            r.addAssignmentWithoutWrapping(new VariableUnode(proxy.getName()), this, proxy);
     }
     
     @pausable

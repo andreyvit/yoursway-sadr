@@ -93,8 +93,8 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     }
     
     public void actOnIndex(IndexRequest req) {
-        req.addAssignment(new VariableUnode(name()), new SpecialValueC(staticContext(), new PythonValueSet(
-                instanceType)));
+        req.addAssignment(new VariableUnode(name()), staticContext(), new SpecialValueC(staticContext(),
+                new PythonValueSet(instanceType)));
     }
     
     @Override

@@ -8,9 +8,11 @@ import com.yoursway.sadr.core.constructs.ConstructVisitor;
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.python.constructs.MethodDeclarationC;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.unodes.AttributeUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
+import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.utils.bugs.Bugs;
 
@@ -29,7 +31,7 @@ public class IndexRequest implements
         this.wrappingStrategy = wrappingStrategy;
     }
     
-    public void addAssignmentWithoutWrapping(Unode lhs, PythonConstruct rhs) {
+    public void addAssignmentWithoutWrapping(Unode lhs, PythonScope lhsScope, PythonConstruct rhs) {
         if (lhs == null)
             throw new NullPointerException("lhs is null");
         if (rhs == null)
@@ -39,9 +41,17 @@ public class IndexRequest implements
             AttributeUnode au = (AttributeUnode) lhs;
             memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
         }
+        addLocalVarToScope(lhsScope, lhs);
     }
     
-    public void addAssignment(Unode lhs, PythonConstruct rhs) {
+    private void addLocalVarToScope(PythonScope lhsScope, Unode lhs) {
+        VariableUnode variable = lhs.leadingVariableUnode();
+        if (variable.equals(lhs))
+            if (!lhsScope.isGlobalVariable(variable.getName()))
+                lhsScope.addLocalVariable(variable.getName());
+    }
+    
+    public void addAssignment(Unode lhs, PythonScope lhsScope, PythonConstruct rhs) {
         if (lhs == null)
             throw new NullPointerException("lhs is null");
         if (rhs == null)
@@ -54,6 +64,7 @@ public class IndexRequest implements
             AttributeUnode au = (AttributeUnode) lhs;
             memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
         }
+        addLocalVarToScope(lhsScope, lhs);
     }
     
     public void addReturnedValue(MethodDeclarationC methodC, PythonConstruct value) {

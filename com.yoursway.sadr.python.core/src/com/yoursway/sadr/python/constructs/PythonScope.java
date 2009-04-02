@@ -18,4 +18,6 @@ public interface PythonScope {
     
     PythonScope findDefiningScope(String name);
     
+    void addLocalVariable(String name);
+    
 }
