@@ -6,6 +6,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.index.unodes.Unode;
+import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python.model.IndexAffector;
 import com.yoursway.sadr.python.model.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.model.IndexRequest;
@@ -24,6 +25,11 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
             throw new IllegalArgumentException("node.getRight() should be not null");
         lhs = wrap(node.getLeft(), sc);
         rhs = wrap(node.getRight(), sc);
+        Unode unode = lhs.toUnode();
+        VariableUnode variable = unode.leadingVariableUnode();
+        if (variable.equals(unode))
+            if (!sc.isGlobalVariable(variable.getName()))
+                sc.addLocalVariable(variable.getName());
     }
     
     public PythonConstruct lhs() {

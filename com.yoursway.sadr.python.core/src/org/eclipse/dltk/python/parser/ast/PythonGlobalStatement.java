@@ -26,6 +26,10 @@ public class PythonGlobalStatement extends Statement {
         declaredVariables.add(node);
     }
     
+    public List<VariableReference> getDeclaredVariables() {
+        return declaredVariables;
+    }
+    
     @Override
     public void traverse(ASTVisitor visitor) throws Exception {
         if (visitor.visit(this)) {

@@ -10,4 +10,12 @@ public interface PythonScope {
     
     PythonStaticContext scopeContext();
     
+    boolean isGlobalVariable(String name);
+    
+    boolean isGlobalScope();
+    
+    boolean isLocalVariable(String name);
+    
+    PythonScope findDefiningScope(String name);
+    
 }

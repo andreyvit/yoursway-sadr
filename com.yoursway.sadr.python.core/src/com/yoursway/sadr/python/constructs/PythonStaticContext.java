@@ -14,4 +14,8 @@ public interface PythonStaticContext extends PythonConstruct,
     
     MethodDeclarationC getParentMethodDeclarationC();
     
+    void addGlobalVariable(String name);
+    
+    void addLocalVariable(String name);
+    
 }

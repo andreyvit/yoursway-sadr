@@ -67,4 +67,9 @@ public class VariableUnode extends Unode {
             List<PythonScope> scopes) {
         return PythonAnalHelpers.queryIndexForValuesAssignedTo(this, sc, dc, scopes);
     }
+    
+    @Override
+    public VariableUnode leadingVariableUnode() {
+        return this;
+    }
 }

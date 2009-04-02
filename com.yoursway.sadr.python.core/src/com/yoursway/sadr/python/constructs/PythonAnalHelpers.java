@@ -5,7 +5,6 @@ import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +23,7 @@ import com.yoursway.sadr.python.index.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.unodes.Bnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
+import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
@@ -31,31 +31,34 @@ import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
 
 public class PythonAnalHelpers {
     
-    public static Collection<PythonConstruct> chooseAssignmentsFromInnermostScope(
+    public static Collection<PythonConstruct> chooseAssignmentsFromInnermostScope(Unode unode,
             final Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope,
             final List<PythonScope> scopes) {
-        for (PythonScope scope : scopes) {
-            Collection<PythonConstruct> assignedValues = assignmentsByScope.get(scope);
-            if (!assignedValues.isEmpty())
-                return assignedValues;
-        }
-        return Collections.emptyList();
+        VariableUnode variable = unode.leadingVariableUnode();
+        if (variable == null)
+            throw new IllegalArgumentException(
+                    "Complex expressions are awful candidates for alias calculation");
+        PythonScope definingScope = scopes.get(0).findDefiningScope(variable.getName());
+        Collection<PythonConstruct> result = new ArrayList<PythonConstruct>();
+        for (Map.Entry<PythonScope, Collection<PythonConstruct>> entry : assignmentsByScope.entrySet())
+            if (definingScope == entry.getKey().findDefiningScope(variable.getName()))
+                result.addAll(entry.getValue());
+        return result;
     }
     
     @pausable
     public static void findAssignmentsAndGroupByScopes(PythonStaticContext staticContext, Unode unode,
             final Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope,
             final List<PythonScope> scopes) {
-        PythonScope outerScope = scopes.get(scopes.size() - 1);
-        final Collection<PythonConstruct> outerScopeConstructs = assignmentsByScope.get(outerScope);
-        
         Analysis.queryIndex(new AssignmentsIndexQuery(unode), new AssignmentsRequestor() {
             public void assignment(PythonConstruct rhs, PythonFileC fileC) {
-                Collection<PythonConstruct> constructs = assignmentsByScope.get(rhs.staticContext());
-                if (constructs == null)
-                    constructs = outerScopeConstructs;
-                constructs.add(rhs);
-                
+                PythonStaticContext sc = rhs.staticContext();
+                Collection<PythonConstruct> result = assignmentsByScope.get(sc);
+                if (result == null) {
+                    result = new ArrayList<PythonConstruct>();
+                    assignmentsByScope.put(sc, result);
+                }
+                result.add(rhs);
             }
         });
     }
@@ -95,7 +98,7 @@ public class PythonAnalHelpers {
             assignmentsByScope.put(scope, new ArrayList<PythonConstruct>());
         findAssignmentsAndGroupByScopes(sc, unode, assignmentsByScope, scopes);
         
-        return chooseAssignmentsFromInnermostScope(assignmentsByScope, scopes);
+        return chooseAssignmentsFromInnermostScope(unode, assignmentsByScope, scopes);
     }
     
     @pausable

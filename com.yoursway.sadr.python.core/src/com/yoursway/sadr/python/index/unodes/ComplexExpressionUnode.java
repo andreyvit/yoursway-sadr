@@ -52,4 +52,9 @@ public final class ComplexExpressionUnode extends Unode {
         return "Expr(" + construct + ")";
     }
     
+    @Override
+    public VariableUnode leadingVariableUnode() {
+        return null;
+    }
+    
 }

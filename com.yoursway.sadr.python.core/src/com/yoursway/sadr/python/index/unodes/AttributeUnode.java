@@ -158,4 +158,9 @@ public class AttributeUnode extends Unode {
         return PythonAnalHelpers.evaluateConstructs(assignedValues, dc);
     }
     
+    @Override
+    public VariableUnode leadingVariableUnode() {
+        return receiver.leadingVariableUnode();
+    }
+    
 }

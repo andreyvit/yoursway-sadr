@@ -23,6 +23,7 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonDelStatement;
 import org.eclipse.dltk.python.parser.ast.PythonExceptStatement;
 import org.eclipse.dltk.python.parser.ast.PythonForStatement;
+import org.eclipse.dltk.python.parser.ast.PythonGlobalStatement;
 import org.eclipse.dltk.python.parser.ast.PythonImportFromStatement;
 import org.eclipse.dltk.python.parser.ast.PythonImportStatement;
 import org.eclipse.dltk.python.parser.ast.PythonRaiseStatement;
@@ -123,6 +124,8 @@ public class PythonConstructFactory {
             return new ImportModuleC(staticContext, (PythonImportStatement) node, parent);
         if (node instanceof PythonArgument)
             return new ArgumentC(staticContext, (PythonArgument) node, parent);
+        if (node instanceof PythonGlobalStatement)
+            return new GlobalC(staticContext, (PythonGlobalStatement) node,parent);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
                 || node instanceof EmptyStatement || node instanceof PythonTestListExpression
                 || node instanceof PythonImportExpression || node instanceof PythonAllImportExpression

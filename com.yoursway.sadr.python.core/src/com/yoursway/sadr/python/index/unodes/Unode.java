@@ -36,4 +36,6 @@ public abstract class Unode {
     public abstract PythonValueSet calculateValue(PythonStaticContext staticContext, PythonDynamicContext dc,
             List<PythonScope> currentScopes);
     
+    public abstract VariableUnode leadingVariableUnode();
+    
 }

@@ -73,4 +73,9 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements P
         return null;
     }
     
+    @Override
+    public boolean isGlobalScope() {
+        return true;
+    }
+    
 }
