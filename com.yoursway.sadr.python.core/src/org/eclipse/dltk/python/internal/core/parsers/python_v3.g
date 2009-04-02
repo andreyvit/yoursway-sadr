@@ -1860,7 +1860,7 @@ LEADING_WS
             emit(tok);
         }
         	// kill trailing newline if present and then ignore
-        	( ('\r')? '\n' {if (token!=null) token.setChannel(99); else $channel=HIDDEN;})*
+        	( ('\r')? '\n' {if (tok!=null) tok.setChannel(99); else $channel=HIDDEN;})*
            // {token.setChannel(99); }
         )
 
