@@ -140,6 +140,12 @@ if __name__ == '__main__':
     elif len(sys.argv)==3:
         test_builder = TestBuilder(sys.argv[1])
         test_builder.addTest(sys.argv[2], "")
+        del test_builder
+        test_builder = TestBuilder(sys.argv[1])
+        test_builder.update()
+    elif len(sys.argv)==2:
+        test_builder = TestBuilder(sys.argv[1])
+        test_builder.update()
     else:
         print """Usage: 
         python test_gen.py <suite_name> <test_name> - to add a test
