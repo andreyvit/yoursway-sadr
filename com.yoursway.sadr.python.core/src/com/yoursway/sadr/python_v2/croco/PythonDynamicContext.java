@@ -29,6 +29,11 @@ public abstract class PythonDynamicContext implements DynamicContext {
         @Override
         public boolean equals(Object obj) {
             return obj == this;
+        }
+        
+        @Override
+        public int callStackSize() {
+            return 0;
         };
         
     };
@@ -45,5 +50,7 @@ public abstract class PythonDynamicContext implements DynamicContext {
     public abstract Arguments argumentsOfTopCall();
     
     public abstract PythonDynamicContext unwind();
+    
+    public abstract int callStackSize();
     
 }

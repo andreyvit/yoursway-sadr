@@ -4,6 +4,7 @@ public class CallSiteDynamicContext extends ChildDynamicContext {
     
     private final Arguments arguments;
     private final int hashCode;
+    private final int callStackSize;
     
     public CallSiteDynamicContext(PythonDynamicContext parent, Arguments arguments) {
         super(parent);
@@ -11,6 +12,7 @@ public class CallSiteDynamicContext extends ChildDynamicContext {
             throw new NullPointerException("arguments is null");
         this.arguments = arguments;
         this.hashCode = computeHashCode();
+        this.callStackSize = parent.callStackSize() + 1;
     }
     
     @Override
@@ -56,6 +58,11 @@ public class CallSiteDynamicContext extends ChildDynamicContext {
         } else if (!parent.equals(other.parent))
             return false;
         return true;
+    }
+    
+    @Override
+    public int callStackSize() {
+        return callStackSize;
     }
     
 }

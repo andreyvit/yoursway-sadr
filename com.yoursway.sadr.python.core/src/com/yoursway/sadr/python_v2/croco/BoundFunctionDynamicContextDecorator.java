@@ -9,11 +9,13 @@ public class BoundFunctionDynamicContextDecorator extends ChildDynamicContext {
     
     private final ArgumentsDecorator arguments;
     private final int hashCode;
+    private final int callStackSize;
     
     public BoundFunctionDynamicContextDecorator(PythonDynamicContext dc, PythonValueSet self) {
         super(dc.unwind());
         this.arguments = new ArgumentsDecorator(dc.argumentsOfTopCall(), self);
         this.hashCode = computeHashCode();
+        this.callStackSize = parent.callStackSize() + 1;
     }
     
     static class ArgumentsDecorator implements Arguments {
@@ -125,6 +127,11 @@ public class BoundFunctionDynamicContextDecorator extends ChildDynamicContext {
         } else if (!parent.equals(other.parent))
             return false;
         return true;
+    }
+    
+    @Override
+    public int callStackSize() {
+        return callStackSize;
     }
     
 }

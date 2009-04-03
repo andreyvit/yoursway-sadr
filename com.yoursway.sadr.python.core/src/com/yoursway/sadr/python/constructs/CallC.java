@@ -10,6 +10,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.Constants;
 import com.yoursway.sadr.python.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.index.unodes.ComplexExpressionUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
@@ -86,6 +87,9 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+        int size = dc.callStackSize();
+        if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
+            return PythonValueSet.EMPTY;
         PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(callable, dc));
         return callableValueSet.call(createDynamicContext(dc));
     }
