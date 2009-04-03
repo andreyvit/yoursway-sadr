@@ -5,8 +5,9 @@ import kilim.pausable;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.index.unodes.ScalarLiteralUnode;
+import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python.model.values.IntegerValue;
-import com.yoursway.sadr.python.model.values.NumericValue;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -18,12 +19,20 @@ public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        NumericValue val = new IntegerValue(getValue());
-        return new PythonValueSet(val);
+        return createValue();
+    }
+    
+    private PythonValueSet createValue() {
+        return new PythonValueSet(new IntegerValue(getValue()));
     }
     
     public long getValue() {
         return this.node().getIntValue();
+    }
+    
+    @Override
+    public Unode toUnode() {
+        return new ScalarLiteralUnode(createValue());
     }
     
 }

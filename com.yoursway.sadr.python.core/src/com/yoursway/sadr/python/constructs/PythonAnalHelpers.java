@@ -167,8 +167,12 @@ public class PythonAnalHelpers {
     @pausable
     public static PythonValueSet queryIndexForValuesAssignedTo(Collection<Alias> unodes) {
         List<PythonValueSet> values = newArrayList();
-        for (Alias alias : unodes)
+        for (Alias alias : unodes) {
+            PythonValueSet vs = alias.getUnode().calculateLiteralValue();
+            if (vs != null)
+                values.add(vs);
             values.add(queryIndexForValuesAssignedTo(alias));
+        }
         return PythonValueSet.merge(values);
     }
     

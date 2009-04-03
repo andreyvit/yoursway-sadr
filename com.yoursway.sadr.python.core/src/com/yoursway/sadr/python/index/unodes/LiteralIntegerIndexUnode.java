@@ -87,6 +87,7 @@ public class LiteralIntegerIndexUnode extends Unode {
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         if (isIndexable())
             PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
+        receiver.findIntegerIndexRenames(punode, sc, dc, aliases, index);
     }
     
 }

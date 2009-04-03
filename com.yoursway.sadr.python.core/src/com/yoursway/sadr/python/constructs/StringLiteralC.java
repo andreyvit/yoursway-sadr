@@ -5,6 +5,8 @@ import kilim.pausable;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.index.unodes.ScalarLiteralUnode;
+import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python.model.types.StringType;
 import com.yoursway.sadr.python.model.types.UnicodeType;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -51,7 +53,16 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+        return createValue();
+    }
+    
+    private PythonValueSet createValue() {
         return new PythonValueSet(isUnicode ? UnicodeType.wrap(this) : StringType.wrap(this));
+    }
+    
+    @Override
+    public Unode toUnode() {
+        return new ScalarLiteralUnode(createValue());
     }
     
 }

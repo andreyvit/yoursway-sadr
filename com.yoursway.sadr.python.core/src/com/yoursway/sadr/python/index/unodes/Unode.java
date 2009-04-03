@@ -42,4 +42,13 @@ public abstract class Unode {
     public abstract void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
             Set<Alias> aliases);
     
+    @pausable
+    public void findIntegerIndexRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
+            Set<Alias> aliases, int index) {
+    }
+    
+    public PythonValueSet calculateLiteralValue() {
+        return null;
+    }
+    
 }
