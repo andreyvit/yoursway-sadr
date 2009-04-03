@@ -9,6 +9,14 @@ public final class SameNamedVariableTests extends AbstractTypeInferencingTestCas
         runTest();
     }
     @Test
+    public void currentScopeChangeAfterAssignment() throws Exception {
+        runTest();
+    }
+    @Test
+    public void currentScopeChangeAfterCall() throws Exception {
+        runTest();
+    }
+    @Test
     public void functionArgumentAmbiguity() throws Exception {
         runTest();
     }
