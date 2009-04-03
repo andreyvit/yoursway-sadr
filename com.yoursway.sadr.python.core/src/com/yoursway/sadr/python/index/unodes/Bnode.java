@@ -34,4 +34,9 @@ public final class Bnode {
         return unode;
     }
     
+    @Override
+    public String toString() {
+        return unode + " @" + sc;
+    }
+    
 }

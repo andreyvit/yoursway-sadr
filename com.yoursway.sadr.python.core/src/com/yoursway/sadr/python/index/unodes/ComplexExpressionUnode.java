@@ -49,7 +49,7 @@ public final class ComplexExpressionUnode extends Unode {
     
     @Override
     public String toString() {
-        return "Expr(" + construct + ")";
+        return "#{" + construct + "}";
     }
     
     @Override

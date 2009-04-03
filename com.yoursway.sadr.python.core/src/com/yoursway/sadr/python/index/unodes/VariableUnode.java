@@ -30,7 +30,7 @@ public class VariableUnode extends Unode {
     
     @Override
     public String toString() {
-        return format("Var(%s)", name);
+        return format("$%s", name);
     }
     
     @Override

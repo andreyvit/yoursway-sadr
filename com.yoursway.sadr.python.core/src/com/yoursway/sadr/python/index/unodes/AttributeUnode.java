@@ -49,7 +49,7 @@ public class AttributeUnode extends Unode {
     
     @Override
     public String toString() {
-        return format("Field(%s, %s)", receiver.toString(), name);
+        return format("%s.%s", receiver.toString(), name);
     }
     
     @Override
