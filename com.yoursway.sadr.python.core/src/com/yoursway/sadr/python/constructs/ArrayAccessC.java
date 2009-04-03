@@ -76,7 +76,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
         Unode unode = toUnode();
         if (unode == null)
             return PythonValueSet.EMPTY;
-        return unode.calculateValue(staticContext(), dc, currentScopes());
+        return unode.calculateValue(staticContext(), dc);
     }
     
 }

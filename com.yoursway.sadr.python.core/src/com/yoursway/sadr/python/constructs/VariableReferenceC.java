@@ -25,7 +25,7 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
         Unode unode = toUnode();
         if (unode == null)
             return PythonValueSet.EMPTY;
-        return unode.calculateValue(staticContext(), dc, currentScopes());
+        return unode.calculateValue(staticContext(), dc);
     }
     
     @Override

@@ -2,6 +2,7 @@ package com.yoursway.sadr.python_v2.model.builtins;
 
 import static com.yoursway.sadr.python.model.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -9,8 +10,8 @@ import kilim.pausable;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.unodes.Bnode;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.PythonException;
@@ -74,8 +75,8 @@ public abstract class PythonValue extends AbstractValue {
     
     @pausable
     public void getAttrFromType(String name, PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes, PythonValueSetBuilder builder) {
-        getType().getAttr(name, sc, dc, scopes).bind(this, builder);
+            PythonValueSetBuilder builder) {
+        getType().getAttr(name, sc, dc).bind(this, builder);
     }
     
     public void bind(PythonValue self, PythonValueSetBuilder builder) {
@@ -85,7 +86,12 @@ public abstract class PythonValue extends AbstractValue {
     public void obtainIntegerValue(Set<Long> result) {
     }
     
-    public void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes) {
+    }
+    
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
+            Collection<Bnode> aliases) {
     }
     
 }

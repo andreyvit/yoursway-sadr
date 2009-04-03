@@ -2,12 +2,11 @@ package com.yoursway.sadr.python.index.unodes;
 
 import static java.lang.String.format;
 
-import java.util.List;
+import java.util.Set;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -63,10 +62,8 @@ public class VariableUnode extends Unode {
     
     @Override
     @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
-        System.out.println("VariableUnode.calculateValue(" + this + ")");
-        return PythonAnalHelpers.queryIndexForValuesAssignedTo(this, sc, dc, scopes);
+    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
+        return PythonAnalHelpers.queryIndexForValuesAssignedTo(new Bnode(this, sc, dc));
     }
     
     @Override
@@ -77,6 +74,12 @@ public class VariableUnode extends Unode {
     @Override
     public boolean isIndexable() {
         return true;
+    }
+    
+    @Override
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+        PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }
     
 }

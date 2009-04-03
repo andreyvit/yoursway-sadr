@@ -1,12 +1,10 @@
 package com.yoursway.sadr.python.model.types;
 
-import java.util.List;
 import java.util.Set;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.IntegerLiteralC;
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.model.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.model.values.IntegerValue;
@@ -110,8 +108,7 @@ public class IntegerType extends NumericType {
     
     @Override
     @pausable
-    public PythonValueSet getAttr(String name, PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
+    public PythonValueSet getAttr(String name, PythonStaticContext sc, PythonDynamicContext dc) {
         if ("__add__".equals(name))
             return new PythonValueSet(new BuiltinFunctionObject("integeradd") {
                 @Override
@@ -130,7 +127,7 @@ public class IntegerType extends NumericType {
                     return builder.build();
                 }
             });
-        return super.getAttr(name, sc, dc, scopes);
+        return super.getAttr(name, sc, dc);
     }
     
 }

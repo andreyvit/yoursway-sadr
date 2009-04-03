@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.constructs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import kilim.pausable;
 
@@ -12,7 +13,9 @@ import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.Constants;
 import com.yoursway.sadr.python.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python.index.unodes.ComplexExpressionUnode;
+import com.yoursway.sadr.python.index.punodes.Punode;
+import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.CallUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python.model.IndexAffector;
 import com.yoursway.sadr.python.model.IndexNameWrappingStrategy;
@@ -107,7 +110,7 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     
     @Override
     public Unode toUnode() {
-        return new ComplexExpressionUnode(this);
+        return new CallUnode(this);
     }
     
     public void actOnIndex(IndexRequest r) {
@@ -118,6 +121,17 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     
     public IndexNameWrappingStrategy createWrappingStrategy() {
         return null;
+    }
+    
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+        int size = dc.callStackSize();
+        if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
+            return;
+        
+        PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(callable, dc));
+        dc = createDynamicContext(dc);
+        callableValueSet.findRenames(punode, sc, dc, aliases);
     }
     
 }

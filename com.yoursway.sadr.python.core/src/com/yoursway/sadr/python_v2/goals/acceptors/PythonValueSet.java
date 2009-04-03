@@ -14,8 +14,8 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.unodes.Bnode;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.BooleanType;
@@ -146,11 +146,10 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     }
     
     @pausable
-    public PythonValueSet getAttrFromType(String name, PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
+    public PythonValueSet getAttrFromType(String name, PythonStaticContext sc, PythonDynamicContext dc) {
         PythonValueSetBuilder builder = newBuilder();
         for (PythonValue value : this)
-            value.getAttrFromType(name, sc, dc, scopes, builder);
+            value.getAttrFromType(name, sc, dc, builder);
         return builder.build();
     }
     
@@ -187,9 +186,16 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         return result;
     }
     
-    public void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes) {
         for (PythonValue value : this)
-            value.computeArgumentAliases(info, unodes);
+            value.computeArgumentAliases(info, dc, unodes);
+    }
+    
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
+            Collection<Bnode> aliases) {
+        for (PythonValue value : this)
+            value.findRenames(punode, sc, dc, aliases);
     }
     
 }

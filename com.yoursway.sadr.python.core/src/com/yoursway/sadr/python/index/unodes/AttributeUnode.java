@@ -13,7 +13,6 @@ import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonFileC;
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.AttributeAssignmentsIndexQuery;
 import com.yoursway.sadr.python.index.AttributeAssignmentsRequestor;
@@ -90,8 +89,7 @@ public class AttributeUnode extends Unode {
     
     @Override
     @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
+    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
         // foo.bar
         // a) foo.bar = x
         //    boz.bar = x
@@ -119,28 +117,26 @@ public class AttributeUnode extends Unode {
         // 3) x -> 42
         // <- foo.bar.boz == 42
         System.out.println("AttributeUnode.calculateValue(" + this + ")");
-        return PythonValueSet.merge(readFromTypeAndBind(sc, dc, scopes), trackAssignmentsAndRenames(sc, dc,
-                scopes), findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(sc, dc, scopes));
+        return PythonValueSet.merge(readFromTypeAndBind(sc, dc), trackAssignmentsAndRenames(sc, dc),
+                findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(sc, dc));
     }
     
     @pausable
-    private PythonValueSet readFromTypeAndBind(PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
-        PythonValueSet foo = receiver.calculateValue(sc, dc, scopes);
-        PythonValueSet result = foo.getAttrFromType(name, sc, dc, scopes);
+    private PythonValueSet readFromTypeAndBind(PythonStaticContext sc, PythonDynamicContext dc) {
+        PythonValueSet foo = receiver.calculateValue(sc, dc);
+        PythonValueSet result = foo.getAttrFromType(name, sc, dc);
         return result;
     }
     
     @pausable
-    private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
-        Set<Bnode> aliases = PythonAnalHelpers.computeAliases(this, scopes, sc, dc);
-        return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases, dc);
+    private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc) {
+        Set<Bnode> aliases = PythonAnalHelpers.computeAliases(new Bnode(this, sc, dc));
+        return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases);
     }
     
     @pausable
     private PythonValueSet findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(PythonStaticContext sc,
-            PythonDynamicContext dc, List<PythonScope> scopes) {
+            PythonDynamicContext dc) {
         Collection<PythonConstruct> assignedValues = new ArrayList<PythonConstruct>();
         final List<AssignmentInfo> assignments = new ArrayList<AssignmentInfo>();
         Analysis.queryIndex(new AttributeAssignmentsIndexQuery(name), new AttributeAssignmentsRequestor() {
@@ -148,11 +144,11 @@ public class AttributeUnode extends Unode {
                 assignments.add(info);
             }
         });
-        PythonValueSet actualReceiverValue = receiver.calculateValue(sc, dc, scopes);
+        PythonValueSet actualReceiverValue = receiver.calculateValue(sc, dc);
         for (AssignmentInfo info : assignments) {
             PythonConstruct rhs = info.getRhs();
-            PythonValueSet candidateReceiverValue = info.getReceiver().calculateValue(rhs.staticContext(),
-                    dc, rhs.currentScopes());
+            PythonValueSet candidateReceiverValue = info.getReceiver()
+                    .calculateValue(rhs.staticContext(), dc);
             if (candidateReceiverValue.canAlias(actualReceiverValue))
                 assignedValues.add(rhs);
         }
@@ -167,6 +163,13 @@ public class AttributeUnode extends Unode {
     @Override
     public boolean isIndexable() {
         return receiver.isIndexable();
+    }
+    
+    @Override
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+        if (isIndexable())
+            PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }
     
 }

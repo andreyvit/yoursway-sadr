@@ -4,12 +4,10 @@
 package com.yoursway.sadr.python.model.types;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.ClassDeclarationC;
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.unodes.AttributeUnode;
 import com.yoursway.sadr.python.index.unodes.VariableUnode;
@@ -58,10 +56,9 @@ public class InstanceType extends PythonType implements CallableObject {
     
     @Override
     @pausable
-    public PythonValueSet getAttr(String attrName, PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
+    public PythonValueSet getAttr(String attrName, PythonStaticContext sc, PythonDynamicContext dc) {
         System.out.println("InstanceType.getAttr(" + name() + ", " + attrName + ")");
-        return new AttributeUnode(new VariableUnode(name()), attrName).calculateValue(sc, dc, scopes);
+        return new AttributeUnode(new VariableUnode(name()), attrName).calculateValue(sc, dc);
     }
     
 }

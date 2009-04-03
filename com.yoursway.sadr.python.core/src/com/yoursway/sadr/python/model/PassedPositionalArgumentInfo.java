@@ -9,6 +9,7 @@ import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.index.unodes.Bnode;
 import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python_v2.croco.DeclaredArguments;
+import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 
 public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     
@@ -52,10 +53,11 @@ public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     }
     
     @Override
-    protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope, List<Bnode> unodes) {
+    protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope,
+            PythonDynamicContext dc, List<Bnode> unodes) {
         ArgumentC arg = declaredArguments.findPositional(index);
         if (arg != null)
-            unodes.add(new Bnode(new VariableUnode(arg.getName()), scope));
+            unodes.add(new Bnode(new VariableUnode(arg.getName()), scope, dc));
     }
     
     @Override

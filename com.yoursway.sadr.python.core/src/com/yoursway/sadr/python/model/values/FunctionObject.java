@@ -1,11 +1,15 @@
 package com.yoursway.sadr.python.model.values;
 
+import java.util.Collection;
 import java.util.List;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
+import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
+import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.unodes.Bnode;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.FunctionType;
@@ -87,8 +91,15 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes) {
-        info.computeAliases(getDecl(), unodes);
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes) {
+        info.computeAliases(getDecl(), dc, unodes);
     }
     
+    @Override
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
+            Collection<Bnode> aliases) {
+        Collection<PythonConstruct> returnedValues = getDecl().findReturnedValues();
+        PythonAnalHelpers.addRenamesForConstructs(punode, aliases, returnedValues, dc);
+    }
 }

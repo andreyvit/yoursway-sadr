@@ -3,13 +3,18 @@ package com.yoursway.sadr.python_v2.croco;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import kilim.pausable;
 
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.engine.Analysis;
+import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.goals.ExpressionValueGoal;
+import com.yoursway.sadr.python.index.punodes.Punode;
+import com.yoursway.sadr.python.index.unodes.Bnode;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.utils.YsCollections;
 
@@ -80,6 +85,21 @@ public class ActualArguments implements Arguments {
         if (init != null)
             return Analysis.evaluate(new ExpressionValueGoal(init, dc));
         return PythonValueSet.EMPTY;
+    }
+    
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
+            Set<Bnode> aliases, int index, String name, PythonConstruct init) {
+        dc = dc.unwind();
+        PythonConstruct construct = null;
+        if (index < positional.size())
+            construct = positional.get(index);
+        else if (name != null)
+            construct = keyword.get(name);
+        if (construct != null)
+            PythonAnalHelpers.addRenameForConstruct(punode, aliases, construct, dc);
+        if (init != null)
+            PythonAnalHelpers.addRenameForConstruct(punode, aliases, init, dc);
     }
     
     public void addTo(ActualArgumentsBuilder builder) {

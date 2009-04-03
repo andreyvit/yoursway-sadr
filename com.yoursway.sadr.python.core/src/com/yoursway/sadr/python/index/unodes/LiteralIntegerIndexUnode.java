@@ -1,12 +1,10 @@
 package com.yoursway.sadr.python.index.unodes;
 
-import java.util.List;
 import java.util.Set;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.HeadPunode;
 import com.yoursway.sadr.python.index.punodes.LiteralIntegerIndexPunode;
@@ -28,16 +26,14 @@ public class LiteralIntegerIndexUnode extends Unode {
     
     @Override
     @pausable
-    public PythonValueSet calculateValue(PythonStaticContext staticContext, PythonDynamicContext dc,
-            List<PythonScope> currentScopes) {
-        return trackAssignmentsAndRenames(staticContext, dc, currentScopes);
+    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
+        return trackAssignmentsAndRenames(sc, dc);
     }
     
     @pausable
-    private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc,
-            List<PythonScope> scopes) {
-        Set<Bnode> aliases = PythonAnalHelpers.computeAliases(this, scopes, sc, dc);
-        return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases, dc);
+    private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc) {
+        Set<Bnode> aliases = PythonAnalHelpers.computeAliases(new Bnode(this, sc, dc));
+        return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases);
     }
     
     @Override
@@ -84,6 +80,13 @@ public class LiteralIntegerIndexUnode extends Unode {
     @Override
     public String toString() {
         return receiver + "[" + index + "]";
+    }
+    
+    @Override
+    @pausable
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+        if (isIndexable())
+            PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }
     
 }

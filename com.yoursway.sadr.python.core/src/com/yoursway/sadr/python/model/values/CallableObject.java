@@ -20,6 +20,6 @@ public interface CallableObject {
     @pausable
     public void call(PythonDynamicContext dc, PythonValueSetBuilder builder);
     
-    void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes);
+    void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes);
     
 }

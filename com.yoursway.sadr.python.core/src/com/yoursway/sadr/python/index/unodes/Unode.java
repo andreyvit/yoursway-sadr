@@ -1,10 +1,9 @@
 package com.yoursway.sadr.python.index.unodes;
 
-import java.util.List;
+import java.util.Set;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -33,11 +32,14 @@ public abstract class Unode {
     public abstract Punode punodize();
     
     @pausable
-    public abstract PythonValueSet calculateValue(PythonStaticContext staticContext, PythonDynamicContext dc,
-            List<PythonScope> currentScopes);
+    public abstract PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc);
     
     public abstract VariableUnode leadingVariableUnode();
     
     public abstract boolean isIndexable();
+    
+    @pausable
+    public abstract void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
+            Set<Bnode> aliases);
     
 }

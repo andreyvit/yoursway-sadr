@@ -56,8 +56,8 @@ public final class BoundFunctionObject extends PythonValue implements CallableOb
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, List<Bnode> unodes) {
-        func.computeArgumentAliases(info.translateToUnbound(), unodes);
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes) {
+        func.computeArgumentAliases(info.translateToUnbound(), dc, unodes);
     }
     
 }
