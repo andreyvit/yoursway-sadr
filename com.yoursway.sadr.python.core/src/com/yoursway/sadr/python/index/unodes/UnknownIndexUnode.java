@@ -9,22 +9,19 @@ import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.AnyIndexPunode;
 import com.yoursway.sadr.python.index.punodes.HeadPunode;
-import com.yoursway.sadr.python.index.punodes.LiteralIntegerIndexPunode;
 import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.punodes.UnknownIndexPunode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
-public class LiteralIntegerIndexUnode extends Unode {
+public final class UnknownIndexUnode extends Unode {
     
     private final Unode receiver;
-    private final int index;
     
-    public LiteralIntegerIndexUnode(Unode receiver, int index) {
+    public UnknownIndexUnode(Unode receiver) {
         if (receiver == null)
             throw new NullPointerException("receiver is null");
         this.receiver = receiver;
-        this.index = index;
     }
     
     @Override
@@ -41,28 +38,15 @@ public class LiteralIntegerIndexUnode extends Unode {
     
     @Override
     protected int computeHashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + index;
-        result = prime * result + ((receiver == null) ? 0 : receiver.hashCode());
-        return result;
+        return receiver.hashCode();
     }
     
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (getClass() != obj.getClass())
+        if (obj == null || obj.getClass() != this.getClass())
             return false;
-        LiteralIntegerIndexUnode other = (LiteralIntegerIndexUnode) obj;
-        if (index != other.index)
-            return false;
-        if (receiver == null) {
-            if (other.receiver != null)
-                return false;
-        } else if (!receiver.equals(other.receiver))
-            return false;
-        return true;
+        UnknownIndexUnode that = (UnknownIndexUnode) obj;
+        return this.receiver.equals(that.receiver);
     }
     
     @Override
@@ -77,12 +61,12 @@ public class LiteralIntegerIndexUnode extends Unode {
     
     @Override
     public Punode punodize() {
-        return new LiteralIntegerIndexPunode(new HeadPunode(receiver), index);
+        return new UnknownIndexPunode(new HeadPunode(receiver));
     }
     
     @Override
     public String toString() {
-        return receiver + "[" + index + "]";
+        return receiver + "[?]";
     }
     
     @Override
@@ -90,16 +74,14 @@ public class LiteralIntegerIndexUnode extends Unode {
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         if (isIndexable())
             PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
-        receiver.findIntegerIndexRenames(punode, sc, dc, aliases, index);
+        receiver.findUnknownIndexRenames(punode, sc, dc, aliases);
     }
     
     @Override
     protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
-        receiver.addGenericVariationsTo(alternatives, new LiteralIntegerIndexPunode(punode, index), reading);
-        if (reading)
+        receiver.addGenericVariationsTo(alternatives, new AnyIndexPunode(punode), reading);
+        if (!reading)
             receiver.addGenericVariationsTo(alternatives, new UnknownIndexPunode(punode), reading);
-        else
-            receiver.addGenericVariationsTo(alternatives, new AnyIndexPunode(punode), reading);
     }
     
 }

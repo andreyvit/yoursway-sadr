@@ -64,6 +64,14 @@ public class ListLiteralUnode extends AbstractLiteralUnode {
     }
     
     @Override
+    @pausable
+    public void findUnknownIndexRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
+            Set<Alias> aliases) {
+        for (PythonConstruct item : items)
+            PythonAnalHelpers.addRenameForConstruct(punode, aliases, item, dc);
+    }
+    
+    @Override
     public String toString() {
         return "[" + Join.join(", ", items) + "]";
     }

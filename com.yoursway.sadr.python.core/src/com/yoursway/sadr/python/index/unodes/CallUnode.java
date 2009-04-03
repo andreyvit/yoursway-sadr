@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.index.unodes;
 
+import java.util.Collection;
 import java.util.Set;
 
 import kilim.pausable;
@@ -62,9 +63,12 @@ public final class CallUnode extends Unode {
     
     @Override
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Alias> aliases) {
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         call.findRenames(punode, sc, dc, aliases);
+    }
+    
+    @Override
+    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
     }
     
 }

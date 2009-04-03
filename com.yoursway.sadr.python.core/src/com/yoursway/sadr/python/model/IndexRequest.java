@@ -1,5 +1,8 @@
 package com.yoursway.sadr.python.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import kilim.pausable;
 
 import org.eclipse.dltk.ast.ASTNode;
@@ -36,14 +39,18 @@ public class IndexRequest implements
             throw new NullPointerException("lhs is null");
         if (rhs == null)
             throw new NullPointerException("rhs is null");
-        if (!lhs.isIndexable())
-            return;
-        memento.assignments.put(lhs, rhs);
-        if (lhs instanceof AttributeUnode) {
-            AttributeUnode au = (AttributeUnode) lhs;
-            memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
+        Collection<Unode> alternatives = new ArrayList<Unode>();
+        lhs.addGenericVariationsTo(alternatives, false);
+        for (Unode unode : alternatives) {
+            if (!unode.isIndexable())
+                continue;
+            memento.assignments.put(unode, rhs);
+            if (unode instanceof AttributeUnode) {
+                AttributeUnode au = (AttributeUnode) unode;
+                memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
+            }
+            addLocalVarToScope(lhsScope, unode);
         }
-        addLocalVarToScope(lhsScope, lhs);
     }
     
     private void addLocalVarToScope(PythonScope lhsScope, Unode lhs) {
@@ -58,17 +65,21 @@ public class IndexRequest implements
             throw new NullPointerException("lhs is null");
         if (rhs == null)
             throw new NullPointerException("rhs is null");
-        if (!lhs.isIndexable())
-            return;
-        lhs = wrappingStrategy.wrap(lhs);
-        if (lhs == null)
-            throw new NullPointerException("lhs is null");
-        memento.assignments.put(lhs, rhs);
-        if (lhs instanceof AttributeUnode) {
-            AttributeUnode au = (AttributeUnode) lhs;
-            memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
+        Collection<Unode> alternatives = new ArrayList<Unode>();
+        lhs.addGenericVariationsTo(alternatives, false);
+        for (Unode unode : alternatives) {
+            if (!unode.isIndexable())
+                continue;
+            unode = wrappingStrategy.wrap(unode);
+            if (unode == null)
+                throw new NullPointerException("lhs is null");
+            memento.assignments.put(unode, rhs);
+            if (unode instanceof AttributeUnode) {
+                AttributeUnode au = (AttributeUnode) unode;
+                memento.attributeAssignments.put(au.getName(), new AssignmentInfo(au.getReceiver(), rhs));
+            }
+            addLocalVarToScope(lhsScope, unode);
         }
-        addLocalVarToScope(lhsScope, lhs);
     }
     
     public void addReturnedValue(MethodDeclarationC methodC, PythonConstruct value) {

@@ -2,6 +2,7 @@ package com.yoursway.sadr.python.index.unodes;
 
 import static java.lang.String.format;
 
+import java.util.Collection;
 import java.util.Set;
 
 import kilim.pausable;
@@ -80,6 +81,11 @@ public class VariableUnode extends Unode {
     @pausable
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
+    }
+    
+    @Override
+    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+        alternatives.add(punode.wrap(this));
     }
     
 }

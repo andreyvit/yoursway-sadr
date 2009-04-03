@@ -172,4 +172,9 @@ public class AttributeUnode extends Unode {
             PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }
     
+    @Override
+    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+        receiver.addGenericVariationsTo(alternatives, new AttributePunode(punode, name), reading);
+    }
+    
 }

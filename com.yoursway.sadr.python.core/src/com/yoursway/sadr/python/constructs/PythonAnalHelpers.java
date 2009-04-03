@@ -49,7 +49,7 @@ public class PythonAnalHelpers {
     @pausable
     public static void findAssignmentsAndGroupByScopes(PythonStaticContext staticContext, Unode unode,
             final Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope) {
-        Analysis.queryIndex(new AssignmentsIndexQuery(unode), new AssignmentsRequestor() {
+        AssignmentsRequestor requestor = new AssignmentsRequestor() {
             public void assignment(PythonConstruct rhs, PythonFileC fileC) {
                 PythonStaticContext sc = rhs.staticContext();
                 Collection<PythonConstruct> result = assignmentsByScope.get(sc);
@@ -59,7 +59,11 @@ public class PythonAnalHelpers {
                 }
                 result.add(rhs);
             }
-        });
+        };
+        Collection<Unode> alternatives = new ArrayList<Unode>();
+        unode.addGenericVariationsTo(alternatives, true);
+        for (Unode alt : alternatives)
+            Analysis.queryIndex(new AssignmentsIndexQuery(alt), requestor);
     }
     
     @pausable

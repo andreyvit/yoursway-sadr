@@ -7,6 +7,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonSubscriptExpression;
 
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.index.unodes.LiteralIntegerIndexUnode;
+import com.yoursway.sadr.python.index.unodes.UnknownIndexUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
@@ -48,7 +49,8 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
             return null;
         if (index instanceof IntegerLiteralC)
             return new LiteralIntegerIndexUnode(receiverUnode, (int) ((IntegerLiteralC) index).getValue());
-        return null;
+        else
+            return new UnknownIndexUnode(receiverUnode);
     }
     
     //    @Override
