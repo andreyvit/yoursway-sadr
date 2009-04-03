@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python.index.punodes;
 
-import static java.lang.String.format;
-
 import com.yoursway.sadr.python.index.unodes.LiteralIntegerIndexUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
 
@@ -16,7 +14,7 @@ public class LiteralIntegerIndexPunode extends TailPunode {
     
     @Override
     public String toString() {
-        return format("[%d]", index);
+        return head + "[" + index + "]";
     }
     
     @Override

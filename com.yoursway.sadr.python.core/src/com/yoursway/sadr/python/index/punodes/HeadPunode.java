@@ -27,4 +27,9 @@ public class HeadPunode extends Punode {
         return punode;
     }
     
+    @Override
+    public String toString() {
+        return head.toString() + " | ";
+    }
+    
 }

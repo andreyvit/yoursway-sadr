@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python.index.punodes;
 
-import static java.lang.String.format;
-
 import com.yoursway.sadr.python.index.unodes.AttributeUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
 
@@ -18,7 +16,7 @@ public class AttributePunode extends TailPunode {
     
     @Override
     public String toString() {
-        return format("Attr(%s)", tailAttrName);
+        return head + "." + tailAttrName;
     }
     
     @Override
