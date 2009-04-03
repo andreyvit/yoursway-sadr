@@ -60,6 +60,7 @@ public class InstanceType extends PythonType implements CallableObject {
     @pausable
     public PythonValueSet getAttr(String attrName, PythonStaticContext sc, PythonDynamicContext dc,
             List<PythonScope> scopes) {
+        System.out.println("InstanceType.getAttr(" + name() + ", " + attrName + ")");
         return new AttributeUnode(new VariableUnode(name()), attrName).calculateValue(sc, dc, scopes);
     }
     

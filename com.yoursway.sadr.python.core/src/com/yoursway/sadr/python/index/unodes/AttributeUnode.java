@@ -118,6 +118,7 @@ public class AttributeUnode extends Unode {
         //  <- true: xx == foo.bar
         // 3) x -> 42
         // <- foo.bar.boz == 42
+        System.out.println("AttributeUnode.calculateValue(" + this + ")");
         return PythonValueSet.merge(readFromTypeAndBind(sc, dc, scopes), trackAssignmentsAndRenames(sc, dc,
                 scopes), findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(sc, dc, scopes));
     }

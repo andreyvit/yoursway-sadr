@@ -65,6 +65,7 @@ public class VariableUnode extends Unode {
     @pausable
     public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc,
             List<PythonScope> scopes) {
+        System.out.println("VariableUnode.calculateValue(" + this + ")");
         return PythonAnalHelpers.queryIndexForValuesAssignedTo(this, sc, dc, scopes);
     }
     

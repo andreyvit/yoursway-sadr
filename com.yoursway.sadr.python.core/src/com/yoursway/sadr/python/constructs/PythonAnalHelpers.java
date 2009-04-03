@@ -98,6 +98,7 @@ public class PythonAnalHelpers {
             assignmentsByScope.put(scope, new ArrayList<PythonConstruct>());
         findAssignmentsAndGroupByScopes(sc, unode, assignmentsByScope, scopes);
         
+        System.out.println("PythonAnalHelpers.findConstructsAssignedTo(" + unode + ")");
         return chooseAssignmentsFromInnermostScope(unode, assignmentsByScope, scopes);
     }
     
