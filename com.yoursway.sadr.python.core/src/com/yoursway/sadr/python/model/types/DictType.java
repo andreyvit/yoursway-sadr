@@ -1,32 +1,29 @@
 package com.yoursway.sadr.python.model.types;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
 import com.yoursway.sadr.python.model.values.DictValue;
-import com.yoursway.sadr.python.objects.PythonArgumentsReader;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 public class DictType extends BuiltinType {
-    public PythonValue __call__(RuntimeArguments args) throws PythonException {
-        PythonArgumentsReader reader = new PythonArgumentsReader(args);
-        HashMap<String, PythonValue> kwargs = reader.lastKwargs();
-        return DictType.wrapStrDict(kwargs);
-    }
+    //    public PythonValue __call__(RuntimeArguments args) throws PythonException {
+    //        PythonArgumentsReader reader = new PythonArgumentsReader(args);
+    //        HashMap<String, PythonValue> kwargs = reader.lastKwargs();
+    //        return DictType.wrapStrDict(kwargs);
+    //    }
     
-    public PythonValue __getitem__(RuntimeArguments args) throws PythonException {
-        List<PythonValue> list = args.readArgs(2);
-        DictValue array = DictType.instance.coerce(list.get(0));
-        PythonValue value = list.get(1);
-        return array.getDict().get(value);
-    }
+    //    public PythonValue __getitem__(RuntimeArguments args) throws PythonException {
+    //        List<PythonValue> list = args.readArgs(2);
+    //        DictValue array = DictType.instance.coerce(list.get(0));
+    //        PythonValue value = list.get(1);
+    //        return array.getDict().get(value);
+    //    }
     
-    public PythonValue __len__(RuntimeArguments args) throws PythonException {
-        DictValue array = DictType.instance.coerce(args.readSingle());
-        return IntegerType.wrap(array.getDict().size());
-    }
+    //    public PythonValue __len__(RuntimeArguments args) throws PythonException {
+    //        DictValue array = DictType.instance.coerce(args.readSingle());
+    //        return IntegerType.wrap(array.getDict().size());
+    //    }
     
     @Override
     public DictValue coerce(PythonValue object) throws PythonException {

@@ -8,14 +8,10 @@ import kilim.pausable;
 import com.yoursway.sadr.python.constructs.IntegerLiteralC;
 import com.yoursway.sadr.python.constructs.PythonScope;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
-import com.yoursway.sadr.python.model.CallResolver;
 import com.yoursway.sadr.python.model.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.model.values.IntegerValue;
-import com.yoursway.sadr.python.model.values.LongValue;
 import com.yoursway.sadr.python.model.values.NumericValue;
 import com.yoursway.sadr.python.model.values.StringValue;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
-import com.yoursway.sadr.python.objects.TypeError;
 import com.yoursway.sadr.python_v2.croco.Arguments;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
@@ -49,28 +45,28 @@ public class IntegerType extends NumericType {
         //        });
     }
     
-    protected PythonValueSet _int(PythonDynamicContext crocodile, PythonValue pvalue) {
-        PythonValueSet methods = CallResolver.findMethod(pvalue, "__int__", crocodile);
-        PythonValueSet results = new PythonValueSet();
-        if (methods.isEmpty()) {
-            results.addException(new TypeError(pvalue.getType() + " instance has no attribute '__int__'"));
-            return results;
-        }
-        for (PythonValue method : methods) {
-            PythonValueSet to_int = CallResolver.callFunction(method, new RuntimeArguments(method),
-                    crocodile, getDecl());
-            for (PythonValue intvalue : to_int) {
-                if (intvalue instanceof IntegerValue || intvalue instanceof LongValue) {
-                    results.addResult(intvalue);
-                } else {
-                    PythonType type = intvalue.getType();
-                    results.addException(new TypeError("__int__ returned non-int (type " + type + ")"));
-                }
-                
-            }
-        }
-        return results;
-    }
+    //    protected PythonValueSet _int(PythonDynamicContext crocodile, PythonValue pvalue) {
+    //        PythonValueSet methods = CallResolver.findMethod(pvalue, "__int__", crocodile);
+    //        PythonValueSet results = new PythonValueSet();
+    //        if (methods.isEmpty()) {
+    //            results.addException(new TypeError(pvalue.getType() + " instance has no attribute '__int__'"));
+    //            return results;
+    //        }
+    //        for (PythonValue method : methods) {
+    //            PythonValueSet to_int = CallResolver.callFunction(method, new RuntimeArguments(method),
+    //                    crocodile, getDecl());
+    //            for (PythonValue intvalue : to_int) {
+    //                if (intvalue instanceof IntegerValue || intvalue instanceof LongValue) {
+    //                    results.addResult(intvalue);
+    //                } else {
+    //                    PythonType type = intvalue.getType();
+    //                    results.addException(new TypeError("__int__ returned non-int (type " + type + ")"));
+    //                }
+    //                
+    //            }
+    //        }
+    //        return results;
+    //    }
     
     public IntegerValue cast(PythonValue val) throws PythonException {
         if (val instanceof IntegerValue)

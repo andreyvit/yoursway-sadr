@@ -6,18 +6,17 @@ import com.yoursway.sadr.python.constructs.BigIntegerLiteralC;
 import com.yoursway.sadr.python.model.values.LongValue;
 import com.yoursway.sadr.python.model.values.NumericValue;
 import com.yoursway.sadr.python.model.values.StringValue;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 public class LongType extends NumericType {
-    @Override
-    public PythonValue __long__(RuntimeArguments args) throws PythonException {
-        PythonValue val = args.readSingle();
-        if (val instanceof LongType)
-            return wrap(BigInteger.ZERO);
-        else
-            return cast(val);
-    }
+    //    @Override
+    //    public PythonValue __long__(RuntimeArguments args) throws PythonException {
+    //        PythonValue val = args.readSingle();
+    //        if (val instanceof LongType)
+    //            return wrap(BigInteger.ZERO);
+    //        else
+    //            return cast(val);
+    //    }
     
     public static LongValue cast(PythonValue var) {
         if (var instanceof LongValue)

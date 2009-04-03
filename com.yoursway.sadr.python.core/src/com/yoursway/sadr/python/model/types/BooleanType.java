@@ -3,14 +3,13 @@ package com.yoursway.sadr.python.model.types;
 import com.yoursway.sadr.python.model.values.BooleanValue;
 import com.yoursway.sadr.python.model.values.NumericValue;
 import com.yoursway.sadr.python.model.values.StringValue;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 public class BooleanType extends NumericType {
-    @Override
-    public PythonValue __nonzero__(RuntimeArguments args) throws PythonException {
-        return cast(args.readSingle());
-    }
+    //    @Override
+    //    public PythonValue __nonzero__(RuntimeArguments args) throws PythonException {
+    //        return cast(args.readSingle());
+    //    }
     
     public static BooleanValue cast(PythonValue value) throws PythonException {
         if (value instanceof BooleanValue)

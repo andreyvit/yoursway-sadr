@@ -4,17 +4,16 @@ import com.yoursway.sadr.python.constructs.FloatLiteralC;
 import com.yoursway.sadr.python.model.values.FloatValue;
 import com.yoursway.sadr.python.model.values.NumericValue;
 import com.yoursway.sadr.python.model.values.StringValue;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 public class FloatType extends NumericType {
-    public PythonValue __call__(RuntimeArguments args) throws PythonException {
-        PythonValue val = args.readSingle();
-        if (val instanceof FloatType)
-            return wrap(0.0);
-        else
-            return cast(val);
-    }
+    //    public PythonValue __call__(RuntimeArguments args) throws PythonException {
+    //        PythonValue val = args.readSingle();
+    //        if (val instanceof FloatType)
+    //            return wrap(0.0);
+    //        else
+    //            return cast(val);
+    //    }
     
     public static PythonValue cast(PythonValue var) throws PythonException {
         if (var instanceof FloatValue)

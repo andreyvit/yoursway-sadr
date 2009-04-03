@@ -5,18 +5,17 @@ import com.yoursway.sadr.python.model.values.Complex;
 import com.yoursway.sadr.python.model.values.ComplexValue;
 import com.yoursway.sadr.python.model.values.NumericValue;
 import com.yoursway.sadr.python.model.values.StringValue;
-import com.yoursway.sadr.python.objects.RuntimeArguments;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
 public class ComplexType extends NumericType {
-    @Override
-    public PythonValue __long__(RuntimeArguments args) throws PythonException {
-        PythonValue val = args.readSingle();
-        if (val instanceof ComplexType)
-            return wrap(new Complex(0));
-        else
-            return coerce(val);
-    }
+    //    @Override
+    //    public PythonValue __long__(RuntimeArguments args) throws PythonException {
+    //        PythonValue val = args.readSingle();
+    //        if (val instanceof ComplexType)
+    //            return wrap(new Complex(0));
+    //        else
+    //            return coerce(val);
+    //    }
     
     @Override
     public ComplexValue coerce(PythonValue var) throws PythonException {
