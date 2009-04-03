@@ -1,6 +1,9 @@
 package com.yoursway.sadr.python.constructs;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.dltk.ast.ASTNode;
@@ -80,6 +83,13 @@ public abstract class PythonScopeImpl<N extends ASTNode> extends PythonConstruct
             if (scope.isLocalVariable(name))
                 return scope;
         return fileC();
+    }
+    
+    public List<PythonScope> currentScopesIncludingSelf() {
+        final List<PythonScope> scopes = newArrayList();
+        for (PythonScope scope = this; scope != null; scope = scope.parentScope())
+            scopes.add(scope);
+        return scopes;
     }
     
 }

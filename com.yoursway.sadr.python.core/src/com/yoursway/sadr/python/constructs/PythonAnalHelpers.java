@@ -102,10 +102,10 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static Set<Unode> computeAliases(Unode unode, List<PythonScope> scopes,
+    public static Set<Bnode> computeAliases(Unode unode, List<PythonScope> scopes,
             PythonStaticContext staticContext, PythonDynamicContext dc) {
-        Set<Unode> aliases = newHashSet();
-        aliases.add(unode);
+        Set<Bnode> aliases = newHashSet();
+        aliases.add(new Bnode(unode, staticContext));
         
         for (Punode punode = unode.punodize(); punode != null; punode = punode.punodize()) {
             Collection<PythonConstruct> valuesAssignedToPunodeHead = findRenames(punode.getHead(),
@@ -114,7 +114,7 @@ public class PythonAnalHelpers {
                 Unode replacementUnode = assignedValue.toUnode();
                 if (replacementUnode != null) {
                     Unode wrapped = punode.wrap(replacementUnode);
-                    aliases.add(wrapped);
+                    aliases.add(new Bnode(wrapped, assignedValue.staticContext()));
                 }
             }
         }
@@ -123,11 +123,12 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static PythonValueSet queryIndexForValuesAssignedTo(Collection<Unode> unodes,
-            PythonStaticContext sc, final PythonDynamicContext dc, List<PythonScope> scopes) {
+    public static PythonValueSet queryIndexForValuesAssignedTo(Collection<Bnode> unodes,
+            final PythonDynamicContext dc) {
         List<PythonValueSet> values = newArrayList();
-        for (Unode alias : unodes)
-            values.add(queryIndexForValuesAssignedTo(alias, sc, dc, scopes));
+        for (Bnode alias : unodes)
+            values.add(queryIndexForValuesAssignedTo(alias.getUnode(), alias.getStaticContext(), dc, alias
+                    .getStaticContext().currentScopesIncludingSelf()));
         return PythonValueSet.merge(values);
     }
     

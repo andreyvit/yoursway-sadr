@@ -1,5 +1,7 @@
 package com.yoursway.sadr.python.constructs;
 
+import java.util.List;
+
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.core.constructs.StaticContext;
@@ -17,5 +19,7 @@ public interface PythonStaticContext extends PythonConstruct,
     void addGlobalVariable(String name);
     
     void addLocalVariable(String name);
+    
+    List<PythonScope> currentScopesIncludingSelf();
     
 }
