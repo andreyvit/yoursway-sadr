@@ -5,6 +5,7 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 
 import com.yoursway.sadr.engine.InfoKind;
+import com.yoursway.sadr.python.model.values.ListValue;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
@@ -35,7 +36,7 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        throw new UnsupportedOperationException();
+        return new PythonValueSet(new ListValue());
     }
     
 }
