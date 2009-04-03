@@ -163,4 +163,9 @@ public class AttributeUnode extends Unode {
         return receiver.leadingVariableUnode();
     }
     
+    @Override
+    public boolean isIndexable() {
+        return receiver.isIndexable();
+    }
+    
 }

@@ -38,4 +38,6 @@ public abstract class Unode {
     
     public abstract VariableUnode leadingVariableUnode();
     
+    public abstract boolean isIndexable();
+    
 }

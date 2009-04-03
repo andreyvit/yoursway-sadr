@@ -57,4 +57,9 @@ public final class ComplexExpressionUnode extends Unode {
         return null;
     }
     
+    @Override
+    public boolean isIndexable() {
+        return false;
+    }
+    
 }

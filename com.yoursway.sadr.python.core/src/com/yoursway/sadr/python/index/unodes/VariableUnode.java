@@ -72,4 +72,10 @@ public class VariableUnode extends Unode {
     public VariableUnode leadingVariableUnode() {
         return this;
     }
+    
+    @Override
+    public boolean isIndexable() {
+        return true;
+    }
+    
 }

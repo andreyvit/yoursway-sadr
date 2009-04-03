@@ -152,6 +152,8 @@ public class PythonAnalHelpers {
     @pausable
     public static PythonValueSet queryIndexForValuesAssignedTo(Unode unode, PythonStaticContext sc,
             PythonDynamicContext dc, List<PythonScope> scopes) {
+        if (!unode.isIndexable())
+            return PythonValueSet.EMPTY;
         Collection<PythonConstruct> assignments = findConstructsAssignedTo(unode, sc, scopes);
         final Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>();
         for (PythonConstruct assignedValue : assignments)

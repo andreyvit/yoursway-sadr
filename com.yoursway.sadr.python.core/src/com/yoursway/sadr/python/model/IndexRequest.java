@@ -36,6 +36,8 @@ public class IndexRequest implements
             throw new NullPointerException("lhs is null");
         if (rhs == null)
             throw new NullPointerException("rhs is null");
+        if (!lhs.isIndexable())
+            return;
         memento.assignments.put(lhs, rhs);
         if (lhs instanceof AttributeUnode) {
             AttributeUnode au = (AttributeUnode) lhs;
@@ -56,6 +58,8 @@ public class IndexRequest implements
             throw new NullPointerException("lhs is null");
         if (rhs == null)
             throw new NullPointerException("rhs is null");
+        if (!lhs.isIndexable())
+            return;
         lhs = wrappingStrategy.wrap(lhs);
         if (lhs == null)
             throw new NullPointerException("lhs is null");
