@@ -12,11 +12,20 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
     
     private final PythonConstruct array;
     private final PythonConstruct index;
+    private final PythonConstruct sliceEnd;
+    private final PythonConstruct sliceStep;
     
     ArrayAccessC(PythonStaticContext sc, PythonArrayAccessExpression node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         array = wrap(node.getArray(), sc);
-        index = wrap(node.getIndex(), sc);
+        PythonSubscriptExpression subscript = (PythonSubscriptExpression) node.getIndex();
+        index = wrapOrNull(subscript.getIndexOrSliceStart(), sc);
+        sliceEnd = wrapOrNull(subscript.getSliceEnd(), sc);
+        sliceStep = wrapOrNull(subscript.getSliceStep(), sc);
+    }
+    
+    public boolean isSubscription() {
+        return index != null && sliceEnd == null && sliceStep == null;
     }
     
     public PythonConstruct getIndex() {

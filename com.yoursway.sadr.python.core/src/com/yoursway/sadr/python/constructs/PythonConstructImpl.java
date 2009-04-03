@@ -137,6 +137,12 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return PythonConstructFactory.wrap(node, staticContext, this);
     }
     
+    protected PythonConstruct wrapOrNull(ASTNode node, PythonStaticContext staticContext) {
+        if (node == null)
+            return null;
+        return PythonConstructFactory.wrap(node, staticContext, this);
+    }
+    
     protected List<PythonConstruct> wrap(List<ASTNode> node, PythonStaticContext staticContext) {
         return PythonConstructFactory.wrap(node, staticContext, this);
     }
