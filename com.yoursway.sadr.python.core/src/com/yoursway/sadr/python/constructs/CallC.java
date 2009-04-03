@@ -14,7 +14,7 @@ import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.Constants;
 import com.yoursway.sadr.python.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.index.punodes.Punode;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.index.unodes.CallUnode;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python.model.IndexAffector;
@@ -124,7 +124,7 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     }
     
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         int size = dc.callStackSize();
         if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
             return;

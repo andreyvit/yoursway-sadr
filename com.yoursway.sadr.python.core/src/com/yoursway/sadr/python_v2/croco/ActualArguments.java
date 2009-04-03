@@ -14,7 +14,7 @@ import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.index.punodes.Punode;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 import com.yoursway.utils.YsCollections;
 
@@ -89,7 +89,7 @@ public class ActualArguments implements Arguments {
     
     @pausable
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Bnode> aliases, int index, String name, PythonConstruct init) {
+            Set<Alias> aliases, int index, String name, PythonConstruct init) {
         dc = dc.unwind();
         PythonConstruct construct = null;
         if (index < positional.size())

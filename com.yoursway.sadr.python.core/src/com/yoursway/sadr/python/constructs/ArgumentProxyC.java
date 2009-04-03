@@ -9,7 +9,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.unodes.ArgumentProxyUnode;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python_v2.croco.Arguments;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -41,7 +41,7 @@ public class ArgumentProxyC extends PythonConstructImpl<ASTNode> {
     }
     
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         Arguments arguments = dc.argumentsOfTopCall();
         arguments.findRenames(punode, sc, dc, aliases, index, argument.getName(), argument.getInit());
     }

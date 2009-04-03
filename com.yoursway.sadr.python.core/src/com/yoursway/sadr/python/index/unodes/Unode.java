@@ -40,6 +40,6 @@ public abstract class Unode {
     
     @pausable
     public abstract void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Bnode> aliases);
+            Set<Alias> aliases);
     
 }

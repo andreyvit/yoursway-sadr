@@ -5,7 +5,7 @@ import java.util.List;
 import com.yoursway.sadr.python.constructs.FieldAccessC;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonScope;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python_v2.croco.DeclaredArguments;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 
@@ -45,7 +45,7 @@ public final class PassedReceiverArgumentInfo extends PassedArgumentInfo {
     }
     
     @Override
-    protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope, PythonDynamicContext dc, List<Bnode> unodes) {
+    protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope, PythonDynamicContext dc, List<Alias> unodes) {
     }
     
     @Override

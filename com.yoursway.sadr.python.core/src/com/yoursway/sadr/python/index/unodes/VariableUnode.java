@@ -63,7 +63,7 @@ public class VariableUnode extends Unode {
     @Override
     @pausable
     public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
-        return PythonAnalHelpers.queryIndexForValuesAssignedTo(new Bnode(this, sc, dc));
+        return PythonAnalHelpers.queryIndexForValuesAssignedTo(new Alias(this, sc, dc));
     }
     
     @Override
@@ -78,7 +78,7 @@ public class VariableUnode extends Unode {
     
     @Override
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }
     

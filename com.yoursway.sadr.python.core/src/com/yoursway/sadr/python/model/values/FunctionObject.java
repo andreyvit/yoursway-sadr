@@ -10,7 +10,7 @@ import com.yoursway.sadr.python.constructs.PythonAnalHelpers;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.Punode;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.FunctionType;
 import com.yoursway.sadr.python.model.types.PythonType;
@@ -91,14 +91,14 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Alias> unodes) {
         info.computeAliases(getDecl(), dc, unodes);
     }
     
     @Override
     @pausable
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Collection<Bnode> aliases) {
+            Collection<Alias> aliases) {
         Collection<PythonConstruct> returnedValues = getDecl().findReturnedValues();
         PythonAnalHelpers.addRenamesForConstructs(punode, aliases, returnedValues, dc);
     }

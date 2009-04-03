@@ -5,7 +5,7 @@ import java.util.List;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.PythonConstruct;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.FunctionType;
 import com.yoursway.sadr.python.model.types.PythonType;
@@ -56,7 +56,7 @@ public final class BoundFunctionObject extends PythonValue implements CallableOb
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Alias> unodes) {
         func.computeArgumentAliases(info.translateToUnbound(), dc, unodes);
     }
     

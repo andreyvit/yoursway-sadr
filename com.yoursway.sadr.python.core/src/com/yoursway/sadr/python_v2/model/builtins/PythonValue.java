@@ -12,7 +12,7 @@ import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.Punode;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.PythonException;
 import com.yoursway.sadr.python.model.types.PythonType;
@@ -86,12 +86,12 @@ public abstract class PythonValue extends AbstractValue {
     public void obtainIntegerValue(Set<Long> result) {
     }
     
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Alias> unodes) {
     }
     
     @pausable
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Collection<Bnode> aliases) {
+            Collection<Alias> aliases) {
     }
     
 }

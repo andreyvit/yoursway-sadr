@@ -5,7 +5,7 @@ import java.util.List;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.constructs.PythonConstruct;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSetBuilder;
@@ -20,6 +20,6 @@ public interface CallableObject {
     @pausable
     public void call(PythonDynamicContext dc, PythonValueSetBuilder builder);
     
-    void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Bnode> unodes);
+    void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Alias> unodes);
     
 }

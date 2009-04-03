@@ -130,7 +130,7 @@ public class AttributeUnode extends Unode {
     
     @pausable
     private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc) {
-        Set<Bnode> aliases = PythonAnalHelpers.computeAliases(new Bnode(this, sc, dc));
+        Set<Alias> aliases = PythonAnalHelpers.computeAliases(new Alias(this, sc, dc));
         return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases);
     }
     
@@ -167,7 +167,7 @@ public class AttributeUnode extends Unode {
     
     @Override
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Bnode> aliases) {
+    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         if (isIndexable())
             PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }

@@ -42,7 +42,7 @@ public final class ArgumentProxyUnode extends Unode {
     @Override
     @pausable
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Bnode> aliases) {
+            Set<Alias> aliases) {
         arg.findRenames(punode, sc, dc, aliases);
     }
     

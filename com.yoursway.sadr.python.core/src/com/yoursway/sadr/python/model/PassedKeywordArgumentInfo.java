@@ -5,7 +5,7 @@ import java.util.List;
 import com.yoursway.sadr.python.constructs.ArgumentC;
 import com.yoursway.sadr.python.constructs.CallC;
 import com.yoursway.sadr.python.constructs.PythonScope;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python_v2.croco.DeclaredArguments;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
@@ -52,10 +52,10 @@ public final class PassedKeywordArgumentInfo extends PassedCallArgumentInfo {
     
     @Override
     protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope,
-            PythonDynamicContext dc, List<Bnode> unodes) {
+            PythonDynamicContext dc, List<Alias> unodes) {
         ArgumentC arg = declaredArguments.findKeyword(name);
         if (arg != null)
-            unodes.add(new Bnode(new VariableUnode(arg.getName()), scope, dc));
+            unodes.add(new Alias(new VariableUnode(arg.getName()), scope, dc));
     }
     
     @Override

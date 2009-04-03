@@ -22,7 +22,7 @@ import com.yoursway.sadr.python.index.PassedArgumentsIndexQuery;
 import com.yoursway.sadr.python.index.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.index.punodes.HeadPunode;
 import com.yoursway.sadr.python.index.punodes.Punode;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.index.unodes.Unode;
 import com.yoursway.sadr.python.index.unodes.VariableUnode;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
@@ -63,26 +63,26 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static Collection<PythonConstruct> findRenames(Bnode bnode) {
-        final Collection<PythonConstruct> result = findConstructsAssignedTo(bnode.getUnode(), bnode
+    public static Collection<PythonConstruct> findRenames(Alias alias) {
+        final Collection<PythonConstruct> result = findConstructsAssignedTo(alias.getUnode(), alias
                 .getStaticContext());
         
         final Collection<PassedArgumentInfo> infos = new ArrayList<PassedArgumentInfo>();
-        Analysis.queryIndex(new PassedArgumentsIndexQuery(bnode.getUnode()), new PassedArgumentsRequestor() {
+        Analysis.queryIndex(new PassedArgumentsIndexQuery(alias.getUnode()), new PassedArgumentsRequestor() {
             public void call(PassedArgumentInfo info, PythonFileC fileC) {
                 // FIXME check scope
                 infos.add(info);
             }
         });
         for (PassedArgumentInfo info : infos) {
-            PythonValueSet callable = Analysis.evaluate(new ExpressionValueGoal(info.getCallable(), bnode
+            PythonValueSet callable = Analysis.evaluate(new ExpressionValueGoal(info.getCallable(), alias
                     .getDynamicContext()));
-            List<Bnode> aliases = new ArrayList<Bnode>();
-            callable.computeArgumentAliases(info, bnode.getDynamicContext(), aliases);
-            for (Bnode alias : aliases)
-                result.add(new CallAliasProxyC(alias, info.getCallable()));
+            List<Alias> callableAliases = new ArrayList<Alias>();
+            callable.computeArgumentAliases(info, alias.getDynamicContext(), callableAliases);
+            for (Alias callableAlias : callableAliases)
+                result.add(new CallAliasProxyC(callableAlias, info.getCallable()));
         }
-        System.out.println("renames(" + bnode + ") = " + Join.join(", ", result));
+        System.out.println("renames(" + alias + ") = " + Join.join(", ", result));
         for (PassedArgumentInfo info : infos)
             System.out.println(" - " + info);
         return result;
@@ -99,15 +99,15 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static Set<Bnode> computeAliases(Bnode bnode) {
-        Set<Bnode> aliases = newHashSet();
-        Set<Bnode> newAliases = newHashSet();
-        newAliases.add(bnode);
+    public static Set<Alias> computeAliases(Alias alias) {
+        Set<Alias> aliases = newHashSet();
+        Set<Alias> newAliases = newHashSet();
+        newAliases.add(alias);
         while (!newAliases.isEmpty()) {
-            Set<Bnode> superNewAliases = newHashSet();
+            Set<Alias> superNewAliases = newHashSet();
             aliases.addAll(newAliases);
-            for (Bnode alias : newAliases)
-                superNewAliases.addAll(computeAliases_old(alias));
+            for (Alias newAlias : newAliases)
+                superNewAliases.addAll(computeAliases_old(newAlias));
             superNewAliases.removeAll(aliases);
             newAliases = superNewAliases;
             if (!newAliases.isEmpty())
@@ -117,14 +117,14 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static Set<Bnode> computeAliases_old(Bnode bnode) {
-        return computeAliases_old(bnode.getUnode(), bnode.getStaticContext(), bnode.getDynamicContext());
+    public static Set<Alias> computeAliases_old(Alias alias) {
+        return computeAliases_old(alias.getUnode(), alias.getStaticContext(), alias.getDynamicContext());
     }
     
     @pausable
-    public static Set<Bnode> computeAliases_old(Unode unode, PythonStaticContext staticContext,
+    public static Set<Alias> computeAliases_old(Unode unode, PythonStaticContext staticContext,
             PythonDynamicContext dc) {
-        Set<Bnode> aliases = newHashSet();
+        Set<Alias> aliases = newHashSet();
         
         computeRenamesForAliasing(new HeadPunode(unode), staticContext, dc, aliases);
         
@@ -136,38 +136,38 @@ public class PythonAnalHelpers {
     
     @pausable
     private static void computeRenamesForAliasing(Punode punode, PythonStaticContext sc,
-            PythonDynamicContext dc, Set<Bnode> aliases) {
+            PythonDynamicContext dc, Set<Alias> aliases) {
         System.out.println("PythonAnalHelpers.computeRenamesForAliasing(" + punode + ")");
         punode.getHead().findRenames(punode, sc, dc, aliases);
     }
     
     @pausable
     public static void computeRenamesForAliasingUsingIndex(Punode punode, PythonStaticContext sc,
-            PythonDynamicContext dc, Set<Bnode> aliases) {
-        Collection<PythonConstruct> valuesAssignedToPunodeHead = findRenames(new Bnode(punode.getHead(), sc,
+            PythonDynamicContext dc, Set<Alias> aliases) {
+        Collection<PythonConstruct> valuesAssignedToPunodeHead = findRenames(new Alias(punode.getHead(), sc,
                 dc));
         addRenamesForConstructs(punode, aliases, valuesAssignedToPunodeHead, dc);
     }
     
-    public static void addRenamesForConstructs(Punode punode, Collection<Bnode> aliases,
+    public static void addRenamesForConstructs(Punode punode, Collection<Alias> aliases,
             Collection<PythonConstruct> valuesAssignedToPunodeHead, PythonDynamicContext dc) {
         for (PythonConstruct assignedValue : valuesAssignedToPunodeHead)
             addRenameForConstruct(punode, aliases, assignedValue, dc);
     }
     
-    public static void addRenameForConstruct(Punode punode, Collection<Bnode> aliases,
+    public static void addRenameForConstruct(Punode punode, Collection<Alias> aliases,
             PythonConstruct construct, PythonDynamicContext dc) {
         Unode replacementUnode = construct.toUnode();
         if (replacementUnode != null) {
             Unode wrapped = punode.wrap(replacementUnode);
-            aliases.add(new Bnode(wrapped, construct.staticContext(), dc));
+            aliases.add(new Alias(wrapped, construct.staticContext(), dc));
         }
     }
     
     @pausable
-    public static PythonValueSet queryIndexForValuesAssignedTo(Collection<Bnode> unodes) {
+    public static PythonValueSet queryIndexForValuesAssignedTo(Collection<Alias> unodes) {
         List<PythonValueSet> values = newArrayList();
-        for (Bnode alias : unodes)
+        for (Alias alias : unodes)
             values.add(queryIndexForValuesAssignedTo(alias));
         return PythonValueSet.merge(values);
     }
@@ -191,14 +191,14 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static PythonValueSet queryIndexForValuesAssignedTo(Bnode bnode) {
-        if (!bnode.getUnode().isIndexable())
+    public static PythonValueSet queryIndexForValuesAssignedTo(Alias alias) {
+        if (!alias.getUnode().isIndexable())
             return PythonValueSet.EMPTY;
-        Collection<PythonConstruct> assignments = findConstructsAssignedTo(bnode.getUnode(), bnode
+        Collection<PythonConstruct> assignments = findConstructsAssignedTo(alias.getUnode(), alias
                 .getStaticContext());
         final Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>();
         for (PythonConstruct assignedValue : assignments)
-            goals.add(new ExpressionValueGoal(assignedValue, bnode.getDynamicContext()));
+            goals.add(new ExpressionValueGoal(assignedValue, alias.getDynamicContext()));
         return PythonValueSet.merge(Analysis.evaluate(goals));
     }
     

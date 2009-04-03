@@ -7,13 +7,13 @@ import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
-public final class Bnode {
+public final class Alias {
     
     private final Unode unode;
     private final PythonScope sc;
     private final PythonDynamicContext dc;
     
-    public Bnode(Unode unode, PythonScope sc, PythonDynamicContext dc) {
+    public Alias(Unode unode, PythonScope sc, PythonDynamicContext dc) {
         if (unode == null)
             throw new NullPointerException("unode is null");
         if (sc == null)
@@ -64,7 +64,7 @@ public final class Bnode {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Bnode other = (Bnode) obj;
+        Alias other = (Alias) obj;
         if (sc == null) {
             if (other.sc != null)
                 return false;

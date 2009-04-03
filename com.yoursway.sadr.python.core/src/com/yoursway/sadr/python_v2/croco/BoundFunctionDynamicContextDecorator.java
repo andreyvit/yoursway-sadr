@@ -7,7 +7,7 @@ import kilim.pausable;
 import com.yoursway.sadr.python.constructs.PythonConstruct;
 import com.yoursway.sadr.python.constructs.PythonStaticContext;
 import com.yoursway.sadr.python.index.punodes.Punode;
-import com.yoursway.sadr.python.index.unodes.Bnode;
+import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python_v2.goals.acceptors.PythonValueSet;
 
 public class BoundFunctionDynamicContextDecorator extends ChildDynamicContext {
@@ -49,7 +49,7 @@ public class BoundFunctionDynamicContextDecorator extends ChildDynamicContext {
         
         @pausable
         public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-                Set<Bnode> aliases, int index, String name, PythonConstruct init) {
+                Set<Alias> aliases, int index, String name, PythonConstruct init) {
             if (index == 0)
                 return;
             delegate.findRenames(punode, sc, dc, aliases, index - 1, name, init);
