@@ -2,14 +2,10 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import java.util.HashMap;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     
@@ -62,11 +58,6 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
         if (node.getChilds().size() != 2) {
             throw new IllegalArgumentException();
         }
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        return PythonValueSet.EMPTY;
     }
     
 }

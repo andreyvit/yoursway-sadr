@@ -13,7 +13,6 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.engine.Analysis;
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
@@ -99,11 +98,6 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
     
     public String name() {
         return this.node.getName();
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        return null;
     }
     
     public void actOnIndex(IndexRequest r) {

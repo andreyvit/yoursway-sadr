@@ -2,19 +2,15 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import java.util.List;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
 import com.yoursway.sadr.engine.incremental.SourceUnit;
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.context.lexical.areas.ModuleArea;
 import com.yoursway.sadr.python.analysis.context.lexical.scopes.ModuleScope;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonRootConstruct;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implements PythonRootConstruct {
     
@@ -43,13 +39,9 @@ public class PythonFileC extends PythonConstructImpl<ModuleDeclaration> implemen
         return module;
     }
     
+    @Override
     public PythonFileC fileC() {
         return this;
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        throw new UnsupportedOperationException();
     }
     
 }

@@ -2,18 +2,13 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import java.util.List;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
 import com.yoursway.sadr.python.analysis.objectmodel.values.BooleanValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class IfC extends PythonConstructImpl<IfStatement> {
     
@@ -48,11 +43,6 @@ public class IfC extends PythonConstructImpl<IfStatement> {
         } else { // What the hell was this?!
             return null;
         }
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        throw new VoidConstructException(this);
     }
     
 }

@@ -1,10 +1,7 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
@@ -18,22 +15,13 @@ public class IntegerLiteralC extends PythonConstructImpl<NumericLiteral> {
         super(sc, node, parent);
     }
     
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        return createValue();
-    }
-    
-    private PythonValueSet createValue() {
-        return new PythonValueSet(new IntegerValue(getValue()));
-    }
-    
     public long getValue() {
         return this.node().getIntValue();
     }
     
     @Override
     public Unode toUnode() {
-        return new ScalarLiteralUnode(createValue());
+        return new ScalarLiteralUnode(new PythonValueSet(new IntegerValue(getValue())));
     }
     
 }

@@ -8,15 +8,11 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
-import com.yoursway.sadr.engine.Analysis;
-import com.yoursway.sadr.python.analysis.Constants;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
-import com.yoursway.sadr.python.analysis.context.dynamic.CallSiteDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.ActualArgumentsBuilder;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
@@ -26,7 +22,6 @@ import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.proxies.CallUnode;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class CallC extends PythonConstructImpl<PythonCallExpression> implements IndexAffector {
     
@@ -90,23 +85,6 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
         return callable;
     }
     
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        Unode unode = callable.toUnode();
-        if (unode == null)
-            return PythonValueSet.EMPTY;
-        int size = dc.callStackSize();
-        if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
-            return PythonValueSet.EMPTY;
-        PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(new Bnode(unode,
-                staticContext()), dc));
-        return callableValueSet.call(createDynamicContext(dc));
-    }
-    
-    public CallSiteDynamicContext createDynamicContext(PythonDynamicContext dc) {
-        return new CallSiteDynamicContext(dc, arguments);
-    }
-    
     private Arguments buildArguments() {
         ActualArgumentsBuilder builder = new ActualArgumentsBuilder();
         for (CallArgumentC argument : args)
@@ -116,7 +94,11 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     
     @Override
     public Unode toUnode() {
-        return new CallUnode(this);
+        Unode callableUnode = callable.toUnode();
+        if (callableUnode == null)
+            return null;
+        else
+            return new CallUnode(new Bnode(callableUnode, staticContext()), arguments);
     }
     
     public void actOnIndex(IndexRequest r) {
@@ -132,18 +114,6 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     @pausable
     public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
-        Unode unode = callable.toUnode();
-        if (unode == null)
-            return;
-        
-        int size = dc.callStackSize();
-        if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
-            return;
-        
-        PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(new Bnode(unode,
-                staticContext()), dc));
-        dc = createDynamicContext(dc);
-        callableValueSet.findRenames(suffix, sc, dc, aliases);
     }
     
 }

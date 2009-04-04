@@ -3,19 +3,14 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ListLiteralUnode;
-import com.yoursway.sadr.python.analysis.objectmodel.values.ListValue;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class PythonListExpressionC extends PythonConstructImpl<PythonListExpression> implements
         PythonConstruct {
@@ -54,11 +49,6 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
     //        }
     //        return results;
     //    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        return new PythonValueSet(new ListValue());
-    }
     
     @Override
     public Unode toUnode() {

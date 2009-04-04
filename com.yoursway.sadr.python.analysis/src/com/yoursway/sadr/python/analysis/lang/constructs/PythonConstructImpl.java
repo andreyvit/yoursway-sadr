@@ -20,6 +20,7 @@ import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonConstructFact
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
     
@@ -159,6 +160,11 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (unode == null)
             return null;
         return new Bnode(unode, staticContext());
+    }
+    
+    @pausable
+    public final PythonValueSet evaluateValue(PythonDynamicContext dc) {
+        throw new UnsupportedOperationException();
     }
     
 }

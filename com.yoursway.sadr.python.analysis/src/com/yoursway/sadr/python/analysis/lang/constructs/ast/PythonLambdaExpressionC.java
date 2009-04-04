@@ -10,7 +10,6 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
@@ -19,6 +18,8 @@ import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.literals.ScalarLiteralUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -75,9 +76,9 @@ public class PythonLambdaExpressionC extends PythonConstructImpl<PythonLambdaExp
         return null;
     }
     
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        return new PythonValueSet(new FunctionObject(this));
+    @Override
+    public Unode toUnode() {
+        return new ScalarLiteralUnode(new PythonValueSet(new FunctionObject(this)));
     }
     
     @pausable

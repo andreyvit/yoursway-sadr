@@ -1,7 +1,5 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
@@ -14,7 +12,6 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class AssignmentC extends PythonConstructImpl<Assignment> implements PythonDeclaration, IndexAffector {
     
@@ -62,9 +59,9 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
         return null;
     }
     
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        return rhs.evaluateValue(dc);
+    @Override
+    public Unode toUnode() {
+        return rhs.toUnode();
     }
     
     public void actOnIndex(IndexRequest indexRequest) {

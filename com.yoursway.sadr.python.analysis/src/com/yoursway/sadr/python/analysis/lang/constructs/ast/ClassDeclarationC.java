@@ -3,8 +3,6 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 import java.util.Collections;
 import java.util.List;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
@@ -21,7 +19,6 @@ import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
-import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ScalarLiteralUnode;
@@ -91,11 +88,6 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
     
     public List<PythonArgument> getArguments() {
         throw new UnsupportedOperationException();
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        throw new VoidConstructException(this);
     }
     
     public void actOnIndex(IndexRequest req) {

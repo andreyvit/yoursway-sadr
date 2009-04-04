@@ -2,17 +2,12 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import java.util.HashMap;
 
-import kilim.pausable;
-
-import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class UnaryC extends PythonConstructImpl<UnaryExpression> {
     
@@ -41,13 +36,8 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
         if (node.getChilds().size() != 1) {
             throw new IllegalArgumentException();
         }
-        argument = wrap((ASTNode) node.getChilds().get(0), sc);
+        argument = wrap(node.getChilds().get(0), sc);
         argument.hashCode();
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        return PythonValueSet.EMPTY;
     }
     
 }

@@ -1,10 +1,7 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
@@ -14,7 +11,6 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpression> implements
         IndexAffector {
@@ -34,14 +30,6 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     
     public VariableReferenceC variable() {
         return variable;
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(final PythonDynamicContext dc) {
-        Unode unode = toUnode();
-        if (unode == null)
-            return PythonValueSet.EMPTY;
-        return unode.calculateValue(staticContext(), dc);
     }
     
     @Override

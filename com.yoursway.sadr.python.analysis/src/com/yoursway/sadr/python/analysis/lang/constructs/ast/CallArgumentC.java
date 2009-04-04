@@ -1,13 +1,10 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.ActualArgumentsBuilder;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
@@ -17,7 +14,6 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     
@@ -48,11 +44,6 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     
     public PythonConstruct getValue() {
         return value;
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        throw new UnsupportedOperationException();
     }
     
     public void addTo(ActualArgumentsBuilder builder) {

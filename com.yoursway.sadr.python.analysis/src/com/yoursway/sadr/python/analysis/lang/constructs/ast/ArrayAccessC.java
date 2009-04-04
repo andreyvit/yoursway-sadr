@@ -1,18 +1,14 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonSubscriptExpression;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription.LiteralIntegerIndexUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription.UnknownIndexUnode;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpression> {
     
@@ -74,13 +70,5 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
     //        }
     //        return results;
     //    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        Unode unode = toUnode();
-        if (unode == null)
-            return PythonValueSet.EMPTY;
-        return unode.calculateValue(staticContext(), dc);
-    }
     
 }

@@ -2,18 +2,13 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import java.util.HashMap;
 
-import kilim.pausable;
-
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
 import com.yoursway.sadr.python.analysis.objectmodel.types.ModuleType;
 import com.yoursway.sadr.python.analysis.objectmodel.values.ModuleValue;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> implements ImportDeclarationC {
     
@@ -68,11 +63,6 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
             addModule(parentPath, parentPath, null);
         }
         imports.put(alias, value);
-    }
-    
-    @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
-        throw new VoidConstructException(this);
     }
     
 }
