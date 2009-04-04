@@ -55,7 +55,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     public void actOnIndex(IndexRequest r) {
         Unode unode = receiver.toUnode();
         if (unode != null)
-            r.addPassedArgument(unode, new PassedReceiverArgumentInfo(this));
+            r.addPassedArgument(unode, new PassedReceiverArgumentInfo(toBnode()));
     }
     
     public IndexNameWrappingStrategy createWrappingStrategy() {

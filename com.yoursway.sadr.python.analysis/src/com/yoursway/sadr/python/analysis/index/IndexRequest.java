@@ -17,6 +17,7 @@ import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
@@ -37,11 +38,11 @@ public class IndexRequest implements
         this.wrappingStrategy = wrappingStrategy;
     }
     
-    public void addAssignmentWithoutWrapping(Unode lhs, PythonLexicalContext lhsLc, PythonConstruct rhs) {
+    public void addAssignmentWithoutWrapping(Unode lhs, PythonLexicalContext lhsLc, Bnode rhs) {
         addAssignment(lhs, lhsLc.getScope(), rhs);
     }
     
-    public void addAssignmentWithoutWrapping(Unode lhs, PythonScope lhsScope, PythonConstruct rhs) {
+    public void addAssignmentWithoutWrapping(Unode lhs, PythonScope lhsScope, Bnode rhs) {
         if (lhs == null)
             throw new NullPointerException("lhs is null");
         if (rhs == null)
@@ -67,11 +68,11 @@ public class IndexRequest implements
                 lhsScope.addLocalVariable(variable.getName());
     }
     
-    public void addAssignment(Unode lhs, PythonLexicalContext lc, PythonConstruct rhs) {
+    public void addAssignment(Unode lhs, PythonLexicalContext lc, Bnode rhs) {
         addAssignment(lhs, lc.getScope(), rhs);
     }
     
-    public void addAssignment(Unode lhs, PythonScope lhsScope, PythonConstruct rhs) {
+    public void addAssignment(Unode lhs, PythonScope lhsScope, Bnode rhs) {
         if (lhs == null)
             throw new NullPointerException("lhs is null");
         if (rhs == null)
@@ -93,7 +94,7 @@ public class IndexRequest implements
         }
     }
     
-    public void addReturnedValue(MethodArea area, PythonConstruct value) {
+    public void addReturnedValue(MethodArea area, Bnode value) {
         if (area == null)
             throw new NullPointerException("methodC is null");
         if (value == null)

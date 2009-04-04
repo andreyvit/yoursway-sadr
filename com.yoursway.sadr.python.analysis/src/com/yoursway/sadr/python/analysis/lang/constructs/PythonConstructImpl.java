@@ -18,6 +18,7 @@ import com.yoursway.sadr.python.analysis.context.lexical.scopes.PythonScope;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonConstructFactory;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
@@ -151,6 +152,13 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     public List<PythonScope> currentScopes() {
         return staticContext().getScope().currentScopesIncludingSelf();
+    }
+    
+    public Bnode toBnode() {
+        Unode unode = toUnode();
+        if (unode == null)
+            return null;
+        return new Bnode(unode, staticContext());
     }
     
 }

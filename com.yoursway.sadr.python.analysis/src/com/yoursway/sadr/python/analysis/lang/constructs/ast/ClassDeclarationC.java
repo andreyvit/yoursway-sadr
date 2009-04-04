@@ -21,9 +21,10 @@ import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
-import com.yoursway.sadr.python.analysis.lang.constructs.special.SpecialValueC;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.literals.ScalarLiteralUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.types.InstanceType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -98,8 +99,8 @@ public class ClassDeclarationC extends PythonConstructImpl<PythonClassDeclaratio
     }
     
     public void actOnIndex(IndexRequest req) {
-        req.addAssignment(new VariableUnode(name()), staticContext().getScope(), new SpecialValueC(
-                staticContext(), new PythonValueSet(instanceType)));
+        req.addAssignment(new VariableUnode(name()), staticContext().getScope(), new Bnode(
+                new ScalarLiteralUnode(new PythonValueSet(instanceType)), staticContext()));
     }
     
     public IndexNameWrappingStrategy createWrappingStrategy() {

@@ -20,8 +20,8 @@ import com.yoursway.sadr.python.analysis.index.queries.AssignmentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsRequestor;
 import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsRequestor;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
@@ -46,7 +46,7 @@ public final class Alias {
     }
     
     @pausable
-    public PythonValueSet calculateValue(PythonDynamicContext dc) {
+    public PythonValueSet calculateValue() {
         return unode.calculateValue(lc, dc);
     }
     
@@ -100,7 +100,7 @@ public final class Alias {
     
     @pausable
     public void findRenamesUsingIndex(Suffix suffix, AliasConsumer aliases) {
-        Collection<PythonConstruct> result = findConstructsAssignedTo();
+        Collection<Bnode> result = findConstructsAssignedTo();
         PythonAnalHelpers.addRenamesForConstructs(suffix, aliases, result, dc);
         addUsagesInCallsTo(suffix, aliases);
     }
@@ -128,20 +128,20 @@ public final class Alias {
     }
     
     @pausable
-    public Collection<PythonConstruct> findConstructsAssignedTo() {
+    public Collection<Bnode> findConstructsAssignedTo() {
         return chooseAssignmentsFromInnermostScope(findAssignmentsAndGroupByScopes());
     }
     
     @pausable
-    private Map<PythonScope, Collection<PythonConstruct>> findAssignmentsAndGroupByScopes() {
-        final Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope = Maps.newHashMap();
+    private Map<PythonScope, Collection<Bnode>> findAssignmentsAndGroupByScopes() {
+        final Map<PythonScope, Collection<Bnode>> assignmentsByScope = Maps.newHashMap();
         AssignmentsRequestor requestor = new AssignmentsRequestor() {
-            public void assignment(PythonConstruct rhs, PythonFileC fileC) {
-                PythonLexicalContext sc = rhs.staticContext();
-                Collection<PythonConstruct> result = assignmentsByScope.get(sc);
+            public void assignment(Bnode rhs, PythonFileC fileC) {
+                PythonScope sc = rhs.lc().getScope();
+                Collection<Bnode> result = assignmentsByScope.get(sc);
                 if (result == null) {
-                    result = new ArrayList<PythonConstruct>();
-                    assignmentsByScope.put(sc.getScope(), result);
+                    result = new ArrayList<Bnode>();
+                    assignmentsByScope.put(sc, result);
                 }
                 result.add(rhs);
             }
@@ -153,15 +153,15 @@ public final class Alias {
         return assignmentsByScope;
     }
     
-    private Collection<PythonConstruct> chooseAssignmentsFromInnermostScope(
-            final Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope) {
+    private Collection<Bnode> chooseAssignmentsFromInnermostScope(
+            final Map<PythonScope, Collection<Bnode>> assignmentsByScope) {
         VariableUnode variable = unode.leadingVariableUnode();
         if (variable == null)
             throw new IllegalArgumentException(
                     "Complex expressions are awful candidates for alias calculation");
         PythonScope definingScope = lc.getScope().findDefiningScope(variable.getName());
-        Collection<PythonConstruct> result = new ArrayList<PythonConstruct>();
-        for (Map.Entry<PythonScope, Collection<PythonConstruct>> entry : assignmentsByScope.entrySet())
+        Collection<Bnode> result = new ArrayList<Bnode>();
+        for (Map.Entry<PythonScope, Collection<Bnode>> entry : assignmentsByScope.entrySet())
             if (definingScope == entry.getKey().findDefiningScope(variable.getName()))
                 result.addAll(entry.getValue());
         return result;

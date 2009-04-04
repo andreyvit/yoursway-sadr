@@ -10,7 +10,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.FunctionType;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
@@ -88,7 +88,8 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix,
+            AliasConsumer aliases) {
         info.computeAliases(getDecl(), dc, suffix, aliases);
     }
     
@@ -96,7 +97,7 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     @pausable
     public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
-        Collection<PythonConstruct> returnedValues = getDecl().findReturnedValues();
+        Collection<Bnode> returnedValues = getDecl().findReturnedValues();
         PythonAnalHelpers.addRenamesForConstructs(suffix, aliases, returnedValues, dc);
     }
 }

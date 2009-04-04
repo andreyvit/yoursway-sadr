@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.special;
 
-
 import kilim.pausable;
 
 import org.eclipse.dltk.ast.ASTNode;
@@ -39,13 +38,14 @@ public class ArgumentProxyC extends PythonConstructImpl<ASTNode> {
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         Arguments arguments = dc.argumentsOfTopCall();
-        return arguments.computeArgument(dc, index, argument.getName(), argument.getInit());
+        return arguments.computeArgument(dc, index, argument.getName(), argument.getInitBnode());
     }
     
     @pausable
-    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
         Arguments arguments = dc.argumentsOfTopCall();
-        arguments.findRenames(suffix, sc, dc, aliases, index, argument.getName(), argument.getInit());
+        arguments.findRenames(suffix, sc, dc, aliases, index, argument.getName(), argument.getInitBnode());
     }
     
     @Override

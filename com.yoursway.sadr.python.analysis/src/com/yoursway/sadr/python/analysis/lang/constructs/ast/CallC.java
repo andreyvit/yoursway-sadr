@@ -22,6 +22,7 @@ import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.proxies.CallUnode;
@@ -91,10 +92,14 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc) {
+        Unode unode = callable.toUnode();
+        if (unode == null)
+            return PythonValueSet.EMPTY;
         int size = dc.callStackSize();
         if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
             return PythonValueSet.EMPTY;
-        PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(callable, dc));
+        PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(new Bnode(unode,
+                staticContext()), dc));
         return callableValueSet.call(createDynamicContext(dc));
     }
     
@@ -125,12 +130,18 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     }
     
     @pausable
-    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        Unode unode = callable.toUnode();
+        if (unode == null)
+            return;
+        
         int size = dc.callStackSize();
         if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
             return;
         
-        PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(callable, dc));
+        PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(new Bnode(unode,
+                staticContext()), dc));
         dc = createDynamicContext(dc);
         callableValueSet.findRenames(suffix, sc, dc, aliases);
     }

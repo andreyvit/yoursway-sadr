@@ -15,6 +15,7 @@ import com.yoursway.sadr.python.analysis.index.data.PassedKeywordArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.data.PassedPositionalArgumentInfo;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -27,7 +28,7 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     public CallArgumentC(PythonLexicalContext staticContext, PythonCallArgument node,
             PythonConstructImpl<?> parent) {
         super(staticContext, node, parent);
-        if(node.getValue() == null)
+        if (node.getValue() == null)
             throw new IllegalArgumentException("node.getValue() should be != null");
         ASTNode value = node.getValue();
         if (value instanceof Assignment) {
@@ -55,14 +56,18 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     }
     
     public void addTo(ActualArgumentsBuilder builder) {
+        Unode valueU = value.toUnode();
+        if (valueU == null)
+            return;
+        Bnode bnode = new Bnode(valueU, staticContext());
         if (name != null)
-            builder.addKeyword(name, value);
+            builder.addKeyword(name, bnode);
         else if (getStar() == 1)
-            builder.addStar(value);
+            builder.addStar(bnode);
         else if (getStar() == 2)
-            builder.addSuperstar(value);
+            builder.addSuperstar(bnode);
         else
-            builder.addPositional(value);
+            builder.addPositional(bnode);
     }
     
     public boolean isStarOrSuperstar() {

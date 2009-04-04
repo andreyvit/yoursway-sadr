@@ -1,14 +1,14 @@
 package com.yoursway.sadr.python.analysis.index.data;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
 public class AssignmentInfo {
     
-    private final PythonConstruct rhs;
+    private final Bnode rhs;
     private final Unode receiver;
     
-    public AssignmentInfo(Unode receiver, PythonConstruct rhs) {
+    public AssignmentInfo(Unode receiver, Bnode rhs) {
         if (receiver == null)
             throw new NullPointerException("receiver is null");
         if (rhs == null)
@@ -21,7 +21,7 @@ public class AssignmentInfo {
         return receiver;
     }
     
-    public PythonConstruct getRhs() {
+    public Bnode getRhs() {
         return rhs;
     }
     

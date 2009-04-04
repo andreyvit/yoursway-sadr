@@ -10,19 +10,19 @@ import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.values.ListValue;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class ListLiteralUnode extends AbstractLiteralUnode {
     
-    private final List<PythonConstruct> items;
+    private final List<Bnode> items;
     
-    public ListLiteralUnode(List<PythonConstruct> items) {
+    public ListLiteralUnode(List<Bnode> items) {
         if (items == null)
             throw new NullPointerException("items is null");
-        this.items = new ArrayList<PythonConstruct>(items);
+        this.items = new ArrayList<Bnode>(items);
         this.hashCode = items.hashCode();
     }
     
@@ -62,7 +62,7 @@ public class ListLiteralUnode extends AbstractLiteralUnode {
     @pausable
     public void findUnknownIndexRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
-        for (PythonConstruct item : items)
+        for (Bnode item : items)
             PythonAnalHelpers.addRenameForConstruct(suffix, aliases, item, dc);
     }
     

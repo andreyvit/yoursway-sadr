@@ -4,16 +4,16 @@ import kilim.pausable;
 
 import com.yoursway.sadr.engine.Goal;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class ExpressionValueGoal extends AbstractValueGoal {
     
-    private final PythonConstruct construct;
+    private final Bnode construct;
     private final PythonDynamicContext dc;
     private final int hashCode;
     
-    public ExpressionValueGoal(PythonConstruct construct, PythonDynamicContext dc) {
+    public ExpressionValueGoal(Bnode construct, PythonDynamicContext dc) {
         if (construct == null)
             throw new NullPointerException("construct is null");
         if (dc == null)
@@ -33,7 +33,7 @@ public class ExpressionValueGoal extends AbstractValueGoal {
     
     @pausable
     public PythonValueSet evaluate() {
-        return construct.evaluateValue(dc);
+        return construct.toAlias(dc).calculateValue();
     }
     
     @Override

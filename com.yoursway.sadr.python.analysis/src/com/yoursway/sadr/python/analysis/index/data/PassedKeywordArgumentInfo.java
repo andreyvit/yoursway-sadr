@@ -15,7 +15,7 @@ public final class PassedKeywordArgumentInfo extends PassedCallArgumentInfo {
     private final String name;
     
     public PassedKeywordArgumentInfo(CallC call, String name) {
-        super(call);
+        super(call.getCallable().toBnode());
         this.name = name;
     }
     

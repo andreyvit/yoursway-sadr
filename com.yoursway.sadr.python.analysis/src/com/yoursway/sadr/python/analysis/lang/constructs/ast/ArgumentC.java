@@ -9,6 +9,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgum
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class ArgumentC extends PythonConstructImpl<PythonArgument> {
@@ -17,7 +18,7 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     
     ArgumentC(PythonLexicalContext sc, PythonArgument node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
-        if(node.getName() == null)
+        if (node.getName() == null)
             throw new AssertionError("node.getName() should be != null");
         if (node.getInitialization() == null)
             init = null;
@@ -35,6 +36,10 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     
     public PythonConstruct getInit() {
         return init;
+    }
+    
+    public Bnode getInitBnode() {
+        return init == null ? null : init.toBnode();
     }
     
     @pausable

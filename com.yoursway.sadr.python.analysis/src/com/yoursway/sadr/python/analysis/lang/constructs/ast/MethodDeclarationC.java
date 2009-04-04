@@ -29,8 +29,10 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.ArgumentProxyC;
-import com.yoursway.sadr.python.analysis.lang.constructs.special.SpecialValueC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.literals.ScalarLiteralUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ArgumentProxyUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -106,14 +108,14 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
     }
     
     public void actOnIndex(IndexRequest r) {
-        r.addAssignment(new VariableUnode(node.getName()), staticContext(), new SpecialValueC(
-                staticContext(), new PythonValueSet(new FunctionObject(this))));
-        Collection<ArgumentProxyC> argumentProxies = new ArrayList<ArgumentProxyC>(arguments.size());
+        r.addAssignment(new VariableUnode(node.getName()), staticContext(), new Bnode(new ScalarLiteralUnode(
+                new PythonValueSet(new FunctionObject(this))), staticContext()));
         int index = 0;
         for (ArgumentC argument : arguments) {
             //            ASTNode initialization = argument.getInitialization();
             //            String key = argument.getName();
-            argumentProxies.add(new ArgumentProxyC(innerLC, this, argument, index++));
+            r.addAssignmentWithoutWrapping(new VariableUnode(argument.getName()), innerLC, new Bnode(
+                    new ArgumentProxyUnode(new ArgumentProxyC(innerLC, this, argument, index++)), innerLC));
             //            if (argument.getStar() == PythonArgument.NOSTAR) {
             //                boolean required = initialization == null;
             //                PythonValue value = reader.getKwarg(key, required);
@@ -127,15 +129,13 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
             //            }
             //            
         }
-        for (ArgumentProxyC proxy : argumentProxies)
-            r.addAssignmentWithoutWrapping(new VariableUnode(proxy.getName()), innerLC, proxy);
     }
     
     @pausable
-    public Collection<PythonConstruct> findReturnedValues() {
-        final Collection<PythonConstruct> result = new ArrayList<PythonConstruct>();
+    public Collection<Bnode> findReturnedValues() {
+        final Collection<Bnode> result = new ArrayList<Bnode>();
         Analysis.queryIndex(new ReturnsIndexQuery(this), new ReturnsRequestor() {
-            public void returnedValue(PythonConstruct value) {
+            public void returnedValue(Bnode value) {
                 result.add(value);
             }
         });

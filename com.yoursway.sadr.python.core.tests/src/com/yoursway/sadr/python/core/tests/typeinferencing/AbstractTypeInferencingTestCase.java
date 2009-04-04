@@ -371,7 +371,7 @@ public abstract class AbstractTypeInferencingTestCase {
         //            }
         //            throw new IllegalStateException("No method found!");
         //        } else {
-        return new ExpressionValueGoal(construct, PythonDynamicContext.EMPTY);
+        return new ExpressionValueGoal(construct.toBnode(), PythonDynamicContext.EMPTY);
         //        }
     }
     
@@ -617,7 +617,7 @@ public abstract class AbstractTypeInferencingTestCase {
             assertNotNull(node);
             PythonConstruct construct = fileC.subconstructFor(node);
             if (construct instanceof VariableReferenceC) {
-                return new ExpressionValueGoal(construct, PythonDynamicContext.EMPTY);
+                return new ExpressionValueGoal(construct.toBnode(), PythonDynamicContext.EMPTY);
             } else {
                 throw new IllegalStateException("Should be VariableReferenceC, but found "
                         + construct.getClass().getSimpleName());

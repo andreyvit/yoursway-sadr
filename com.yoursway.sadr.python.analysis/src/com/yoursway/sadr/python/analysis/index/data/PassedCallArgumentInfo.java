@@ -1,17 +1,17 @@
 package com.yoursway.sadr.python.analysis.index.data;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 
 public abstract class PassedCallArgumentInfo extends PassedArgumentInfo {
     
-    protected final PythonConstruct callable;
+    protected final Bnode callable;
     
-    public PassedCallArgumentInfo(PythonConstruct callable) {
+    public PassedCallArgumentInfo(Bnode callable) {
         this.callable = callable;
     }
     
     @Override
-    public final PythonConstruct getCallable() {
+    public final Bnode getCallable() {
         return callable;
     }
     

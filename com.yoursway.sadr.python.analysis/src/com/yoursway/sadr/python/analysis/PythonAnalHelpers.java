@@ -14,27 +14,22 @@ import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
-import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
 
 public class PythonAnalHelpers {
     
     public static void addRenamesForConstructs(Suffix suffix, AliasConsumer aliases,
-            Collection<PythonConstruct> valuesAssignedToPunodeHead, PythonDynamicContext dc) {
-        for (PythonConstruct assignedValue : valuesAssignedToPunodeHead)
+            Collection<Bnode> valuesAssignedToPunodeHead, PythonDynamicContext dc) {
+        for (Bnode assignedValue : valuesAssignedToPunodeHead)
             addRenameForConstruct(suffix, aliases, assignedValue, dc);
     }
     
-    public static void addRenameForConstruct(Suffix suffix, AliasConsumer aliases,
-            PythonConstruct construct, PythonDynamicContext dc) {
-        Unode replacementUnode = construct.toUnode();
-        if (replacementUnode != null) {
-            Unode wrapped = suffix.appendTo(replacementUnode);
-            aliases.add(new Alias(wrapped, construct.staticContext(), dc));
-        }
+    public static void addRenameForConstruct(Suffix suffix, AliasConsumer aliases, Bnode bnode,
+            PythonDynamicContext dc) {
+        aliases.add(bnode.append(suffix).toAlias(dc));
     }
     
     @pausable
@@ -50,18 +45,17 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    public static PythonValueSet evaluateConstructs(Collection<PythonConstruct> expressions,
-            PythonDynamicContext dc) {
+    public static PythonValueSet evaluateConstructs(Collection<Bnode> expressions, PythonDynamicContext dc) {
         PythonValueSetBuilder builder = PythonValueSet.newBuilder();
         evaluateConstructs(expressions, dc, builder);
         return builder.build();
     }
     
     @pausable
-    public static void evaluateConstructs(Collection<PythonConstruct> expressions, PythonDynamicContext dc,
+    public static void evaluateConstructs(Collection<Bnode> expressions, PythonDynamicContext dc,
             PythonValueSetBuilder builder) {
         Collection<Goal<PythonValueSet>> goals = new ArrayList<Goal<PythonValueSet>>(expressions.size());
-        for (PythonConstruct construct : expressions)
+        for (Bnode construct : expressions)
             goals.add(new ExpressionValueGoal(construct, dc));
         List<PythonValueSet> results = Analysis.evaluate(goals);
         builder.addAll(results);

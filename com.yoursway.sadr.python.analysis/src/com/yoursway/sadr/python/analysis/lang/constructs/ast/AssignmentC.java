@@ -12,6 +12,7 @@ import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrateg
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -68,8 +69,9 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
     
     public void actOnIndex(IndexRequest indexRequest) {
         Unode lhsUnode = lhs.toUnode();
-        if (lhsUnode != null)
-            indexRequest.addAssignment(lhsUnode, staticContext(), rhs);
+        Unode rhsUnode = rhs.toUnode();
+        if (lhsUnode != null && rhsUnode != null)
+            indexRequest.addAssignment(lhsUnode, staticContext(), new Bnode(rhsUnode, staticContext()));
     }
     
     public IndexNameWrappingStrategy createWrappingStrategy() {

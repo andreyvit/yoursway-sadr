@@ -16,8 +16,8 @@ import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsRequestor;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.ChainableSuffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
@@ -134,7 +134,7 @@ public class AttributeUnode extends AbstractIndexableUnode {
     @pausable
     private PythonValueSet findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(PythonLexicalContext sc,
             PythonDynamicContext dc) {
-        Collection<PythonConstruct> assignedValues = new ArrayList<PythonConstruct>();
+        Collection<Bnode> assignedValues = new ArrayList<Bnode>();
         final List<AssignmentInfo> assignments = new ArrayList<AssignmentInfo>();
         Analysis.queryIndex(new AttributeAssignmentsIndexQuery(name), new AttributeAssignmentsRequestor() {
             public void assignment(AssignmentInfo info, PythonFileC fileC) {
@@ -143,9 +143,8 @@ public class AttributeUnode extends AbstractIndexableUnode {
         });
         PythonValueSet actualReceiverValue = receiver.calculateValue(sc, dc);
         for (AssignmentInfo info : assignments) {
-            PythonConstruct rhs = info.getRhs();
-            PythonValueSet candidateReceiverValue = info.getReceiver()
-                    .calculateValue(rhs.staticContext(), dc);
+            Bnode rhs = info.getRhs();
+            PythonValueSet candidateReceiverValue = info.getReceiver().calculateValue(rhs.lc(), dc);
             if (candidateReceiverValue.canAlias(actualReceiverValue))
                 assignedValues.add(rhs);
         }

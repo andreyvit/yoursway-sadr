@@ -13,6 +13,8 @@ import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrateg
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class ReturnC extends PythonConstructImpl<ReturnStatement> implements IndexAffector {
@@ -35,8 +37,11 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> implements Ind
     
     public void actOnIndex(IndexRequest r) {
         MethodArea area = staticContext().getArea().getReturnableArea();
-        if (area != null)
-            r.addReturnedValue(area, expression);
+        if (area != null) {
+            Unode unode = expression.toUnode();
+            if (unode != null)
+                r.addReturnedValue(area, new Bnode(unode, staticContext()));
+        }
     }
     
     public IndexNameWrappingStrategy createWrappingStrategy() {

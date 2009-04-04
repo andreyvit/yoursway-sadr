@@ -1,5 +1,6 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kilim.pausable;
@@ -10,6 +11,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ListLiteralUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.ListValue;
@@ -29,12 +31,12 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
         //        this.itemUnodes = createItemUnodes();
     }
     
-    //    private List<Unode> createItemUnodes() {
-    //        List<Unode> itemUnodes = new ArrayList<Unode>(items.size());
-    //        for (PythonConstruct construct : items)
-    //            itemUnodes.add(construct.toUnode());
-    //        return itemUnodes;
-    //    }
+    private List<Bnode> createItemUnodes() {
+        List<Bnode> itemUnodes = new ArrayList<Bnode>(items.size());
+        for (PythonConstruct construct : items)
+            itemUnodes.add(construct.toBnode());
+        return itemUnodes;
+    }
     
     //    
     //    @Override
@@ -60,7 +62,7 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
     
     @Override
     public Unode toUnode() {
-        return new ListLiteralUnode(items);
+        return new ListLiteralUnode(createItemUnodes());
     }
     
 }

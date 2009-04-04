@@ -5,7 +5,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 
 public abstract class PassedArgumentInfo {
@@ -20,6 +20,6 @@ public abstract class PassedArgumentInfo {
     
     public abstract PassedArgumentInfo translateToUnbound();
     
-    public abstract PythonConstruct getCallable();
+    public abstract Bnode getCallable();
     
 }

@@ -4,11 +4,9 @@ import java.util.Collection;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
@@ -28,7 +26,7 @@ public final class CallUnode extends Unode {
     @Override
     @pausable
     public PythonValueSet calculateValue(PythonLexicalContext sc, PythonDynamicContext dc) {
-        return Analysis.evaluate(new ExpressionValueGoal(call, dc));
+        return call.evaluateValue(dc);
     }
     
     @Override

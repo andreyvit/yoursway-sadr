@@ -14,24 +14,23 @@ import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 import com.yoursway.utils.YsCollections;
 
 public class ActualArguments implements Arguments {
     
-    private final List<PythonConstruct> positional;
-    private final Map<String, PythonConstruct> keyword;
-    private final PythonConstruct star;
-    private final PythonConstruct superstar;
+    private final List<Bnode> positional;
+    private final Map<String, Bnode> keyword;
+    private final Bnode star;
+    private final Bnode superstar;
     private final int hashCode;
     
-    public static final Arguments EMPTY = new ActualArguments(Collections.<PythonConstruct> emptyList(),
-            Collections.<String, PythonConstruct> emptyMap(), null, null);
+    public static final Arguments EMPTY = new ActualArguments(Collections.<Bnode> emptyList(), Collections
+            .<String, Bnode> emptyMap(), null, null);
     
-    public ActualArguments(List<PythonConstruct> positional, Map<String, PythonConstruct> keyword,
-            PythonConstruct star, PythonConstruct superstar) {
+    public ActualArguments(List<Bnode> positional, Map<String, Bnode> keyword, Bnode star, Bnode superstar) {
         if (positional == null)
             throw new NullPointerException("positional is null");
         if (keyword == null)
@@ -47,12 +46,12 @@ public class ActualArguments implements Arguments {
     public String toString() {
         StringBuilder r = new StringBuilder();
         r.append('(');
-        for (PythonConstruct construct : positional) {
+        for (Bnode construct : positional) {
             if (r.length() > 0)
                 r.append(", ");
             r.append(construct);
         }
-        for (Map.Entry<String, PythonConstruct> entry : keyword.entrySet()) {
+        for (Map.Entry<String, Bnode> entry : keyword.entrySet()) {
             if (r.length() > 0)
                 r.append(", ");
             r.append(entry.getKey()).append('=').append(entry.getValue());
@@ -72,10 +71,9 @@ public class ActualArguments implements Arguments {
     }
     
     @pausable
-    public PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name,
-            PythonConstruct init) {
+    public PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name, Bnode init) {
         dc = dc.unwind();
-        PythonConstruct construct = null;
+        Bnode construct = null;
         if (index < positional.size())
             construct = positional.get(index);
         else if (name != null)
@@ -90,9 +88,9 @@ public class ActualArguments implements Arguments {
     
     @pausable
     public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
-            AliasConsumer aliases, int index, String name, PythonConstruct init) {
+            AliasConsumer aliases, int index, String name, Bnode init) {
         dc = dc.unwind();
-        PythonConstruct construct = null;
+        Bnode construct = null;
         if (index < positional.size())
             construct = positional.get(index);
         else if (name != null)

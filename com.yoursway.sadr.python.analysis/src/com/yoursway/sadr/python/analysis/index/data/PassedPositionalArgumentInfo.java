@@ -5,9 +5,9 @@ import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 
@@ -16,10 +16,10 @@ public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     private final int index;
     
     public PassedPositionalArgumentInfo(CallC call, int index) {
-        this(call.getCallable(), index);
+        this(call.getCallable().toBnode(), index);
     }
     
-    PassedPositionalArgumentInfo(PythonConstruct callable, int index) {
+    PassedPositionalArgumentInfo(Bnode callable, int index) {
         super(callable);
         this.index = index;
     }

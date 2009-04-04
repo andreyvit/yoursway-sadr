@@ -18,6 +18,7 @@ import com.yoursway.sadr.python.analysis.context.lexical.scopes.LambdaScope;
 import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -80,8 +81,12 @@ public class PythonLambdaExpressionC extends PythonConstructImpl<PythonLambdaExp
     }
     
     @pausable
-    public Collection<PythonConstruct> findReturnedValues() {
-        return Collections.singleton(body);
+    public Collection<Bnode> findReturnedValues() {
+        Bnode bnode = body.toBnode();
+        if (bnode == null)
+            return Collections.emptyList();
+        else
+            return Collections.singleton(bnode);
     }
     
     public PythonLexicalContext getInnerLC() {
