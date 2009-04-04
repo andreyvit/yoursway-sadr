@@ -19,48 +19,37 @@ import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsIndexQuery
 import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.analysis.index.queries.ReturnsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.ReturnsRequestor;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonRootConstruct;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
 public class IndexManager {
     
-    private final Map<PythonFileC, PythonFileIndexManager> files = new HashMap<PythonFileC, PythonFileIndexManager>();
+    private final Map<SourceUnit, PythonFileIndexManager> files = new HashMap<SourceUnit, PythonFileIndexManager>();
     
-    private final Map<SourceUnit, PythonFileIndexManager> sourceUnitsTofiles = new HashMap<SourceUnit, PythonFileIndexManager>();
-    
-    private PythonFileIndexManager lookup(PythonFileC fileC) {
-        if (fileC == null)
-            throw new NullPointerException("fileC is null");
-        PythonFileIndexManager result = files.get(fileC);
+    private PythonFileIndexManager lookup(SourceUnit sourceUnit) {
+        if (sourceUnit == null)
+            throw new NullPointerException("sourceUnit is null");
+        PythonFileIndexManager result = files.get(sourceUnit);
         if (result == null) {
-            result = new PythonFileIndexManager(fileC);
-            files.put(fileC, result);
-            sourceUnitsTofiles.put(fileC.sourceUnit(), result);
+            result = new PythonFileIndexManager();
+            files.put(sourceUnit, result);
         }
         return result;
     }
     
-    @pausable
-    public void addToIndex(PythonRootConstruct root) {
-        lookup(root.fileC()).addToIndex(root);
+    public IndexRequest createIndexRequest(SourceUnit sourceUnit) {
+        return lookup(sourceUnit).createIndexRequest();
     }
     
     class PythonFileIndexManager {
         
         private PythonFileIndex index;
         
-        private final PythonFileC fileC;
-        
-        public PythonFileIndexManager(PythonFileC fileC) {
-            this.fileC = fileC;
-            this.index = new PythonFileIndex(fileC);
+        public PythonFileIndexManager() {
+            this.index = new PythonFileIndex();
         }
         
-        @pausable
-        public void addToIndex(PythonConstruct root) {
-            index.add(root);
+        public IndexRequest createIndexRequest() {
+            return index.createIndexRequest();
         }
         
         public PythonFileIndex index() {
@@ -68,7 +57,7 @@ public class IndexManager {
         }
         
         public void removeAllContributions() {
-            index = new PythonFileIndex(fileC);
+            index = new PythonFileIndex();
         }
         
         public void makeImmutable() {
@@ -80,11 +69,6 @@ public class IndexManager {
     static class PythonFileIndex {
         
         private final PythonFileIndexMemento memento = new PythonFileIndexMemento();
-        private final PythonFileC fileC;
-        
-        public PythonFileIndex(PythonFileC fileC) {
-            this.fileC = fileC;
-        }
         
         public void makeImmutable() {
             memento.makeImmutable();
@@ -93,10 +77,8 @@ public class IndexManager {
         public void clear() {
         }
         
-        @pausable
-        public void add(PythonConstruct root) {
-            IndexRequest request = memento.createIndexRequest();
-            root.staticContext().propagationTracker().traverseStatically(root, request);
+        public IndexRequest createIndexRequest() {
+            return memento.createIndexRequest();
         }
         
         public PythonFileIndexMemento getMemento() {
@@ -104,7 +86,7 @@ public class IndexManager {
         }
         
         public void findAssignments(Unode name, AssignmentsRequestor requestor) {
-            memento.findAssignments(name, requestor, fileC);
+            memento.findAssignments(name, requestor);
         }
         
         public void findReturns(MethodArea area, ReturnsRequestor requestor) {
@@ -112,11 +94,11 @@ public class IndexManager {
         }
         
         public void findAttributeAssignments(String attributeName, AttributeAssignmentsRequestor requestor) {
-            memento.findAttributeAssignments(attributeName, requestor, fileC);
+            memento.findAttributeAssignments(attributeName, requestor);
         }
         
         public void findPassedArguments(Unode arg, PassedArgumentsRequestor requestor) {
-            memento.findPassedArguments(arg, requestor, fileC);
+            memento.findPassedArguments(arg, requestor);
         }
         
     }
@@ -133,7 +115,7 @@ public class IndexManager {
                 }
                 
                 public void acceptReturnsQuery(ReturnsIndexQuery query, ReturnsRequestor requestor) {
-                    PythonFileIndexManager fileIndex = sourceUnitsTofiles.get(query.localSourceUnit());
+                    PythonFileIndexManager fileIndex = files.get(query.localSourceUnit());
                     if (fileIndex != null)
                         fileIndex.index().findReturns(query.getArea(), requestor);
                 }
@@ -154,7 +136,7 @@ public class IndexManager {
         }
         
         public IndexMemento createMemento(SourceUnit sourceUnit) {
-            PythonFileIndexManager file = sourceUnitsTofiles.get(sourceUnit);
+            PythonFileIndexManager file = files.get(sourceUnit);
             if (file == null)
                 return new PythonFileIndexMemento();
             else
@@ -164,7 +146,7 @@ public class IndexManager {
     }
     
     public void pleaseAbstainFromContinuingToKeepContributionsOf(SourceUnit file) {
-        PythonFileIndexManager fileObj = sourceUnitsTofiles.get(file);
+        PythonFileIndexManager fileObj = files.get(file);
         if (fileObj != null)
             fileObj.removeAllContributions();
     }

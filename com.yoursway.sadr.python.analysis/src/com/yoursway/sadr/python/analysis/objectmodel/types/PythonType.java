@@ -6,14 +6,9 @@ import java.util.List;
 
 import kilim.pausable;
 
-import org.eclipse.dltk.ast.ASTNode;
-import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
-
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.ClassDeclarationC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -23,10 +18,6 @@ import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 public abstract class PythonType extends PythonValue implements Type {
     
     PythonType() {
-    }
-    
-    public PythonType(ClassDeclarationC decl) {
-        super(decl);
     }
     
     public List<PythonType> getSuperClasses() {
@@ -40,15 +31,7 @@ public abstract class PythonType extends PythonValue implements Type {
     
     @Override
     public String describe() {
-        PythonConstruct decl = getDecl();
-        if (decl == null) {
-            return "type";
-        }
-        ASTNode node = decl.node();
-        if (node instanceof PythonClassDeclaration) {
-            return ((PythonClassDeclaration) node).getName();
-        } else
-            return "(unknown)";
+        return "type";
     }
     
     @Override

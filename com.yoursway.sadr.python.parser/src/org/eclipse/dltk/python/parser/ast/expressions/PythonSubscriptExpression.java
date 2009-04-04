@@ -124,4 +124,8 @@ public class PythonSubscriptExpression extends Expression {
         return fSlice;
     }
     
+    public boolean isSubscription() {
+        return getIndexOrSliceStart() != null && getSliceEnd() == null && getSliceStep() == null;
+    }
+    
 }

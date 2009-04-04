@@ -3,10 +3,9 @@ package com.yoursway.sadr.python.analysis.index.data;
 import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
+import com.yoursway.sadr.python.analysis.context.dynamic.arguments.Argument;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
@@ -15,11 +14,7 @@ public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     
     private final int index;
     
-    public PassedPositionalArgumentInfo(CallC call, int index) {
-        this(call.getCallable().toBnode(), index);
-    }
-    
-    PassedPositionalArgumentInfo(Bnode callable, int index) {
+    public PassedPositionalArgumentInfo(Bnode callable, int index) {
         super(callable);
         this.index = index;
     }
@@ -53,9 +48,9 @@ public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     }
     
     @Override
-    protected void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc,
+    public void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc,
             PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
-        ArgumentC arg = declaredArguments.findPositional(index);
+        Argument arg = declaredArguments.findPositional(index);
         if (arg != null)
             aliases.add(new Alias(suffix.appendTo(new VariableUnode(arg.getName())), lc, dc));
     }

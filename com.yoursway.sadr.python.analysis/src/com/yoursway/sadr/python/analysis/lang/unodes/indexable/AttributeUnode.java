@@ -16,7 +16,6 @@ import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsRequestor;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.ChainableSuffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
@@ -137,7 +136,7 @@ public class AttributeUnode extends AbstractIndexableUnode {
         Collection<Bnode> assignedValues = new ArrayList<Bnode>();
         final List<AssignmentInfo> assignments = new ArrayList<AssignmentInfo>();
         Analysis.queryIndex(new AttributeAssignmentsIndexQuery(name), new AttributeAssignmentsRequestor() {
-            public void assignment(AssignmentInfo info, PythonFileC fileC) {
+            public void assignment(AssignmentInfo info) {
                 assignments.add(info);
             }
         });

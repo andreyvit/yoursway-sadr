@@ -3,10 +3,10 @@ package com.yoursway.sadr.python.analysis.index.data;
 import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
+import com.yoursway.sadr.python.analysis.context.dynamic.arguments.Argument;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 
@@ -14,8 +14,8 @@ public final class PassedKeywordArgumentInfo extends PassedCallArgumentInfo {
     
     private final String name;
     
-    public PassedKeywordArgumentInfo(CallC call, String name) {
-        super(call.getCallable().toBnode());
+    public PassedKeywordArgumentInfo(Bnode callable, String name) {
+        super(callable);
         this.name = name;
     }
     
@@ -51,9 +51,9 @@ public final class PassedKeywordArgumentInfo extends PassedCallArgumentInfo {
     }
     
     @Override
-    protected void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc,
+    public void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc,
             PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
-        ArgumentC arg = declaredArguments.findKeyword(name);
+        Argument arg = declaredArguments.findKeyword(name);
         if (arg != null)
             aliases.add(new Alias(suffix.appendTo(new VariableUnode(arg.getName())), lc, dc));
     }

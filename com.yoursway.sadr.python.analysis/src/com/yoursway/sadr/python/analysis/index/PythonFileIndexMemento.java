@@ -25,7 +25,6 @@ import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsIndexQuery
 import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.analysis.index.queries.ReturnsRequestor;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
@@ -113,9 +112,9 @@ class PythonFileIndexMemento implements IndexMemento {
         immutable = true;
     }
     
-    public void findAssignments(Unode name, AssignmentsRequestor requestor, PythonFileC scope) {
+    public void findAssignments(Unode name, AssignmentsRequestor requestor) {
         for (Bnode info : assignments.get(name))
-            requestor.assignment(info, scope);
+            requestor.assignment(info);
     }
     
     public void findReturns(MethodArea area, ReturnsRequestor requestor) {
@@ -123,15 +122,14 @@ class PythonFileIndexMemento implements IndexMemento {
             requestor.returnedValue(returnedValue);
     }
     
-    public void findAttributeAssignments(String attributeName, AttributeAssignmentsRequestor requestor,
-            PythonFileC fileC) {
+    public void findAttributeAssignments(String attributeName, AttributeAssignmentsRequestor requestor) {
         for (AssignmentInfo info : attributeAssignments.get(attributeName))
-            requestor.assignment(info, fileC);
+            requestor.assignment(info);
     }
     
-    public void findPassedArguments(Unode arg, PassedArgumentsRequestor requestor, PythonFileC fileC) {
+    public void findPassedArguments(Unode arg, PassedArgumentsRequestor requestor) {
         for (PassedArgumentInfo info : passedArguments.get(arg))
-            requestor.call(info, fileC);
+            requestor.call(info);
     }
     
 }

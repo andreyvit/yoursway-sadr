@@ -3,7 +3,6 @@ package com.yoursway.sadr.python.analysis.objectmodel.values;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.objectmodel.types.FunctionType;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -27,11 +26,6 @@ public abstract class BuiltinFunctionObject extends PythonValue implements Calla
     @Override
     public String name() {
         return name;
-    }
-    
-    @Override
-    public CallableDeclaration getDecl() {
-        return null;
     }
     
     @Override

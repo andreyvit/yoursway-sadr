@@ -19,9 +19,7 @@ Bundle-ActivationPolicy: lazy
 Kilim-Enabled: true
 Export-Package: com.yoursway.sadr.python,
  com.yoursway.sadr.python.analysis.project
-Import-Package: com.yoursway.sadr.python.analysis.lang.constructs.ast,
- com.yoursway.sadr.python.analysis.project,
- kilim,
+Import-Package: kilim,
  kilim.fibers,
  kilim.states
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

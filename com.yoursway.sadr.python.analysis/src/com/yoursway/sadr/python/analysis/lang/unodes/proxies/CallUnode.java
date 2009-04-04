@@ -39,7 +39,9 @@ public final class CallUnode extends Unode {
         if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
             return PythonValueSet.EMPTY;
         PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(callable, dc));
-        return callableValueSet.call(createDynamicContext(dc));
+        PythonValueSet result = callableValueSet.call(createDynamicContext(dc));
+        //        System.out.println("CallUnode.calculateValue(" + this + ") = " + result);
+        return result;
     }
     
     @Override

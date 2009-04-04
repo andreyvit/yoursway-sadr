@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
+import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.utils.YsCollections;
 
 public class DeclaredArguments {
     
-    private final List<ArgumentC> positional;
-    private final Map<String, ArgumentC> keyword;
-    private final ArgumentC star;
-    private final ArgumentC superstar;
+    private final List<Argument> positional;
+    private final Map<String, Argument> keyword;
+    private final Argument star;
+    private final Argument superstar;
     
-    public DeclaredArguments(List<ArgumentC> positional, Map<String, ArgumentC> keyword, ArgumentC star,
-            ArgumentC superstar) {
+    public DeclaredArguments(List<Argument> positional, Map<String, Argument> keyword, Argument star,
+            Argument superstar) {
         if (positional == null)
             throw new NullPointerException("positional is null");
         if (keyword == null)
@@ -30,12 +31,12 @@ public class DeclaredArguments {
     public String toString() {
         StringBuilder r = new StringBuilder();
         r.append('(');
-        for (ArgumentC construct : positional) {
+        for (Argument construct : positional) {
             if (r.length() > 0)
                 r.append(", ");
             r.append(construct);
         }
-        for (Map.Entry<String, ArgumentC> entry : keyword.entrySet()) {
+        for (Map.Entry<String, Argument> entry : keyword.entrySet()) {
             if (r.length() > 0)
                 r.append(", ");
             r.append(entry.getKey()).append('=').append(entry.getValue());
@@ -54,14 +55,19 @@ public class DeclaredArguments {
         return r.toString();
     }
     
-    public ArgumentC findPositional(int index) {
+    public Argument findPositional(int index) {
         if (index < positional.size())
             return positional.get(index);
         return null;
     }
     
-    public ArgumentC findKeyword(String name) {
+    public Argument findKeyword(String name) {
         return keyword.get(name);
+    }
+    
+    public void addToIndex(IndexRequest r, PythonLexicalContext inner) {
+        for (Argument argument : positional)
+            argument.addToIndex(r, inner);
     }
     
 }

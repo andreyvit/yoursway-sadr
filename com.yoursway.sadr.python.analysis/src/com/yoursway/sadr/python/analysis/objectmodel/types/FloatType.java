@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.analysis.objectmodel.types;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.FloatLiteralC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FloatValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.NumericValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
@@ -32,11 +31,6 @@ public class FloatType extends NumericType {
     }
     
     public static FloatType instance = new FloatType();
-    
-    public static FloatValue wrap(FloatLiteralC literal) {
-        FloatValue integerValue = new FloatValue(literal.node().getDoubleValue());
-        return integerValue;
-    }
     
     public static FloatValue wrap(double value) {
         return new FloatValue(value);

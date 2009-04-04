@@ -43,7 +43,7 @@ public final class PassedReceiverArgumentInfo extends PassedArgumentInfo {
     }
     
     @Override
-    protected void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc,
+    public void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc,
             PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
     }
     

@@ -1,33 +1,31 @@
 package com.yoursway.sadr.python.analysis.objectmodel.values;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
-import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
+import com.yoursway.sadr.engine.Analysis;
+import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
-import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
+import com.yoursway.sadr.python.analysis.index.queries.ReturnsIndexQuery;
+import com.yoursway.sadr.python.analysis.index.queries.ReturnsRequestor;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
-import com.yoursway.sadr.python.analysis.objectmodel.types.FunctionType;
-import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
 
-public final class FunctionObject extends PythonValue implements CallableObject {
+public final class FunctionObject extends LambdaOrFunctionObject {
     
     private final String name;
     
-    public FunctionObject(CallableDeclaration decl) {
-        super(decl);
-        this.name = decl.name();
+    public FunctionObject(String name, DeclaredArguments args, PythonLexicalContext inner) {
+        super(args, inner);
+        if (name == null)
+            throw new NullPointerException("name is null");
+        this.name = name;
     }
     
     @Override
     public String describe() {
-        return "function " + name();
+        return "function " + name;
     }
     
     @Override
@@ -36,68 +34,16 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     }
     
     @Override
-    public CallableDeclaration getDecl() {
-        return (CallableDeclaration) super.getDecl();
-    }
-    
-    @Override
     @pausable
-    public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
-        PythonAnalHelpers.evaluateConstructs(getDecl().findReturnedValues(), dc, builder);
+    protected Collection<Bnode> findReturnedValues() {
+        final Collection<Bnode> result = new ArrayList<Bnode>();
+        Analysis.queryIndex(new ReturnsIndexQuery(lc.getArea().getReturnableArea(), lc.getScope()
+                .getFileScope().getSourceUnit()), new ReturnsRequestor() {
+            public void returnedValue(Bnode value) {
+                result.add(value);
+            }
+        });
+        return result;
     }
     
-    //    public PythonValueSet call(Krocodile crocodile, RuntimeArguments args) {
-    //        List<PythonArgument> nodeArgs = getDecl().getArguments();
-    //        ContextImpl context;
-    //        try {
-    //            context = new ContextImpl(nodeArgs, args);
-    //        } catch (PythonException e) {
-    //            return new PythonValueSet();
-    //        }
-    //        Map<String, PythonValueSet> defaults = new HashMap<String, PythonValueSet>();
-    //        for (PythonArgument arg : nodeArgs) {
-    //            String key = arg.getName();
-    //            if (context.getActualArgument(key) == null) {
-    //                PythonConstruct init = getDecl().getArgInit(key);
-    //                if (init == null)
-    //                    return PythonValueSet.EMPTY;
-    //                PythonValueSet argDefault = init.evaluate(crocodile);
-    //                defaults.put(key, argDefault);
-    //            }
-    //        }
-    //        PythonValueSet results = new PythonValueSet();
-    //        for (Map<String, PythonValue> def : new DictIterator<String>(defaults)) {
-    //            for (Entry<String, PythonValue> e : def.entrySet()) {
-    //                context.put(e.getKey(), e.getValue());
-    //            }
-    //            Krocodile arguments = new Krocodile(crocodile, getDecl(), context);
-    //            PythonValueSet result = getDecl().call(arguments);
-    //            results.addResults(result);
-    //        }
-    //        return results;
-    //    }
-    
-    @Override
-    public PythonType getType() {
-        return FunctionType.instance;
-    }
-    
-    @Override
-    public void bind(PythonValue self, PythonValueSetBuilder builder) {
-        builder.addResult(new BoundFunctionObject(this, self));
-    }
-    
-    @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix,
-            AliasConsumer aliases) {
-        info.computeAliases(getDecl(), dc, suffix, aliases);
-    }
-    
-    @Override
-    @pausable
-    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
-            AliasConsumer aliases) {
-        Collection<Bnode> returnedValues = getDecl().findReturnedValues();
-        PythonAnalHelpers.addRenamesForConstructs(suffix, aliases, returnedValues, dc);
-    }
 }

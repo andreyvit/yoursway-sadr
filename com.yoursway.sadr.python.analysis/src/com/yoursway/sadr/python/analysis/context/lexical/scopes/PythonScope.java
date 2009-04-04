@@ -2,16 +2,32 @@ package com.yoursway.sadr.python.analysis.context.lexical.scopes;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 
 public abstract class PythonScope {
     
     private final Set<String> globalVariables = new HashSet<String>();
     
     private final Set<String> localVariables = new HashSet<String>();
+    
+    final Collection<PythonScope> innerScopes = new ArrayList<PythonScope>();
+    
+    public final PythonScope scopeForOffset(int offset) {
+        if (!containsOffset(offset))
+            return null;
+        for (PythonScope inner : innerScopes) {
+            PythonScope result = inner.scopeForOffset(offset);
+            if (result != null)
+                return result;
+        }
+        return this;
+    }
+    
+    protected abstract boolean containsOffset(int offset);
     
     public abstract PythonScope parentScope();
     

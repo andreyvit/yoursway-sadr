@@ -17,7 +17,6 @@ import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.BooleanType;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
@@ -25,7 +24,6 @@ import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, PythonValueSetBuilder {
     
     private final ValueInfoBuilder builder = new ValueInfoBuilder(); //FIXME Build value info in getResult().
-    private PythonConstruct callingConstruct = null;
     
     public static final PythonValueSet EMPTY = new PythonValueSet();
     
@@ -40,23 +38,9 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         addResult(result, context);
     }
     
-    /**
-     * Sets a most specific construct which creates the instances being added as
-     * results.
-     * 
-     * @param callingConstruct
-     */
-    public void setCallingCostruct(PythonConstruct callingConstruct) {
-        this.callingConstruct = callingConstruct;
-    }
-    
     public void addResult(PythonValue result) {
         if (null == result)
             throw new IllegalStateException("There should be no null items in results!");
-        
-        if (callingConstruct != null && result.getDecl() == null) {
-            result.setDecl(callingConstruct);
-        }
         
         builder.add(result.getType(), result);
     }
@@ -180,7 +164,8 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         return result;
     }
     
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix,
+            AliasConsumer aliases) {
         for (PythonValue value : this)
             value.computeArgumentAliases(info, dc, suffix, aliases);
     }

@@ -4,16 +4,19 @@ import static java.lang.String.format;
 
 import com.yoursway.sadr.engine.incremental.SourceUnit;
 import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
 
 public class ReturnsIndexQuery implements DtlIndexQuery<ReturnsRequestor> {
     
-    private final MethodDeclarationC methodC;
+    private final MethodArea area;
+    private final SourceUnit sourceUnit;
     
-    public ReturnsIndexQuery(MethodDeclarationC methodC) {
-        if (methodC == null)
-            throw new NullPointerException("methodC is null");
-        this.methodC = methodC;
+    public ReturnsIndexQuery(MethodArea area, SourceUnit sourceUnit) {
+        if (area == null)
+            throw new NullPointerException("area is null");
+        if (sourceUnit == null)
+            throw new NullPointerException("sourceUnit is null");
+        this.area = area;
+        this.sourceUnit = sourceUnit;
     }
     
     public void accept(DtlIndexQueryVisitor visitor, ReturnsRequestor requestor) {
@@ -21,14 +24,15 @@ public class ReturnsIndexQuery implements DtlIndexQuery<ReturnsRequestor> {
     }
     
     public MethodArea getArea() {
-        return (MethodArea) methodC.getInnerLC().getArea();
+        return area;
     }
     
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((methodC == null) ? 0 : methodC.hashCode());
+        result = prime * result + ((area == null) ? 0 : area.hashCode());
+        result = prime * result + ((sourceUnit == null) ? 0 : sourceUnit.hashCode());
         return result;
     }
     
@@ -41,21 +45,26 @@ public class ReturnsIndexQuery implements DtlIndexQuery<ReturnsRequestor> {
         if (getClass() != obj.getClass())
             return false;
         ReturnsIndexQuery other = (ReturnsIndexQuery) obj;
-        if (methodC == null) {
-            if (other.methodC != null)
+        if (area == null) {
+            if (other.area != null)
                 return false;
-        } else if (!methodC.equals(other.methodC))
+        } else if (!area.equals(other.area))
+            return false;
+        if (sourceUnit == null) {
+            if (other.sourceUnit != null)
+                return false;
+        } else if (!sourceUnit.equals(other.sourceUnit))
             return false;
         return true;
     }
     
     @Override
     public String toString() {
-        return format("Returns(%s)", methodC.name());
+        return format("Returns(%s)", area);
     }
     
     public SourceUnit localSourceUnit() {
-        return methodC.fileC().sourceUnit();
+        return sourceUnit;
     }
     
 }

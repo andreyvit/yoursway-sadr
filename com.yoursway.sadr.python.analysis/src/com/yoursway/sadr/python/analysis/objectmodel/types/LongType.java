@@ -2,7 +2,6 @@ package com.yoursway.sadr.python.analysis.objectmodel.types;
 
 import java.math.BigInteger;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.BigIntegerLiteralC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.LongValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.NumericValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
@@ -36,10 +35,6 @@ public class LongType extends NumericType {
     }
     
     public static LongType instance = new LongType();
-    
-    public static LongValue wrap(BigIntegerLiteralC literal) {
-        return new LongValue(literal.node().getLongValue());
-    }
     
     public static LongValue wrap(BigInteger value) {
         return new LongValue(value);

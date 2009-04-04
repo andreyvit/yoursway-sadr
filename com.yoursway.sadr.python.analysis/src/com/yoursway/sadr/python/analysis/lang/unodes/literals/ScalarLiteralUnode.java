@@ -6,9 +6,12 @@ import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class ScalarLiteralUnode extends AbstractLiteralUnode {
+    
+    public static final Unode UNKNOWN = new ScalarLiteralUnode(PythonValueSet.EMPTY);
     
     private final PythonValueSet valueSet;
     

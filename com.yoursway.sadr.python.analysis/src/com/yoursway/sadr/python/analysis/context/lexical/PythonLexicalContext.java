@@ -8,7 +8,7 @@ import com.yoursway.sadr.core.propagation.PropagationTrackerImpl;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.areas.Area;
 import com.yoursway.sadr.python.analysis.context.lexical.scopes.PythonScope;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.unused.PythonConstruct;
 
 public final class PythonLexicalContext implements
         StaticContext<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> {
@@ -43,6 +43,24 @@ public final class PythonLexicalContext implements
     
     public PythonLexicalContext with(Area area) {
         return new PythonLexicalContext(scope, area);
+    }
+    
+    @Override
+    public String toString() {
+        return scope.toString();
+    }
+    
+    @Override
+    public int hashCode() {
+        return (scope.hashCode() + 31) * 31 + area.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != this.getClass())
+            return false;
+        PythonLexicalContext that = (PythonLexicalContext) obj;
+        return this.area.equals(that.area) && this.scope.equals(that.scope);
     }
     
 }

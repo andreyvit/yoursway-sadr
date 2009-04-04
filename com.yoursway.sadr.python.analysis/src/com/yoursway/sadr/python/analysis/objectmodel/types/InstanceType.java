@@ -9,7 +9,6 @@ import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.ClassDeclarationC;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.CallableObject;
@@ -19,9 +18,17 @@ import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuil
 
 public class InstanceType extends PythonType implements CallableObject {
     private ArrayList<PythonType> supers = new ArrayList<PythonType>();
+    private final String name;
     
-    public InstanceType(ClassDeclarationC classDeclarationC) {
-        super(classDeclarationC);
+    public InstanceType(String name) {
+        if (name == null)
+            throw new NullPointerException("name is null");
+        this.name = name;
+    }
+    
+    @Override
+    public String describe() {
+        return name;
     }
     
     public void setSuperClasses(ArrayList<PythonType> supers) {
@@ -39,13 +46,8 @@ public class InstanceType extends PythonType implements CallableObject {
     }
     
     @Override
-    public ClassDeclarationC getDecl() {
-        return (ClassDeclarationC) super.getDecl();
-    }
-    
-    @Override
     public String name() {
-        return getDecl().name();
+        return name;
     }
     
     @Override

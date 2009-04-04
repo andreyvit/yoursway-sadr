@@ -11,24 +11,16 @@ import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonException;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
 
 public abstract class PythonValue extends AbstractValue {
-    private PythonConstruct decl;
     private final int id;
     
     public PythonValue() {
-        this.decl = null;
         this.id = BUILTIN_INSTANCE_ID;
-    }
-    
-    public PythonValue(PythonConstruct declaration) {
-        this.decl = declaration;
-        this.id = InstanceRegistrar.registerInstance(this);
     }
     
     public abstract PythonType getType();
@@ -36,18 +28,6 @@ public abstract class PythonValue extends AbstractValue {
     @Override
     public String describe() {
         return getType().describe() + " " + " instance #" + id;
-    }
-    
-    public PythonConstruct getDecl() {
-        return this.decl;
-    }
-    
-    public void setDecl(PythonConstruct decl) {
-        if (this.decl != null)
-            throw new IllegalStateException("Already assigned");
-        if (decl == null)
-            throw new NullPointerException("Decl should never be null!");
-        this.decl = decl;
     }
     
     public PythonValue getBuiltinAttribute(String name) {
@@ -83,7 +63,8 @@ public abstract class PythonValue extends AbstractValue {
     public void obtainIntegerValue(Set<Long> result) {
     }
     
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix,
+            AliasConsumer aliases) {
     }
     
     @pausable

@@ -1,13 +1,11 @@
 package com.yoursway.sadr.python.analysis.objectmodel.values;
 
-
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.BoundFunctionDynamicContextDecorator;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.FunctionType;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
@@ -39,11 +37,6 @@ public final class BoundFunctionObject extends PythonValue implements CallableOb
     }
     
     @Override
-    public PythonConstruct getDecl() {
-        return func.getDecl();
-    }
-    
-    @Override
     @pausable
     public void call(PythonDynamicContext dc, PythonValueSetBuilder builder) {
         func.call(new BoundFunctionDynamicContextDecorator(dc, new PythonValueSet(self)), builder);
@@ -55,7 +48,8 @@ public final class BoundFunctionObject extends PythonValue implements CallableOb
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix,
+            AliasConsumer aliases) {
         func.computeArgumentAliases(info.translateToUnbound(), dc, suffix, aliases);
     }
     

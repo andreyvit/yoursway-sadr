@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.constructs.support;
+package com.yoursway.sadr.python.analysis.unused;
 
 
 public enum Comparison {

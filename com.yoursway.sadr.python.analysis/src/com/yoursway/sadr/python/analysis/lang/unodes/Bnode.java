@@ -20,6 +20,10 @@ public final class Bnode {
         this.hashCode = (lc.hashCode() + 31) * 31 + unode.hashCode();
     }
     
+    public Unode unode() {
+        return unode;
+    }
+    
     public PythonLexicalContext lc() {
         return lc;
     }
@@ -34,7 +38,7 @@ public final class Bnode {
     
     @Override
     public String toString() {
-        return unode + " @" + lc;
+        return unode + " @ " + lc;
     }
     
     @Override

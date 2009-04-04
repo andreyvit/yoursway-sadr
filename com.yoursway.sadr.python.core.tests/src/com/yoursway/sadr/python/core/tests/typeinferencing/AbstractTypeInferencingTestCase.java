@@ -2,7 +2,6 @@ package com.yoursway.sadr.python.core.tests.typeinferencing;
 
 import static com.yoursway.sadr.python.core.tests.TestingUtils.callerOutside;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import java.io.File;
@@ -31,22 +30,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.dltk.ast.ASTNode;
 import org.junit.After;
 
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
-import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.engine.AnalysisEngine;
 import com.yoursway.sadr.engine.util.Strings;
-import com.yoursway.sadr.python.ASTUtils;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.VariableReferenceC;
-import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
+import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.project.FileSourceUnit;
 import com.yoursway.sadr.python.analysis.project.ProjectRuntime;
 import com.yoursway.sadr.python.analysis.project.ProjectUnit;
@@ -175,7 +169,7 @@ public abstract class AbstractTypeInferencingTestCase {
         
         if (assertions.size() == 0)
             return;
-        PythonFileC fileC = projectRuntime.getModule(sourceModule);
+        PythonLexicalContext fileC = projectRuntime.getModule(sourceModule);
         for (IAssertion assertion : assertions)
             assertion.check(engine, fileC, sourceModule, expected, actual);
     }
@@ -223,10 +217,9 @@ public abstract class AbstractTypeInferencingTestCase {
             //            String methodName = tok.nextToken();
             //            assertion = new HasMethodAssertion(expr, namePos, methodName);
         } else if ("find-var".equals(test)) {
-            String expr = tok.nextToken();
-            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
-            int lineNumber = Integer.valueOf(tok.nextToken()).intValue();
-            assertion = new FindVariableAssertion(lineNumber, namePos);
+            //            String expr = tok.nextToken();
+            //            int namePos = locate(expr, line, originalLine, delimiterPos, lineOffset);
+            //            int lineNumber = Integer.valueOf(tok.nextToken()).intValue();
         } else {
             throw new IllegalArgumentException("Unknown assertion: " + test);
         }
@@ -344,42 +337,14 @@ public abstract class AbstractTypeInferencingTestCase {
     
     public interface IAssertion {
         
-        void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit sourceModule,
+        void check(AnalysisEngine engine, PythonLexicalContext fileC, FileSourceUnit sourceModule,
                 StringBuilder expected, StringBuilder actual) throws Exception;
     }
     
-    public ExpressionValueGoal createSelfGoal(PythonFileC fileC, final PythonConstruct construct) {
-        //        if (construct instanceof MethodDeclarationC && construct.staticContext() instanceof ClassDeclarationC) {
-        //            final MethodDeclarationC func = (MethodDeclarationC) construct.staticContext();
-        //            ClassDeclarationC classC = (ClassDeclarationC) construct.parentScope();
-        //            PythonValueSet klasses = classC.evaluate(PythonDynamicContext.EMPTY);
-        //            for (PythonValue klass : klasses) {
-        //                PythonValueSet results = CallResolver.callFunction(klass, new RuntimeArguments(),
-        //                        PythonDynamicContext.EMPTY, classC);
-        //                for (PythonValue result : results) {
-        //                    List<PythonArgument> args = func.getArguments();
-        //                    PythonDynamicContext context;
-        //                    try {
-        //                        context = new PythonDynamicContext(PythonDynamicContext.EMPTY, func, new ContextImpl(
-        //                                args, new RuntimeArguments(result)));
-        //                        return construct.evaluate(context);
-        //                    } catch (PythonException e) {
-        //                        e.printStackTrace();
-        //                        return new PythonValueSet();
-        //                    }
-        //                }
-        //            }
-        //            throw new IllegalStateException("No method found!");
-        //        } else {
-        return new ExpressionValueGoal(construct.toBnode(), PythonDynamicContext.EMPTY);
-        //        }
-    }
-    
-    public ExpressionValueGoal createGoal(PythonFileC fileC, int namePos) {
-        ASTNode node = ASTUtils.findNodeAt(fileC.node(), namePos);
-        assertNotNull(node);
-        PythonConstruct construct = fileC.subconstructFor(node);
-        return createSelfGoal(fileC, construct);
+    public ExpressionValueGoal createGoal(PythonLexicalContext fileC, String expression, int namePos) {
+        PythonLexicalContext lc = fileC.with(fileC.getScope().scopeForOffset(namePos));
+        return new ExpressionValueGoal(new Bnode(new VariableUnode(expression), lc),
+                PythonDynamicContext.EMPTY);
     }
     
     class ExpressionTypeAssertion implements IAssertion {
@@ -396,9 +361,9 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = correctClassRef;
         }
         
-        public void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit cu,
+        public void check(AnalysisEngine engine, PythonLexicalContext fileC, FileSourceUnit cu,
                 StringBuilder expected, StringBuilder actual) throws Exception {
-            ExpressionValueGoal goal = createGoal(fileC, namePos);
+            ExpressionValueGoal goal = createGoal(fileC, expression, namePos);
             ValueInfo result = engine.evaluate(goal).getResult();
             String[] possibleTypes = result.describePossibleTypes();
             Arrays.sort(possibleTypes, Strings.getNaturalComparator());
@@ -423,9 +388,9 @@ public abstract class AbstractTypeInferencingTestCase {
             this.correctClassRef = ClassRecorrectClassReff;
         }
         
-        public void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit cu,
+        public void check(AnalysisEngine engine, PythonLexicalContext fileC, FileSourceUnit cu,
                 StringBuilder expected, StringBuilder actual) throws Exception {
-            ExpressionValueGoal goal = createGoal(fileC, namePos);
+            ExpressionValueGoal goal = createGoal(fileC, expression, namePos);
             ValueInfo result = engine.evaluate(goal).getResult();
             String[] possibleValues = result.describePossibleValues();
             Arrays.sort(possibleValues, Strings.getNaturalComparator());
@@ -436,7 +401,6 @@ public abstract class AbstractTypeInferencingTestCase {
             expected.append(prefix).append(correctClassRef).append('\n');
             actual.append(prefix).append(values).append('\n');
         }
-        
     }
     
     //    class SwampTestAssertion implements IAssertion {
@@ -561,68 +525,5 @@ public abstract class AbstractTypeInferencingTestCase {
     //        }
     //        
     //    }
-    
-    private static int getLine(FileSourceUnit module, ASTNode node) {
-        String source;
-        try {
-            source = module.getSource();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
-        String[] lines = source.split("\n");
-        int line = 0;
-        int chars = 0;
-        for (String string : lines) {
-            line++;
-            chars += string.length() + 1;
-            if (chars >= node.sourceEnd())
-                return line;
-        }
-        return 0; // not found
-    }
-    
-    class FindVariableAssertion implements IAssertion {
-        private final int line;
-        private final int namePos;
-        
-        public FindVariableAssertion(int line, int namePos) {
-            this.line = line;
-            this.namePos = namePos;
-        }
-        
-        public void check(AnalysisEngine engine, PythonFileC fileC, FileSourceUnit cu,
-                StringBuilder expected, StringBuilder actual) throws Exception {
-            ExpressionValueGoal goal = createGoal(fileC);
-            PythonValueSet values = engine.evaluate(goal);
-            int actualLine = -2;
-            String prefix = "";
-            if (!values.isEmpty()) {
-                ValueInfo result = values.getResult();
-                if (result != null) {
-                    Collection<Value> vals = result.getValueSet().containedValues();
-                    PythonConstruct decl = ((PythonValue) vals.iterator().next()).getDecl();//FIXME I am Dirty Hack! Fix me, please.
-                    actualLine = getLine(cu, decl.node());
-                }
-                
-                prefix = values.toString() + " : ";
-            }
-            expected.append(prefix).append(String.valueOf(line)).append('\n');
-            actual.append(prefix).append(String.valueOf(actualLine)).append('\n');
-            
-        }
-        
-        public ExpressionValueGoal createGoal(PythonFileC fileC) {
-            ASTNode node = ASTUtils.findMinimalNode(fileC.node(), namePos, namePos);
-            assertNotNull(node);
-            PythonConstruct construct = fileC.subconstructFor(node);
-            if (construct instanceof VariableReferenceC) {
-                return new ExpressionValueGoal(construct.toBnode(), PythonDynamicContext.EMPTY);
-            } else {
-                throw new IllegalStateException("Should be VariableReferenceC, but found "
-                        + construct.getClass().getSimpleName());
-            }
-        }
-    }
     
 }

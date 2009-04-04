@@ -5,16 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 
 public class DeclaredArgumentsBuilder {
     
-    private final List<ArgumentC> positional = new ArrayList<ArgumentC>();
-    private final Map<String, ArgumentC> keyword = new HashMap<String, ArgumentC>();
-    private ArgumentC star = null;
-    private ArgumentC superstar = null;
+    private final List<Argument> positional = new ArrayList<Argument>();
+    private final Map<String, Argument> keyword = new HashMap<String, Argument>();
+    private Argument star = null;
+    private Argument superstar = null;
     
-    public void add(String name, ArgumentC value) {
+    public void add(String name, Argument value) {
         if (name == null)
             throw new NullPointerException("name is null");
         if (value == null)
@@ -23,13 +22,13 @@ public class DeclaredArgumentsBuilder {
         keyword.put(name, value);
     }
     
-    public void addStar(ArgumentC value) {
+    public void addStar(Argument value) {
         if (value == null)
             throw new NullPointerException("value is null");
         star = value;
     }
     
-    public void addSuperstar(ArgumentC value) {
+    public void addSuperstar(Argument value) {
         if (value == null)
             throw new NullPointerException("value is null");
         superstar = value;
@@ -39,8 +38,8 @@ public class DeclaredArgumentsBuilder {
         return new DeclaredArguments(positional, keyword, star, superstar);
     }
     
-    void addAll(List<ArgumentC> positional, Map<String, ArgumentC> keyword, ArgumentC star,
-            ArgumentC superstar) {
+    void addAll(List<Argument> positional, Map<String, Argument> keyword, Argument star,
+            Argument superstar) {
         this.positional.addAll(positional);
         this.keyword.putAll(keyword);
         this.star = star;

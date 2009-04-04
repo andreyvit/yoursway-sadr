@@ -20,7 +20,6 @@ import com.yoursway.sadr.python.analysis.index.queries.AssignmentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsRequestor;
 import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsRequestor;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
@@ -116,7 +115,7 @@ public final class Alias {
     private void addUsagesInCallsTo(Suffix suffix, AliasConsumer aliases) {
         final Collection<PassedArgumentInfo> infos = new ArrayList<PassedArgumentInfo>();
         Analysis.queryIndex(new PassedArgumentsIndexQuery(getUnode()), new PassedArgumentsRequestor() {
-            public void call(PassedArgumentInfo info, PythonFileC fileC) {
+            public void call(PassedArgumentInfo info) {
                 // FIXME check scope
                 infos.add(info);
             }
@@ -136,7 +135,7 @@ public final class Alias {
     private Map<PythonScope, Collection<Bnode>> findAssignmentsAndGroupByScopes() {
         final Map<PythonScope, Collection<Bnode>> assignmentsByScope = Maps.newHashMap();
         AssignmentsRequestor requestor = new AssignmentsRequestor() {
-            public void assignment(Bnode rhs, PythonFileC fileC) {
+            public void assignment(Bnode rhs) {
                 PythonScope sc = rhs.lc().getScope();
                 Collection<Bnode> result = assignmentsByScope.get(sc);
                 if (result == null) {
@@ -179,7 +178,8 @@ public final class Alias {
         while (aliases.hasNew())
             for (Alias newAlias : aliases.retrieveNewAliases())
                 newAlias.computeAliasesOnce(aliases);
-        System.out.println("Alias.computeAliases(" + unode + ") = " + Join.join(", ", aliases));
-        return aliases.asSet();
+        Set<Alias> result = aliases.asSet();
+        System.out.println("Alias.computeAliases(" + unode + ") = " + Join.join(", ", result));
+        return result;
     }
 }

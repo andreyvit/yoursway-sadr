@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.analysis.objectmodel.types;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.ComplexLiteralC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.Complex;
 import com.yoursway.sadr.python.analysis.objectmodel.values.ComplexValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.NumericValue;
@@ -37,8 +36,8 @@ public class ComplexType extends NumericType {
     
     public static ComplexType instance = new ComplexType();
     
-    public static ComplexValue wrap(ComplexLiteralC literal) {
-        Complex value = new Complex(0, literal.node().getDoubleValue());
+    public static ComplexValue wrap(double re, double im) {
+        Complex value = new Complex(re, im);
         return new ComplexValue(value);
     }
     

@@ -3,28 +3,19 @@ package com.yoursway.sadr.python.analysis.index;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import kilim.pausable;
-
-import org.eclipse.dltk.ast.ASTNode;
-
-import com.yoursway.sadr.core.constructs.ConstructVisitor;
-import com.yoursway.sadr.core.constructs.Request;
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
 import com.yoursway.sadr.python.analysis.context.lexical.scopes.PythonScope;
 import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
+import com.yoursway.sadr.python.analysis.index.wrapping.IndexAttributeWrappingStrategy;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
-import com.yoursway.utils.bugs.Bugs;
 
-public class IndexRequest implements
-        Request<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> {
+public class IndexRequest {
     
     private final IndexNameWrappingStrategy wrappingStrategy;
     private final PythonFileIndexMemento memento;
@@ -102,34 +93,16 @@ public class IndexRequest implements
         memento.returns.put(area, value);
     }
     
-    public void leave() {
-    }
-    
-    @pausable
-    public ConstructVisitor<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> enter(
-            PythonConstruct construct) {
-        if (construct == null)
-            throw new NullPointerException("construct is null");
-        if (construct instanceof IndexAffector) {
-            IndexAffector affector = (IndexAffector) construct;
-            try {
-                affector.actOnIndex(this);
-            } catch (Throwable e) {
-                Bugs.bug(e);
-            }
-            IndexNameWrappingStrategy wrappingStrategy = affector.createWrappingStrategy();
-            if (wrappingStrategy != null)
-                return new IndexRequest(memento, wrappingStrategy);
-        }
-        return this;
-    }
-    
     public void addPassedArgument(Unode arg, PassedArgumentInfo info) {
         if (arg == null)
             throw new NullPointerException("arg is null");
         if (info == null)
             throw new NullPointerException("callC is null");
         memento.passedArguments.put(arg, info);
+    }
+    
+    public IndexRequest with(IndexAttributeWrappingStrategy ws) {
+        return new IndexRequest(memento, ws);
     }
     
 }

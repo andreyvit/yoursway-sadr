@@ -9,24 +9,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import kilim.pausable;
-
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.python.internal.core.parser.PythonSourceParser;
 
 import com.yoursway.sadr.engine.debug.DotOutputPlugin;
 import com.yoursway.sadr.engine.incremental.IncrementalAnalysisEngine;
-import com.yoursway.sadr.python.analysis.goals.AbstractGenericGoal;
-import com.yoursway.sadr.python.analysis.goals.GenericResult;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.IndexManager;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
+import com.yoursway.sadr.python.analysis.lang.PythonToIntermediateLanguageConverter;
 
 public class ProjectRuntime {
     
     private final Collection<FileSourceUnit> modules;
-    private final Map<File, PythonFileC> nameToModule = newHashMap();
+    private final Map<File, PythonLexicalContext> nameToModule = newHashMap();
     private final IncrementalAnalysisEngine engine;
     private final IndexManager indexManager;
     
@@ -62,7 +60,7 @@ public class ProjectRuntime {
         return engine;
     }
     
-    public PythonFileC getModule(File file) {
+    public PythonLexicalContext getModule(File file) {
         try {
             return nameToModule.get(file.getCanonicalFile());
         } catch (IOException e) {
@@ -71,7 +69,7 @@ public class ProjectRuntime {
         }
     }
     
-    public PythonFileC getModule(FileSourceUnit fsu) {
+    public PythonLexicalContext getModule(FileSourceUnit fsu) {
         try {
             return nameToModule.get(fsu.getFile().getCanonicalFile());
         } catch (IOException e) {
@@ -98,17 +96,12 @@ public class ProjectRuntime {
             ModuleDeclaration moduleDecl = parser.parse(moduleName.toCharArray(), module
                     .getSourceAsCharArray(), null);
             
-            final PythonFileC moduleObject = new PythonFileC(moduleDecl, moduleName, module);
+            fixOffsets(moduleDecl);
+            PythonToIntermediateLanguageConverter converter = new PythonToIntermediateLanguageConverter(
+                    indexManager.createIndexRequest(module));
+            PythonLexicalContext lc = converter.processModule(moduleDecl, module);
             //FIXME convert module names to python code form (e.g. "package.module").
-            nameToModule.put(module.getFile().getCanonicalFile(), moduleObject);
-            engine.evaluate(new AbstractGenericGoal() {
-                
-                @pausable
-                public GenericResult evaluate() {
-                    indexManager.addToIndex(moduleObject);
-                    return new GenericResult();
-                }
-            });
+            nameToModule.put(module.getFile().getCanonicalFile(), lc);
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getCause() != null) {
@@ -118,4 +111,13 @@ public class ProjectRuntime {
             }
         }
     }
+    
+    private int fixOffsets(ASTNode node) {
+        int end = node.sourceEnd();
+        for (ASTNode child : node.getChilds())
+            end = Math.max(end, fixOffsets(child));
+        node.setEnd(end);
+        return end;
+    }
+    
 }

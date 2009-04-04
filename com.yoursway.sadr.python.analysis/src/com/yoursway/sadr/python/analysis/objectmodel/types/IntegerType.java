@@ -7,7 +7,6 @@ import kilim.pausable;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.IntegerLiteralC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.values.IntegerValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.NumericValue;
@@ -84,10 +83,6 @@ public class IntegerType extends NumericType {
     }
     
     public static IntegerType instance = new IntegerType();
-    
-    public static NumericValue wrap(IntegerLiteralC literal) {
-        return new IntegerValue(literal.node().getIntValue());
-    }
     
     public static IntegerValue wrap(long value) {
         return new IntegerValue(value);

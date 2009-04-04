@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.analysis.objectmodel.types;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.StringLiteralC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.StringValue;
 
@@ -63,17 +62,12 @@ public class UnicodeType extends BaseStringType {
     
     public static UnicodeType instance = new UnicodeType();
     
-    public static PythonValue wrap(StringLiteralC literal) {
-        StringValue value = new StringValue(literal.stringValue(), literal.isUnicode());
-        return value;
+    public static PythonValue wrap(String value) {
+        return new StringValue(value, true);
     }
     
     public static PythonValue wrap(String value, boolean isUnicode) {
         return new StringValue(value, isUnicode);
-    }
-    
-    public static PythonValue wrap(String value) {
-        return new StringValue(value);
     }
     
     @Override

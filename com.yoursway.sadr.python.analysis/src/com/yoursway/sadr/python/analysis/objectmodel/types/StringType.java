@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.analysis.objectmodel.types;
 
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.StringLiteralC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.StringValue;
 
@@ -65,16 +64,8 @@ public class StringType extends BaseStringType {
     
     public static StringType instance = new StringType();
     
-    public static StringValue wrap(StringLiteralC literal) {
-        return new StringValue(literal.stringValue(), literal.isUnicode());
-    }
-    
-    public static StringValue wrap(String value, boolean isUnicode) {
-        return new StringValue(value, isUnicode);
-    }
-    
     public static StringValue wrap(String value) {
-        return new StringValue(value);
+        return new StringValue(value, false);
     }
     
     @Override
