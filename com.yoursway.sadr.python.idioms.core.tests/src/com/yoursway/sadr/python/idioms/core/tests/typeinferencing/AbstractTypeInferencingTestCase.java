@@ -40,9 +40,9 @@ import org.eclipse.dltk.python.core.PythonNature;
 import org.junit.After;
 
 import com.yoursway.sadr.python.ASTUtils;
-import com.yoursway.sadr.python.constructs.PythonConstruct;
-import com.yoursway.sadr.python.constructs.PythonFileC;
-import com.yoursway.sadr.python.core.runtime.ProjectRuntime;
+import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
+import com.yoursway.sadr.python.analysis.project.ProjectRuntime;
 import com.yoursway.sadr.python.idioms.core.Idiom;
 import com.yoursway.sadr.python.idioms.core.IdiomMatch;
 import com.yoursway.sadr.python.idioms.core.tests.Activator;

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 
 public class IdiomsCollection {
 	

@@ -8,11 +8,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.yoursway.sadr.python.core.typeannotations.Annotation;
-import com.yoursway.sadr.python.core.typeannotations.AnnotationParser;
-import com.yoursway.sadr.python.core.typeannotations.AnnotationParsingException;
-import com.yoursway.sadr.python.core.typeannotations.FunctionAnnotation;
-import com.yoursway.sadr.python.core.typeannotations.TypeAnnotation;
+import com.yoursway.sadr.python.analysis.unused.typeannotations.Annotation;
+import com.yoursway.sadr.python.analysis.unused.typeannotations.AnnotationParser;
+import com.yoursway.sadr.python.analysis.unused.typeannotations.AnnotationParsingException;
+import com.yoursway.sadr.python.analysis.unused.typeannotations.FunctionAnnotation;
+import com.yoursway.sadr.python.analysis.unused.typeannotations.TypeAnnotation;
 
 public class AnnotationParserTests {
     @Test

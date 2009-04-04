@@ -2,7 +2,7 @@ package com.yoursway.sadr.python.idioms.core;
 
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
-import com.yoursway.sadr.python.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 
 public class IdiomMatcher {
 	private final String source;
