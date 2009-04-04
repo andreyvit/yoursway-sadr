@@ -24,3 +24,4 @@ Import-Package: com.yoursway.sadr.python.analysis.lang.constructs.ast,
  kilim,
  kilim.fibers,
  kilim.states
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
