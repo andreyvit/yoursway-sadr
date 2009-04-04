@@ -2,7 +2,6 @@ package com.yoursway.sadr.python.analysis.aliasing;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +22,6 @@ import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsIndexQuery
 import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
-import com.yoursway.sadr.python.analysis.lang.constructs.special.CallAliasProxyC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
@@ -101,11 +99,10 @@ public final class Alias {
     }
     
     @pausable
-    public Collection<PythonConstruct> findRenamesUsingIndex() {
+    public void findRenamesUsingIndex(Suffix suffix, AliasConsumer aliases) {
         Collection<PythonConstruct> result = findConstructsAssignedTo();
-        addUsagesInCallsTo(result);
-        System.out.println("Alias.findRenamesUsingIndex(" + unode + ") = " + Join.join(", ", result));
-        return result;
+        PythonAnalHelpers.addRenamesForConstructs(suffix, aliases, result, dc);
+        addUsagesInCallsTo(suffix, aliases);
     }
     
     @pausable
@@ -116,7 +113,7 @@ public final class Alias {
     }
     
     @pausable
-    private void addUsagesInCallsTo(Collection<PythonConstruct> result) {
+    private void addUsagesInCallsTo(Suffix suffix, AliasConsumer aliases) {
         final Collection<PassedArgumentInfo> infos = new ArrayList<PassedArgumentInfo>();
         Analysis.queryIndex(new PassedArgumentsIndexQuery(getUnode()), new PassedArgumentsRequestor() {
             public void call(PassedArgumentInfo info, PythonFileC fileC) {
@@ -126,10 +123,7 @@ public final class Alias {
         });
         for (PassedArgumentInfo info : infos) {
             PythonValueSet callable = Analysis.evaluate(new ExpressionValueGoal(info.getCallable(), dc));
-            List<Alias> callableAliases = new ArrayList<Alias>();
-            callable.computeArgumentAliases(info, dc, callableAliases);
-            for (Alias callableAlias : callableAliases)
-                result.add(new CallAliasProxyC(callableAlias, info.getCallable()));
+            callable.computeArgumentAliases(info, dc, suffix, aliases);
         }
     }
     

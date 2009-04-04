@@ -13,7 +13,6 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.core.IValueInfo;
-import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -181,9 +180,9 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
         return result;
     }
     
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Alias> unodes) {
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
         for (PythonValue value : this)
-            value.computeArgumentAliases(info, dc, unodes);
+            value.computeArgumentAliases(info, dc, suffix, aliases);
     }
     
     @pausable

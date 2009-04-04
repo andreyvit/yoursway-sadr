@@ -1,12 +1,10 @@
 package com.yoursway.sadr.python.analysis.objectmodel.values;
 
 import java.util.Collection;
-import java.util.List;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
-import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -90,8 +88,8 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Alias> unodes) {
-        info.computeAliases(getDecl(), dc, unodes);
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
+        info.computeAliases(getDecl(), dc, suffix, aliases);
     }
     
     @Override

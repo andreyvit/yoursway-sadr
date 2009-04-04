@@ -1,14 +1,14 @@
 package com.yoursway.sadr.python.analysis.objectmodel.values;
 
-import java.util.List;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.aliasing.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.BoundFunctionDynamicContextDecorator;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.FunctionType;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -55,8 +55,8 @@ public final class BoundFunctionObject extends PythonValue implements CallableOb
     }
     
     @Override
-    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, List<Alias> unodes) {
-        func.computeArgumentAliases(info.translateToUnbound(), dc, unodes);
+    public void computeArgumentAliases(PassedArgumentInfo info, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
+        func.computeArgumentAliases(info.translateToUnbound(), dc, suffix, aliases);
     }
     
 }

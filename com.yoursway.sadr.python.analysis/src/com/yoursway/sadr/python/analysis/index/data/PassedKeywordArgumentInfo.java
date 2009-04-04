@@ -1,13 +1,13 @@
 package com.yoursway.sadr.python.analysis.index.data;
 
-import java.util.List;
-
 import com.yoursway.sadr.python.analysis.aliasing.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 
 public final class PassedKeywordArgumentInfo extends PassedCallArgumentInfo {
@@ -52,10 +52,10 @@ public final class PassedKeywordArgumentInfo extends PassedCallArgumentInfo {
     
     @Override
     protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope,
-            PythonDynamicContext dc, List<Alias> unodes) {
+            PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
         ArgumentC arg = declaredArguments.findKeyword(name);
         if (arg != null)
-            unodes.add(new Alias(new VariableUnode(arg.getName()), scope, dc));
+            aliases.add(new Alias(suffix.appendTo(new VariableUnode(arg.getName())), scope, dc));
     }
     
     @Override
