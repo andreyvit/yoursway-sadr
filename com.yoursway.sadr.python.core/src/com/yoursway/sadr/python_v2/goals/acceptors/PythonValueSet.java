@@ -19,7 +19,6 @@ import com.yoursway.sadr.python.index.punodes.Punode;
 import com.yoursway.sadr.python.index.unodes.Alias;
 import com.yoursway.sadr.python.model.PassedArgumentInfo;
 import com.yoursway.sadr.python.model.types.BooleanType;
-import com.yoursway.sadr.python.objects.TypeError;
 import com.yoursway.sadr.python_v2.croco.PythonDynamicContext;
 import com.yoursway.sadr.python_v2.model.builtins.PythonValue;
 
@@ -104,10 +103,6 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     @Override
     public String toString() {
         return builder.toString();
-    }
-    
-    public void addException(TypeError typeError) {
-        
     }
     
     public String[] describePossibleTypes() {
