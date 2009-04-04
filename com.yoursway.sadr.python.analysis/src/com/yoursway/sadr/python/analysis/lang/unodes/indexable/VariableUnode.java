@@ -6,11 +6,11 @@ import java.util.Collection;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class VariableUnode extends AbstractIndexableUnode {
@@ -57,11 +57,6 @@ public class VariableUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    public Punode punodize() {
-        return null;
-    }
-    
-    @Override
     @pausable
     public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
         return new Alias(this, sc, dc).queryIndexForValuesAssignedTo();
@@ -73,8 +68,8 @@ public class VariableUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
-        alternatives.add(punode.wrap(this));
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Suffix suffix, boolean reading) {
+        alternatives.add(suffix.appendTo(this));
     }
     
 }

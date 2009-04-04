@@ -13,12 +13,13 @@ import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfo;
 import com.yoursway.sadr.blocks.foundation.valueinfo.ValueInfoBuilder;
 import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.core.IValueInfo;
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.BooleanType;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 
@@ -186,10 +187,10 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     }
     
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Collection<Alias> aliases) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
         for (PythonValue value : this)
-            value.findRenames(punode, sc, dc, aliases);
+            value.findRenames(suffix, sc, dc, aliases);
     }
     
 }

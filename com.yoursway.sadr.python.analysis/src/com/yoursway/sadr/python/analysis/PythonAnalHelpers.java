@@ -10,27 +10,29 @@ import kilim.pausable;
 
 import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.engine.Goal;
+import com.yoursway.sadr.python.analysis.aliasing.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
 
 public class PythonAnalHelpers {
     
-    public static void addRenamesForConstructs(Punode punode, Collection<Alias> aliases,
+    public static void addRenamesForConstructs(Suffix suffix, AliasConsumer aliases,
             Collection<PythonConstruct> valuesAssignedToPunodeHead, PythonDynamicContext dc) {
         for (PythonConstruct assignedValue : valuesAssignedToPunodeHead)
-            addRenameForConstruct(punode, aliases, assignedValue, dc);
+            addRenameForConstruct(suffix, aliases, assignedValue, dc);
     }
     
-    public static void addRenameForConstruct(Punode punode, Collection<Alias> aliases,
+    public static void addRenameForConstruct(Suffix suffix, AliasConsumer aliases,
             PythonConstruct construct, PythonDynamicContext dc) {
         Unode replacementUnode = construct.toUnode();
         if (replacementUnode != null) {
-            Unode wrapped = punode.wrap(replacementUnode);
+            Unode wrapped = suffix.appendTo(replacementUnode);
             aliases.add(new Alias(wrapped, construct.staticContext(), dc));
         }
     }

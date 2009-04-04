@@ -5,7 +5,7 @@ import kilim.pausable;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;

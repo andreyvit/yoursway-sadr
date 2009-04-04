@@ -3,20 +3,19 @@ package com.yoursway.sadr.python.analysis.context.dynamic.arguments;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import kilim.pausable;
 
 import com.google.common.collect.Lists;
 import com.yoursway.sadr.engine.Analysis;
-import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 import com.yoursway.utils.YsCollections;
 
@@ -90,8 +89,8 @@ public class ActualArguments implements Arguments {
     }
     
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Alias> aliases, int index, String name, PythonConstruct init) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases, int index, String name, PythonConstruct init) {
         dc = dc.unwind();
         PythonConstruct construct = null;
         if (index < positional.size())
@@ -99,9 +98,9 @@ public class ActualArguments implements Arguments {
         else if (name != null)
             construct = keyword.get(name);
         if (construct != null)
-            PythonAnalHelpers.addRenameForConstruct(punode, aliases, construct, dc);
+            PythonAnalHelpers.addRenameForConstruct(suffix, aliases, construct, dc);
         if (init != null)
-            PythonAnalHelpers.addRenameForConstruct(punode, aliases, init, dc);
+            PythonAnalHelpers.addRenameForConstruct(suffix, aliases, init, dc);
     }
     
     public void addTo(ActualArgumentsBuilder builder) {

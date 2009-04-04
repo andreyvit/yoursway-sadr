@@ -1,13 +1,12 @@
 package com.yoursway.sadr.python.analysis.context.dynamic;
 
-import java.util.Set;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class BoundFunctionDynamicContextDecorator extends ChildDynamicContext {
@@ -48,11 +47,11 @@ public class BoundFunctionDynamicContextDecorator extends ChildDynamicContext {
         }
         
         @pausable
-        public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-                Set<Alias> aliases, int index, String name, PythonConstruct init) {
+        public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+                AliasConsumer aliases, int index, String name, PythonConstruct init) {
             if (index == 0)
                 return;
-            delegate.findRenames(punode, sc, dc, aliases, index - 1, name, init);
+            delegate.findRenames(suffix, sc, dc, aliases, index - 1, name, init);
         }
         
         @Override

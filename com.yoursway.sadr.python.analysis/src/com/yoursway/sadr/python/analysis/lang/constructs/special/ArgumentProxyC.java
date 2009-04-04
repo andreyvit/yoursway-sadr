@@ -1,22 +1,21 @@
 package com.yoursway.sadr.python.analysis.lang.constructs.special;
 
-import java.util.Set;
 
 import kilim.pausable;
 
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ArgumentProxyUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class ArgumentProxyC extends PythonConstructImpl<ASTNode> {
@@ -45,9 +44,9 @@ public class ArgumentProxyC extends PythonConstructImpl<ASTNode> {
     }
     
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
         Arguments arguments = dc.argumentsOfTopCall();
-        arguments.findRenames(punode, sc, dc, aliases, index, argument.getName(), argument.getInit());
+        arguments.findRenames(suffix, sc, dc, aliases, index, argument.getName(), argument.getInit());
     }
     
     @Override

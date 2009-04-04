@@ -1,21 +1,17 @@
 package com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription;
 
 import java.util.Collection;
-import java.util.Set;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.lang.unodes.ChainableSuffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AbstractIndexableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.AnyIndexPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.LiteralIntegerIndexPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.UnknownIndexPunode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class LiteralIntegerIndexUnode extends AbstractIndexableUnode {
@@ -73,8 +69,11 @@ public class LiteralIntegerIndexUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    public Punode punodize() {
-        return new LiteralIntegerIndexPunode(new HeadPunode(receiver), index);
+    @pausable
+    public void computeAliases(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        super.computeAliases(suffix, sc, dc, aliases);
+        receiver.computeAliases(new LiteralIntegerIndexSuffix(suffix, index), sc, dc, aliases);
     }
     
     @Override
@@ -84,18 +83,41 @@ public class LiteralIntegerIndexUnode extends AbstractIndexableUnode {
     
     @Override
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
-        super.findRenames(punode, sc, dc, aliases);
-        receiver.findIntegerIndexRenames(punode, sc, dc, aliases, index);
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        super.findRenames(suffix, sc, dc, aliases);
+        receiver.findIntegerIndexRenames(suffix, sc, dc, aliases, index);
     }
     
     @Override
-    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
-        receiver.addGenericVariationsTo(alternatives, new LiteralIntegerIndexPunode(punode, index), reading);
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Suffix suffix, boolean reading) {
+        receiver.addGenericVariationsTo(alternatives, new LiteralIntegerIndexSuffix(suffix, index), reading);
         if (reading)
-            receiver.addGenericVariationsTo(alternatives, new UnknownIndexPunode(punode), reading);
+            receiver.addGenericVariationsTo(alternatives, new UnknownIndexUnode.UnknownIndexSuffix(suffix),
+                reading);
         else
-            receiver.addGenericVariationsTo(alternatives, new AnyIndexPunode(punode), reading);
+            receiver.addGenericVariationsTo(alternatives, new AnyIndexUnode.AnyIndexSuffix(suffix), reading);
+    }
+    
+    static class LiteralIntegerIndexSuffix extends ChainableSuffix {
+        
+        private final int index;
+        
+        public LiteralIntegerIndexSuffix(Suffix suffix, int index) {
+            super(suffix);
+            this.index = index;
+        }
+        
+        @Override
+        public String thisSuffixToString() {
+            return "[" + index + "]";
+        }
+        
+        @Override
+        protected Unode appendThisSuffixTo(Unode replacementUnode) {
+            return new LiteralIntegerIndexUnode(replacementUnode, index);
+        }
+        
     }
     
 }

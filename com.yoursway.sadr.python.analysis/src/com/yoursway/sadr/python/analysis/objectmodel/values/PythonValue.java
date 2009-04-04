@@ -2,19 +2,19 @@ package com.yoursway.sadr.python.analysis.objectmodel.values;
 
 import static com.yoursway.sadr.python.analysis.objectmodel.values.InstanceRegistrar.BUILTIN_INSTANCE_ID;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.blocks.foundation.values.AbstractValue;
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonException;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
@@ -89,8 +89,8 @@ public abstract class PythonValue extends AbstractValue {
     }
     
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Collection<Alias> aliases) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
     }
     
 }

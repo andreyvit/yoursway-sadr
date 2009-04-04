@@ -2,7 +2,6 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import kilim.pausable;
 
@@ -11,8 +10,8 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.engine.InfoKind;
-import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.Constants;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.CallSiteDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
@@ -24,9 +23,9 @@ import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.proxies.CallUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class CallC extends PythonConstructImpl<PythonCallExpression> implements IndexAffector {
@@ -127,14 +126,14 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     }
     
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
         int size = dc.callStackSize();
         if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
             return;
         
         PythonValueSet callableValueSet = Analysis.evaluate(new ExpressionValueGoal(callable, dc));
         dc = createDynamicContext(dc);
-        callableValueSet.findRenames(punode, sc, dc, aliases);
+        callableValueSet.findRenames(suffix, sc, dc, aliases);
     }
     
 }

@@ -1,16 +1,13 @@
 package com.yoursway.sadr.python.analysis.lang.unodes;
 
 import java.util.Collection;
-import java.util.Set;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public abstract class Unode {
@@ -33,8 +30,6 @@ public abstract class Unode {
         return hashCode;
     }
     
-    public abstract Punode punodize();
-    
     @pausable
     public abstract PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc);
     
@@ -43,17 +38,17 @@ public abstract class Unode {
     public abstract boolean isIndexable();
     
     @pausable
-    public abstract void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Alias> aliases);
+    public abstract void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases);
     
     @pausable
-    public void findIntegerIndexRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Alias> aliases, int index) {
+    public void findIntegerIndexRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases, int index) {
     }
     
     @pausable
-    public void findUnknownIndexRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Set<Alias> aliases) {
+    public void findUnknownIndexRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
     }
     
     public PythonValueSet calculateLiteralValue() {
@@ -61,9 +56,15 @@ public abstract class Unode {
     }
     
     public final void addGenericVariationsTo(Collection<Unode> alternatives, boolean reading) {
-        addGenericVariationsTo(alternatives, new HeadPunode(this), reading);
+        addGenericVariationsTo(alternatives, Suffix.EMPTY, reading);
     }
     
-    public abstract void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading);
+    public abstract void addGenericVariationsTo(Collection<Unode> alternatives, Suffix suffix, boolean reading);
+    
+    @pausable
+    public void computeAliases(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        findRenames(suffix, sc, dc, aliases);
+    }
     
 }

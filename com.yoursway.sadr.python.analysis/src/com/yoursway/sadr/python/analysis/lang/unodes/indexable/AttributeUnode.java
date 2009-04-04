@@ -10,6 +10,7 @@ import kilim.pausable;
 
 import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
@@ -17,10 +18,9 @@ import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsIndex
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsRequestor;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
+import com.yoursway.sadr.python.analysis.lang.unodes.ChainableSuffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.AttributePunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class AttributeUnode extends AbstractIndexableUnode {
@@ -83,8 +83,11 @@ public class AttributeUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    public Punode punodize() {
-        return new AttributePunode(new HeadPunode(receiver), name);
+    @pausable
+    public void computeAliases(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        super.computeAliases(suffix, sc, dc, aliases);
+        receiver.computeAliases(new AttributeSuffix(suffix, name), sc, dc, aliases);
     }
     
     @Override
@@ -160,8 +163,31 @@ public class AttributeUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
-        receiver.addGenericVariationsTo(alternatives, new AttributePunode(punode, name), reading);
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Suffix suffix, boolean reading) {
+        receiver.addGenericVariationsTo(alternatives, new AttributeSuffix(suffix, name), reading);
+    }
+    
+    static class AttributeSuffix extends ChainableSuffix {
+        
+        private final String attrName;
+        
+        public AttributeSuffix(Suffix suffix, String attrName) {
+            super(suffix);
+            if (attrName == null)
+                throw new NullPointerException("suffix is null");
+            this.attrName = attrName;
+        }
+        
+        @Override
+        public String thisSuffixToString() {
+            return "." + attrName;
+        }
+        
+        @Override
+        protected Unode appendThisSuffixTo(Unode replacementUnode) {
+            return new AttributeUnode(replacementUnode, attrName);
+        }
+        
     }
     
 }

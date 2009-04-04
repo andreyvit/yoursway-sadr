@@ -1,6 +1,4 @@
-package com.yoursway.sadr.python.analysis;
-
-import static com.google.common.collect.Sets.newHashSet;
+package com.yoursway.sadr.python.analysis.aliasing;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +11,7 @@ import kilim.pausable;
 import com.google.common.base.Join;
 import com.google.common.collect.Maps;
 import com.yoursway.sadr.engine.Analysis;
+import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -25,10 +24,9 @@ import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.CallAliasProxyC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public final class Alias {
@@ -176,30 +174,18 @@ public final class Alias {
     }
     
     @pausable
-    private Set<Alias> computeAliasesOnce() {
-        Set<Alias> aliases = newHashSet();
-        unode.findRenames(new HeadPunode(unode), sc.scopeContext(), dc, aliases);
-        
-        for (Punode punode = unode.punodize(); punode != null; punode = punode.punodize()) {
-            punode.getHead().findRenames(punode, sc.scopeContext(), dc, aliases);
-        }
-        return aliases;
+    private void computeAliasesOnce(AliasConsumer aliases) {
+        unode.computeAliases(Suffix.EMPTY, sc.scopeContext(), dc, aliases);
     }
     
     @pausable
     public Set<Alias> computeAliases() {
-        Set<Alias> aliases = newHashSet();
-        Set<Alias> newAliases = newHashSet();
-        newAliases.add(this);
-        while (!newAliases.isEmpty()) {
-            Set<Alias> superNewAliases = newHashSet();
-            aliases.addAll(newAliases);
-            for (Alias newAlias : newAliases)
-                superNewAliases.addAll(newAlias.computeAliasesOnce());
-            superNewAliases.removeAll(aliases);
-            newAliases = superNewAliases;
-        }
+        MultiPassAliasesCollector aliases = new MultiPassAliasesCollector();
+        aliases.add(this);
+        while (aliases.hasNew())
+            for (Alias newAlias : aliases.retrieveNewAliases())
+                newAlias.computeAliasesOnce(aliases);
         System.out.println("Alias.computeAliases(" + unode + ") = " + Join.join(", ", aliases));
-        return aliases;
+        return aliases.asSet();
     }
 }

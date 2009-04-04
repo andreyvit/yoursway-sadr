@@ -1,19 +1,18 @@
 package com.yoursway.sadr.python.analysis.lang.unodes.proxies;
 
 import java.util.Collection;
-import java.util.Set;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.engine.Analysis;
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public final class CallUnode extends Unode {
@@ -45,11 +44,6 @@ public final class CallUnode extends Unode {
     }
     
     @Override
-    public Punode punodize() {
-        return null;
-    }
-    
-    @Override
     public String toString() {
         return "#{" + call + "}";
     }
@@ -66,12 +60,13 @@ public final class CallUnode extends Unode {
     
     @Override
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
-        call.findRenames(punode, sc, dc, aliases);
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        call.findRenames(suffix, sc, dc, aliases);
     }
     
     @Override
-    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Suffix suffix, boolean reading) {
     }
     
 }

@@ -1,20 +1,17 @@
 package com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription;
 
 import java.util.Collection;
-import java.util.Set;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.lang.unodes.ChainableSuffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AbstractIndexableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.AnyIndexPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.UnknownIndexPunode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public final class UnknownIndexUnode extends AbstractIndexableUnode {
@@ -57,8 +54,11 @@ public final class UnknownIndexUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    public Punode punodize() {
-        return new UnknownIndexPunode(new HeadPunode(receiver));
+    @pausable
+    public void computeAliases(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        super.computeAliases(suffix, sc, dc, aliases);
+        receiver.computeAliases(new UnknownIndexSuffix(suffix), sc, dc, aliases);
     }
     
     @Override
@@ -68,16 +68,35 @@ public final class UnknownIndexUnode extends AbstractIndexableUnode {
     
     @Override
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
-        super.findRenames(punode, sc, dc, aliases);
-        receiver.findUnknownIndexRenames(punode, sc, dc, aliases);
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
+        super.findRenames(suffix, sc, dc, aliases);
+        receiver.findUnknownIndexRenames(suffix, sc, dc, aliases);
     }
     
     @Override
-    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
-        receiver.addGenericVariationsTo(alternatives, new AnyIndexPunode(punode), reading);
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Suffix suffix, boolean reading) {
+        receiver.addGenericVariationsTo(alternatives, new AnyIndexUnode.AnyIndexSuffix(suffix), reading);
         if (!reading)
-            receiver.addGenericVariationsTo(alternatives, new UnknownIndexPunode(punode), reading);
+            receiver.addGenericVariationsTo(alternatives, new UnknownIndexSuffix(suffix), reading);
+    }
+    
+    static class UnknownIndexSuffix extends ChainableSuffix {
+        
+        public UnknownIndexSuffix(Suffix suffix) {
+            super(suffix);
+        }
+        
+        @Override
+        public String thisSuffixToString() {
+            return "[?]";
+        }
+        
+        @Override
+        protected Unode appendThisSuffixTo(Unode replacementUnode) {
+            return new UnknownIndexUnode(replacementUnode);
+        }
+        
     }
     
 }

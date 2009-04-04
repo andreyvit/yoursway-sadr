@@ -5,14 +5,15 @@ import java.util.List;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
+import com.yoursway.sadr.python.analysis.aliasing.Alias;
+import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
+import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.types.FunctionType;
 import com.yoursway.sadr.python.analysis.objectmodel.types.PythonType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
@@ -95,9 +96,9 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     
     @Override
     @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc,
-            Collection<Alias> aliases) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
         Collection<PythonConstruct> returnedValues = getDecl().findReturnedValues();
-        PythonAnalHelpers.addRenamesForConstructs(punode, aliases, returnedValues, dc);
+        PythonAnalHelpers.addRenamesForConstructs(suffix, aliases, returnedValues, dc);
     }
 }
