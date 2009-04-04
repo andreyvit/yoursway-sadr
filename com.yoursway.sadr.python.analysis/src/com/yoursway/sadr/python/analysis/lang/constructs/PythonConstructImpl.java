@@ -83,15 +83,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+        if (obj == null || obj.getClass() != this.getClass())
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final PythonConstructImpl other = (PythonConstructImpl) obj;
-        //FIXME: Add root element comparison, to check nodes belong to the same tree!
-        return (node == other.node);
+        PythonConstructImpl<?> that = (PythonConstructImpl<?>) obj;
+        return this.node.equals(that.node);
     }
     
     public final PythonStaticContext staticContext() {

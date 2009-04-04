@@ -43,7 +43,6 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     private final List<ArgumentC> arguments;
     private final DeclaredArguments declaredArguments;
     
-    @SuppressWarnings("unchecked")
     MethodDeclarationC(PythonStaticContext sc, MethodDeclaration node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         body = wrap(node.getBody().getChilds(), this);
@@ -110,13 +109,11 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
         r.addAssignment(new VariableUnode(node.getName()), staticContext(), new SpecialValueC(
                 staticContext(), new PythonValueSet(new FunctionObject(this))));
         Collection<ArgumentProxyC> argumentProxies = new ArrayList<ArgumentProxyC>(arguments.size());
-        boolean isFirst = true;
         int index = 0;
         for (ArgumentC argument : arguments) {
             //            ASTNode initialization = argument.getInitialization();
             //            String key = argument.getName();
             argumentProxies.add(new ArgumentProxyC(this, this, argument, index++));
-            isFirst = false;
             //            if (argument.getStar() == PythonArgument.NOSTAR) {
             //                boolean required = initialization == null;
             //                PythonValue value = reader.getKwarg(key, required);

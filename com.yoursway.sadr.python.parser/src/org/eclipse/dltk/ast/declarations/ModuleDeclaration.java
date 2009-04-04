@@ -80,7 +80,8 @@ public class ModuleDeclaration extends ASTNode {
 		this.body.addStatement(statement);
 	}
 
-	public List getStatements() {
+	@SuppressWarnings("unchecked")
+    public List<ASTNode> getStatements() {
 		return this.body.getStatements();
 	}
 

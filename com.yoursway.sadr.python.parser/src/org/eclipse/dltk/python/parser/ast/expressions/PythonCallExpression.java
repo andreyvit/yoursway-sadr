@@ -88,10 +88,11 @@ public class PythonCallExpression extends Expression implements ExtendedVariable
         output.formatPrintLn(toString());
     }
     
+    @SuppressWarnings("unchecked")
     public List<PythonCallArgument> getArgumentsAsList() {
         if (arguments == null)
             return Collections.emptyList();
-        return arguments.getChilds();
+        return (List<PythonCallArgument>) (List<?>) arguments.getChilds();
     }
     
 }

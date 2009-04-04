@@ -9,7 +9,6 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.BigNumericLiteral;
 import org.eclipse.dltk.ast.expressions.Expression;
-import org.eclipse.dltk.ast.expressions.ExpressionList;
 import org.eclipse.dltk.ast.expressions.FloatNumericLiteral;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
@@ -44,6 +43,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonFunctionDecorator;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonImportExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonListForExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonSubscriptExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
@@ -130,20 +130,20 @@ public class PythonConstructFactory {
         if (node instanceof PythonArgument)
             return new ArgumentC(staticContext, (PythonArgument) node, parent);
         if (node instanceof PythonGlobalStatement)
-            return new GlobalC(staticContext, (PythonGlobalStatement) node,parent);
+            return new GlobalC(staticContext, (PythonGlobalStatement) node, parent);
         if (node instanceof ASTListNode || node instanceof PythonForStatement || node instanceof Block
                 || node instanceof EmptyStatement || node instanceof PythonTestListExpression
                 || node instanceof PythonImportExpression || node instanceof PythonAllImportExpression
                 || node instanceof PythonArgument || node instanceof PythonDelStatement
                 || node instanceof PythonFunctionDecorator || node instanceof PythonWithStatement
                 || node instanceof PythonRaiseStatement || node instanceof PythonTestListExpression
-                || node instanceof PythonVariableAccessExpression || node instanceof ExpressionList
-                || node instanceof PythonSubscriptExpression || node instanceof PythonWhileStatement
-                || node instanceof PythonYieldStatement || node instanceof PythonTryStatement
-                || node instanceof PythonExceptStatement || node instanceof ContinueStatement
-                || node instanceof PythonForListExpression || node instanceof BreakStatement
-                || node instanceof ExecStatement || node instanceof TryFinallyStatement
-                || node instanceof PythonAssertStatement) {
+                || node instanceof PythonVariableAccessExpression || node instanceof PythonListForExpression
+                || node instanceof PythonTestListExpression || node instanceof PythonSubscriptExpression
+                || node instanceof PythonWhileStatement || node instanceof PythonYieldStatement
+                || node instanceof PythonTryStatement || node instanceof PythonExceptStatement
+                || node instanceof ContinueStatement || node instanceof PythonForListExpression
+                || node instanceof BreakStatement || node instanceof ExecStatement
+                || node instanceof TryFinallyStatement || node instanceof PythonAssertStatement) {
             return new UnhandledC(staticContext, node, parent);
         }
         Bugs.bug(new ConstructNotFoundForNode(node));

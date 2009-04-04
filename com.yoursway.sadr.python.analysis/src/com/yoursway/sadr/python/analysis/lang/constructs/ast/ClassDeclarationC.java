@@ -35,7 +35,6 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     private final List<PythonConstruct> body;
     private final InstanceType instanceType;
     
-    @SuppressWarnings("unchecked")
     ClassDeclarationC(PythonStaticContext sc, PythonClassDeclaration node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         body = wrap(node.getBody().getChilds(), this);

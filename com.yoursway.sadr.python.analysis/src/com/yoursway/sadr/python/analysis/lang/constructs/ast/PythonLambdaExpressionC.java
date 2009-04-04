@@ -66,7 +66,6 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
         return "<lambda>";
     }
     
-    @SuppressWarnings("unchecked")
     public List<PythonArgument> getArguments() {
         return node.getArguments();
     }

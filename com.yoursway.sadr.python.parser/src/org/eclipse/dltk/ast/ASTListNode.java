@@ -38,7 +38,8 @@ public class ASTListNode extends ASTNode {
 		}
 	}
 
-	public List getChilds() {
+	@SuppressWarnings("unchecked")
+    public List<ASTNode> getChilds() {
 		return nodes;
 	}
 

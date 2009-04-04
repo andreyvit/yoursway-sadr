@@ -5,7 +5,6 @@ import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.StringValue;
 
 public class UnicodeType extends BaseStringType {
-    private static final long MAX_LENGTH = 1000000;
     
     //    
     //    public PythonValue __int__(RuntimeArguments args) throws PythonException {

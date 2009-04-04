@@ -15,6 +15,7 @@ import org.eclipse.dltk.ast.ASTVisitor;
 import org.eclipse.dltk.ast.DLTKToken;
 import org.eclipse.dltk.ast.expressions.ArgumentList;
 import org.eclipse.dltk.ast.expressions.Expression;
+import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonConstants;
 import org.eclipse.dltk.utils.CorePrinter;
 
@@ -35,9 +36,9 @@ public class PythonLambdaExpression extends Expression
 		this.fBodyExpressions = body;
 	}
 
-	public List getArguments( ) {
-
-		return this.fArguments.getChilds();
+	@SuppressWarnings("unchecked")
+    public List<PythonArgument> getArguments( ) {
+		return (List<PythonArgument>) (List<?>) this.fArguments.getChilds();
 	}
 
 	public Expression getBodyExpression( ) {
