@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.analysis.lang.unodes.literals;
 
-
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
@@ -17,12 +16,6 @@ public class ScalarLiteralUnode extends AbstractLiteralUnode {
         if (valueSet == null)
             throw new NullPointerException("valueSet is null");
         this.valueSet = valueSet;
-    }
-    
-    @Override
-    @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
-        return valueSet;
     }
     
     @Override
@@ -45,7 +38,8 @@ public class ScalarLiteralUnode extends AbstractLiteralUnode {
     
     @Override
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
     }
     
     @Override

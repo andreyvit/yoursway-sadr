@@ -27,12 +27,6 @@ public class ListLiteralUnode extends AbstractLiteralUnode {
     }
     
     @Override
-    @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
-        return new PythonValueSet(new ListValue());
-    }
-    
-    @Override
     public PythonValueSet calculateLiteralValue() {
         return new PythonValueSet(new ListValue());
     }
@@ -52,7 +46,8 @@ public class ListLiteralUnode extends AbstractLiteralUnode {
     
     @Override
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
+    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases) {
     }
     
     @Override
