@@ -5,7 +5,7 @@ import kilim.pausable;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ScalarLiteralUnode;
@@ -18,7 +18,7 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     private final boolean isUnicode;
     private final String value;
     
-    StringLiteralC(PythonStaticContext sc, StringLiteral node, PythonConstructImpl<?> parent) {
+    StringLiteralC(PythonLexicalContext sc, StringLiteral node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         
         String v = node.getValue();

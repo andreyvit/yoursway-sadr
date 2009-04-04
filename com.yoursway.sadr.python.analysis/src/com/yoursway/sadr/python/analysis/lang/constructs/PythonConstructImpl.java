@@ -1,6 +1,5 @@
 package com.yoursway.sadr.python.analysis.lang.constructs;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.yoursway.sadr.engine.util.Lists.filter;
 
 import java.util.ArrayList;
@@ -14,8 +13,8 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.google.common.base.Predicate;
 import com.yoursway.sadr.core.constructs.ControlFlowGraph;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
+import com.yoursway.sadr.python.analysis.context.lexical.scopes.PythonScope;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonConstructFactory;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
@@ -24,13 +23,13 @@ import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 public abstract class PythonConstructImpl<N extends ASTNode> implements PythonConstruct {
     
     protected final N node;
-    private final PythonStaticContext parentScope;
+    private final PythonLexicalContext parentScope;
     private List<PythonConstruct> children = Collections.emptyList();
-    private ControlFlowGraph<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> effectiveControlFlowGraph;
+    private ControlFlowGraph<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> effectiveControlFlowGraph;
+    private final PythonConstructImpl<?> parent;
     
-    public PythonConstructImpl(PythonStaticContext sc, N node, PythonConstructImpl<?> parent) {
-        if (sc == null)
-            sc = (PythonStaticContext) this;
+    public PythonConstructImpl(PythonLexicalContext sc, N node, PythonConstructImpl<?> parent) {
+        this.parent = parent;
         if (node == null)
             throw new NullPointerException("node is null");
         this.parentScope = sc;
@@ -43,6 +42,10 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         if (children.isEmpty())
             children = new ArrayList<PythonConstruct>();
         children.add(child);
+    }
+    
+    public PythonFileC fileC() {
+        return parent.fileC();
     }
     
     public N node() {
@@ -88,7 +91,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return this.node.equals(that.node);
     }
     
-    public final PythonStaticContext staticContext() {
+    public final PythonLexicalContext staticContext() {
         return parentScope;
     }
     
@@ -97,12 +100,8 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return node.toString();
     }
     
-    public PythonFileC fileC() {
-        return parentScope.fileC();
-    }
-    
     @pausable
-    public final ControlFlowGraph<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> calculateEffectiveControlFlowGraph() {
+    public final ControlFlowGraph<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> calculateEffectiveControlFlowGraph() {
         if (effectiveControlFlowGraph != null)
             return effectiveControlFlowGraph;
         else
@@ -110,7 +109,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     @pausable
-    protected ControlFlowGraph<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> doCalculateEffectiveControlFlowGraph() {
+    protected ControlFlowGraph<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> doCalculateEffectiveControlFlowGraph() {
         List<PythonConstruct> constructs = filter(enclosedConstructs(), NOT_METHOD);
         effectiveControlFlowGraph = ControlFlowGraph.create(constructs);
         return effectiveControlFlowGraph;
@@ -132,17 +131,17 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         return children;
     }
     
-    protected PythonConstruct wrap(ASTNode node, PythonStaticContext staticContext) {
+    protected PythonConstruct wrap(ASTNode node, PythonLexicalContext staticContext) {
         return PythonConstructFactory.wrap(node, staticContext, this);
     }
     
-    protected PythonConstruct wrapOrNull(ASTNode node, PythonStaticContext staticContext) {
+    protected PythonConstruct wrapOrNull(ASTNode node, PythonLexicalContext staticContext) {
         if (node == null)
             return null;
         return PythonConstructFactory.wrap(node, staticContext, this);
     }
     
-    protected List<PythonConstruct> wrap(List<ASTNode> node, PythonStaticContext staticContext) {
+    protected List<PythonConstruct> wrap(List<ASTNode> node, PythonLexicalContext staticContext) {
         return PythonConstructFactory.wrap(node, staticContext, this);
     }
     
@@ -151,10 +150,7 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
     }
     
     public List<PythonScope> currentScopes() {
-        final List<PythonScope> scopes = newArrayList();
-        for (PythonScope scope = staticContext(); scope != null; scope = scope.parentScope())
-            scopes.add(scope);
-        return scopes;
+        return staticContext().getScope().currentScopesIncludingSelf();
     }
     
 }

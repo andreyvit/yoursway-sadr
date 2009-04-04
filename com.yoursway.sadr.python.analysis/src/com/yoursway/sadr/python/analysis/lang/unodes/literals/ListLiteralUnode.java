@@ -9,7 +9,7 @@ import com.google.common.base.Join;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.objectmodel.values.ListValue;
@@ -46,13 +46,13 @@ public class ListLiteralUnode extends AbstractLiteralUnode {
     
     @Override
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
     }
     
     @Override
     @pausable
-    public void findIntegerIndexRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+    public void findIntegerIndexRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases, int index) {
         if (index < items.size())
             PythonAnalHelpers.addRenameForConstruct(suffix, aliases, items.get(index), dc);
@@ -60,7 +60,7 @@ public class ListLiteralUnode extends AbstractLiteralUnode {
     
     @Override
     @pausable
-    public void findUnknownIndexRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+    public void findUnknownIndexRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
         for (PythonConstruct item : items)
             PythonAnalHelpers.addRenameForConstruct(suffix, aliases, item, dc);

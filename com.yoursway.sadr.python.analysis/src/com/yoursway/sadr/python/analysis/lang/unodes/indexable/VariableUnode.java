@@ -8,7 +8,7 @@ import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -58,7 +58,7 @@ public class VariableUnode extends AbstractIndexableUnode {
     
     @Override
     @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet calculateValue(PythonLexicalContext sc, PythonDynamicContext dc) {
         return new Alias(this, sc, dc).queryIndexForValuesAssignedTo();
     }
     

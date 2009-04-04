@@ -5,7 +5,8 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
+import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
@@ -18,7 +19,7 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> implements Ind
     
     private final PythonConstruct expression;
     
-    ReturnC(PythonStaticContext sc, ReturnStatement node, PythonConstructImpl<?> parent) {
+    ReturnC(PythonLexicalContext sc, ReturnStatement node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         expression = wrap(node.getExpression(), sc);
     }
@@ -33,9 +34,9 @@ public class ReturnC extends PythonConstructImpl<ReturnStatement> implements Ind
     }
     
     public void actOnIndex(IndexRequest r) {
-        MethodDeclarationC methodC = staticContext().getParentMethodDeclarationC();
-        if (methodC != null)
-            r.addReturnedValue(methodC, expression);
+        MethodArea area = staticContext().getArea().getReturnableArea();
+        if (area != null)
+            r.addReturnedValue(area, expression);
     }
     
     public IndexNameWrappingStrategy createWrappingStrategy() {

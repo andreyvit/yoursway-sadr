@@ -6,7 +6,7 @@ import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.ArgumentProxyC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
@@ -25,7 +25,7 @@ public final class ArgumentProxyUnode extends Unode {
     
     @Override
     @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet calculateValue(PythonLexicalContext sc, PythonDynamicContext dc) {
         return arg.evaluateValue(dc);
     }
     
@@ -43,7 +43,7 @@ public final class ArgumentProxyUnode extends Unode {
     
     @Override
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
         arg.findRenames(suffix, sc, dc, aliases);
     }

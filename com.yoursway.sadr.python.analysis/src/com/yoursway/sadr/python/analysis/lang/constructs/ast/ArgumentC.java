@@ -6,7 +6,7 @@ import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -15,7 +15,7 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     
     private final PythonConstruct init;
     
-    ArgumentC(PythonStaticContext sc, PythonArgument node, PythonConstructImpl<?> parent) {
+    ArgumentC(PythonLexicalContext sc, PythonArgument node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         if(node.getName() == null)
             throw new AssertionError("node.getName() should be != null");

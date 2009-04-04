@@ -12,7 +12,7 @@ import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsRequestor;
@@ -84,7 +84,7 @@ public class AttributeUnode extends AbstractIndexableUnode {
     
     @Override
     @pausable
-    public void computeAliases(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+    public void computeAliases(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
         super.computeAliases(suffix, sc, dc, aliases);
         receiver.computeAliases(new AttributeSuffix(suffix, name), sc, dc, aliases);
@@ -92,7 +92,7 @@ public class AttributeUnode extends AbstractIndexableUnode {
     
     @Override
     @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet calculateValue(PythonLexicalContext sc, PythonDynamicContext dc) {
         // foo.bar
         // a) foo.bar = x
         //    boz.bar = x
@@ -125,14 +125,14 @@ public class AttributeUnode extends AbstractIndexableUnode {
     }
     
     @pausable
-    private PythonValueSet readFromTypeAndBind(PythonStaticContext sc, PythonDynamicContext dc) {
+    private PythonValueSet readFromTypeAndBind(PythonLexicalContext sc, PythonDynamicContext dc) {
         PythonValueSet foo = receiver.calculateValue(sc, dc);
         PythonValueSet result = foo.getAttrFromType(name, sc, dc);
         return result;
     }
     
     @pausable
-    private PythonValueSet findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(PythonStaticContext sc,
+    private PythonValueSet findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(PythonLexicalContext sc,
             PythonDynamicContext dc) {
         Collection<PythonConstruct> assignedValues = new ArrayList<PythonConstruct>();
         final List<AssignmentInfo> assignments = new ArrayList<AssignmentInfo>();

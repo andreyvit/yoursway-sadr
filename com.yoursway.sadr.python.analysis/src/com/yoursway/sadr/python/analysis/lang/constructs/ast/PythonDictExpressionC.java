@@ -5,7 +5,7 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonDictExpression;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -13,7 +13,7 @@ import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 public class PythonDictExpressionC extends PythonConstructImpl<PythonDictExpression> implements
         PythonConstruct {
     
-    public PythonDictExpressionC(PythonStaticContext sc, PythonDictExpression node,
+    public PythonDictExpressionC(PythonLexicalContext sc, PythonDictExpression node,
             PythonConstructImpl<?> parent) {
         super(sc, node, parent);
     }

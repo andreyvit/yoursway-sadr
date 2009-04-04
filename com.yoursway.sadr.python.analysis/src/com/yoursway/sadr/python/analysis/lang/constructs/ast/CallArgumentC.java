@@ -9,7 +9,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.ActualArgumentsBuilder;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.data.PassedKeywordArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.data.PassedPositionalArgumentInfo;
@@ -24,7 +24,7 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     
     private final PythonConstruct value;
     
-    public CallArgumentC(PythonStaticContext staticContext, PythonCallArgument node,
+    public CallArgumentC(PythonLexicalContext staticContext, PythonCallArgument node,
             PythonConstructImpl<?> parent) {
         super(staticContext, node, parent);
         if(node.getValue() == null)

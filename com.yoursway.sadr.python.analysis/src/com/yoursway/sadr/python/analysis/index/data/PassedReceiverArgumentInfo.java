@@ -4,7 +4,7 @@ package com.yoursway.sadr.python.analysis.index.data;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.FieldAccessC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
@@ -45,7 +45,7 @@ public final class PassedReceiverArgumentInfo extends PassedArgumentInfo {
     }
     
     @Override
-    protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
+    protected void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc, PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
     }
     
     @Override

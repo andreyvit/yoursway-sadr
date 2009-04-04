@@ -7,7 +7,7 @@ import kilim.pausable;
 import org.eclipse.dltk.ast.ASTNode;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
@@ -19,7 +19,7 @@ public abstract class ImportC<N extends ASTNode> extends PythonConstructImpl<N> 
     
     private final HashMap<String, ModuleValue> imports;
     
-    public ImportC(PythonStaticContext sc, N node, PythonConstructImpl<?> parent) {
+    public ImportC(PythonLexicalContext sc, N node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         imports = new HashMap<String, ModuleValue>();
     }

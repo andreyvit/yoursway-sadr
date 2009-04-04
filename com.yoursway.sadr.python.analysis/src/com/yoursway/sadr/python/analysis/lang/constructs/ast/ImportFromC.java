@@ -8,7 +8,7 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.PythonImportFromStatement;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -23,7 +23,7 @@ public class ImportFromC extends ImportC<PythonImportFromStatement> {
             return super.hasImport(variable);
     }
     
-    public ImportFromC(PythonStaticContext sc, PythonImportFromStatement node, PythonConstructImpl<?> parent) {
+    public ImportFromC(PythonLexicalContext sc, PythonImportFromStatement node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         Map<?, ?> importedAsNames = node.getImportedAsNames();
         String module = node.getImportModuleName();

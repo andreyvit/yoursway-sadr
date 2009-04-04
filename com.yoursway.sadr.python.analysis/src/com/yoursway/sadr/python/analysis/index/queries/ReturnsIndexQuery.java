@@ -3,6 +3,7 @@ package com.yoursway.sadr.python.analysis.index.queries;
 import static java.lang.String.format;
 
 import com.yoursway.sadr.engine.incremental.SourceUnit;
+import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
 
 public class ReturnsIndexQuery implements DtlIndexQuery<ReturnsRequestor> {
@@ -19,8 +20,8 @@ public class ReturnsIndexQuery implements DtlIndexQuery<ReturnsRequestor> {
         visitor.acceptReturnsQuery(this, requestor);
     }
     
-    public MethodDeclarationC getMethodC() {
-        return methodC;
+    public MethodArea getArea() {
+        return (MethodArea) methodC.getInnerLC().getArea();
     }
     
     @Override

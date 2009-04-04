@@ -5,7 +5,7 @@ import java.util.Collection;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
@@ -29,7 +29,7 @@ public abstract class AbstractLiteralUnode extends Unode {
     
     @Override
     @pausable
-    public final PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
+    public final PythonValueSet calculateValue(PythonLexicalContext sc, PythonDynamicContext dc) {
         return calculateLiteralValue();
     }
     

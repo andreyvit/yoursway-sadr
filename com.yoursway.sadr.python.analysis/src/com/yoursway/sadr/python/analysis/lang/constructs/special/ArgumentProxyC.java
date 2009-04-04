@@ -8,7 +8,7 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
@@ -22,7 +22,7 @@ public class ArgumentProxyC extends PythonConstructImpl<ASTNode> {
     private final ArgumentC argument;
     private final int index;
     
-    public ArgumentProxyC(PythonStaticContext sc, MethodDeclarationC methodC, ArgumentC argument, int index) {
+    public ArgumentProxyC(PythonLexicalContext sc, MethodDeclarationC methodC, ArgumentC argument, int index) {
         super(sc, new DummyAstNode(), null);
         if (methodC == null)
             throw new NullPointerException("methodC is null");
@@ -43,7 +43,7 @@ public class ArgumentProxyC extends PythonConstructImpl<ASTNode> {
     }
     
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
         Arguments arguments = dc.argumentsOfTopCall();
         arguments.findRenames(suffix, sc, dc, aliases, index, argument.getName(), argument.getInit());
     }

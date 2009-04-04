@@ -14,6 +14,7 @@ import com.yoursway.sadr.engine.incremental.index.IndexMemento;
 import com.yoursway.sadr.engine.incremental.index.IndexQuery;
 import com.yoursway.sadr.engine.util.AbstractMultiMap;
 import com.yoursway.sadr.engine.util.ArrayListHashMultiMap;
+import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
 import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsIndexQuery;
@@ -25,7 +26,6 @@ import com.yoursway.sadr.python.analysis.index.queries.PassedArgumentsRequestor;
 import com.yoursway.sadr.python.analysis.index.queries.ReturnsRequestor;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
@@ -35,7 +35,7 @@ class PythonFileIndexMemento implements IndexMemento {
     
     final AbstractMultiMap<Unode, PassedArgumentInfo> passedArguments = new ArrayListHashMultiMap<Unode, PassedArgumentInfo>();
     
-    final AbstractMultiMap<MethodDeclarationC, PythonConstruct> returns = new ArrayListHashMultiMap<MethodDeclarationC, PythonConstruct>();
+    final AbstractMultiMap<MethodArea, PythonConstruct> returns = new ArrayListHashMultiMap<MethodArea, PythonConstruct>();
     
     final AbstractMultiMap<String, AssignmentInfo> attributeAssignments = new ArrayListHashMultiMap<String, AssignmentInfo>();
     
@@ -119,8 +119,8 @@ class PythonFileIndexMemento implements IndexMemento {
             requestor.assignment(info, scope);
     }
     
-    public void findReturns(MethodDeclarationC methodC, ReturnsRequestor requestor) {
-        for (PythonConstruct returnedValue : returns.get(methodC))
+    public void findReturns(MethodArea area, ReturnsRequestor requestor) {
+        for (PythonConstruct returnedValue : returns.get(area))
             requestor.returnedValue(returnedValue);
     }
     

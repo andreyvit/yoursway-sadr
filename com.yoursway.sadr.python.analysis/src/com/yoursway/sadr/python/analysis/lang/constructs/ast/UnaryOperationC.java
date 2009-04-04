@@ -2,13 +2,13 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 
 public class UnaryOperationC extends UnaryC implements PythonConstruct {
     
-    UnaryOperationC(PythonStaticContext sc, UnaryExpression node, PythonConstructImpl<?> parent) {
+    UnaryOperationC(PythonLexicalContext sc, UnaryExpression node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
     }
     

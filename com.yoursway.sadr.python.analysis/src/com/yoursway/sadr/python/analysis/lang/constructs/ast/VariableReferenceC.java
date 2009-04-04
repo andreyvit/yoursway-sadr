@@ -5,7 +5,7 @@ import kilim.pausable;
 import org.eclipse.dltk.ast.references.VariableReference;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
@@ -13,7 +13,7 @@ import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     
-    VariableReferenceC(PythonStaticContext sc, VariableReference node, PythonConstructImpl<?> parent) {
+    VariableReferenceC(PythonLexicalContext sc, VariableReference node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
     }
     

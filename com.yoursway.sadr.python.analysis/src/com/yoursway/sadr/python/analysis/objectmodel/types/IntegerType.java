@@ -6,7 +6,7 @@ import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.IntegerLiteralC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.values.IntegerValue;
@@ -108,7 +108,7 @@ public class IntegerType extends NumericType {
     
     @Override
     @pausable
-    public PythonValueSet getAttr(String name, PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet getAttr(String name, PythonLexicalContext sc, PythonDynamicContext dc) {
         if ("__add__".equals(name))
             return new PythonValueSet(new BuiltinFunctionObject("integeradd") {
                 @Override

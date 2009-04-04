@@ -15,7 +15,7 @@ import com.yoursway.sadr.blocks.foundation.values.Value;
 import com.yoursway.sadr.core.IValueInfo;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
@@ -140,7 +140,7 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     }
     
     @pausable
-    public PythonValueSet getAttrFromType(String name, PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet getAttrFromType(String name, PythonLexicalContext sc, PythonDynamicContext dc) {
         PythonValueSetBuilder builder = newBuilder();
         for (PythonValue value : this)
             value.getAttrFromType(name, sc, dc, builder);
@@ -186,7 +186,7 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
     }
     
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
         for (PythonValue value : this)
             value.findRenames(suffix, sc, dc, aliases);

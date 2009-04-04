@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.Comparison;
 
@@ -13,7 +13,7 @@ public class BinaryComparisonC extends BinaryC {
     
     private final Comparison comparison;
     
-    BinaryComparisonC(PythonStaticContext sc, BinaryExpression node, PythonConstructImpl<?> parent) {
+    BinaryComparisonC(PythonLexicalContext sc, BinaryExpression node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         this.comparison = parseComparison(node.getOperator());
     }

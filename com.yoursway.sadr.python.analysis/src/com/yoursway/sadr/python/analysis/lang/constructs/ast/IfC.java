@@ -7,7 +7,7 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
@@ -21,7 +21,7 @@ public class IfC extends PythonConstructImpl<IfStatement> {
     private final List<PythonConstruct> elseBlock;
     private final PythonConstruct condition;
     
-    IfC(PythonStaticContext sc, IfStatement node, PythonConstructImpl<?> parent) {
+    IfC(PythonLexicalContext sc, IfStatement node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         condition = wrap(node.getCondition(), sc);
         thenBlock = wrap(node.getSaneThen(), sc);

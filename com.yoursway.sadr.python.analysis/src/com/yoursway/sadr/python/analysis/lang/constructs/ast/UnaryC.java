@@ -9,7 +9,7 @@ import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -36,7 +36,7 @@ public class UnaryC extends PythonConstructImpl<UnaryExpression> {
         return oplist.containsKey(name);
     }
     
-    UnaryC(PythonStaticContext sc, UnaryExpression node, PythonConstructImpl<?> parent) {
+    UnaryC(PythonLexicalContext sc, UnaryExpression node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         if (node.getChilds().size() != 1) {
             throw new IllegalArgumentException();

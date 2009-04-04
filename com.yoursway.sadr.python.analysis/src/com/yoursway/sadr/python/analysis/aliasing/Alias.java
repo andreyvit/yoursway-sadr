@@ -12,8 +12,8 @@ import com.google.common.collect.Maps;
 import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
+import com.yoursway.sadr.python.analysis.context.lexical.scopes.PythonScope;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsIndexQuery;
@@ -30,28 +30,28 @@ import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 public final class Alias {
     
     private final Unode unode;
-    private final PythonScope sc;
     private final PythonDynamicContext dc;
+    private final PythonLexicalContext lc;
     
-    public Alias(Unode unode, PythonScope sc, PythonDynamicContext dc) {
+    public Alias(Unode unode, PythonLexicalContext lc, PythonDynamicContext dc) {
         if (unode == null)
             throw new NullPointerException("unode is null");
-        if (sc == null)
-            throw new NullPointerException("sc is null");
+        if (lc == null)
+            throw new NullPointerException("lc is null");
         if (dc == null)
             throw new NullPointerException("dc is null");
         this.unode = unode;
-        this.sc = sc;
+        this.lc = lc;
         this.dc = dc;
     }
     
     @pausable
     public PythonValueSet calculateValue(PythonDynamicContext dc) {
-        return unode.calculateValue(sc.scopeContext(), dc);
+        return unode.calculateValue(lc, dc);
     }
     
-    public PythonStaticContext getStaticContext() {
-        return sc.scopeContext();
+    public PythonLexicalContext getStaticContext() {
+        return lc;
     }
     
     public PythonDynamicContext getDynamicContext() {
@@ -64,14 +64,14 @@ public final class Alias {
     
     @Override
     public String toString() {
-        return unode + " @" + sc;
+        return unode + " @" + lc;
     }
     
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((sc == null) ? 0 : sc.hashCode());
+        result = prime * result + ((lc == null) ? 0 : lc.hashCode());
         result = prime * result + ((unode == null) ? 0 : unode.hashCode());
         return result;
     }
@@ -85,10 +85,10 @@ public final class Alias {
         if (getClass() != obj.getClass())
             return false;
         Alias other = (Alias) obj;
-        if (sc == null) {
-            if (other.sc != null)
+        if (lc == null) {
+            if (other.lc != null)
                 return false;
-        } else if (!sc.equals(other.sc))
+        } else if (!lc.equals(other.lc))
             return false;
         if (unode == null) {
             if (other.unode != null)
@@ -137,11 +137,11 @@ public final class Alias {
         final Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope = Maps.newHashMap();
         AssignmentsRequestor requestor = new AssignmentsRequestor() {
             public void assignment(PythonConstruct rhs, PythonFileC fileC) {
-                PythonStaticContext sc = rhs.staticContext();
+                PythonLexicalContext sc = rhs.staticContext();
                 Collection<PythonConstruct> result = assignmentsByScope.get(sc);
                 if (result == null) {
                     result = new ArrayList<PythonConstruct>();
-                    assignmentsByScope.put(sc, result);
+                    assignmentsByScope.put(sc.getScope(), result);
                 }
                 result.add(rhs);
             }
@@ -159,7 +159,7 @@ public final class Alias {
         if (variable == null)
             throw new IllegalArgumentException(
                     "Complex expressions are awful candidates for alias calculation");
-        PythonScope definingScope = sc.findDefiningScope(variable.getName());
+        PythonScope definingScope = lc.getScope().findDefiningScope(variable.getName());
         Collection<PythonConstruct> result = new ArrayList<PythonConstruct>();
         for (Map.Entry<PythonScope, Collection<PythonConstruct>> entry : assignmentsByScope.entrySet())
             if (definingScope == entry.getKey().findDefiningScope(variable.getName()))
@@ -169,7 +169,7 @@ public final class Alias {
     
     @pausable
     private void computeAliasesOnce(AliasConsumer aliases) {
-        unode.computeAliases(Suffix.EMPTY, sc.scopeContext(), dc, aliases);
+        unode.computeAliases(Suffix.EMPTY, lc, dc, aliases);
     }
     
     @pausable

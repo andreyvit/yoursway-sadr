@@ -13,24 +13,26 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
+import com.yoursway.sadr.python.analysis.context.lexical.scopes.LambdaScope;
 import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
-public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpression> implements
+public class PythonLambdaExpressionC extends PythonConstructImpl<PythonLambdaExpression> implements
         CallableDeclaration {
     
     private final PythonConstruct body;
     private final List<ArgumentC> arguments;
     private final DeclaredArguments declaredArguments;
+    private final PythonLexicalContext innerLC;
     
-    public PythonLambdaExpressionC(PythonStaticContext sc, PythonLambdaExpression node,
+    public PythonLambdaExpressionC(PythonLexicalContext sc, PythonLambdaExpression node,
             PythonConstructImpl<?> parent) {
         super(sc, node, parent);
+        innerLC = sc.with(new LambdaScope(sc.getScope()));
         body = wrap(node.getBodyExpression(), sc);
         this.arguments = wrapArguments(node);
         this.declaredArguments = createDeclaredArguments();
@@ -40,7 +42,7 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
         List<PythonArgument> args = node.getArguments();
         List<ArgumentC> arguments = new ArrayList<ArgumentC>(args.size());
         for (PythonArgument arg : args)
-            arguments.add((ArgumentC) wrap(arg, this));
+            arguments.add((ArgumentC) wrap(arg, innerLC));
         return arguments;
     }
     
@@ -60,7 +62,6 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
         return "Lambda";
     }
     
-    @Override
     public String name() {
         return "<lambda>";
     }
@@ -81,6 +82,10 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
     @pausable
     public Collection<PythonConstruct> findReturnedValues() {
         return Collections.singleton(body);
+    }
+    
+    public PythonLexicalContext getInnerLC() {
+        return innerLC;
     }
     
 }

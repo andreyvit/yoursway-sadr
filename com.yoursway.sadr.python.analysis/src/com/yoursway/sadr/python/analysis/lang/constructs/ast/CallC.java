@@ -15,7 +15,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.CallSiteDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.ActualArgumentsBuilder;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
@@ -36,14 +36,14 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     
     private final Arguments arguments;
     
-    CallC(PythonStaticContext sc, PythonCallExpression node, PythonConstructImpl<?> parent) {
+    CallC(PythonLexicalContext sc, PythonCallExpression node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         this.callable = wrap(node.getReceiver(), sc);
         this.args = wrapArguments(sc, node);
         this.arguments = buildArguments();
     }
     
-    private List<CallArgumentC> wrapArguments(PythonStaticContext sc, PythonCallExpression node) {
+    private List<CallArgumentC> wrapArguments(PythonLexicalContext sc, PythonCallExpression node) {
         List<CallArgumentC> args = new ArrayList<CallArgumentC>();
         for (PythonCallArgument arg : node.getArgumentsAsList())
             args.add(new CallArgumentC(sc, arg, this));
@@ -125,7 +125,7 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     }
     
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc, AliasConsumer aliases) {
         int size = dc.callStackSize();
         if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
             return;

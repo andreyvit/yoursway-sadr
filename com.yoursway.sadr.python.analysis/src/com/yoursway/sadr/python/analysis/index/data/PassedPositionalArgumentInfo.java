@@ -4,7 +4,7 @@ import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
@@ -53,11 +53,11 @@ public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     }
     
     @Override
-    protected void computeAliases(DeclaredArguments declaredArguments, PythonScope scope,
+    protected void computeAliases(DeclaredArguments declaredArguments, PythonLexicalContext lc,
             PythonDynamicContext dc, Suffix suffix, AliasConsumer aliases) {
         ArgumentC arg = declaredArguments.findPositional(index);
         if (arg != null)
-            aliases.add(new Alias(suffix.appendTo(new VariableUnode(arg.getName())), scope, dc));
+            aliases.add(new Alias(suffix.appendTo(new VariableUnode(arg.getName())), lc, dc));
     }
     
     @Override

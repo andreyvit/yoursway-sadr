@@ -7,7 +7,7 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
@@ -22,7 +22,7 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
     
     //    private final List<Unode> itemUnodes;
     
-    public PythonListExpressionC(PythonStaticContext sc, PythonListExpression node,
+    public PythonListExpressionC(PythonLexicalContext sc, PythonListExpression node,
             PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         items = wrap(node.getChilds(), sc);

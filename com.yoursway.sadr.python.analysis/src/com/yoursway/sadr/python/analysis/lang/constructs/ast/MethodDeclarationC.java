@@ -16,7 +16,9 @@ import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
+import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
+import com.yoursway.sadr.python.analysis.context.lexical.scopes.MethodScope;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.queries.ReturnsIndexQuery;
@@ -26,25 +28,25 @@ import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
-import com.yoursway.sadr.python.analysis.lang.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.ArgumentProxyC;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.SpecialValueC;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FunctionObject;
-import com.yoursway.sadr.python.analysis.objectmodel.values.InstanceValue;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
-public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> implements PythonDeclaration,
+public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> implements PythonDeclaration,
         CallableDeclaration, IndexAffector {
     
     private final Map<String, PythonConstruct> inits;
     private final List<PythonConstruct> body;
     private final List<ArgumentC> arguments;
     private final DeclaredArguments declaredArguments;
+    private final PythonLexicalContext innerLC;
     
-    MethodDeclarationC(PythonStaticContext sc, MethodDeclaration node, PythonConstructImpl<?> parent) {
+    MethodDeclarationC(PythonLexicalContext sc, MethodDeclaration node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
-        body = wrap(node.getBody().getChilds(), this);
+        innerLC = sc.with(new MethodScope(sc.getScope())).with(new MethodArea());
+        body = wrap(node.getBody().getChilds(), innerLC);
         inits = computeInitializers();
         body.isEmpty();
         this.arguments = wrapArguments(node);
@@ -66,7 +68,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
         List<PythonArgument> args = node.getArguments();
         List<ArgumentC> arguments = new ArrayList<ArgumentC>(args.size());
         for (PythonArgument arg : args)
-            arguments.add((ArgumentC) wrap(arg, this));
+            arguments.add((ArgumentC) wrap(arg, innerLC));
         return arguments;
     }
     
@@ -94,7 +96,6 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
         return "Method " + this.name();
     }
     
-    @Override
     public String name() {
         return this.node.getName();
     }
@@ -112,7 +113,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
         for (ArgumentC argument : arguments) {
             //            ASTNode initialization = argument.getInitialization();
             //            String key = argument.getName();
-            argumentProxies.add(new ArgumentProxyC(this, this, argument, index++));
+            argumentProxies.add(new ArgumentProxyC(innerLC, this, argument, index++));
             //            if (argument.getStar() == PythonArgument.NOSTAR) {
             //                boolean required = initialization == null;
             //                PythonValue value = reader.getKwarg(key, required);
@@ -127,7 +128,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
             //            
         }
         for (ArgumentProxyC proxy : argumentProxies)
-            r.addAssignmentWithoutWrapping(new VariableUnode(proxy.getName()), this, proxy);
+            r.addAssignmentWithoutWrapping(new VariableUnode(proxy.getName()), innerLC, proxy);
     }
     
     @pausable
@@ -141,22 +142,21 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
         return result;
     }
     
-    @Override
-    public MethodDeclarationC getParentMethodDeclarationC() {
-        return this;
-    }
-    
     public IndexNameWrappingStrategy createWrappingStrategy() {
         return IndexNameWrappingStrategy.NULL;
     }
     
-    public PythonValueSet calculateSelf() {
-        PythonStaticContext sc = staticContext();
-        if (sc instanceof ClassDeclarationC) {
-            ClassDeclarationC cdc = (ClassDeclarationC) sc;
-            return new PythonValueSet(new InstanceValue(cdc.getInstanceType()));
-        }
-        return PythonValueSet.EMPTY;
+    public PythonLexicalContext getInnerLC() {
+        return innerLC;
     }
+    
+    //    public PythonValueSet calculateSelf() {
+    //        PythonLexicalContext sc = staticContext();
+    //        if (sc instanceof ClassDeclarationC) {
+    //            ClassDeclarationC cdc = (ClassDeclarationC) sc;
+    //            return new PythonValueSet(new InstanceValue(cdc.getInstanceType()));
+    //        }
+    //        return PythonValueSet.EMPTY;
+    //    }
     
 }

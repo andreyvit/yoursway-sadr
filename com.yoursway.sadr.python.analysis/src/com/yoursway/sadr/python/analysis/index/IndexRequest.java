@@ -10,20 +10,20 @@ import org.eclipse.dltk.ast.ASTNode;
 import com.yoursway.sadr.core.constructs.ConstructVisitor;
 import com.yoursway.sadr.core.constructs.Request;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
+import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
+import com.yoursway.sadr.python.analysis.context.lexical.scopes.PythonScope;
 import com.yoursway.sadr.python.analysis.index.data.AssignmentInfo;
 import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.utils.bugs.Bugs;
 
 public class IndexRequest implements
-        Request<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
+        Request<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> {
     
     private final IndexNameWrappingStrategy wrappingStrategy;
     private final PythonFileIndexMemento memento;
@@ -35,6 +35,10 @@ public class IndexRequest implements
             throw new NullPointerException("wrappingStrategy is null");
         this.memento = memento;
         this.wrappingStrategy = wrappingStrategy;
+    }
+    
+    public void addAssignmentWithoutWrapping(Unode lhs, PythonLexicalContext lhsLc, PythonConstruct rhs) {
+        addAssignment(lhs, lhsLc.getScope(), rhs);
     }
     
     public void addAssignmentWithoutWrapping(Unode lhs, PythonScope lhsScope, PythonConstruct rhs) {
@@ -63,6 +67,10 @@ public class IndexRequest implements
                 lhsScope.addLocalVariable(variable.getName());
     }
     
+    public void addAssignment(Unode lhs, PythonLexicalContext lc, PythonConstruct rhs) {
+        addAssignment(lhs, lc.getScope(), rhs);
+    }
+    
     public void addAssignment(Unode lhs, PythonScope lhsScope, PythonConstruct rhs) {
         if (lhs == null)
             throw new NullPointerException("lhs is null");
@@ -85,19 +93,19 @@ public class IndexRequest implements
         }
     }
     
-    public void addReturnedValue(MethodDeclarationC methodC, PythonConstruct value) {
-        if (methodC == null)
+    public void addReturnedValue(MethodArea area, PythonConstruct value) {
+        if (area == null)
             throw new NullPointerException("methodC is null");
         if (value == null)
             throw new NullPointerException("value is null");
-        memento.returns.put(methodC, value);
+        memento.returns.put(area, value);
     }
     
     public void leave() {
     }
     
     @pausable
-    public ConstructVisitor<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> enter(
+    public ConstructVisitor<PythonConstruct, PythonLexicalContext, PythonDynamicContext, ASTNode> enter(
             PythonConstruct construct) {
         if (construct == null)
             throw new NullPointerException("construct is null");

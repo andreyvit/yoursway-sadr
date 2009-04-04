@@ -57,7 +57,7 @@ import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ReturnStatement;
 import org.eclipse.dltk.python.parser.ast.statements.TryFinallyStatement;
 
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.Comparison;
@@ -66,7 +66,7 @@ import com.yoursway.utils.bugs.Bugs;
 
 public class PythonConstructFactory {
     
-    public static List<PythonConstruct> wrap(List<ASTNode> enclosedNodes, PythonStaticContext staticContext,
+    public static List<PythonConstruct> wrap(List<ASTNode> enclosedNodes, PythonLexicalContext staticContext,
             PythonConstructImpl<?> parent) {
         ArrayList<PythonConstruct> list = new ArrayList<PythonConstruct>();
         if (enclosedNodes != null)
@@ -77,7 +77,7 @@ public class PythonConstructFactory {
         return list;
     }
     
-    public static PythonConstruct wrap(ASTNode node, PythonStaticContext staticContext,
+    public static PythonConstruct wrap(ASTNode node, PythonLexicalContext staticContext,
             PythonConstructImpl<?> parent) {
         if (node instanceof ModuleDeclaration)
             throw new RuntimeException("ModuleDeclaration cannot be wrapped with wrap()");
@@ -150,7 +150,7 @@ public class PythonConstructFactory {
         return new UnhandledC(staticContext, node, parent);
     }
     
-    private static PythonConstruct wrapBinaryExpression(PythonStaticContext sc, BinaryExpression node,
+    private static PythonConstruct wrapBinaryExpression(PythonLexicalContext sc, BinaryExpression node,
             PythonConstructImpl<?> parent) {
         String operator = node.getOperator();
         if ("+".equals(operator)) {
@@ -171,7 +171,7 @@ public class PythonConstructFactory {
         return new UnhandledC(sc, node, parent);
     }
     
-    private static PythonConstruct wrapUnaryExpression(PythonStaticContext sc, UnaryExpression node,
+    private static PythonConstruct wrapUnaryExpression(PythonLexicalContext sc, UnaryExpression node,
             PythonConstructImpl<?> parent) {
         String operator = node.getOperator();
         if (UnaryOperationC.isUnaryOperation(operator))

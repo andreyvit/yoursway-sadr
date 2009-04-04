@@ -11,7 +11,7 @@ import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ClassDeclarationC;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
@@ -74,7 +74,7 @@ public abstract class PythonType extends PythonValue implements Type {
     }
     
     @pausable
-    public PythonValueSet getAttr(String name, PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet getAttr(String name, PythonLexicalContext sc, PythonDynamicContext dc) {
         return PythonValueSet.EMPTY;
     }
     

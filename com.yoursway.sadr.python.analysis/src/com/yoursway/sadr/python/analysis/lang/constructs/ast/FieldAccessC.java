@@ -5,7 +5,7 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.data.PassedReceiverArgumentInfo;
@@ -22,7 +22,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     private final PythonConstruct receiver;
     private final VariableReferenceC variable;
     
-    FieldAccessC(PythonStaticContext sc, PythonVariableAccessExpression node, PythonConstructImpl<?> parent) {
+    FieldAccessC(PythonLexicalContext sc, PythonVariableAccessExpression node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         this.receiver = wrap(node.getReceiver(), sc);
         this.variable = (VariableReferenceC) wrap(node.variable(), sc);

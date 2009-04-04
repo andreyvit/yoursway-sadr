@@ -5,9 +5,9 @@ import java.util.Collection;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 
-public interface CallableDeclaration extends PythonScope, PythonConstruct {
+public interface CallableDeclaration extends PythonConstruct {
     
     String name();
     
@@ -17,5 +17,7 @@ public interface CallableDeclaration extends PythonScope, PythonConstruct {
     Collection<PythonConstruct> findReturnedValues();
     
     DeclaredArguments getDeclaredArguments();
+    
+    PythonLexicalContext getInnerLC();
     
 }

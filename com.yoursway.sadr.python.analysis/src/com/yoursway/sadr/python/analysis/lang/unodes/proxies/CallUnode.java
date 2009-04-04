@@ -7,7 +7,7 @@ import kilim.pausable;
 import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
@@ -27,7 +27,7 @@ public final class CallUnode extends Unode {
     
     @Override
     @pausable
-    public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet calculateValue(PythonLexicalContext sc, PythonDynamicContext dc) {
         return Analysis.evaluate(new ExpressionValueGoal(call, dc));
     }
     
@@ -60,7 +60,7 @@ public final class CallUnode extends Unode {
     
     @Override
     @pausable
-    public void findRenames(Suffix suffix, PythonStaticContext sc, PythonDynamicContext dc,
+    public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
         call.findRenames(suffix, sc, dc, aliases);
     }

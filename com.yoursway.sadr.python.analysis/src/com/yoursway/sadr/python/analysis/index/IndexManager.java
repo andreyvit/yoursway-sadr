@@ -8,6 +8,7 @@ import kilim.pausable;
 import com.yoursway.sadr.engine.incremental.SourceUnit;
 import com.yoursway.sadr.engine.incremental.index.IndexMemento;
 import com.yoursway.sadr.engine.incremental.index.IndexQuery;
+import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsRequestor;
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsIndexQuery;
@@ -20,7 +21,6 @@ import com.yoursway.sadr.python.analysis.index.queries.ReturnsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.ReturnsRequestor;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonRootConstruct;
-import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
@@ -107,8 +107,8 @@ public class IndexManager {
             memento.findAssignments(name, requestor, fileC);
         }
         
-        public void findReturns(MethodDeclarationC methodC, ReturnsRequestor requestor) {
-            memento.findReturns(methodC, requestor);
+        public void findReturns(MethodArea area, ReturnsRequestor requestor) {
+            memento.findReturns(area, requestor);
         }
         
         public void findAttributeAssignments(String attributeName, AttributeAssignmentsRequestor requestor) {
@@ -135,7 +135,7 @@ public class IndexManager {
                 public void acceptReturnsQuery(ReturnsIndexQuery query, ReturnsRequestor requestor) {
                     PythonFileIndexManager fileIndex = sourceUnitsTofiles.get(query.localSourceUnit());
                     if (fileIndex != null)
-                        fileIndex.index().findReturns(query.getMethodC(), requestor);
+                        fileIndex.index().findReturns(query.getArea(), requestor);
                 }
                 
                 public void acceptAttributeAssignmentsQuery(AttributeAssignmentsIndexQuery query,

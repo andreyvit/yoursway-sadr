@@ -5,7 +5,7 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
 import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
@@ -19,7 +19,7 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
     
     private final PythonConstruct lhs, rhs;
     
-    AssignmentC(PythonStaticContext sc, Assignment node, PythonConstructImpl<?> parent) {
+    AssignmentC(PythonLexicalContext sc, Assignment node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         if (node.getLeft() == null)
             throw new IllegalArgumentException("node.getLeft() should be not null");

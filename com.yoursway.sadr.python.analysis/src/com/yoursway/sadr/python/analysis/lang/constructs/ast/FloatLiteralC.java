@@ -5,14 +5,14 @@ import kilim.pausable;
 import org.eclipse.dltk.ast.expressions.FloatNumericLiteral;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.objectmodel.types.FloatType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class FloatLiteralC extends PythonConstructImpl<FloatNumericLiteral> {
     
-    FloatLiteralC(PythonStaticContext sc, FloatNumericLiteral node, PythonConstructImpl<?> parent) {
+    FloatLiteralC(PythonLexicalContext sc, FloatNumericLiteral node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
     }
     

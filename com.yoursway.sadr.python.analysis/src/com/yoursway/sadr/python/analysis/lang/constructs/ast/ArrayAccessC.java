@@ -6,7 +6,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonArrayAccessExpressio
 import org.eclipse.dltk.python.parser.ast.expressions.PythonSubscriptExpression;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
@@ -21,7 +21,7 @@ public class ArrayAccessC extends PythonConstructImpl<PythonArrayAccessExpressio
     private final PythonConstruct sliceEnd;
     private final PythonConstruct sliceStep;
     
-    ArrayAccessC(PythonStaticContext sc, PythonArrayAccessExpression node, PythonConstructImpl<?> parent) {
+    ArrayAccessC(PythonLexicalContext sc, PythonArrayAccessExpression node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
         array = wrap(node.getArray(), sc);
         PythonSubscriptExpression subscript = (PythonSubscriptExpression) node.getIndex();

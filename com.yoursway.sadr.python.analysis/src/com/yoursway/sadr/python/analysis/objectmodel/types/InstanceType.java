@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ClassDeclarationC;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
@@ -56,7 +56,7 @@ public class InstanceType extends PythonType implements CallableObject {
     
     @Override
     @pausable
-    public PythonValueSet getAttr(String attrName, PythonStaticContext sc, PythonDynamicContext dc) {
+    public PythonValueSet getAttr(String attrName, PythonLexicalContext sc, PythonDynamicContext dc) {
         System.out.println("InstanceType.getAttr(" + name() + ", " + attrName + ")");
         return new AttributeUnode(new VariableUnode(name()), attrName).calculateValue(sc, dc);
     }
