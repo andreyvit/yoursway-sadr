@@ -6,7 +6,6 @@ import java.util.Set;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.Alias;
-import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.AnyIndexPunode;
@@ -32,12 +31,6 @@ public class LiteralIntegerIndexUnode extends AbstractIndexableUnode {
     @pausable
     public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
         return trackAssignmentsAndRenames(sc, dc);
-    }
-    
-    @pausable
-    private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc) {
-        Set<Alias> aliases = PythonAnalHelpers.computeAliases(new Alias(this, sc, dc));
-        return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases);
     }
     
     @Override

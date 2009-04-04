@@ -5,12 +5,10 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import kilim.pausable;
 
 import com.yoursway.sadr.engine.Analysis;
-import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -127,12 +125,6 @@ public class AttributeUnode extends AbstractIndexableUnode {
         PythonValueSet foo = receiver.calculateValue(sc, dc);
         PythonValueSet result = foo.getAttrFromType(name, sc, dc);
         return result;
-    }
-    
-    @pausable
-    private PythonValueSet trackAssignmentsAndRenames(PythonStaticContext sc, PythonDynamicContext dc) {
-        Set<Alias> aliases = PythonAnalHelpers.computeAliases(new Alias(this, sc, dc));
-        return PythonAnalHelpers.queryIndexForValuesAssignedTo(aliases);
     }
     
     @pausable

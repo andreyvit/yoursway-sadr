@@ -7,7 +7,6 @@ import java.util.Collection;
 import kilim.pausable;
 
 import com.yoursway.sadr.python.analysis.Alias;
-import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
@@ -64,7 +63,7 @@ public class VariableUnode extends AbstractIndexableUnode {
     @Override
     @pausable
     public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
-        return PythonAnalHelpers.queryIndexForValuesAssignedTo(new Alias(this, sc, dc));
+        return new Alias(this, sc, dc).queryIndexForValuesAssignedTo();
     }
     
     @Override

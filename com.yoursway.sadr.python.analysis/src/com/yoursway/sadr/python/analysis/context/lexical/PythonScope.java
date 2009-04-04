@@ -20,4 +20,6 @@ public interface PythonScope {
     
     void addLocalVariable(String name);
     
+    List<PythonScope> currentScopesIncludingSelf();
+    
 }
