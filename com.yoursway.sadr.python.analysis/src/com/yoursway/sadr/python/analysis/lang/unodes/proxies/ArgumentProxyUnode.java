@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.proxies;
 
 import java.util.Collection;
 import java.util.Set;
@@ -10,6 +10,8 @@ import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.ArgumentProxyC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -68,7 +70,7 @@ public final class ArgumentProxyUnode extends Unode {
     }
     
     @Override
-    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
     }
     
 }

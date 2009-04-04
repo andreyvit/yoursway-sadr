@@ -1,7 +1,9 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.literals;
 
 import java.util.Collection;
 
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 
 public abstract class AbstractLiteralUnode extends Unode {
@@ -22,7 +24,7 @@ public abstract class AbstractLiteralUnode extends Unode {
     }
     
     @Override
-    protected
+    public
     final void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
     }
     

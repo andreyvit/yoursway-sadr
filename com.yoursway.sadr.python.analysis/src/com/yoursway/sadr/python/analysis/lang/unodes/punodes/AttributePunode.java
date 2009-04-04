@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python.analysis.lang.unodes.punodes;
 
-import com.yoursway.sadr.python.analysis.lang.unodes.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 
 public class AttributePunode extends TailPunode {
     

@@ -1,8 +1,8 @@
 package com.yoursway.sadr.python.analysis.index.wrapping;
 
-import com.yoursway.sadr.python.analysis.lang.unodes.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.lang.unodes.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 
 public class IndexAttributeWrappingStrategy extends IndexNameWrappingStrategy {
     

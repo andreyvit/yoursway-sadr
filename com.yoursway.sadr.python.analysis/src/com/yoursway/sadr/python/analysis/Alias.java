@@ -26,7 +26,7 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.CallAliasProxyC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.lang.unodes.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -106,7 +106,7 @@ public final class Alias {
     public Collection<PythonConstruct> findRenamesUsingIndex() {
         Collection<PythonConstruct> result = findConstructsAssignedTo();
         addUsagesInCallsTo(result);
-        System.out.println("renames(" + this + ") = " + Join.join(", ", result));
+        System.out.println("Alias.findRenamesUsingIndex(" + unode + ") = " + Join.join(", ", result));
         return result;
     }
     

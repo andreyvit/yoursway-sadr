@@ -8,6 +8,7 @@ import kilim.pausable;
 import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -63,7 +64,6 @@ public abstract class Unode {
         addGenericVariationsTo(alternatives, new HeadPunode(this), reading);
     }
     
-    protected abstract void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode,
-            boolean reading);
+    public abstract void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading);
     
 }

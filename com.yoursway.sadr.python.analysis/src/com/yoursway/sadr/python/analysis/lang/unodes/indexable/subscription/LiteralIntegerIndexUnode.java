@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription;
 
 import java.util.Collection;
 import java.util.Set;
@@ -8,20 +8,26 @@ import kilim.pausable;
 import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AbstractIndexableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.AnyIndexPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
+import com.yoursway.sadr.python.analysis.lang.unodes.punodes.LiteralIntegerIndexPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.UnknownIndexPunode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
-public final class UnknownIndexUnode extends AbstractIndexableUnode {
+public class LiteralIntegerIndexUnode extends AbstractIndexableUnode {
     
     private final Unode receiver;
+    private final int index;
     
-    public UnknownIndexUnode(Unode receiver) {
+    public LiteralIntegerIndexUnode(Unode receiver, int index) {
         if (receiver == null)
             throw new NullPointerException("receiver is null");
         this.receiver = receiver;
+        this.index = index;
     }
     
     @Override
@@ -32,15 +38,28 @@ public final class UnknownIndexUnode extends AbstractIndexableUnode {
     
     @Override
     protected int computeHashCode() {
-        return receiver.hashCode();
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + index;
+        result = prime * result + ((receiver == null) ? 0 : receiver.hashCode());
+        return result;
     }
     
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || obj.getClass() != this.getClass())
+        if (this == obj)
+            return true;
+        if (getClass() != obj.getClass())
             return false;
-        UnknownIndexUnode that = (UnknownIndexUnode) obj;
-        return this.receiver.equals(that.receiver);
+        LiteralIntegerIndexUnode other = (LiteralIntegerIndexUnode) obj;
+        if (index != other.index)
+            return false;
+        if (receiver == null) {
+            if (other.receiver != null)
+                return false;
+        } else if (!receiver.equals(other.receiver))
+            return false;
+        return true;
     }
     
     @Override
@@ -55,26 +74,28 @@ public final class UnknownIndexUnode extends AbstractIndexableUnode {
     
     @Override
     public Punode punodize() {
-        return new UnknownIndexPunode(new HeadPunode(receiver));
+        return new LiteralIntegerIndexPunode(new HeadPunode(receiver), index);
     }
     
     @Override
     public String toString() {
-        return receiver + "[?]";
+        return receiver + "[" + index + "]";
     }
     
     @Override
     @pausable
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
         super.findRenames(punode, sc, dc, aliases);
-        receiver.findUnknownIndexRenames(punode, sc, dc, aliases);
+        receiver.findIntegerIndexRenames(punode, sc, dc, aliases, index);
     }
     
     @Override
-    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
-        receiver.addGenericVariationsTo(alternatives, new AnyIndexPunode(punode), reading);
-        if (!reading)
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+        receiver.addGenericVariationsTo(alternatives, new LiteralIntegerIndexPunode(punode, index), reading);
+        if (reading)
             receiver.addGenericVariationsTo(alternatives, new UnknownIndexPunode(punode), reading);
+        else
+            receiver.addGenericVariationsTo(alternatives, new AnyIndexPunode(punode), reading);
     }
     
 }

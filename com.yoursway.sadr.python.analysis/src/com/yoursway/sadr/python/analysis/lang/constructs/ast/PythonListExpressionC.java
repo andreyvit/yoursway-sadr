@@ -11,8 +11,8 @@ import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.lang.unodes.ListLiteralUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.literals.ListLiteralUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.ListValue;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 

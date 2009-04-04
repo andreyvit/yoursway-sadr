@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.literals;
 
 import java.util.ArrayList;
 import java.util.List;

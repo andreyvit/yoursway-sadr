@@ -114,7 +114,6 @@ public class IntegerType extends NumericType {
                 @Override
                 @pausable
                 protected PythonValueSet calculate(PythonDynamicContext dc) {
-                    System.out.println(".calculate()");
                     Arguments arguments = dc.argumentsOfTopCall();
                     PythonValueSet lhs = arguments.computeArgument(dc, 0, null, null);
                     PythonValueSet rhs = arguments.computeArgument(dc, 1, null, null);

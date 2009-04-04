@@ -17,9 +17,9 @@ import com.yoursway.sadr.python.analysis.index.data.PassedArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
-import com.yoursway.sadr.python.analysis.lang.unodes.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
-import com.yoursway.sadr.python.analysis.lang.unodes.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.utils.bugs.Bugs;
 
 public class IndexRequest implements

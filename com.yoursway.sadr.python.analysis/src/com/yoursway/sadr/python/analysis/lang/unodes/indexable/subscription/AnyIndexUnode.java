@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription;
 
 import java.util.Collection;
 import java.util.Set;
@@ -8,6 +8,9 @@ import kilim.pausable;
 import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AbstractIndexableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.AnyIndexPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
@@ -71,7 +74,7 @@ public final class AnyIndexUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
         receiver.addGenericVariationsTo(alternatives, new UnknownIndexPunode(punode), reading);
     }
     

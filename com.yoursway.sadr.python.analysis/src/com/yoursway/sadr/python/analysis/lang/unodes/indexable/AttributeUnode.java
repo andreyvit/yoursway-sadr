@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.indexable;
 
 import static java.lang.String.format;
 
@@ -17,6 +17,7 @@ import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsIndex
 import com.yoursway.sadr.python.analysis.index.queries.AttributeAssignmentsRequestor;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.PythonFileC;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.AttributePunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
@@ -159,7 +160,7 @@ public class AttributeUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
         receiver.addGenericVariationsTo(alternatives, new AttributePunode(punode, name), reading);
     }
     

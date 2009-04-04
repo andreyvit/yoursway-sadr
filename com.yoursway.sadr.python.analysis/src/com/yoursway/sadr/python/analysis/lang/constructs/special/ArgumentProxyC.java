@@ -14,8 +14,8 @@ import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.MethodDeclarationC;
-import com.yoursway.sadr.python.analysis.lang.unodes.ArgumentProxyUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ArgumentProxyUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 

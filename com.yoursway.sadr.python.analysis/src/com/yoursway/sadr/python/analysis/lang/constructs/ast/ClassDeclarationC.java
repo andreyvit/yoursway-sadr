@@ -24,7 +24,7 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.SpecialValueC;
 import com.yoursway.sadr.python.analysis.lang.constructs.support.VoidConstructException;
-import com.yoursway.sadr.python.analysis.lang.unodes.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.types.InstanceType;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 

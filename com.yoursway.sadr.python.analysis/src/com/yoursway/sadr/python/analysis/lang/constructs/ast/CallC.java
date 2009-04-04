@@ -24,8 +24,8 @@ import com.yoursway.sadr.python.analysis.index.IndexRequest;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.lang.unodes.CallUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.proxies.CallUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 

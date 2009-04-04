@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.indexable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -10,6 +10,7 @@ import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 

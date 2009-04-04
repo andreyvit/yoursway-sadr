@@ -13,8 +13,8 @@ import com.yoursway.sadr.python.analysis.index.data.PassedReceiverArgumentInfo;
 import com.yoursway.sadr.python.analysis.index.wrapping.IndexNameWrappingStrategy;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
-import com.yoursway.sadr.python.analysis.lang.unodes.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
 public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpression> implements

@@ -1,7 +1,7 @@
 package com.yoursway.sadr.python.analysis.lang.unodes.punodes;
 
-import com.yoursway.sadr.python.analysis.lang.unodes.LiteralIntegerIndexUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription.LiteralIntegerIndexUnode;
 
 public class LiteralIntegerIndexPunode extends TailPunode {
     

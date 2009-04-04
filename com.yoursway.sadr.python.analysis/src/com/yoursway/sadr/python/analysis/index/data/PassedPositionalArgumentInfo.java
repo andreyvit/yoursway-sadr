@@ -9,7 +9,7 @@ import com.yoursway.sadr.python.analysis.context.lexical.PythonScope;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.ArgumentC;
 import com.yoursway.sadr.python.analysis.lang.constructs.ast.CallC;
-import com.yoursway.sadr.python.analysis.lang.unodes.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 
 public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     

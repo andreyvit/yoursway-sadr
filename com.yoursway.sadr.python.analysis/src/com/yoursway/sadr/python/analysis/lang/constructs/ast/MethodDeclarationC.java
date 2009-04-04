@@ -30,7 +30,7 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.ArgumentProxyC;
 import com.yoursway.sadr.python.analysis.lang.constructs.special.SpecialValueC;
-import com.yoursway.sadr.python.analysis.lang.unodes.VariableUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.values.InstanceValue;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;

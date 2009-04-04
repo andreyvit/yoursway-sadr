@@ -1,4 +1,4 @@
-package com.yoursway.sadr.python.analysis.lang.unodes;
+package com.yoursway.sadr.python.analysis.lang.unodes.indexable;
 
 import static java.lang.String.format;
 
@@ -9,6 +9,7 @@ import kilim.pausable;
 import com.yoursway.sadr.python.analysis.Alias;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -72,7 +73,7 @@ public class VariableUnode extends AbstractIndexableUnode {
     }
     
     @Override
-    protected void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+    public void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
         alternatives.add(punode.wrap(this));
     }
     
