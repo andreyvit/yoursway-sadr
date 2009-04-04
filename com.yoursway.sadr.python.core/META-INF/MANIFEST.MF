@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.yoursway.sadr.blocks.foundation;bundle-version="1.0.0",
  com.yoursway.sadr.blocks.misc;bundle-version="1.0.0",
  com.yoursway.utils;bundle-version="1.0.0",
- org.antlr;bundle-version="3.1.1"
+ org.antlr;bundle-version="3.1.1",
+ com.yoursway.sadr.python.parser;bundle-version="1.0.0"
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
 Kilim-Enabled: true
@@ -27,24 +28,7 @@ Export-Package: com.yoursway.sadr.python,
  com.yoursway.sadr.python.model.values,
  com.yoursway.sadr.python_v2.croco,
  com.yoursway.sadr.python_v2.goals.acceptors,
- com.yoursway.sadr.python_v2.model.builtins,
- org.eclipse.dltk.ast,
- org.eclipse.dltk.ast.declarations,
- org.eclipse.dltk.ast.expressions,
- org.eclipse.dltk.ast.references,
- org.eclipse.dltk.ast.statements,
- org.eclipse.dltk.ast.utils,
- org.eclipse.dltk.compiler.env.lookup,
- org.eclipse.dltk.compiler.problem,
- org.eclipse.dltk.core,
- org.eclipse.dltk.internal.compiler.lookup,
- org.eclipse.dltk.internal.core,
- org.eclipse.dltk.python.internal.core.parser,
- org.eclipse.dltk.python.parser,
- org.eclipse.dltk.python.parser.ast,
- org.eclipse.dltk.python.parser.ast.expressions,
- org.eclipse.dltk.python.parser.ast.statements,
- org.eclipse.dltk.utils
+ com.yoursway.sadr.python_v2.model.builtins
 Import-Package: com.yoursway.sadr.python.constructs,
  com.yoursway.sadr.python.core.runtime,
  kilim,

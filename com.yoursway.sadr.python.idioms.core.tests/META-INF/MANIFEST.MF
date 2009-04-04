@@ -12,5 +12,6 @@ Require-Bundle: org.eclipse.ui,
  com.yoursway.sadr.engine,
  org.junit4,
  com.yoursway.sadr.python.core,
- com.yoursway.sadr.python.idioms.core;bundle-version="1.0.0"
+ com.yoursway.sadr.python.idioms.core;bundle-version="1.0.0",
+ com.yoursway.sadr.python.parser;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

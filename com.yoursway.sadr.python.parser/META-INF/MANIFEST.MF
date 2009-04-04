@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Python Parser
+Bundle-SymbolicName: com.yoursway.sadr.python.parser
+Bundle-Version: 1.0.0
+Bundle-Vendor: YourSway
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.eclipse.dltk.ast,
+ org.eclipse.dltk.ast.declarations,
+ org.eclipse.dltk.ast.expressions,
+ org.eclipse.dltk.ast.references,
+ org.eclipse.dltk.ast.statements,
+ org.eclipse.dltk.ast.utils,
+ org.eclipse.dltk.compiler.env.lookup,
+ org.eclipse.dltk.compiler.problem,
+ org.eclipse.dltk.core,
+ org.eclipse.dltk.internal.compiler.lookup,
+ org.eclipse.dltk.internal.core,
+ org.eclipse.dltk.python.internal.core.parser,
+ org.eclipse.dltk.python.parser.ast,
+ org.eclipse.dltk.python.parser.ast.expressions,
+ org.eclipse.dltk.python.parser.ast.statements,
+ org.eclipse.dltk.utils
+Require-Bundle: org.antlr;bundle-version="3.1.1"
