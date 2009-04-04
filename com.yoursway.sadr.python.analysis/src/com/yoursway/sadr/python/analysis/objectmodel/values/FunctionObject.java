@@ -61,7 +61,6 @@ public final class FunctionObject extends PythonValue implements CallableObject 
     //            if (context.getActualArgument(key) == null) {
     //                PythonConstruct init = getDecl().getArgInit(key);
     //                if (init == null)
-    //                    //XXX:can't find argument initialization. This is a true error.
     //                    return PythonValueSet.EMPTY;
     //                PythonValueSet argDefault = init.evaluate(crocodile);
     //                defaults.put(key, argDefault);

@@ -130,9 +130,8 @@ public class NumericType extends BuiltinType {
     }
     
     static List<NumericType> getTypes() {
-        //FIXME: move back to static singleton
         return immutableList(ComplexType.instance, FloatType.instance, LongType.instance,
-                IntegerType.instance);
+            IntegerType.instance);
     }
     
     //    public static List<NumericValue> coerce(int size, RuntimeArguments args) throws PythonException {

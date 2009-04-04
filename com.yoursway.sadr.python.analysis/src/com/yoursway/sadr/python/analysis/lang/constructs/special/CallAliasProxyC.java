@@ -24,13 +24,10 @@ public class CallAliasProxyC extends PythonConstructImpl<ASTNode> {
     @pausable
     public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
         return PythonValueSet.EMPTY;
-        // XXX was causing an infinite loop
-        //        return bnode.calculateValue(call.createDynamicContext(dc));
     }
     
     @Override
     public Unode toUnode() {
-        // FIXME this is a dirty hack because we most definitely lose the scope (and thus will evaluate this unode in a wrong scope)
         return alias.getUnode();
     }
     

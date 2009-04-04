@@ -77,7 +77,6 @@ public abstract class PythonConstructImpl<N extends ASTNode> implements PythonCo
         final int prime = 31;
         int result = 1;
         result = prime * result + ((node == null) ? 0 : node.hashCode());
-        //FIXME: Add root element comparison, to check nodes belong to the same tree!
         return result;
     }
     

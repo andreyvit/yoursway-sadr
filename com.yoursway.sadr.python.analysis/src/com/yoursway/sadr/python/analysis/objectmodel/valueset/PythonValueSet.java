@@ -55,7 +55,6 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
             throw new IllegalStateException("There should be no null items in results!");
         
         if (callingConstruct != null && result.getDecl() == null) {
-            //TODO move get/set decl to PythonConstruct interface?
             result.setDecl(callingConstruct);
         }
         

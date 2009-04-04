@@ -39,9 +39,9 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
         addOp("!=", "__ne__");
         addOp(">", "__gt__");
         addOp(">=", "__ge__");
-        addOp(" is ", "__eq__");//FIXME
-        addOp(" is not ", "__ne__");//FIXME
-        addOp(" not in ", "__notcontains__");//FIXME
+        addOp(" is ", "__eq__");
+        addOp(" is not ", "__ne__");
+        addOp(" not in ", "__notcontains__");
     }
     
     static void addOp(String name, String op) {

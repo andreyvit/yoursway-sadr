@@ -8,7 +8,6 @@ public class StringType extends BaseStringType {
     
     //    
     //    public PythonValue __int__(RuntimeArguments args) throws PythonException {
-    //        //FIXME: no this method
     //        PythonValue str = args.readSingle();
     //        StringValue value = coerce(str);
     //        int parsed = Integer.parseInt(value.toString());
@@ -16,7 +15,6 @@ public class StringType extends BaseStringType {
     //    }
     //    
     //    public StringValue __call__(RuntimeArguments args) throws TypeError {
-    //        //FIXME: no this method
     //        PythonValue str = args.readSingle();
     //        if (str instanceof StringType)
     //            return wrap("");
@@ -24,7 +22,6 @@ public class StringType extends BaseStringType {
     //    }
     //    
     //    public StringValue __unicode__(RuntimeArguments args) throws TypeError {
-    //        //FIXME: no this method
     //        PythonValue str = args.readSingle();
     //        if (str instanceof StringType)
     //            return wrap("", true);

@@ -8,7 +8,6 @@ public class UnicodeType extends BaseStringType {
     
     //    
     //    public PythonValue __int__(RuntimeArguments args) throws PythonException {
-    //        //FIXME: no this method in the object actually
     //        PythonValue str = args.readSingle();
     //        StringValue value = coerce(str);
     //        int parsed = Integer.parseInt(value.toString());
@@ -23,7 +22,6 @@ public class UnicodeType extends BaseStringType {
     //    }
     //    
     //    public PythonValue __call__(RuntimeArguments args) throws TypeError {
-    //        //FIXME: no this method
     //        PythonValue str = args.readSingle();
     //        if (str instanceof UnicodeType)
     //            return wrap("", true);
