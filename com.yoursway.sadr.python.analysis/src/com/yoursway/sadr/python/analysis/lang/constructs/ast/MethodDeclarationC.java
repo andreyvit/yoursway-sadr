@@ -28,11 +28,10 @@ import com.yoursway.sadr.python.analysis.lang.constructs.CallableDeclaration;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonDeclaration;
-import com.yoursway.sadr.python.analysis.lang.constructs.special.ArgumentProxyC;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ScalarLiteralUnode;
-import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ArgumentProxyUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ArgumentUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.values.FunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
@@ -115,7 +114,7 @@ public class MethodDeclarationC extends PythonConstructImpl<MethodDeclaration> i
             //            ASTNode initialization = argument.getInitialization();
             //            String key = argument.getName();
             r.addAssignmentWithoutWrapping(new VariableUnode(argument.getName()), innerLC, new Bnode(
-                    new ArgumentProxyUnode(new ArgumentProxyC(innerLC, this, argument, index++)), innerLC));
+                    new ArgumentUnode(index++, argument.getName(), argument.getInitBnode()), innerLC));
             //            if (argument.getStar() == PythonArgument.NOSTAR) {
             //                boolean required = initialization == null;
             //                PythonValue value = reader.getKwarg(key, required);
