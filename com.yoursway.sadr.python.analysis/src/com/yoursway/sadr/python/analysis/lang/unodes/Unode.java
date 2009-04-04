@@ -63,6 +63,7 @@ public abstract class Unode {
         addGenericVariationsTo(alternatives, new HeadPunode(this), reading);
     }
     
-    protected abstract void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading);
+    protected abstract void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode,
+            boolean reading);
     
 }

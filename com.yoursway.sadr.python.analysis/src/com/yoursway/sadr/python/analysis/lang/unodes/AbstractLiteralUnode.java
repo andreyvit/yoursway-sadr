@@ -22,7 +22,8 @@ public abstract class AbstractLiteralUnode extends Unode {
     }
     
     @Override
-    protected final void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
+    protected
+    final void addGenericVariationsTo(Collection<Unode> alternatives, Punode punode, boolean reading) {
     }
     
 }

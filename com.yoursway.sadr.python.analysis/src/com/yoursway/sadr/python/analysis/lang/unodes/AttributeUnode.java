@@ -24,7 +24,7 @@ import com.yoursway.sadr.python.analysis.lang.unodes.punodes.HeadPunode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
-public class AttributeUnode extends Unode {
+public class AttributeUnode extends AbstractIndexableUnode {
     
     private final Unode receiver;
     private final String name;
@@ -119,7 +119,7 @@ public class AttributeUnode extends Unode {
         // <- foo.bar.boz == 42
         System.out.println("AttributeUnode.calculateValue(" + this + ")");
         return PythonValueSet.merge(readFromTypeAndBind(sc, dc), trackAssignmentsAndRenames(sc, dc),
-                findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(sc, dc));
+            findAllAssignmentsToAttributesOfSameNameAndCheckReceivers(sc, dc));
     }
     
     @pausable
@@ -164,13 +164,6 @@ public class AttributeUnode extends Unode {
     @Override
     public boolean isIndexable() {
         return receiver.isIndexable();
-    }
-    
-    @Override
-    @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
-        if (isIndexable())
-            PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }
     
     @Override

@@ -97,7 +97,7 @@ public class PythonAnalHelpers {
     }
     
     @pausable
-    private static Collection<PythonConstruct> findConstructsAssignedTo(Unode unode, PythonStaticContext sc) {
+    public static Collection<PythonConstruct> findConstructsAssignedTo(Unode unode, PythonStaticContext sc) {
         Map<PythonScope, Collection<PythonConstruct>> assignmentsByScope = Maps.newHashMap();
         for (PythonScope scope : sc.currentScopesIncludingSelf())
             assignmentsByScope.put(scope, new ArrayList<PythonConstruct>());
@@ -147,14 +147,6 @@ public class PythonAnalHelpers {
             PythonDynamicContext dc, Set<Alias> aliases) {
         System.out.println("PythonAnalHelpers.computeRenamesForAliasing(" + punode + ")");
         punode.getHead().findRenames(punode, sc, dc, aliases);
-    }
-    
-    @pausable
-    public static void computeRenamesForAliasingUsingIndex(Punode punode, PythonStaticContext sc,
-            PythonDynamicContext dc, Set<Alias> aliases) {
-        Collection<PythonConstruct> valuesAssignedToPunodeHead = findRenames(new Alias(punode.getHead(), sc,
-                dc));
-        addRenamesForConstructs(punode, aliases, valuesAssignedToPunodeHead, dc);
     }
     
     public static void addRenamesForConstructs(Punode punode, Collection<Alias> aliases,

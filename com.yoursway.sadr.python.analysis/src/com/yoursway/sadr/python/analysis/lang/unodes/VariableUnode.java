@@ -3,7 +3,6 @@ package com.yoursway.sadr.python.analysis.lang.unodes;
 import static java.lang.String.format;
 
 import java.util.Collection;
-import java.util.Set;
 
 import kilim.pausable;
 
@@ -14,7 +13,7 @@ import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
-public class VariableUnode extends Unode {
+public class VariableUnode extends AbstractIndexableUnode {
     
     private final String name;
     
@@ -71,17 +70,6 @@ public class VariableUnode extends Unode {
     @Override
     public VariableUnode leadingVariableUnode() {
         return this;
-    }
-    
-    @Override
-    public boolean isIndexable() {
-        return true;
-    }
-    
-    @Override
-    @pausable
-    public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
-        PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
     }
     
     @Override

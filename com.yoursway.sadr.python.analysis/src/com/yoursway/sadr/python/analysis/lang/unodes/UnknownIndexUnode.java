@@ -15,7 +15,7 @@ import com.yoursway.sadr.python.analysis.lang.unodes.punodes.Punode;
 import com.yoursway.sadr.python.analysis.lang.unodes.punodes.UnknownIndexPunode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 
-public final class UnknownIndexUnode extends Unode {
+public final class UnknownIndexUnode extends AbstractIndexableUnode {
     
     private final Unode receiver;
     
@@ -73,8 +73,7 @@ public final class UnknownIndexUnode extends Unode {
     @Override
     @pausable
     public void findRenames(Punode punode, PythonStaticContext sc, PythonDynamicContext dc, Set<Alias> aliases) {
-        if (isIndexable())
-            PythonAnalHelpers.computeRenamesForAliasingUsingIndex(punode, sc, dc, aliases);
+        super.findRenames(punode, sc, dc, aliases);
         receiver.findUnknownIndexRenames(punode, sc, dc, aliases);
     }
     
