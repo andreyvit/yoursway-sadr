@@ -10,8 +10,8 @@ Export-Package: com.yoursway.sadr.engine,
  com.yoursway.sadr.engine.debug,
  com.yoursway.sadr.engine.incremental,
  com.yoursway.sadr.engine.incremental.index,
- com.yoursway.sadr.engine.util,
- com.yoursway.sadr.succeeder
+ com.yoursway.sadr.engine.util
 Import-Package: kilim,
  kilim.fibers, kilim.states
 Kilim-Enabled: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
