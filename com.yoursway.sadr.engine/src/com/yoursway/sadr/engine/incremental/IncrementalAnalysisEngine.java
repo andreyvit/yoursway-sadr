@@ -159,7 +159,7 @@ public class IncrementalAnalysisEngine extends AnalysisEngine {
         
         public <R extends Result> IncrementalGoalState(Goal<R> goal) {
             super(goal);
-            if (goal instanceof IncrementalGoal) {
+            if (goal instanceof IncrementalGoal<?>) {
                 IncrementalGoal<?> ig = (IncrementalGoal<?>) goal;
                 SourceUnit unit = ig.getInherentSourceUnitDependency();
                 if (unit != null)
