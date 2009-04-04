@@ -6,7 +6,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.python.parser.ast.expressions.BinaryExpression;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
@@ -66,7 +65,7 @@ public abstract class BinaryC extends PythonConstructImpl<BinaryExpression> {
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         return PythonValueSet.EMPTY;
     }
     

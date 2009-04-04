@@ -6,7 +6,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.python.parser.ast.statements.IfStatement;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
@@ -52,7 +51,7 @@ public class IfC extends PythonConstructImpl<IfStatement> {
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         throw new VoidConstructException(this);
     }
     

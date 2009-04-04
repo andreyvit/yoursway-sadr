@@ -4,7 +4,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
@@ -38,7 +37,7 @@ public class FieldAccessC extends PythonConstructImpl<PythonVariableAccessExpres
     }
     
     @pausable
-    public PythonValueSet evaluateValue(final PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(final PythonDynamicContext dc) {
         Unode unode = toUnode();
         if (unode == null)
             return PythonValueSet.EMPTY;

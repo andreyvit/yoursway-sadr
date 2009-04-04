@@ -10,7 +10,6 @@ import kilim.pausable;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonLambdaExpression;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
@@ -75,7 +74,7 @@ public class PythonLambdaExpressionC extends PythonScopeImpl<PythonLambdaExpress
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         return new PythonValueSet(new FunctionObject(this));
     }
     

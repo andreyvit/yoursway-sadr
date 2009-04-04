@@ -13,7 +13,6 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.engine.Analysis;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
@@ -101,7 +100,7 @@ public class MethodDeclarationC extends PythonScopeImpl<MethodDeclaration> imple
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         return null;
     }
     

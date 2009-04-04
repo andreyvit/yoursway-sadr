@@ -5,7 +5,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.ast.ASTNode;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
@@ -38,7 +37,7 @@ public class ArgumentProxyC extends PythonConstructImpl<ASTNode> {
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         Arguments arguments = dc.argumentsOfTopCall();
         return arguments.computeArgument(dc, index, argument.getName(), argument.getInit());
     }

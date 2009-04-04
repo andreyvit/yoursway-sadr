@@ -18,7 +18,7 @@ public interface PythonConstruct extends
         IConstruct<PythonConstruct, PythonStaticContext, PythonDynamicContext, ASTNode> {
     
     @pausable
-    PythonValueSet evaluateValue(PythonDynamicContext dc, com.yoursway.sadr.engine.InfoKind infoKind);
+    PythonValueSet evaluateValue(PythonDynamicContext dc);
     
     PythonStaticContext staticContext();
     

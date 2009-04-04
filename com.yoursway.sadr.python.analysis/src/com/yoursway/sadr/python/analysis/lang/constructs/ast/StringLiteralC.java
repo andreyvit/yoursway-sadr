@@ -4,7 +4,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.ast.expressions.StringLiteral;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
@@ -54,7 +53,7 @@ public class StringLiteralC extends PythonConstructImpl<StringLiteral> {
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         return createValue();
     }
     

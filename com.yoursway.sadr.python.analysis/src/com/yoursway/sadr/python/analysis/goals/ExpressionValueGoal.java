@@ -3,7 +3,6 @@ package com.yoursway.sadr.python.analysis.goals;
 import kilim.pausable;
 
 import com.yoursway.sadr.engine.Goal;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
@@ -34,7 +33,7 @@ public class ExpressionValueGoal extends AbstractValueGoal {
     
     @pausable
     public PythonValueSet evaluate() {
-        return construct.evaluateValue(dc, InfoKind.VALUE);
+        return construct.evaluateValue(dc);
     }
     
     @Override

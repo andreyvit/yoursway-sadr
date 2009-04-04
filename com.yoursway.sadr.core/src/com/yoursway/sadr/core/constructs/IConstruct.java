@@ -5,7 +5,6 @@ import java.util.List;
 import kilim.pausable;
 
 import com.yoursway.sadr.core.IValueInfo;
-import com.yoursway.sadr.engine.InfoKind;
 
 public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends StaticContext<C, SC, DC, N>, DC extends DynamicContext, N> {
     
@@ -22,7 +21,7 @@ public interface IConstruct<C extends IConstruct<C, SC, DC, N>, SC extends Stati
     List<C> enclosedConstructs();
     
     @pausable
-    IValueInfo evaluateValue(DC dc, InfoKind infoKind);
+    IValueInfo evaluateValue(DC dc);
     
     @pausable
     ControlFlowGraph<C, SC, DC, N> calculateEffectiveControlFlowGraph();

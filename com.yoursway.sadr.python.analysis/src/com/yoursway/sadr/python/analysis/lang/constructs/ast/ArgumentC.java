@@ -4,7 +4,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -39,7 +38,7 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         throw new UnsupportedOperationException();
     }
     

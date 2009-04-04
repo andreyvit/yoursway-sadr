@@ -9,7 +9,6 @@ import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonCallExpression;
 
 import com.yoursway.sadr.engine.Analysis;
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.Constants;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
@@ -91,7 +90,7 @@ public class CallC extends PythonConstructImpl<PythonCallExpression> implements 
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         int size = dc.callStackSize();
         if (size >= Constants.MAXIMUM_CALL_STACK_DEPTH)
             return PythonValueSet.EMPTY;

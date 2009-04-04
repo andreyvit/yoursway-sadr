@@ -4,7 +4,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.python.parser.ast.expressions.Assignment;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.index.IndexAffector;
@@ -63,8 +62,8 @@ public class AssignmentC extends PythonConstructImpl<Assignment> implements Pyth
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
-        return rhs.evaluateValue(dc, infoKind);
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
+        return rhs.evaluateValue(dc);
     }
     
     public void actOnIndex(IndexRequest indexRequest) {

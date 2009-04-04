@@ -6,7 +6,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.python.parser.ast.expressions.PythonListExpression;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
@@ -55,7 +54,7 @@ public class PythonListExpressionC extends PythonConstructImpl<PythonListExpress
     //    }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         return new PythonValueSet(new ListValue());
     }
     

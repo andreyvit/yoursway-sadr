@@ -6,7 +6,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.engine.incremental.SourceUnit;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -54,7 +53,7 @@ public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements P
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         throw new UnsupportedOperationException();
     }
     

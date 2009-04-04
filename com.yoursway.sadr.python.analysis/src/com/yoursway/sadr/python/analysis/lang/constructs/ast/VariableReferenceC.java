@@ -4,7 +4,6 @@ import kilim.pausable;
 
 import org.eclipse.dltk.ast.references.VariableReference;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstructImpl;
@@ -23,7 +22,7 @@ public class VariableReferenceC extends PythonConstructImpl<VariableReference> {
     }
     
     @pausable
-    public PythonValueSet evaluateValue(PythonDynamicContext dc, InfoKind infoKind) {
+    public PythonValueSet evaluateValue(PythonDynamicContext dc) {
         Unode unode = toUnode();
         if (unode == null)
             return PythonValueSet.EMPTY;

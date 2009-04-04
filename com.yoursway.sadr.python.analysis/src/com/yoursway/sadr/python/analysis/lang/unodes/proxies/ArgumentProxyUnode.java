@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import kilim.pausable;
 
-import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -27,7 +26,7 @@ public final class ArgumentProxyUnode extends Unode {
     @Override
     @pausable
     public PythonValueSet calculateValue(PythonStaticContext sc, PythonDynamicContext dc) {
-        return arg.evaluateValue(dc, InfoKind.VALUE);
+        return arg.evaluateValue(dc);
     }
     
     @Override
