@@ -10,8 +10,6 @@ import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 import org.eclipse.dltk.python.parser.ast.PythonClassDeclaration;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.yoursway.sadr.engine.InfoKind;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonStaticContext;
@@ -84,15 +82,15 @@ public class ClassDeclarationC extends PythonScopeImpl<PythonClassDeclaration> i
     }
     
     public PythonValueSet call(PythonDynamicContext crocodile) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
     
     public PythonConstruct getArgInit(String name) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
     
     public List<PythonArgument> getArguments() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
     
     @pausable

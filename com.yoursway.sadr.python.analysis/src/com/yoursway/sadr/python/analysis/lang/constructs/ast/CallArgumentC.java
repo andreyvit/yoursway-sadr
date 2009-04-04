@@ -2,7 +2,6 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import kilim.pausable;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.python.parser.ast.PythonCallArgument;
@@ -29,7 +28,8 @@ public class CallArgumentC extends PythonConstructImpl<PythonCallArgument> {
     public CallArgumentC(PythonStaticContext staticContext, PythonCallArgument node,
             PythonConstructImpl<?> parent) {
         super(staticContext, node, parent);
-        Assert.isLegal(node.getValue() != null, "node.getValue() should be != null");
+        if(node.getValue() == null)
+            throw new IllegalArgumentException("node.getValue() should be != null");
         ASTNode value = node.getValue();
         if (value instanceof Assignment) {
             Assignment assignment = (Assignment) value;

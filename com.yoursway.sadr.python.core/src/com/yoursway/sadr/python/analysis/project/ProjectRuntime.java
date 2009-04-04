@@ -98,7 +98,7 @@ public class ProjectRuntime {
             ModuleDeclaration moduleDecl = parser.parse(moduleName.toCharArray(), module
                     .getSourceAsCharArray(), null);
             
-            final PythonFileC moduleObject = new PythonFileC(moduleDecl, moduleName, module, this);
+            final PythonFileC moduleObject = new PythonFileC(moduleDecl, moduleName, module);
             //FIXME convert module names to python code form (e.g. "package.module").
             nameToModule.put(module.getFile().getCanonicalFile(), moduleObject);
             engine.evaluate(new AbstractGenericGoal() {

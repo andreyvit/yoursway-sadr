@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  com.yoursway.sadr.blocks.misc;bundle-version="1.0.0",
  com.google.collections;bundle-version="1.0.0",
  com.yoursway.utils,
- com.yoursway.sadr.python.parser;bundle-version="1.0.0"
+ com.yoursway.sadr.python.parser;bundle-version="1.0.0",
+ com.yoursway.sadr.python.analysis;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: kilim,

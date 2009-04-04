@@ -14,28 +14,19 @@ import com.yoursway.sadr.python.analysis.lang.constructs.PythonConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonRootConstruct;
 import com.yoursway.sadr.python.analysis.lang.constructs.PythonScopeImpl;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
-import com.yoursway.sadr.python.analysis.project.FileSourceUnit;
-import com.yoursway.sadr.python.analysis.project.ProjectRuntime;
 
 public class PythonFileC extends PythonScopeImpl<ModuleDeclaration> implements PythonRootConstruct {
     
     private final String moduleName;
-    private final ProjectRuntime projectRuntime;
-    private final FileSourceUnit module;
+    private final SourceUnit module;
     private final List<PythonConstruct> body;
     
-    public PythonFileC(ModuleDeclaration node, String name, FileSourceUnit module,
-            ProjectRuntime projectRuntime) {
+    public PythonFileC(ModuleDeclaration node, String name, SourceUnit module) {
         super(null, node, null);
         this.moduleName = name;
         this.module = module;
-        this.projectRuntime = projectRuntime;
         body = wrap(node.getStatements(), this);
         body.isEmpty();
-    }
-    
-    public ProjectRuntime getProjectRuntime() {
-        return projectRuntime;
     }
     
     @Override

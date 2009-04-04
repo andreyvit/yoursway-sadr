@@ -2,7 +2,6 @@ package com.yoursway.sadr.python.analysis.lang.constructs.ast;
 
 import kilim.pausable;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.python.parser.ast.PythonArgument;
 
 import com.yoursway.sadr.engine.InfoKind;
@@ -19,7 +18,8 @@ public class ArgumentC extends PythonConstructImpl<PythonArgument> {
     
     ArgumentC(PythonStaticContext sc, PythonArgument node, PythonConstructImpl<?> parent) {
         super(sc, node, parent);
-        Assert.isLegal(node.getName() != null, "node.getName() should be != null");
+        if(node.getName() == null)
+            throw new AssertionError("node.getName() should be != null");
         if (node.getInitialization() == null)
             init = null;
         else

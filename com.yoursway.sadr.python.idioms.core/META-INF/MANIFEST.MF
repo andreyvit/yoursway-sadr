@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  com.yoursway.sadr.python.core,
  com.google.collections;bundle-version="1.0.0",
- com.yoursway.sadr.python.parser;bundle-version="1.0.0"
+ com.yoursway.sadr.python.parser;bundle-version="1.0.0",
+ com.yoursway.sadr.python.analysis;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: com.yoursway.sadr.python.idioms.core
