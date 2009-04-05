@@ -7,7 +7,7 @@ import java.util.List;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.StringValue;
 
-public class BaseStringType extends BuiltinType {
+public class BaseStringType extends PythonType {
     public static BaseStringType instance = new BaseStringType();
     
     static List<BaseStringType> types = immutableList(UnicodeType.instance, StringType.instance);

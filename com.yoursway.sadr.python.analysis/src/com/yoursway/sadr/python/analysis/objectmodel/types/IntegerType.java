@@ -1,19 +1,11 @@
 package com.yoursway.sadr.python.analysis.objectmodel.types;
 
-import java.util.Set;
-
 import kilim.pausable;
 
-import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
-import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
-import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.objectmodel.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.values.IntegerValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.NumericValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.StringValue;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
-import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
 
 public class IntegerType extends NumericType {
     public IntegerType() {
@@ -101,27 +93,10 @@ public class IntegerType extends NumericType {
         
     }
     
-    @Override
+    @Builtin
     @pausable
-    public PythonValueSet getAttr(String name, PythonLexicalContext sc, PythonDynamicContext dc) {
-        if ("__add__".equals(name))
-            return new PythonValueSet(new BuiltinFunctionObject("integeradd") {
-                @Override
-                @pausable
-                protected PythonValueSet calculate(PythonDynamicContext dc) {
-                    Arguments arguments = dc.argumentsOfTopCall();
-                    PythonValueSet lhs = arguments.computeArgument(dc, 0, null, null);
-                    PythonValueSet rhs = arguments.computeArgument(dc, 1, null, null);
-                    Set<Long> l = lhs.obtainIntegerValues();
-                    Set<Long> r = rhs.obtainIntegerValues();
-                    PythonValueSetBuilder builder = PythonValueSet.newBuilder();
-                    for (Long ll : l)
-                        for (Long rr : r)
-                            builder.addResult(new IntegerValue(ll + rr));
-                    return builder.build();
-                }
-            });
-        return super.getAttr(name, sc, dc);
+    public PythonValue __add__(Long a, Long b) {
+        return new IntegerValue(a + b);
     }
     
 }

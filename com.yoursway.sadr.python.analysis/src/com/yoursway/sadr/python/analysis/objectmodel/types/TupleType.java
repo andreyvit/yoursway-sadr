@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.TupleValue;
 
-public class TupleType extends BuiltinType {
+public class TupleType extends PythonType {
     //    public PythonValue __call__(RuntimeArguments args) throws PythonException {
     //        PythonValue value = args.readSingle();
     //        if (value instanceof TupleValue)

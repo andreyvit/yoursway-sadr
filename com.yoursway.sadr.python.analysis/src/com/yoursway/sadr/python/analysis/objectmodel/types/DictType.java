@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import com.yoursway.sadr.python.analysis.objectmodel.values.DictValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 
-public class DictType extends BuiltinType {
+public class DictType extends PythonType {
     //    public PythonValue __call__(RuntimeArguments args) throws PythonException {
     //        PythonArgumentsReader reader = new PythonArgumentsReader(args);
     //        HashMap<String, PythonValue> kwargs = reader.lastKwargs();

@@ -177,4 +177,12 @@ public class PythonValueSet implements Iterable<PythonValue>, IValueInfo, Python
             value.findRenames(suffix, sc, dc, aliases);
     }
     
+    public Collection<?> obtainTypedValues(Class<?> klass) {
+        if (klass == Long.class)
+            return obtainIntegerValues();
+        else if (klass == PythonValue.class)
+            return builder.build().containedValues();
+        else
+            throw new IllegalArgumentException("Cannot provide values of type " + klass.getName());
+    }
 }

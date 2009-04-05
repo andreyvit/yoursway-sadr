@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.analysis.objectmodel.types;
 import com.yoursway.sadr.python.analysis.objectmodel.values.ListValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 
-public class ListType extends BuiltinType {
+public class ListType extends PythonType {
     
     //    public PythonValue __getitem__(RuntimeArguments args) throws PythonException {
     //        List<PythonValue> list = args.readArgs(2);

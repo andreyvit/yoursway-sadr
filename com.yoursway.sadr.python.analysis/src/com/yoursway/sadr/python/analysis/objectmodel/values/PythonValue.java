@@ -30,10 +30,6 @@ public abstract class PythonValue extends AbstractValue {
         return getType().describe() + " " + " instance #" + id;
     }
     
-    public PythonValue getBuiltinAttribute(String name) {
-        return this.getType().getBuiltinAttribute(name);
-    }
-    
     public String name() {
         return null;
     }

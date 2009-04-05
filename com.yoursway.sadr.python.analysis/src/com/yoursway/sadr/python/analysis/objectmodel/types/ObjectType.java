@@ -3,7 +3,7 @@ package com.yoursway.sadr.python.analysis.objectmodel.types;
 import java.util.Collections;
 import java.util.List;
 
-public class ObjectType extends BuiltinType {
+public class ObjectType extends PythonType {
     //    
     //    public PythonValue __init__(RuntimeArguments args) {
     //        return NoneValue.instance;

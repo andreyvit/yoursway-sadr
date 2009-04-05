@@ -2,11 +2,12 @@ package com.yoursway.sadr.python.analysis.objectmodel.types;
 
 import com.yoursway.sadr.python.analysis.objectmodel.values.BooleanValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.NoneValue;
+import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 
 /**
  * Utility and declaration class.
  */
-public class Builtins extends BuiltinType {
+public class Builtins extends PythonType {
     
     private static Builtins module = null;
     
@@ -65,5 +66,9 @@ public class Builtins extends BuiltinType {
             //            
         }
         return module;
+    }
+    
+    private void setAttribute(String string, PythonValue instance) {
+        throw new UnsupportedOperationException();
     }
 }

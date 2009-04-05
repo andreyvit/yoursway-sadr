@@ -7,7 +7,7 @@ import java.util.List;
 import com.yoursway.sadr.python.analysis.objectmodel.values.NumericValue;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
 
-public class NumericType extends BuiltinType {
+public class NumericType extends PythonType {
     public NumericType() {
     }
     
