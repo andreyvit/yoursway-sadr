@@ -12,6 +12,7 @@ package org.eclipse.dltk.python.parser.ast.expressions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTVisitor;
 import org.eclipse.dltk.ast.DLTKToken;
@@ -22,7 +23,7 @@ import org.eclipse.dltk.utils.CorePrinter;
 
 public class PythonDictExpression extends Expression
 {
-	private static class DictNode
+	public static class DictNode
 	{
 		private Expression key;
 
@@ -50,6 +51,10 @@ public class PythonDictExpression extends Expression
 	public PythonDictExpression( ) {
 
 	}
+	
+	public List<DictNode> getDictionary() {
+        return fDictionary;
+    }
 
 	public PythonDictExpression( DLTKToken t ) {
 

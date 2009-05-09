@@ -47,6 +47,11 @@ public abstract class Unode {
     }
     
     @pausable
+    public void findStringIndexRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
+            AliasConsumer aliases, String index) {
+    }
+    
+    @pausable
     public void findUnknownIndexRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
     }

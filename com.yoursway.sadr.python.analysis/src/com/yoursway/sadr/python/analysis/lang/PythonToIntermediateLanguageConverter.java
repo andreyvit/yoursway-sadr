@@ -1,13 +1,16 @@
 package com.yoursway.sadr.python.analysis.lang;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.BigNumericLiteral;
+import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.expressions.FloatNumericLiteral;
 import org.eclipse.dltk.ast.expressions.NumericLiteral;
 import org.eclipse.dltk.ast.expressions.StringLiteral;
@@ -47,6 +50,7 @@ import org.eclipse.dltk.python.parser.ast.expressions.PythonTestListExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonTupleExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.PythonVariableAccessExpression;
 import org.eclipse.dltk.python.parser.ast.expressions.UnaryExpression;
+import org.eclipse.dltk.python.parser.ast.expressions.PythonDictExpression.DictNode;
 import org.eclipse.dltk.python.parser.ast.statements.BreakStatement;
 import org.eclipse.dltk.python.parser.ast.statements.ContinueStatement;
 import org.eclipse.dltk.python.parser.ast.statements.EmptyStatement;
@@ -79,7 +83,9 @@ import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.AttributeUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription.LiteralIntegerIndexUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription.LiteralStringIndexUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.subscription.UnknownIndexUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.literals.DictLiteralUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ListLiteralUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ScalarLiteralUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.proxies.CallUnode;
@@ -284,7 +290,14 @@ public class PythonToIntermediateLanguageConverter {
     }
     
     private Unode processDict(PythonDictExpression node, PythonLexicalContext lc) {
-        return null;
+        Map<String, Bnode> items = new HashMap<String, Bnode>();
+        for (DictNode item : node.getDictionary()) {
+            Expression key = item.getKey();
+            Expression value = item.getValue();
+            if (key instanceof StringLiteral && value != null)
+                items.put(unquote(((StringLiteral) key).getValue()), processBNode(value, lc));
+        }
+        return new DictLiteralUnode(items);
     }
     
     private Unode processTuple(PythonTupleExpression node, PythonLexicalContext lc) {
@@ -316,6 +329,8 @@ public class PythonToIntermediateLanguageConverter {
             return null;
         else if (i instanceof NumericLiteral)
             return new LiteralIntegerIndexUnode(receiver, (int) ((NumericLiteral) i).getIntValue());
+        else if (i instanceof StringLiteral)
+            return new LiteralStringIndexUnode(receiver, unquote(((StringLiteral) i).getValue()));
         else
             return new UnknownIndexUnode(receiver);
     }
