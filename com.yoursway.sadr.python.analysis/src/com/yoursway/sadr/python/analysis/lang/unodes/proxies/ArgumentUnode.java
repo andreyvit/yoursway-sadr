@@ -7,6 +7,7 @@ import kilim.pausable;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
+import com.yoursway.sadr.python.analysis.context.dynamic.arguments.Starness;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
@@ -19,11 +20,15 @@ public final class ArgumentUnode extends Unode {
     private final int index;
     private final String name;
     private final Bnode init;
+    private final Starness starness;
     
-    public ArgumentUnode(int index, String name, Bnode init) {
+    public ArgumentUnode(int index, String name, Bnode init, Starness starness) {
+        if (starness == null)
+            throw new NullPointerException("starness is null");
         this.index = index;
         this.name = name;
         this.init = init;
+        this.starness = starness;
     }
     
     public String getName() {
@@ -42,7 +47,7 @@ public final class ArgumentUnode extends Unode {
     public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases) {
         Arguments arguments = dc.argumentsOfTopCall();
-        arguments.findRenames(suffix, sc, dc, aliases, index, name, init);
+        arguments.findRenames(suffix, sc, dc, aliases, index, name, init, starness);
     }
     
     @Override

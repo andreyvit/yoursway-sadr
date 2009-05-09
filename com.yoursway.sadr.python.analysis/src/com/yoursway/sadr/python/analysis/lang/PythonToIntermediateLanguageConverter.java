@@ -63,6 +63,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.arguments.Argument;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.CallArgument;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgumentsBuilder;
+import com.yoursway.sadr.python.analysis.context.dynamic.arguments.Starness;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
 import com.yoursway.sadr.python.analysis.context.lexical.areas.ModuleArea;
@@ -220,7 +221,7 @@ public class PythonToIntermediateLanguageConverter {
         String operator = node.getOperator();
         if ("+".equals(operator)) {
             // TODO too tedious, should be much simpler (say hello to effects?)   
-            ActualArgumentsBuilder argumentsBuilder = new ActualArgumentsBuilder();
+            ActualArgumentsBuilder argumentsBuilder = new ActualArgumentsBuilder(lc);
             argumentsBuilder.addPositional(processBNode(node.getRight(), lc));
             Arguments arguments = argumentsBuilder.build();
             Unode receiver = processNode(node.getLeft(), lc);
@@ -369,14 +370,14 @@ public class PythonToIntermediateLanguageConverter {
         DeclaredArgumentsBuilder builder = new DeclaredArgumentsBuilder();
         int i = 0;
         for (PythonArgument arg : args)
-            new Argument(arg.getName(), i++, arg.getStar(), bnode(processNode(arg.getInitialization(), lc),
-                lc)).addTo(builder);
+            new Argument(arg.getName(), i++, Starness.fromCount(arg.getStar()), bnode(processNode(arg
+                    .getInitialization(), lc), lc)).addTo(builder);
         return builder.build();
     }
     
     private Arguments processActualArguments(Bnode callable, List<PythonCallArgument> args,
             PythonLexicalContext lc) {
-        ActualArgumentsBuilder builder = new ActualArgumentsBuilder();
+        ActualArgumentsBuilder builder = new ActualArgumentsBuilder(lc);
         int i = 0;
         for (PythonCallArgument arg : args)
             processCallArgument(callable, arg, lc, i++).addTo(builder);

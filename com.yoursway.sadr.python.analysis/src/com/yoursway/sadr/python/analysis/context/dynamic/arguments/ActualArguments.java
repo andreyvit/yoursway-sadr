@@ -16,6 +16,9 @@ import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.literals.ListLiteralUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ListConcatUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 import com.yoursway.utils.YsCollections;
 
@@ -27,10 +30,12 @@ public class ActualArguments implements Arguments {
     private final Bnode superstar;
     private final int hashCode;
     
-    public static final Arguments EMPTY = new ActualArguments(Collections.<Bnode> emptyList(), Collections
-            .<String, Bnode> emptyMap(), null, null);
+    public static final Arguments EMPTY = new ActualArguments(null, Collections.<Bnode> emptyList(),
+            Collections.<String, Bnode> emptyMap(), null, null);
+    private final PythonLexicalContext lc;
     
-    public ActualArguments(List<Bnode> positional, Map<String, Bnode> keyword, Bnode star, Bnode superstar) {
+    public ActualArguments(PythonLexicalContext lc, List<Bnode> positional, Map<String, Bnode> keyword,
+            Bnode star, Bnode superstar) {
         if (positional == null)
             throw new NullPointerException("positional is null");
         if (keyword == null)
@@ -40,6 +45,7 @@ public class ActualArguments implements Arguments {
         this.star = star;
         this.superstar = superstar;
         this.hashCode = computeHashCode();
+        this.lc = lc;
     }
     
     @Override
@@ -88,15 +94,34 @@ public class ActualArguments implements Arguments {
     
     @pausable
     public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
-            AliasConsumer aliases, int index, String name, Bnode init) {
+            AliasConsumer aliases, int index, String name, Bnode init, Starness starness) {
         dc = dc.unwind();
-        Bnode construct = null;
-        if (index < positional.size())
-            construct = positional.get(index);
-        else if (name != null)
-            construct = keyword.get(name);
-        if (construct != null)
-            PythonAnalHelpers.addRenameForConstruct(suffix, aliases, construct, dc);
+        if (starness == Starness.REGULAR) {
+            Bnode construct = null;
+            if (index < positional.size())
+                construct = positional.get(index);
+            else if (name != null)
+                construct = keyword.get(name);
+            if (construct != null)
+                PythonAnalHelpers.addRenameForConstruct(suffix, aliases, construct, dc);
+        } else if (starness == Starness.STAR) {
+            List<Bnode> items;
+            if (index < positional.size())
+                items = positional.subList(index, positional.size());
+            else
+                items = Collections.emptyList();
+            Unode list;
+            if (star != null)
+                if (items.isEmpty())
+                    list = star.unode();
+                else
+                    list = new ListConcatUnode(new ListLiteralUnode(items), star.unode());
+            else
+                list = new ListLiteralUnode(items);
+            PythonAnalHelpers.addRenameForConstruct(suffix, aliases, new Bnode(list, lc), dc);
+        } else if (starness == Starness.DOUBLE_STAR) {
+            // TODO: support *kw *
+        }
         if (init != null)
             PythonAnalHelpers.addRenameForConstruct(suffix, aliases, init, dc);
     }

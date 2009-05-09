@@ -26,6 +26,10 @@ public class ListLiteralUnode extends AbstractLiteralUnode {
         this.hashCode = items.hashCode();
     }
     
+    public int itemCount() {
+        return items.size();
+    }
+    
     @Override
     public PythonValueSet calculateLiteralValue() {
         return new PythonValueSet(new ListValue());

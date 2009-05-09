@@ -9,14 +9,14 @@ import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ArgumentUnode;
 public class Argument {
     
     private final String name;
-    private final int star;
+    private final Starness starness;
     private final Bnode init;
     private final int index;
     
-    public Argument(String name, int index, int star, Bnode init) {
+    public Argument(String name, int index, Starness starness, Bnode init) {
         this.name = name;
         this.index = index;
-        this.star = star;
+        this.starness = starness;
         this.init = init;
     }
     
@@ -25,11 +25,11 @@ public class Argument {
     }
     
     public void addTo(DeclaredArgumentsBuilder builder) {
-        if (star == 0)
+        if (starness == Starness.REGULAR)
             builder.add(name, this);
-        else if (star == 1)
+        else if (starness == Starness.STAR)
             builder.addStar(this);
-        else if (star == 2)
+        else if (starness == Starness.DOUBLE_STAR)
             builder.addStar(this);
         else
             throw new AssertionError("Unreachable");
@@ -37,7 +37,7 @@ public class Argument {
     
     public void addToIndex(IndexRequest r, PythonLexicalContext inner) {
         r.addAssignmentWithoutWrapping(new VariableUnode(name), inner, new Bnode(new ArgumentUnode(index,
-                name, init), inner));
+                name, init, starness), inner));
     }
     
 }

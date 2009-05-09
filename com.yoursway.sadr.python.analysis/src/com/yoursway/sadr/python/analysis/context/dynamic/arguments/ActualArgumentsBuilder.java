@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
+import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 
 public class ActualArgumentsBuilder {
@@ -14,6 +15,13 @@ public class ActualArgumentsBuilder {
     private final Map<String, Bnode> keyword = new HashMap<String, Bnode>();
     private Bnode star = null;
     private Bnode superstar = null;
+    private final PythonLexicalContext lc;
+    
+    public ActualArgumentsBuilder(PythonLexicalContext lc) {
+        if (lc == null)
+            throw new NullPointerException("lc is null");
+        this.lc = lc;
+    }
     
     public void addPositional(Bnode construct) {
         if (construct == null)
@@ -42,7 +50,7 @@ public class ActualArgumentsBuilder {
     }
     
     public Arguments build() {
-        return new ActualArguments(positional, keyword, star, superstar);
+        return new ActualArguments(lc, positional, keyword, star, superstar);
     }
     
     void addAll(List<Bnode> positional, Map<String, Bnode> keyword, Bnode star, Bnode superstar) {

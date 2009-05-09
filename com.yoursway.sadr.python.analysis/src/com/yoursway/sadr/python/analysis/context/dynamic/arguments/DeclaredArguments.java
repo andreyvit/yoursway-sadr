@@ -68,6 +68,8 @@ public class DeclaredArguments {
     public void addToIndex(IndexRequest r, PythonLexicalContext inner) {
         for (Argument argument : positional)
             argument.addToIndex(r, inner);
+        if (star != null)
+            star.addToIndex(r, inner);
     }
     
 }
