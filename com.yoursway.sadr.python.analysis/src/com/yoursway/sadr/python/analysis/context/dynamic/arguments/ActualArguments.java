@@ -1,25 +1,29 @@
 package com.yoursway.sadr.python.analysis.context.dynamic.arguments;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import kilim.pausable;
 
 import com.google.common.collect.Lists;
-import com.yoursway.sadr.engine.Analysis;
 import com.yoursway.sadr.python.analysis.PythonAnalHelpers;
+import com.yoursway.sadr.python.analysis.aliasing.Alias;
 import com.yoursway.sadr.python.analysis.aliasing.AliasConsumer;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
-import com.yoursway.sadr.python.analysis.goals.ExpressionValueGoal;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
 import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
+import com.yoursway.sadr.python.analysis.lang.unodes.literals.DictLiteralUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.literals.ListLiteralUnode;
+import com.yoursway.sadr.python.analysis.lang.unodes.proxies.DictConcatUnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.proxies.ListConcatUnode;
 import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
+import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSetBuilder;
 import com.yoursway.utils.YsCollections;
 
 public class ActualArguments implements Arguments {
@@ -77,24 +81,27 @@ public class ActualArguments implements Arguments {
     }
     
     @pausable
-    public PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name, Bnode init) {
+    public PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name, Bnode init,
+            Starness starness) {
         dc = dc.unwind();
-        Bnode construct = null;
-        if (index < positional.size())
-            construct = positional.get(index);
-        else if (name != null)
-            construct = keyword.get(name);
-        if (construct != null)
-            return Analysis.evaluate(new ExpressionValueGoal(construct, dc));
-        // TODO: handle * and ** here (by creating the corresponding array element / dict element goals)
-        if (init != null)
-            return Analysis.evaluate(new ExpressionValueGoal(init, dc));
-        return PythonValueSet.EMPTY;
+        final List<Alias> aliases = new ArrayList<Alias>();
+        findRenames(Suffix.EMPTY, null, dc, new AliasConsumer() {
+            @Override
+            public void add(Alias alias) {
+                aliases.add(alias);
+            }
+        }, index, name, init, starness);
+        PythonValueSetBuilder builder = PythonValueSet.newBuilder();
+        for (Alias alias : aliases)
+            builder.addResults(alias.getUnode().calculateValue(lc, dc));
+        return builder.build();
     }
     
     @pausable
     public void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,
             AliasConsumer aliases, int index, String name, Bnode init, Starness starness) {
+        if (lc == null) // only happens for an EMPTY context
+            return;
         dc = dc.unwind();
         if (starness == Starness.REGULAR) {
             Bnode construct = null;
@@ -120,7 +127,16 @@ public class ActualArguments implements Arguments {
                 list = new ListLiteralUnode(items);
             PythonAnalHelpers.addRenameForConstruct(suffix, aliases, new Bnode(list, lc), dc);
         } else if (starness == Starness.DOUBLE_STAR) {
-            // TODO: support *kw *
+            Map<String, Bnode> items = new HashMap<String, Bnode>(keyword);
+            // TODO remove all declared named arguments from items
+            Unode dict;
+            if (superstar == null)
+                dict = new DictLiteralUnode(items);
+            else if (items.isEmpty())
+                dict = superstar.unode();
+            else
+                dict = new DictConcatUnode(new DictLiteralUnode(items), superstar.unode());
+            PythonAnalHelpers.addRenameForConstruct(suffix, aliases, new Bnode(dict, lc), dc);
         }
         if (init != null)
             PythonAnalHelpers.addRenameForConstruct(suffix, aliases, init, dc);

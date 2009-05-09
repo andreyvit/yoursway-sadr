@@ -70,6 +70,8 @@ public class DeclaredArguments {
             argument.addToIndex(r, inner);
         if (star != null)
             star.addToIndex(r, inner);
+        if (superstar != null)
+            superstar.addToIndex(r, inner);
     }
     
 }

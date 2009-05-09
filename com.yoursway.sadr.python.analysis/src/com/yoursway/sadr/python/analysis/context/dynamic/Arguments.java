@@ -12,7 +12,7 @@ import com.yoursway.sadr.python.analysis.objectmodel.valueset.PythonValueSet;
 public interface Arguments {
     
     @pausable
-    public abstract PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name, Bnode init);
+    public abstract PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name, Bnode init, Starness starness);
     
     @pausable
     public abstract void findRenames(Suffix suffix, PythonLexicalContext sc, PythonDynamicContext dc,

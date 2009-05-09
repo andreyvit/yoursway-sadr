@@ -19,6 +19,7 @@ import kilim.fibers.Task;
 import com.yoursway.sadr.blocks.foundation.types.Type;
 import com.yoursway.sadr.python.analysis.context.dynamic.Arguments;
 import com.yoursway.sadr.python.analysis.context.dynamic.PythonDynamicContext;
+import com.yoursway.sadr.python.analysis.context.dynamic.arguments.Starness;
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.objectmodel.values.BuiltinFunctionObject;
 import com.yoursway.sadr.python.analysis.objectmodel.values.PythonValue;
@@ -133,7 +134,8 @@ public abstract class PythonType extends PythonValue implements Type {
                             int paramCount = params.length - 1;
                             List<PythonValueSet> untypedArgs = new ArrayList<PythonValueSet>(paramCount);
                             for (int arg = 0; arg < paramCount; arg++)
-                                untypedArgs.add(arguments.computeArgument(dc, arg, null, null));
+                                untypedArgs.add(arguments.computeArgument(dc, arg, null, null,
+                                    Starness.REGULAR));
                             List<Collection<?>> typedArgs = new ArrayList<Collection<?>>(paramCount);
                             int index = 0;
                             for (PythonValueSet valueSet : untypedArgs)

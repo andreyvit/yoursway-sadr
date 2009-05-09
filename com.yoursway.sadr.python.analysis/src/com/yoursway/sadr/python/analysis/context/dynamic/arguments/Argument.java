@@ -30,7 +30,7 @@ public class Argument {
         else if (starness == Starness.STAR)
             builder.addStar(this);
         else if (starness == Starness.DOUBLE_STAR)
-            builder.addStar(this);
+            builder.addSuperstar(this);
         else
             throw new AssertionError("Unreachable");
     }

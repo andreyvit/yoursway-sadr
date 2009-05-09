@@ -39,10 +39,11 @@ public class BoundFunctionDynamicContextDecorator extends ChildDynamicContext {
         }
         
         @pausable
-        public PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name, Bnode init) {
+        public PythonValueSet computeArgument(PythonDynamicContext dc, int index, String name, Bnode init,
+                Starness starness) {
             if (index == 0)
                 return self;
-            return delegate.computeArgument(dc, index - 1, name, init);
+            return delegate.computeArgument(dc, index - 1, name, init, starness);
         }
         
         @pausable

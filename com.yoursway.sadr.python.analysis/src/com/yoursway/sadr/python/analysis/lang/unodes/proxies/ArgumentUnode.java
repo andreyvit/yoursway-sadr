@@ -39,7 +39,7 @@ public final class ArgumentUnode extends Unode {
     @pausable
     public PythonValueSet calculateValue(PythonLexicalContext sc, PythonDynamicContext dc) {
         Arguments arguments = dc.argumentsOfTopCall();
-        return arguments.computeArgument(dc, index, name, init);
+        return arguments.computeArgument(dc, index, name, init, starness);
     }
     
     @Override
