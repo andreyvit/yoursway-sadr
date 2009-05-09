@@ -287,7 +287,7 @@ public class PythonToIntermediateLanguageConverter {
     }
     
     private Unode processTuple(PythonTupleExpression node, PythonLexicalContext lc) {
-        return null;
+        return new ListLiteralUnode(processToBnodes(node.getChilds(), lc));
     }
     
     private Unode processList(PythonListExpression node, PythonLexicalContext lc) {
