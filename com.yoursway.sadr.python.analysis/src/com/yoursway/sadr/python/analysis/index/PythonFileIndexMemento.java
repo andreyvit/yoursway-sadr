@@ -132,4 +132,25 @@ class PythonFileIndexMemento implements IndexMemento {
             requestor.call(info);
     }
     
+    public void dump() {
+        System.out.println("Assignments:");
+        for (Map.Entry<Unode, Collection<Bnode>> entry : assignments.entrySet())
+            for (Bnode rhs : entry.getValue())
+                System.out.println("  " + entry.getKey() + " := " + rhs);
+        System.out.println("Attribute assignments:");
+        for (Map.Entry<String, Collection<AssignmentInfo>> entry : attributeAssignments.entrySet())
+            for (AssignmentInfo info : entry.getValue())
+                System.out.println("  " + info.getReceiver() + "." + entry.getKey() + " := " + info.getRhs());
+        System.out.println("Passed arguments:");
+        for (Map.Entry<Unode, Collection<PassedArgumentInfo>> entry : passedArguments.entrySet())
+            for (PassedArgumentInfo info : entry.getValue())
+                System.out.println("  " + info.descriptionWithValueUnode(entry.getKey()));
+        System.out.println("Returns:");
+        for (Map.Entry<MethodArea, Collection<Bnode>> entry : returns.entrySet()) {
+            System.out.println("  " + entry.getKey());
+            for (Bnode info : entry.getValue())
+                System.out.println("    " + info);
+        }
+    }
+    
 }

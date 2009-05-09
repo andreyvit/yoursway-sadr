@@ -8,6 +8,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgum
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 import com.yoursway.sadr.python.analysis.lang.unodes.indexable.VariableUnode;
 
 public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
@@ -63,6 +64,11 @@ public final class PassedPositionalArgumentInfo extends PassedCallArgumentInfo {
     @Override
     public String toString() {
         return "arg #" + index + " of " + callable;
+    }
+    
+    @Override
+    public String descriptionWithValueUnode(Unode unode) {
+        return callable + "(... #" + index + "=" + unode + " ...)";
     }
     
 }

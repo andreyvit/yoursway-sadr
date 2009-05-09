@@ -8,6 +8,7 @@ import kilim.pausable;
 import com.yoursway.sadr.engine.incremental.SourceUnit;
 import com.yoursway.sadr.engine.incremental.index.IndexMemento;
 import com.yoursway.sadr.engine.incremental.index.IndexQuery;
+import com.yoursway.sadr.python.analysis.Constants;
 import com.yoursway.sadr.python.analysis.context.lexical.areas.MethodArea;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsIndexQuery;
 import com.yoursway.sadr.python.analysis.index.queries.AssignmentsRequestor;
@@ -64,6 +65,10 @@ public class IndexManager {
             index.makeImmutable();
         }
         
+        public void dumpIndex() {
+            index.dump();
+        }
+        
     }
     
     static class PythonFileIndex {
@@ -72,6 +77,10 @@ public class IndexManager {
         
         public void makeImmutable() {
             memento.makeImmutable();
+        }
+        
+        public void dump() {
+            memento.dump();
         }
         
         public void clear() {
@@ -158,6 +167,13 @@ public class IndexManager {
     public void updateFinished() {
         for (PythonFileIndexManager file : files.values())
             file.makeImmutable();
+        if (Constants.DUMP_INDEX) {
+            System.out.println();
+            System.out.println("INDEX CONTENTS");
+            for (PythonFileIndexManager file : files.values())
+                file.dumpIndex();
+            System.out.println();
+        }
     }
     
 }

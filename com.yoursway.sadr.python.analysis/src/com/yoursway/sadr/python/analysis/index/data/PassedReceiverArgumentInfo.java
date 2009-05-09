@@ -6,6 +6,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgum
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
 public final class PassedReceiverArgumentInfo extends PassedArgumentInfo {
     
@@ -60,6 +61,11 @@ public final class PassedReceiverArgumentInfo extends PassedArgumentInfo {
     @Override
     public String toString() {
         return "self arg of " + callable;
+    }
+    
+    @Override
+    public String descriptionWithValueUnode(Unode unode) {
+        return callable + "()";
     }
     
 }

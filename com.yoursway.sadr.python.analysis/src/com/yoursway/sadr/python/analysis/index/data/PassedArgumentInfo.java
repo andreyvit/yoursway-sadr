@@ -6,6 +6,7 @@ import com.yoursway.sadr.python.analysis.context.dynamic.arguments.DeclaredArgum
 import com.yoursway.sadr.python.analysis.context.lexical.PythonLexicalContext;
 import com.yoursway.sadr.python.analysis.lang.unodes.Bnode;
 import com.yoursway.sadr.python.analysis.lang.unodes.Suffix;
+import com.yoursway.sadr.python.analysis.lang.unodes.Unode;
 
 public abstract class PassedArgumentInfo {
     
@@ -15,5 +16,7 @@ public abstract class PassedArgumentInfo {
     public abstract PassedArgumentInfo translateToUnbound();
     
     public abstract Bnode getCallable();
+    
+    public abstract String descriptionWithValueUnode(Unode unode);
     
 }
